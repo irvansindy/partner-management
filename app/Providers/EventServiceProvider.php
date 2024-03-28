@@ -6,6 +6,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,19 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
+            // Add some items to the menu...
+            $event->menu->add('MAIN MENU');
+            $event->menu->add([
+                'text' => 'User Management',
+                'url'  => 'user-manage',
+                'icon' => 'fas fa-fw fa-user',
+            ],);
+            $event->menu->add([
+                'text' => 'Role Permission',
+                'url'  => 'role-permission',
+                'icon' => 'fas fa-fw fa-tasks',
+            ],);
+        });
     }
 }

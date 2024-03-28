@@ -29,6 +29,7 @@ class ChangeColumnAccountNumberAtTableCompanyBanks extends Migration
         Schema::table('company_banks', function (Blueprint $table) {
             // $table->integer('account_number')->nullable()->change();
             DB::statement("ALTER TABLE {$table->getTable()} MODIFY `account_number` integer(11)");
+            // $table->integer('account_number')->nullable()->change();
         });
     }
 }
