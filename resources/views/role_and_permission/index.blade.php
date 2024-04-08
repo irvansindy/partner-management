@@ -78,6 +78,7 @@
         </div>
         @include('role_and_permission.create_role')
         @include('role_and_permission.detail_role')
+        @include('role_and_permission.add_permission')
         @include('role_and_permission.create_permission')
         @include('role_and_permission.detail_permission')
     </div>

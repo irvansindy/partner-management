@@ -8,6 +8,7 @@ use App\Models\SubMenu;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Helpers\FormatResponseJson;
+use Illuminate\Support\Facades\DB;
 class RoleAndPermissionController extends Controller
 {
     public function __construct()
@@ -134,6 +135,28 @@ class RoleAndPermissionController extends Controller
             return FormatResponseJson::success($delete_permission,'permission deleted successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 500);
+        }
+    }
+    public function fetchPermissionInRole(Request $request)
+    {
+        try {
+            $permissions = Permission::all();
+            $role = Role::findOrFail($request->role_id);
+            $data = [
+                'permissions' => $permissions,
+                'role' => $role
+            ];
+            return FormatResponseJson::success($data,'permission fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null,$e->getMessage(), 404);
+        }
+    }
+    public function addOrRemovePermissionToRole()
+    {
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 }

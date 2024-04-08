@@ -23,7 +23,7 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-role_id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_role" data-toggle="modal" data-target="#formUpdateRole">View</button> <button type="button" data-role_id="'+item.id+'" class="btn btn-outline-danger btn-sm mt-2 delete_role" data-toggle="modal" data-target="#confirmDeleteRole">Delete</button>'
+                        return '<button type="button" data-role_id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_role" data-toggle="modal" data-target="#formUpdateRole">View</button> <button type="button" data-role_id="'+item.id+'" class="btn btn-outline-secondary btn-sm mt-2 add_permission" data-toggle="modal" data-target="#formAddPermission">+ Permission</button> <button type="button" data-role_id="'+item.id+'" class="btn btn-outline-danger btn-sm mt-2 delete_role" data-toggle="modal" data-target="#confirmDeleteRole">Delete</button>'
                     }
                 },
             ]
@@ -267,6 +267,67 @@
                         body: response_error.meta.message
                     });
                 }
+            })
+        })
+
+        $(document).on('click', '.add_permission', function(e) {
+            e.preventDefault()
+            let role_id = $(this).data('role_id')
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("fetch-permission-in-role") }}',
+                type: 'GET',
+                data: {
+                    role_id: role_id
+                },
+                dataType: 'json',
+                async: true,
+                success: function(res) {
+                    $('#list_permission_data').empty()
+                    $.each(res.data['permissions'], function(i, permission) {
+                        $('#list_permission_data').append(`
+                            <tr>
+                                <td>
+                                    <input class="form-check-input ms-3 permission-checkbox" type="checkbox" value="${permission.name}" id="${permission.name}" data-permission_id="${permission.id}">
+                                </td>
+                                <td>
+                                    <p>${permission.name}</p>
+                                </td>
+                            </tr>
+                        `)
+                    })
+                },
+                error: function(xhr) {
+                    let response_error = JSON.parse(xhr.responseText)
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        class: 'bg-danger',
+                        body: response_error.meta.message
+                    });
+                }
+            })
+            
+        })
+
+        $(document).on('change', '.permission-checkbox', function() {
+            // let role_id 
+            let permission_id = $(this).data('permission_id')
+            var is_checked = $(this).is(':checked');
+            
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("add-or-remove-permission") }}',
+                type: 'POST',
+                data: {
+                    role_id: update_role_id,
+                    role_name: update_role_name
+                },
+                dataType: 'json',
+                async: true,
             })
         })
     });

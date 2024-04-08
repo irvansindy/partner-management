@@ -41,6 +41,9 @@ Route::get('detail-permission', [RoleAndPermissionController::class,'detailPermi
 Route::post('update-permission', [RoleAndPermissionController::class,'updatePermission'])->name('update-permission');
 Route::post('delete-permission', [RoleAndPermissionController::class,'deletePermission'])->name('delete-permission');
 
+Route::get('fetch-permission-in-role', [RoleAndPermissionController::class,'fetchPermissionInRole'])->name('fetch-permission-in-role');
+Route::post('add-or-remove-permission', [RoleAndPermissionController::class,'addOrRemovePermissionToRole'])->name('add-or-remove-permission');
+
 Route::get('/user-manage', [UserManagementController::class,'index'])->name('user-manage');
 Route::get('/fetch-user', [UserManagementController::class,'fetchUser'])->name('fetch-user');
 Route::post('/store-user', [UserManagementController::class,'storeUser'])->name('store-user');
