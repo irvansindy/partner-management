@@ -1,117 +1,87 @@
 <script>
-    fetchDocTypeCategories()
-
-    function fetchDocTypeCategories() {
-        $.ajax({
-            url: '{{ route("fetch-doctype") }}',
-            type: 'GET',
-            dataType: 'json',
-            async: true,
-            success: function(res) {
-                // alert('success')
-                $('#data_doc_type_pt').empty()
-                $.each(res.data, function(i, data) {
-                    $('#data_doc_type_pt').append(`
-                    <tr>
-                        <td>${data.name}</td>
-                        <td>
-                            <input type="file" name="${data.name_id_class+'_pt'}" id="${data.name_id_class+'_pt'}" class="form-control ${data.name_id_class+'_pt'}" />
-                        </td>
-                    </tr>`
-                    )
-                })
-                
-                $('#data_doc_type_cv').empty()
-                $.each(res.data, function(i, data) {
-                    $('#data_doc_type_cv').append(`
-                    <tr>
-                        <td>${data.name}</td>
-                        <td>
-                            <input type="file" name="${data.name_id_class+'_cv'}" id="${data.name_id_class+'_cv'}" class="form-control ${data.name_id_class+'_cv'}" />
-                        </td>
-                    </tr>`
-                    )
-                })
-                
-                $('#document_type_ud_or_pd').empty()
-                $.each(res.data, function(i, data) {
-                    $('#document_type_ud_or_pd').append(`
-                    <tr>
-                        <td>${data.name}</td>
-                        <td>
-                            <input type="file" name="${data.name_id_class+'_ud_or_pd'}" id="${data.name_id_class+'_ud_or_pd'}" class="form-control ${data.name_id_class+'_ud_or_pd'}" />
-                        </td>
-                    </tr>`
-                    )
-                })
-                
-                $('#data_doc_type_perorangan').empty()
-                $.each(res.data, function(i, data) {
-                    $('#data_doc_type_perorangan').append(`
-                    <tr>
-                        <td>${data.name}</td>
-                        <td>
-                            <input type="file" name="${data.name_id_class+'_perorangan'}" id="${data.name_id_class+'_perorangan'}" class="form-control ${data.name_id_class+'_perorangan'}" />
-                        </td>
-                    </tr>`
-                    )
-                })
-            }
-        })
-    }
+    $('#company_type').select2({
+        dropdownParent: $('#modalCreatePartner'),
+        width:'100%'
+    })
     $(document).ready(function() {
-        // alert('success load')
+        fetchDataPartner()
+        function fetchDataPartner() {
+            $('.data-partner').empty()
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('fetch-partner') }}",
+                method: 'GET',
+                async: true,
+                success: function(res) {
+                    // console.log(res);
+                    if (res.data != null) {
+                        // window.location.href
+                        // alert('anda sudah terdaftar')
+                    }
+                }
+            })
+        }
 
-        $(document).on('click', '#add_dynamic_list_document', function(e) {
+        $(document).on('click', '#create_partner', function(e) {
             e.preventDefault()
-            $('.dynamic_list_document').append(`
-                <div class="array_dynamic_list_document">
-                    <div class="input-group mt-2">
-                        <div class="col-md mb-4 px-4">
-                            <div class="row">
-                                <div class="col-md-auto">
-                                    <label for="company_doc_type">Document for.... *</label>
-                                    <br>
-                                    <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Lampiran dokumen untuk</p>
-                                </div>
-                                <div class="col-md-auto">
-                                    <select class="form-control" name="company_doc_type" id="company_doc_type">
-                                        <option value="PT">PT</option>
-                                        <option value="CV">CV</option>
-                                        <option value="UD/PD">UD/PD</option>
-                                        <option value="Perorangan">Perorangan</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Doc Type</th>
-                                        <th>File</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="data_doc_type">
-                                    <tr>
-                                        <td>KTP</td>
-                                        <td>ktp saya</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="input-group d-flex justify-content-end mr-4 my-4">
-                        <button type="button" class="btn btn-danger" id="pop_dynamic_list_document">
-                            - Document
-                        </button>
-                    </div>
-                </div>
-            `)
-        })
-
-        $(document).on('click', '#pop_dynamic_list_document', function(e) {
-            e.preventDefault()
-            $(this).closest('.array_dynamic_list_document').remove()
+            $.ajax({
+                url: '{{ route("fetch-doctype") }}',
+                type: 'GET',
+                dataType: 'json',
+                async: true,
+                success: function(res) {
+                    // alert('success')
+                    $('#data_doc_type_pt').empty()
+                    $.each(res.data, function(i, data) {
+                        $('#data_doc_type_pt').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="file" name="${data.name_id_class+'_pt'}" id="${data.name_id_class+'_pt'}" class="form-control ${data.name_id_class+'_pt'}" />
+                            </td>
+                        </tr>`
+                        )
+                    })
+                    
+                    $('#data_doc_type_cv').empty()
+                    $.each(res.data, function(i, data) {
+                        $('#data_doc_type_cv').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="file" name="${data.name_id_class+'_cv'}" id="${data.name_id_class+'_cv'}" class="form-control ${data.name_id_class+'_cv'}" />
+                            </td>
+                        </tr>`
+                        )
+                    })
+                    
+                    $('#document_type_ud_or_pd').empty()
+                    $.each(res.data, function(i, data) {
+                        $('#document_type_ud_or_pd').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="file" name="${data.name_id_class+'_ud_or_pd'}" id="${data.name_id_class+'_ud_or_pd'}" class="form-control ${data.name_id_class+'_ud_or_pd'}" />
+                            </td>
+                        </tr>`
+                        )
+                    })
+                    
+                    $('#data_doc_type_perorangan').empty()
+                    $.each(res.data, function(i, data) {
+                        $('#data_doc_type_perorangan').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="file" name="${data.name_id_class+'_perorangan'}" id="${data.name_id_class+'_perorangan'}" class="form-control ${data.name_id_class+'_perorangan'}" />
+                            </td>
+                        </tr>`
+                        )
+                    })
+                }
+            })
         })
 
         $(document).on('click', '#add_dynamic_address',function(e) {
@@ -211,6 +181,10 @@
                     </div>
                 </div>
             `)
+        })
+
+        $(document).on('click', '#delete_dynamic_address', function(e) {
+            $(this).closest('.array_company_address').remove()
         })
 
         $(document).on('click', '#add_bank', function(e) {
@@ -326,11 +300,7 @@
             e.preventDefault()
             $(this).closest('.array_dymanic_bank').remove()
         })
-    
-        $(document).on('click', '#delete_dynamic_address', function(e) {
-            $(this).closest('.array_company_address').remove()
-        })
-    
+
         $(document).on('click', '#add_info', function(e) {
             $('.dynamic_add_info').append(`
                 <div class="input-group mb-4 array_add_info">
@@ -431,101 +401,10 @@
             e.preventDefault()
             $(this).closest('.array_add_info').remove()
         })
-    
-        $(document).on('click', '#btn_submit_data_company', function(e) {
-            e.preventDefault()
-            // let company_name = $('#company_name').val()
-            // let company_group_name = $('#company_group_name').val()
-            // let established_year = $('#established_year').val()
-            // let total_employee = $('#total_employee').val()
-            // let liable_person_and_position = $('#liable_person_and_position').val()
-            // let owner_name = $('#owner_name').val()
-            // let board_of_directors = $('#board_of_directors').val()
-            // let major_shareholders = $('#major_shareholders').val()
-            // let business_classification = $('#business_classification').val()
-            // let website_address = $('#website_address').val()
-            // let system_management = $('#system_management').val()
-            // let contact_person = $('#contact_person').val()
-            // let communication_language = $('#communication_language').val()
-            // let email_address = $('#email_address').val()
-            // // format array
-            // let address = $('input[name="address[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // // let address = $('#address').val()
-            // let city = $('input[name="city[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let country = $('input[name="country[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let province = $('input[name="province[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let zip_code = $('input[name="zip_code[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let telephone = $('input[name="telephone[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let fax = $('input[name="fax[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-    
-            // // data 2
-            // let bank_name = $('input[name="bank_name[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let branch = $('input[name="branch[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let account_name = $('input[name="account_name[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let city_or_country = $('input[name="city_or_country[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let account_number = $('input[name="account_number[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let currency = $('input[name="currency[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let swift_code = $('input[name="swift_code[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            
-            // // data 3
-            // let register_number_as_in_tax_invoice = $('#register_number_as_in_tax_invoice').val()
-            // let trc_number = $('#trc_number').val()
-            // let register_number_related_branch = $('#register_number_related_branch').val()
-            // let valid_until = $('#valid_until').val()
-            // let taxable_entrepreneur_number = $('#taxable_entrepreneur_number').val()
-            // let tax_invoice_serial_number = $('#tax_invoice_serial_number').val()
-            
-            // // data 4
-            // let address_add_info = $('input[name="address_add_info[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let city_add_info = $('input[name="city_add_info[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let country_add_info = $('input[name="country_add_info[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let province_add_info = $('input[name="province_add_info[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let zip_code_add_info = $('input[name="zip_code_add_info[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let telephone_add_info = $('input[name="telephone_add_info[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
-            // let fax_add_info = $('input[name="fax_add_info[]"]').map(function(){
-            //     return $(this).val()
-            // }).get()
 
+        $(document).on('click', '#submit_form_partner', function(e) {
+            e.preventDefault()
+            // alert('save')
             let data_form_company = new FormData($('#form_company')[0])
             $.ajax({
                 url: '{{ route("submit-partner") }}',
@@ -541,10 +420,57 @@
                 // dataType: 'json',
                 // async: true,
                 enctype: 'multipart/form-data',
+                beforeSend: function() {
+                    setTimeout(function() {
+                        $('#modalLoading').modal({show: false});
+                    }, 5000)
+                },
+                
+                success: function(res) {
+                    // $('#role_table').DataTable().ajax.reload();
+                    setTimeout(function() {
+                        $('#modalLoading').modal({show: false});
+                    }, 5000)
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        class: 'bg-success',
+                        body: res.meta.message,
+                        delay: 5000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
+                    });
+                },
+                error: function(xhr) {
+                    // $('#modalLoading').modal('hide')
+                    // $('#modalLoading').hide()
+                    // $('#modalLoading').modal({show: false});
+                    setTimeout(function() {
+                        $('#modalLoading').modal({show: false});
+                    }, 5000)
+                    let response_error = JSON.parse(xhr.responseText)
+                    $.each(response_error.meta.message.errors, function(i, value) {
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: value,
+                            delay: 5000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    })
+                },
+                complete: function() {
+                    // $('#modalLoading').modal({show: false});
+                    setTimeout(function() {
+                        $('#modalLoading').modal({show: false});
+                    }, 5000)
+                },
             })
         })
     })
-
-
 
 </script>

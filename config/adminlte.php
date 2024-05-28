@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Pralon</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '<b>Pralon</b> Indonesia',
+    'logo_img' => 'uploads/pt/1713190566.jpg',
+    'logo_img_class' => 'brand-image img-circle elevation-3 rounded-circle',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'Logo Pralon',
 
     /*
     |--------------------------------------------------------------------------
@@ -86,9 +86,13 @@ return [
     'auth_logo' => [
         'enabled' => false,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'uploads/pt/1713190566.jpg',
             'alt' => 'Auth Logo',
-            'class' => '',
+            'class' => 'rounded-circle brand-image img-circle elevation-3',
+            'logo_img_class' => 'brand-image img-circle elevation-3',
+            'logo_img_xl' => null,
+            'logo_img_xl_class' => 'brand-image-xs',
+            'logo_img_alt' => 'Logo Pralon',
             'width' => 50,
             'height' => 50,
         ],
@@ -109,7 +113,7 @@ return [
     'preloader' => [
         'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'uploads/pt/1713190566.jpg',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -130,10 +134,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => true,
+    'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
-    'usermenu_desc' => true,
+    'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
     /*
@@ -290,6 +294,28 @@ return [
     */
 
     'menu' => [
+        // Navbar items:
+        [
+            'type'         => 'navbar-search',
+            'text'         => 'search',
+            'topnav_right' => false,
+        ],
+        [
+            'type'         => 'fullscreen-widget',
+            'topnav_right' => false,
+        ],
+        // [
+        //     'text' => 'Company Data',
+        //     'url' => 'admin/settings',
+        //     'icon' => 'fas fa-fw fa-building',
+        //     'topnav_user' => true,
+        // ],
+
+        // Sidebar items:
+        // [
+        //     'type' => 'sidebar-menu-search',
+        //     'text' => 'search',
+        // ],
         // [
         //     'text' => 'blog',
         //     'url'  => 'admin/blog',

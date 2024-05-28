@@ -32,6 +32,12 @@ class EventServiceProvider extends ServiceProvider
             // Add some items to the menu...
             $event->menu->add('MAIN MENU');
             $event->menu->add([
+                'text' => 'Company Data',
+            'url' => 'detail-partner',
+            'icon' => 'fas fa-fw fa-building',
+            'topnav_user' => true,
+            ],);
+            $event->menu->add([
                 'text' => 'User Management',
                 'url'  => 'user-manage',
                 'icon' => 'fas fa-fw fa-user',
@@ -40,6 +46,11 @@ class EventServiceProvider extends ServiceProvider
                 'text' => 'Role Permission',
                 'url'  => 'role-permission',
                 'icon' => 'fas fa-fw fa-tasks',
+            ],);
+            $event->menu->add([
+                'text' => 'Partner',
+                'url'  => 'partner',
+                'icon' => 'fas fa-fw fa-handshake',
             ],);
         });
     }
