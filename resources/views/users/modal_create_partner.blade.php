@@ -280,10 +280,8 @@ aria-labelledby="modalCreatePartnerLabel" aria-hidden="true">
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-auto">
-                                                    <input type="text" name="business_classification_other_detail"
-                                                        id="business_classification_other_detail" placeholder="Other"
-                                                        class="form-control">
+                                                <div class="col-md-auto" id="field_form_create_business_other">
+                                                    
                                                 </div>
                                             </div>
                                         </div>

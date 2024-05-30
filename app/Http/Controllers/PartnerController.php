@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+// use Illuminate\Support\Facades\Validator;
 class PartnerController extends Controller
 {
     /**
@@ -77,6 +78,7 @@ class PartnerController extends Controller
     {
         try {
             DB::beginTransaction();
+            // dd($request->all());
             $validator = Validator::make($request->all(), [
                 'company_name' => 'required|string',
                 'company_group_name' => 'required|string',
@@ -128,7 +130,28 @@ class PartnerController extends Controller
                 'telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
                 'fax.*.required' => 'Fax tidak boleh kosong',
             ]);
-            
+
+            if ($request->business_classification == 'Other' && $request->business_classification_other_detail == NULL) {
+                $validator->after(function ($validator) {
+                    $validator->errors()->add(
+                        'business_classification_other_detail', 'Business classification/Jenis usaha tidak boleh kosong!'
+                    );
+                    // if ($this->somethingElseIsInvalid()) {
+                    // }
+                });
+                // $validator->errors()->add(
+                //     'business_classification_other_detail',
+                //     'Business classification/Jenis usaha tidak boleh kosong',
+                // );
+                // $validator->$request->validate([
+                //     'business_classification_other_detail' => 'required|string'
+                // ]);
+            }
+            // [
+            //     'business_classification_other_detail' => 'required|string'
+            // ], [
+            //     'business_classification_other_detail.required' => 'Business classification/Jenis usaha tidak boleh kosong',
+            // ]
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
@@ -163,7 +186,8 @@ class PartnerController extends Controller
                 'owner_name' => $request->owner_name,
                 'board_of_directors' => $request->board_of_directors,
                 'major_shareholders' => $request->major_shareholders,
-                'business_classification' => $business_class,
+                'business_classification' => $request->business_classification,
+                'other_business' => $request->business_classification_other_detail,
                 'website_address' => $request->website_address,
                 'system_management' => $request->system_management,
                 'contact_person' => $request->contact_person,

@@ -34,6 +34,7 @@
                 success: function(res) {
                     // alert('success')
                     $('#data_doc_type_pt').empty()
+                    $('#field_form_create_business_other').empty()
                     $.each(res.data, function(i, data) {
                         $('#data_doc_type_pt').append(`
                         <tr>
@@ -82,6 +83,18 @@
                     })
                 }
             })
+        })
+
+        $(document).on('change', 'input[name="business_classification"]', function() {
+            let value = $(this).val()
+            // alert(value)
+            if (value == 'Other') {
+                $('#field_form_create_business_other').append(`
+                    <input type="text" name="business_classification_other_detail" id="business_classification_other_detail" placeholder="Other" class="form-control">
+                `)
+            } else {
+                $('#field_form_create_business_other').empty()
+            }
         })
 
         $(document).on('click', '#add_dynamic_address',function(e) {
@@ -455,7 +468,7 @@
                             title: 'Error',
                             class: 'bg-danger',
                             body: value,
-                            delay: 5000,
+                            delay: 10000,
                             autohide: true,
                             fade: true,
                             close: true,
