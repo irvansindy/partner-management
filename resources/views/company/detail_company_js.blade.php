@@ -1,13 +1,15 @@
 <script>
     $(document).ready(function() {
         fetchDetailPartner()
+
         function fetchDetailPartner() {
             $.ajax({
-                url: '{{ route("fetch-partner") }}',
+                url: '{{ route('fetch-partner') }}',
                 type: 'GET',
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    $('#field_form_detail_business_other').empty()
                     $('#form_detail_company_partner')[0].reset()
                     $('#detail_company_name').val(res.data.name)
                     $('#detail_company_group_name').val(res.data.group_name)
@@ -17,6 +19,46 @@
                     $('#detail_owner_name').val(res.data.owner_name)
                     $('#detail_board_of_directors').val(res.data.board_of_directors)
                     $('#detail_major_shareholders').val(res.data.major_shareholders)
+
+                    $('#list_business_classification').empty()
+                    let data_business_classification = [
+                        'Manufacturer',
+                        'Trading',
+                        'Agent',
+                        'Distributor',
+                        'Services',
+                        'Contractor',
+                        'Other'
+                    ];
+                    let checked_business = '';
+                    $.each(data_business_classification, function(i, business) {
+                        checked_business = res.data.business_classification == business ?
+                            'checked' : ''
+                        $('#list_business_classification').append(`
+                            <div class="form-check form-check-inline mb-1">
+                                <input class="form-check-input detail_business_classification" style="margin-bottom: 1rem;" type="radio"
+                                    name="detail_business_classification" id="detail_business_classification_${business.toLowerCase()}"
+                                    value="${business}" ${checked_business}>
+                                <label class="form-check-label" for="detail_business_classification_${business.toLowerCase()}">
+                                    ${business}
+                                    <p class="fs-6"
+                                        style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
+                                        ${business}</p>
+                                </label>
+                            </div>
+                        `)
+                    })
+                    let checked_business_value = $(
+                        'input[name="detail_business_classification"]:checked').val()
+                    // if (checked_business_value = 'Other') {
+                    if (res.data.business_classification == 'Other') {
+                        $('#field_form_detail_business_other').append(`
+                        <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control" value="${res.data.other_business}">
+                        `)
+                    } else {
+                        $('#field_form_detail_business_other').empty()
+                    }
+
                     $('#detail_website_address').val(res.data.website_address)
                     $('#detail_website_address').val(res.data.website_address)
 
@@ -28,13 +70,14 @@
                     // if($('input[name="detail_communication_language"]'))
                     $('.detail_option_languange').empty()
                     let data_language = ['Bahasa', 'English'];
-                    let checked = '';
+                    let checked_language = '';
                     $.each(data_language, function(i, language) {
                         // alert(language)
-                        checked = res.data.communication_language == language ? 'checked' : ''
+                        checked_language = res.data.communication_language == language ?
+                            'checked' : ''
                         $('.detail_option_languange').append(`
                             <div class="form-check form-check-inline mb-1">
-                                <input class="form-check-input" style="margin-bottom: 1rem !important" ${checked}
+                                <input class="form-check-input" style="margin-bottom: 1rem !important" ${checked_language}
                                     type="radio" name="detail_communication_language"
                                     id="detail_communication_language_bahasa" value="Bahasa">
                                 <label class="form-check-label" for="detail_communication_language_bahasa">
@@ -311,5 +354,17 @@
                 }
             })
         }
+
+        $(document).on('change', '.detail_business_classification', function() {
+            let value = $(this).val()
+            let business_other = 'Other'
+            if (value == business_other) {
+                $('#field_form_detail_business_other').append(`
+                    <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control" value="">
+                        `)
+            } else {
+                $('#field_form_detail_business_other').empty()
+            }
+        })
     })
 </script>

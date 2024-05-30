@@ -162,7 +162,7 @@
                             </div>
                             <div class="col-md-auto">
                                 <div class="row px-2">
-                                    <div class="col-md-auto">
+                                    <div class="col-md-auto" id="list_business_classification">
                                         <div class="form-check form-check-inline mb-1">
                                             <input class="form-check-input" style="margin-bottom: 1rem;" type="radio"
                                                 name="detail_business_classification" id="detail_business_classification_manufacturer"
@@ -247,10 +247,8 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col-md-auto">
-                                        <input type="text" name="detail_business_classification_other_detail"
-                                            id="detail_business_classification_other_detail" placeholder="Other"
-                                            class="form-control">
+                                    <div class="col-md-auto" id="field_form_detail_business_other">
+                                        
                                     </div>
                                 </div>
                             </div>

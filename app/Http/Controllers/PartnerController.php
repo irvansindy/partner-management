@@ -265,13 +265,13 @@ class PartnerController extends Controller
             // support document PT
             if ($request->ktp_penanggung_jawab_pt != null) {
                 $request->validate([
-                    'ktp_penanggung_jawab_pt' => 'required|mimes:png,jpg'
+                    'ktp_penanggung_jawab_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('ktp_penanggung_jawab_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -279,13 +279,13 @@ class PartnerController extends Controller
             }
             if ($request->akte_pendirian_beserta_akte_perubahan_terakhir_pt != null) {
                 $request->validate([
-                    'akte_pendirian_beserta_akte_perubahan_terakhir_pt' => 'required|mimes:png,jpg'
+                    'akte_pendirian_beserta_akte_perubahan_terakhir_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -293,13 +293,13 @@ class PartnerController extends Controller
             }
             if ($request->surat_kuasa_pt != null) {
                 $request->validate([
-                    'surat_kuasa_pt' => 'required|mimes:png,jpg'
+                    'surat_kuasa_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('surat_kuasa_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -307,13 +307,13 @@ class PartnerController extends Controller
             }
             if ($request->surat_keterangan_terdaftar_pajak_pt != null) {
                 $request->validate([
-                    'surat_keterangan_terdaftar_pajak_pt' => 'required|mimes:png,jpg'
+                    'surat_keterangan_terdaftar_pajak_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('surat_keterangan_terdaftar_pajak_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -321,13 +321,13 @@ class PartnerController extends Controller
             }
             if ($request->npwp_pt != null) {
                 $request->validate([
-                    'npwp_pt' => 'required|mimes:png,jpg'
+                    'npwp_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('npwp_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -336,13 +336,13 @@ class PartnerController extends Controller
             }
             if ($request->surat_pengukuhan_pengusaha_kena_pajak_pt != null) {
                 $request->validate([
-                    'surat_pengukuhan_pengusaha_kena_pajak_pt' => 'required|mimes:png,jpg'
+                    'surat_pengukuhan_pengusaha_kena_pajak_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -351,13 +351,13 @@ class PartnerController extends Controller
             }
             if ($request->tanda_daftar_perusahaan_pt != null) {
                 $request->validate([
-                    'tanda_daftar_perusahaan_pt' => 'required|mimes:png,jpg'
+                    'tanda_daftar_perusahaan_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('tanda_daftar_perusahaan_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -366,13 +366,13 @@ class PartnerController extends Controller
             }
             if ($request->surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_pt != null) {
                 $request->validate([
-                    'surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_pt' => 'required|mimes:png,jpg'
+                    'surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -381,13 +381,13 @@ class PartnerController extends Controller
             }
             if ($request->siup_atau_situ_pt != null) {
                 $request->validate([
-                    'siup_atau_situ_pt' => 'required|mimes:png,jpg'
+                    'siup_atau_situ_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('siup_atau_situ_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -396,13 +396,13 @@ class PartnerController extends Controller
             }
             if ($request->company_organization_pt != null) {
                 $request->validate([
-                    'company_organization_pt' => 'required|mimes:png,jpg'
+                    'company_organization_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('company_organization_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -411,13 +411,13 @@ class PartnerController extends Controller
             }
             if ($request->customers_list_pt != null) {
                 $request->validate([
-                    'customers_list_pt' => 'required|mimes:png,jpg'
+                    'customers_list_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('customers_list_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -426,13 +426,13 @@ class PartnerController extends Controller
             }
             if ($request->products_list_pt != null) {
                 $request->validate([
-                    'products_list_pt' => 'required|mimes:png,jpg'
+                    'products_list_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('products_list_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -441,13 +441,13 @@ class PartnerController extends Controller
             }
             if ($request->fakta_integritas_vendor_pt != null) {
                 $request->validate([
-                    'fakta_integritas_vendor_pt' => 'required|mimes:png,jpg'
+                    'fakta_integritas_vendor_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('fakta_integritas_vendor_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -456,13 +456,13 @@ class PartnerController extends Controller
             }
             if ($request->surat_izin_usaha_kontruksi_pt != null) {
                 $request->validate([
-                    'surat_izin_usaha_kontruksi_pt' => 'required|mimes:png,jpg'
+                    'surat_izin_usaha_kontruksi_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('surat_izin_usaha_kontruksi_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -471,13 +471,13 @@ class PartnerController extends Controller
             }
             if ($request->sertifikat_badan_usaha_pt != null) {
                 $request->validate([
-                    'sertifikat_badan_usaha_pt' => 'required|mimes:png,jpg'
+                    'sertifikat_badan_usaha_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('sertifikat_badan_usaha_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -486,13 +486,13 @@ class PartnerController extends Controller
             }
             if ($request->angka_pengenal_import_pt != null) {
                 $request->validate([
-                    'angka_pengenal_import_pt' => 'required|mimes:png,jpg'
+                    'angka_pengenal_import_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('angka_pengenal_import_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -501,13 +501,13 @@ class PartnerController extends Controller
             }
             if ($request->nomor_induk_berusaha_pt != null) {
                 $request->validate([
-                    'nomor_induk_berusaha_pt' => 'required|mimes:png,jpg'
+                    'nomor_induk_berusaha_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('nomor_induk_berusaha_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
@@ -516,13 +516,13 @@ class PartnerController extends Controller
             }
             if ($request->kbli_pt != null) {
                 $request->validate([
-                    'kbli_pt' => 'required|mimes:png,jpg'
+                    'kbli_pt' => 'required|mimes:png,jpg,jpeg,pdf'
                 ]);
                 $file = $request->file('kbli_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
-                    'company_id'=> 1,
+                    'company_id'=> $partner->id,
                     'company_doc_type' => 'jpg',
                     'document' => $file_name,
                     'document_type' => 'jpg',
