@@ -23,6 +23,9 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
+                    <a href="{{ asset('uploads/pt/1713190566.jpg') }}" target="_blank">
+                        <i class="fas fa-regular fa-file"></i>
+                    </a>
                     <div class="row px-2 py-2" style="line-height: 1">
                         <div class="input-group my-4">
                             <div class="col-md-3">
@@ -502,7 +505,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="row px-2 py-2" style="line-height: 1">
+                    <div class="row px-2 py-2" id="list_data_bank" style="line-height: 1">
                         <div class="input-group mt-4">
                             <div class="col-md-6 mb-4">
                                 <div class="row">
@@ -639,7 +642,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="row px-2 py-2" style="line-height: 1">
+                    <div class="row px-2 py-2" id="list_detail_tax" style="line-height: 1">
                         <div class="input-group mt-4">
                             <div class="col-md-auto mb-4">
                                 <div class="row">
@@ -735,7 +738,7 @@
             {{-- end company tax --}}
 
             {{-- additional info --}}
-            <div class="card card-info">
+            {{-- <div class="card card-info">
                 <div class="card-header">
                     <h3 class="card-title">
                         4. ADDITIONAL INFORMATION (Informasi Tambahan)
@@ -868,14 +871,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             {{-- end additional info --}}
 
             {{-- support document --}}
             <div class="card card-info">
                 <div class="card-header">
                     <h3 class="card-title">
-                        5. SUPPORTING DOCUMENTS (Dokumen yang harus dilengkapi)
+                        4. SUPPORTING DOCUMENTS (Dokumen yang harus dilengkapi)
                     </h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -885,8 +888,8 @@
                 </div>
                 <div class="card-body">
                     <div class="row px-2 py-2" style="line-height: 1">
-                        <div class="input-group mt-2">
-                            <ul class="nav nav-tabs" role="tablist">
+                        <div class="container-fluid">
+                            <ul class="nav nav-tabs mb-4" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" href="#detail_document_type_pt" role="tab"
                                         data-toggle="tab">PT</a>
@@ -903,9 +906,9 @@
                                         data-toggle="tab">Perorangan</a>
                                 </li>
                             </ul>
-                            <div class="tab-content mt-4">
-                                <div role="tabpanel" class="tab-pane fade" id="detail_document_type_pt">
-                                    <table class="table table-hover">
+                            <div class="tab-content mt-5">
+                                <div role="tabpanel" class="tab-pane fade table-responsive-lg show" id="detail_document_type_pt">
+                                    <table class="table table-hover w-100">
                                         <thead>
                                             <tr>
                                                 <th>Doc Type</th>
@@ -916,7 +919,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="detail_document_type_cv">
+                                <div role="tabpanel" class="tab-pane fade table-responsive-lg" id="detail_document_type_cv">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -928,7 +931,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="detail_document_type_ud_or_pd">
+                                <div role="tabpanel" class="tab-pane fade table-responsive-lg" id="detail_document_type_ud_or_pd">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -940,7 +943,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="detail_document_type_perorangan">
+                                <div role="tabpanel" class="tab-pane fade table-responsive-lg" id="detail_document_type_perorangan">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -957,12 +960,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary" id="btn_submit_data_company">
-                            submit
-                        </button>
-                    </div>
+                <div class="card-footer" id="button_partner">
+                    
                 </div>
             </div>
             {{-- end support document --}}

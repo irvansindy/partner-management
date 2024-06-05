@@ -14,5 +14,6 @@ class CompanySupportingDocument extends Model
         'company_doc_type',
         'document',
         'document_type',
+        'document_type_name',
     ];
 }

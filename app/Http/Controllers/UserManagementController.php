@@ -22,6 +22,7 @@ class UserManagementController extends Controller
     {
         try {
             $user = User::with('roles')->get();
+            // $user = User::with('roles')->get();
             return FormatResponseJson::success($user, 'user fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 404);

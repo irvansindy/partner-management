@@ -202,6 +202,15 @@
                                     <div class="col-md-auto">
                                         <input type="text" name="fax[]" id="fax" placeholder="" class="form-control">
                                     </div>
+                                    <div class="col-md-auto">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" name="main_address[]" id="main_address">
+                                            <label class="form-check-label" for="main_address" style="margin-top: 2px !important;">
+                                                Main Address
+                                            </label>
+                                            <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Alamat Utama</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col mb-4 align-items-end mr-4">

@@ -29,29 +29,53 @@ class PartnerController extends Controller
     {
         $this->middleware('auth');
     }
-    
     public function index()
     {
         return view("company.index");
     }
-
     public function detailPartner(Request $request)
     {
         return view('company.detail_company');
     }
-
     public function fetchCompany()
     {
         try {
             $company_profile = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'add_info'])
             ->where("user_id", auth()->user()->id)->first();
 
-            return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
+            $doc_type = CompanyDocumentTypeCategories::all();
+
+            $doc_pt = CompanySupportingDocument::where('company_id', $company_profile->id)
+            ->where('company_doc_type', 'pt')
+            ->get();
+
+            // dd($doc_pt);
+            
+            $doc_cv = CompanySupportingDocument::where('company_id', $company_profile->id)
+            ->where('company_doc_type', 'cv')
+            ->get();
+            
+            $doc_ud_or_pd = CompanySupportingDocument::where('company_id', $company_profile->id)
+            ->where('company_doc_type', 'ud_or_pd')
+            ->get();
+            
+            $doc_perorangan = CompanySupportingDocument::where('company_id', $company_profile->id)
+            ->where('company_doc_type', 'perorangan')
+            ->get();
+
+            $data = [
+                $company_profile,
+                $doc_type,
+                'pt' => $doc_pt,
+                'cv' => $doc_cv,
+                'ud_or_pd' => $doc_ud_or_pd,
+                'perorangan' => $doc_perorangan
+            ];
+            return FormatResponseJson::success($data, 'Company profile fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
-
     public function fetchCompanyPartnerById()
     {
         try {
@@ -63,17 +87,16 @@ class PartnerController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
-
     public function fetchDocTypeCategories()
     {
         try {
             $doc_type = CompanyDocumentTypeCategories::all();
+            // dd($doc_type);
             return FormatResponseJson::success($doc_type,'Document Type fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
-
     public function store(Request $request)
     {
         try {
@@ -136,28 +159,12 @@ class PartnerController extends Controller
                     $validator->errors()->add(
                         'business_classification_other_detail', 'Business classification/Jenis usaha tidak boleh kosong!'
                     );
-                    // if ($this->somethingElseIsInvalid()) {
-                    // }
                 });
-                // $validator->errors()->add(
-                //     'business_classification_other_detail',
-                //     'Business classification/Jenis usaha tidak boleh kosong',
-                // );
-                // $validator->$request->validate([
-                //     'business_classification_other_detail' => 'required|string'
-                // ]);
             }
-            // [
-            //     'business_classification_other_detail' => 'required|string'
-            // ], [
-            //     'business_classification_other_detail.required' => 'Business classification/Jenis usaha tidak boleh kosong',
-            // ]
+            
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
-
-            // create data partner profile
-            $business_class = $request->business_classification == 'Other' ? $request->business_classification_other_detail : $request->business_classification;
 
             if($request->signature_file != NULL) {
                 $file_signature = $request->file('signature_file');
@@ -195,13 +202,6 @@ class PartnerController extends Controller
                 'email_address' => $request->email_address,
                 'signature' => $request->signature_file != null ? $file_signature_name : null,
                 'stamp' => $request->stamp_file != null ? $file_signature_name : null,
-                // 'address.*' => $request->address,
-                // 'city.*' => $request->city,
-                // 'country.*' => $request->country,
-                // 'province.*' => $request->province,
-                // 'zip_code.*' => $request->zip_code,
-                // 'telephone.*' => $request->telephone,
-                // 'fax.*' => $request->fax
             ];
             $partner = CompanyInfomation::create($data_company_partner);
 
@@ -261,31 +261,6 @@ class PartnerController extends Controller
                 $create_tax = CompanyTax::insert($data_tax);
             }
 
-            if ($request->address_add_info[0] != null) {
-                // CompanyAdditionalInformation
-                $data_add_info = [];
-                $list_add_info_data = [];
-                for ($i=0; $i < count($request->address_add_info); $i++) { 
-                    $list_add_info_data = [
-                        'company_id' => $partner->id,
-                        'type_branch' => $request->address_add_info[$i],
-                        'country' => $request->country_add_info[$i],
-                        'province' => $request->province_add_info[$i],
-                        'city' => $request->city_add_info[$i],
-                        'zip_code' => $request->zip_code_add_info[$i],
-                        // 'telephone_country_code' => $request->telephone_add_info[$i],
-                        'telephone' => $request->telephone_add_info[$i],
-                        // 'fax_country_code',
-                        'fax' => $request->fax_add_info[$i],
-                        // 'main_product_name_and_brand',
-                        // 'main_customer',
-                        // 'main_customer_telephone'
-                    ];
-                    array_push($data_add_info, $list_add_info_data);
-                }
-                $create_info = CompanyAdditionalInformation::insert($data_add_info);
-            }
-
             // support document PT
             if ($request->ktp_penanggung_jawab_pt != null) {
                 $request->validate([
@@ -296,9 +271,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_ktp_penanggung_jawab_pt,
                 ]);
             }
             if ($request->akte_pendirian_beserta_akte_perubahan_terakhir_pt != null) {
@@ -310,9 +286,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_pt,
                 ]);
             }
             if ($request->surat_kuasa_pt != null) {
@@ -324,9 +301,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_kuasa_pt,
                 ]);
             }
             if ($request->surat_keterangan_terdaftar_pajak_pt != null) {
@@ -338,9 +316,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_pt,
                 ]);
             }
             if ($request->npwp_pt != null) {
@@ -352,9 +331,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kartu_npwp_pt
                 ]);
                 
             }
@@ -367,9 +347,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_pt
                 ]);
                 
             }
@@ -382,9 +363,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_pt
                 ]);
                 
             }
@@ -397,9 +379,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_pt
                 ]);
                 
             }
@@ -412,9 +395,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_siup_atau_situ_pt,
                 ]);
                 
             }
@@ -427,9 +411,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_company_organization_pt,
                 ]);
                 
             }
@@ -442,9 +427,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_customers_list_pt,
                 ]);
                 
             }
@@ -457,9 +443,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_product_list_pt,
                 ]);
                 
             }
@@ -472,9 +459,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_fakta_integritas_vendor_pt,
                 ]);
                 
             }
@@ -487,9 +475,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_pt
                 ]);
                 
             }
@@ -502,9 +491,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_sertifikat_badan_usaha_pt,
                 ]);
                 
             }
@@ -517,9 +507,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_angka_pengenal_import_pt
                 ]);
                 
             }
@@ -532,9 +523,10 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_nomor_induk_berusaha_pt
                 ]);
                 
             }
@@ -547,11 +539,879 @@ class PartnerController extends Controller
                 $file->move(public_path('uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
-                    'company_doc_type' => 'jpg',
+                    'company_doc_type' => 'pt',
                     'document' => $file_name,
-                    'document_type' => 'jpg',
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kbli_pt,
                 ]);
 
+            }
+
+            // support document CV
+            if ($request->ktp_penanggung_jawab_cv != null) {
+                $request->validate([
+                    'ktp_penanggung_jawab_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('ktp_penanggung_jawab_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_ktp_penanggung_jawab_cv,
+                ]);
+            }
+            if ($request->akte_pendirian_beserta_akte_perubahan_terakhir_cv != null) {
+                $request->validate([
+                    'akte_pendirian_beserta_akte_perubahan_terakhir_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_cv,
+                ]);
+            }
+            if ($request->surat_kuasa_cv != null) {
+                $request->validate([
+                    'surat_kuasa_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_kuasa_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_kuasa_cv,
+
+                ]);
+            }
+            if ($request->surat_keterangan_terdaftar_pajak_cv != null) {
+                $request->validate([
+                    'surat_keterangan_terdaftar_pajak_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_keterangan_terdaftar_pajak_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_cv,
+
+                ]);
+            }
+            if ($request->npwp_cv != null) {
+                $request->validate([
+                    'npwp_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('npwp_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kartu_npwp_cv
+                ]);
+                
+            }
+            if ($request->surat_pengukuhan_pengusaha_kena_pajak_cv != null) {
+                $request->validate([
+                    'surat_pengukuhan_pengusaha_kena_pajak_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_cv,
+                ]);
+                
+            }
+            if ($request->tanda_daftar_perusahaan_cv != null) {
+                $request->validate([
+                    'tanda_daftar_perusahaan_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('tanda_daftar_perusahaan_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_cv
+                ]);
+                
+            }
+            if ($request->surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_cv != null) {
+                $request->validate([
+                    'surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_cv
+                ]);
+                
+            }
+            if ($request->siup_atau_situ_cv != null) {
+                $request->validate([
+                    'siup_atau_situ_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('siup_atau_situ_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_siup_atau_situ_cv
+                ]);
+                
+            }
+            if ($request->company_organization_cv != null) {
+                $request->validate([
+                    'company_organization_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('company_organization_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_company_organization_cv
+                ]);
+                
+            }
+            if ($request->customers_list_cv != null) {
+                $request->validate([
+                    'customers_list_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('customers_list_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_customers_list_cv,
+
+                ]);
+                
+            }
+            if ($request->products_list_cv != null) {
+                $request->validate([
+                    'products_list_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('products_list_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_product_list_cv,
+                ]);
+                
+            }
+            if ($request->fakta_integritas_vendor_cv != null) {
+                $request->validate([
+                    'fakta_integritas_vendor_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('fakta_integritas_vendor_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_fakta_integritas_vendor_cv,
+                ]);
+                
+            }
+            if ($request->surat_izin_usaha_kontruksi_cv != null) {
+                $request->validate([
+                    'surat_izin_usaha_kontruksi_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_izin_usaha_kontruksi_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_cv,
+                ]);
+                
+            }
+            if ($request->sertifikat_badan_usaha_cv != null) {
+                $request->validate([
+                    'sertifikat_badan_usaha_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('sertifikat_badan_usaha_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_sertifikat_badan_usaha_cv,
+                ]);
+                
+            }
+            if ($request->angka_pengenal_import_cv != null) {
+                $request->validate([
+                    'angka_pengenal_import_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('angka_pengenal_import_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_angka_pengenal_import_cv,
+                ]);
+                
+            }
+            if ($request->nomor_induk_berusaha_cv != null) {
+                $request->validate([
+                    'nomor_induk_berusaha_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('nomor_induk_berusaha_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_nomor_induk_berusaha_cv
+                ]);
+                
+            }
+            if ($request->kbli_cv != null) {
+                $request->validate([
+                    'kbli_cv' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('kbli_cv');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/cv'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'cv',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kbli_cv
+                ]);
+
+            }
+            
+            // support document UD or OD
+            if ($request->ktp_penanggung_jawab_ud_or_pd != null) {
+                $request->validate([
+                    'ktp_penanggung_jawab_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('ktp_penanggung_jawab_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_ktp_penanggung_jawab_ud_or_pd,
+                ]);
+            }
+            if ($request->akte_pendirian_beserta_akte_perubahan_terakhir_ud_or_pd != null) {
+                $request->validate([
+                    'akte_pendirian_beserta_akte_perubahan_terakhir_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_ud_or_pd,
+                ]);
+            }
+            if ($request->surat_kuasa_ud_or_pd != null) {
+                $request->validate([
+                    'surat_kuasa_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_kuasa_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_kuasa_ud_or_pd,
+            
+                ]);
+            }
+            if ($request->surat_keterangan_terdaftar_pajak_ud_or_pd != null) {
+                $request->validate([
+                    'surat_keterangan_terdaftar_pajak_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_keterangan_terdaftar_pajak_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_ud_or_pd,
+            
+                ]);
+            }
+            if ($request->npwp_ud_or_pd != null) {
+                $request->validate([
+                    'npwp_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('npwp_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kartu_npwp_ud_or_pd
+                ]);
+                
+            }
+            if ($request->surat_pengukuhan_pengusaha_kena_pajak_ud_or_pd != null) {
+                $request->validate([
+                    'surat_pengukuhan_pengusaha_kena_pajak_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_ud_or_pd,
+                ]);
+                
+            }
+            if ($request->tanda_daftar_perusahaan_ud_or_pd != null) {
+                $request->validate([
+                    'tanda_daftar_perusahaan_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('tanda_daftar_perusahaan_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_ud_or_pd
+                ]);
+                
+            }
+            if ($request->surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_ud_or_pd != null) {
+                $request->validate([
+                    'surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_ud_or_pd
+                ]);
+                
+            }
+            if ($request->siup_atau_situ_ud_or_pd != null) {
+                $request->validate([
+                    'siup_atau_situ_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('siup_atau_situ_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_siup_atau_situ_ud_or_pd
+                ]);
+                
+            }
+            if ($request->company_organization_ud_or_pd != null) {
+                $request->validate([
+                    'company_organization_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('company_organization_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_company_organization_ud_or_pd
+                ]);
+                
+            }
+            if ($request->customers_list_ud_or_pd != null) {
+                $request->validate([
+                    'customers_list_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('customers_list_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_customers_list_ud_or_pd,
+            
+                ]);
+                
+            }
+            if ($request->products_list_ud_or_pd != null) {
+                $request->validate([
+                    'products_list_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('products_list_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_product_list_ud_or_pd,
+                ]);
+                
+            }
+            if ($request->fakta_integritas_vendor_ud_or_pd != null) {
+                $request->validate([
+                    'fakta_integritas_vendor_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('fakta_integritas_vendor_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_fakta_integritas_vendor_ud_or_pd,
+                ]);
+                
+            }
+            if ($request->surat_izin_usaha_kontruksi_ud_or_pd != null) {
+                $request->validate([
+                    'surat_izin_usaha_kontruksi_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_izin_usaha_kontruksi_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_ud_or_pd,
+                ]);
+                
+            }
+            if ($request->sertifikat_badan_usaha_ud_or_pd != null) {
+                $request->validate([
+                    'sertifikat_badan_usaha_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('sertifikat_badan_usaha_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_sertifikat_badan_usaha_ud_or_pd,
+                ]);
+                
+            }
+            if ($request->angka_pengenal_import_ud_or_pd != null) {
+                $request->validate([
+                    'angka_pengenal_import_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('angka_pengenal_import_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_angka_pengenal_import_ud_or_pd,
+                ]);
+                
+            }
+            if ($request->nomor_induk_berusaha_ud_or_pd != null) {
+                $request->validate([
+                    'nomor_induk_berusaha_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('nomor_induk_berusaha_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_nomor_induk_berusaha_ud_or_pd
+                ]);
+                
+            }
+            if ($request->kbli_ud_or_pd != null) {
+                $request->validate([
+                    'kbli_ud_or_pd' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('kbli_ud_or_pd');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'ud_or_pd',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kbli_ud_or_pd
+                ]);
+            
+            }
+            
+            // support document Perorangan
+            if ($request->ktp_penanggung_jawab_perorangan != null) {
+                $request->validate([
+                    'ktp_penanggung_jawab_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('ktp_penanggung_jawab_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_ktp_penanggung_jawab_perorangan,
+                ]);
+            }
+            if ($request->akte_pendirian_beserta_akte_perubahan_terakhir_perorangan != null) {
+                $request->validate([
+                    'akte_pendirian_beserta_akte_perubahan_terakhir_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_perorangan,
+                ]);
+            }
+            if ($request->surat_kuasa_perorangan != null) {
+                $request->validate([
+                    'surat_kuasa_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_kuasa_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_kuasa_perorangan,
+            
+                ]);
+            }
+            if ($request->surat_keterangan_terdaftar_pajak_perorangan != null) {
+                $request->validate([
+                    'surat_keterangan_terdaftar_pajak_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_keterangan_terdaftar_pajak_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_perorangan,
+            
+                ]);
+            }
+            if ($request->npwp_perorangan != null) {
+                $request->validate([
+                    'npwp_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('npwp_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kartu_npwp_perorangan
+                ]);
+                
+            }
+            if ($request->surat_pengukuhan_pengusaha_kena_pajak_perorangan != null) {
+                $request->validate([
+                    'surat_pengukuhan_pengusaha_kena_pajak_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_perorangan,
+                ]);
+                
+            }
+            if ($request->tanda_daftar_perusahaan_perorangan != null) {
+                $request->validate([
+                    'tanda_daftar_perusahaan_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('tanda_daftar_perusahaan_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_perorangan
+                ]);
+                
+            }
+            if ($request->surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_perorangan != null) {
+                $request->validate([
+                    'surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_perorangan
+                ]);
+                
+            }
+            if ($request->siup_atau_situ_perorangan != null) {
+                $request->validate([
+                    'siup_atau_situ_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('siup_atau_situ_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_siup_atau_situ_perorangan
+                ]);
+                
+            }
+            if ($request->company_organization_perorangan != null) {
+                $request->validate([
+                    'company_organization_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('company_organization_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_company_organization_perorangan
+                ]);
+                
+            }
+            if ($request->customers_list_perorangan != null) {
+                $request->validate([
+                    'customers_list_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('customers_list_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_customers_list_perorangan,
+            
+                ]);
+                
+            }
+            if ($request->products_list_perorangan != null) {
+                $request->validate([
+                    'products_list_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('products_list_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_product_list_perorangan,
+                ]);
+                
+            }
+            if ($request->fakta_integritas_vendor_perorangan != null) {
+                $request->validate([
+                    'fakta_integritas_vendor_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('fakta_integritas_vendor_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_fakta_integritas_vendor_perorangan,
+                ]);
+                
+            }
+            if ($request->surat_izin_usaha_kontruksi_perorangan != null) {
+                $request->validate([
+                    'surat_izin_usaha_kontruksi_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('surat_izin_usaha_kontruksi_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_perorangan,
+                ]);
+                
+            }
+            if ($request->sertifikat_badan_usaha_perorangan != null) {
+                $request->validate([
+                    'sertifikat_badan_usaha_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('sertifikat_badan_usaha_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_sertifikat_badan_usaha_perorangan,
+                ]);
+                
+            }
+            if ($request->angka_pengenal_import_perorangan != null) {
+                $request->validate([
+                    'angka_pengenal_import_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('angka_pengenal_import_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_angka_pengenal_import_perorangan,
+                ]);
+                
+            }
+            if ($request->nomor_induk_berusaha_perorangan != null) {
+                $request->validate([
+                    'nomor_induk_berusaha_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('nomor_induk_berusaha_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_nomor_induk_berusaha_perorangan
+                ]);
+                
+            }
+            if ($request->kbli_perorangan != null) {
+                $request->validate([
+                    'kbli_perorangan' => 'required|mimes:png,jpg,jpeg,pdf'
+                ]);
+                $file = $request->file('kbli_perorangan');
+                $file_name = time().'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('uploads/perorangan'), $file_name);
+                CompanySupportingDocument::create([
+                    'company_id'=> $partner->id,
+                    'company_doc_type' => 'perorangan',
+                    'document' => $file_name,
+                    'document_type' => $file->getClientOriginalExtension(),
+                    'document_type_name' => $request->doc_name_kbli_perorangan
+                ]);
+            
             }
 
             DB::commit();
@@ -566,5 +1426,72 @@ class PartnerController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }
     }
-
+    public function update(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $validator = Validator::make($request->all(), [
+                'detail_company_name' => 'required|string',
+                'detail_company_group_name' => 'required|string',
+                'detail_company_type' => 'required|string',
+                'detail_established_year' => 'required|string',
+                'detail_total_employee' => 'required|string',
+                'detail_liable_person_and_position' => 'required|string',
+                'detail_owner_name' => 'required|string',
+                'detail_board_of_directors' => 'required|string',
+                'detail_major_shareholders' => 'required|string',
+                'detail_business_classification' => 'required|string',
+                'detail_website_address' => 'required|string',
+                'detail_system_management' => 'required|string',
+                'detail_contact_person' => 'required|string',
+                'detail_communication_language' => 'required|string',
+                'detail_email_address' => 'required|string',
+                'detail_stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+                'detail_signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+                'detail_address.*' => 'required|string',
+                'detail_city.*' => 'required|string',
+                'detail_country.*' => 'required|string',
+                'detail_province.*' => 'required|string',
+                'detail_zip_code.*' => 'required|string',
+                'detail_telephone.*' => 'required|string',
+                'detail_fax.*' => 'required|string',
+            ], [
+                'detail_company_name.required' => 'Company name/Nama perusahaan tidak boleh kosong',
+                'detail_company_group_name.required' => 'Company group name/Nama grup perusahaan tidak boleh kosong',
+                'detail_company_type.required' => 'Company type/tipe perusahaan tidak boleh kosong',
+                'detail_established_year.required' => 'Established since year/Tahun berdiri tidak boleh kosong',
+                'detail_total_employee.required' => 'Total employee/Jumlah Karyawan tidak boleh kosong',
+                'detail_liable_person_and_position.required' => 'Liable person/Penanggung jawab tidak boleh kosong',
+                'detail_owner_name.required' => 'Owner name/Nama pemilik tidak boleh kosong',
+                'detail_board_of_directors.required' => 'Board of directors/Dewan direktur tidak boleh kosong',
+                'detail_major_shareholders.required' => 'Board of directors/Pemilik saham mayoritas tidak boleh kosong',
+                'detail_business_classification.required' => 'Business classification/Jenis usaha tidak boleh kosong',
+                'detail_website_address.required' => 'Website address/Alamat situs web tidak boleh kosong',
+                'detail_system_management.required' => 'System management/Manajemen sistem tidak boleh kosong',
+                'detail_contact_person.required' => 'Contact person/Kontak person tidak boleh kosong',
+                'detail_communication_language.required' => 'Communication language/Bahasa komunikasi tidak boleh kosong',
+                'detail_email_address.required' => 'Email address/Alamat email tidak boleh kosong',
+                'detail_stamp_file.required' => 'Stamp/Stempel tidak boleh kosong',
+                'detail_signature_file.required' => 'Signature/Tanda tangan tidak boleh kosong',
+                'detail_address.*.required' => 'Address/Alamat tidak boleh kosong',
+                'detail_city.*.required' => 'City/Kota tidak boleh kosong',
+                'detail_country.*.required' => 'Country/Negara tidak boleh kosong',
+                'detail_province.*.required' => 'Province/Provinsi tidak boleh kosong',
+                'detail_zip_code.*.required' => 'Zip code/Kode pos tidak boleh kosong',
+                'detail_telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
+                'detail_fax.*.required' => 'Fax tidak boleh kosong',
+            ]);
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+            DB::commit();
+        }  catch (ValidationException $e) {
+            // Return validation errors as JSON response
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
 }

@@ -33,13 +33,14 @@
                 async: true,
                 success: function(res) {
                     // alert('success')
-                    $('#data_doc_type_pt').empty()
                     $('#field_form_create_business_other').empty()
+                    $('#data_doc_type_pt').empty()
                     $.each(res.data, function(i, data) {
                         $('#data_doc_type_pt').append(`
                         <tr>
                             <td>${data.name}</td>
                             <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_pt'}" id="${'doc_name_'+data.name_id_class+'_pt'}" class="form-control ${'doc_name_'+data.name_id_class+'_pt'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_pt'}" id="${data.name_id_class+'_pt'}" class="form-control ${data.name_id_class+'_pt'}" />
                             </td>
                         </tr>`
@@ -52,6 +53,7 @@
                         <tr>
                             <td>${data.name}</td>
                             <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_cv'}" id="${'doc_name_'+data.name_id_class+'_cv'}" class="form-control ${'doc_name_'+data.name_id_class+'_cv'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_cv'}" id="${data.name_id_class+'_cv'}" class="form-control ${data.name_id_class+'_cv'}" />
                             </td>
                         </tr>`
@@ -64,6 +66,7 @@
                         <tr>
                             <td>${data.name}</td>
                             <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" id="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" class="form-control ${'doc_name_'+data.name_id_class+'_ud_or_pd'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_ud_or_pd'}" id="${data.name_id_class+'_ud_or_pd'}" class="form-control ${data.name_id_class+'_ud_or_pd'}" />
                             </td>
                         </tr>`
@@ -76,6 +79,7 @@
                         <tr>
                             <td>${data.name}</td>
                             <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_perorangan'}" id="${'doc_name_'+data.name_id_class+'_perorangan'}" class="form-control ${'doc_name_'+data.name_id_class+'_perorangan'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_perorangan'}" id="${data.name_id_class+'_perorangan'}" class="form-control ${data.name_id_class+'_perorangan'}" />
                             </td>
                         </tr>`
@@ -99,6 +103,7 @@
 
         $(document).on('click', '#add_dynamic_address',function(e) {
             e.preventDefault()
+            let order = 0
             $('.dynamic_company_address').append(`
                 <div class="input-group mb-4 array_company_address">
                     <div class="col-md-2">
@@ -184,6 +189,14 @@
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="fax[]" id="fax" placeholder="" class="form-control">
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input main_address" type="radio" name="main_address[]" id="main_address${order}">
+                                        <label class="form-check-label" for="main_address_${order}">
+                                            Main Address
+                                        </label>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Alamat Utama</p>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -476,12 +489,12 @@
                         });
                     })
                 },
-                complete: function() {
-                    // $('#modalLoading').modal({show: false});
-                    setTimeout(function() {
-                        $('#modalLoading').modal({show: false});
-                    }, 5000)
-                },
+                // complete: function() {
+                //     // $('#modalLoading').modal({show: false});
+                //     setTimeout(function() {
+                //         $('#modalLoading').modal({show: false});
+                //     }, 5000)
+                // },
             })
         })
     })
