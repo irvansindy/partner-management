@@ -270,7 +270,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_ktp_penanggung_jawab_pt,
                 ]);
@@ -285,7 +285,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_pt,
                 ]);
@@ -300,7 +300,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_kuasa_pt,
                 ]);
@@ -315,7 +315,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_pt,
                 ]);
@@ -330,7 +330,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kartu_npwp_pt
                 ]);
@@ -346,7 +346,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_pt
                 ]);
@@ -362,7 +362,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_pt
                 ]);
@@ -378,7 +378,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_pt
                 ]);
@@ -394,7 +394,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_siup_atau_situ_pt,
                 ]);
@@ -410,7 +410,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_company_organization_pt,
                 ]);
@@ -426,7 +426,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_customers_list_pt,
                 ]);
@@ -442,7 +442,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_product_list_pt,
                 ]);
@@ -458,7 +458,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_fakta_integritas_vendor_pt,
                 ]);
@@ -474,7 +474,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_pt
                 ]);
@@ -490,7 +490,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_sertifikat_badan_usaha_pt,
                 ]);
@@ -506,7 +506,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_angka_pengenal_import_pt
                 ]);
@@ -522,7 +522,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_nomor_induk_berusaha_pt
                 ]);
@@ -538,7 +538,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/pt/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kbli_pt,
                 ]);
@@ -556,7 +556,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_ktp_penanggung_jawab_cv,
                 ]);
@@ -571,7 +571,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_cv,
                 ]);
@@ -586,7 +586,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_kuasa_cv,
 
@@ -602,7 +602,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_cv,
 
@@ -618,7 +618,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kartu_npwp_cv
                 ]);
@@ -634,7 +634,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_cv,
                 ]);
@@ -650,7 +650,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_cv
                 ]);
@@ -666,7 +666,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_cv
                 ]);
@@ -682,7 +682,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_siup_atau_situ_cv
                 ]);
@@ -698,7 +698,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_company_organization_cv
                 ]);
@@ -714,7 +714,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_customers_list_cv,
 
@@ -731,7 +731,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_product_list_cv,
                 ]);
@@ -747,7 +747,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_fakta_integritas_vendor_cv,
                 ]);
@@ -763,7 +763,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_cv,
                 ]);
@@ -779,7 +779,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_sertifikat_badan_usaha_cv,
                 ]);
@@ -795,7 +795,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_angka_pengenal_import_cv,
                 ]);
@@ -811,7 +811,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_nomor_induk_berusaha_cv
                 ]);
@@ -827,7 +827,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/cv/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kbli_cv
                 ]);
@@ -845,7 +845,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_ktp_penanggung_jawab_ud_or_pd,
                 ]);
@@ -860,7 +860,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_ud_or_pd,
                 ]);
@@ -875,7 +875,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_kuasa_ud_or_pd,
             
@@ -891,7 +891,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_ud_or_pd,
             
@@ -907,7 +907,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kartu_npwp_ud_or_pd
                 ]);
@@ -923,7 +923,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_ud_or_pd,
                 ]);
@@ -939,7 +939,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_ud_or_pd
                 ]);
@@ -955,7 +955,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_ud_or_pd
                 ]);
@@ -971,7 +971,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_siup_atau_situ_ud_or_pd
                 ]);
@@ -987,7 +987,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_company_organization_ud_or_pd
                 ]);
@@ -1003,7 +1003,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_customers_list_ud_or_pd,
             
@@ -1020,7 +1020,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_product_list_ud_or_pd,
                 ]);
@@ -1036,7 +1036,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_fakta_integritas_vendor_ud_or_pd,
                 ]);
@@ -1052,7 +1052,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_ud_or_pd,
                 ]);
@@ -1068,7 +1068,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_sertifikat_badan_usaha_ud_or_pd,
                 ]);
@@ -1084,7 +1084,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_angka_pengenal_import_ud_or_pd,
                 ]);
@@ -1100,7 +1100,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_nomor_induk_berusaha_ud_or_pd
                 ]);
@@ -1116,7 +1116,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/ud_or_pd/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kbli_ud_or_pd
                 ]);
@@ -1134,7 +1134,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_ktp_penanggung_jawab_perorangan,
                 ]);
@@ -1149,7 +1149,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_akte_pendirian_beserta_akte_perubahan_terakhir_perorangan,
                 ]);
@@ -1164,7 +1164,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_kuasa_perorangan,
             
@@ -1180,7 +1180,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_keterangan_terdaftar_pajak_perorangan,
             
@@ -1196,7 +1196,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kartu_npwp_perorangan
                 ]);
@@ -1212,7 +1212,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_pengukuhan_pengusaha_kena_pajak_perorangan,
                 ]);
@@ -1228,7 +1228,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_tanda_daftar_perusahaan_perorangan
                 ]);
@@ -1244,7 +1244,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_perdagangan_atau_ijin_usaha_tetap_untuk_pma_perorangan
                 ]);
@@ -1260,7 +1260,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_siup_atau_situ_perorangan
                 ]);
@@ -1276,7 +1276,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_company_organization_perorangan
                 ]);
@@ -1292,7 +1292,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_customers_list_perorangan,
             
@@ -1309,7 +1309,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_product_list_perorangan,
                 ]);
@@ -1325,7 +1325,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_fakta_integritas_vendor_perorangan,
                 ]);
@@ -1341,7 +1341,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_surat_izin_usaha_konstruksi_perorangan,
                 ]);
@@ -1357,7 +1357,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_sertifikat_badan_usaha_perorangan,
                 ]);
@@ -1373,7 +1373,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_angka_pengenal_import_perorangan,
                 ]);
@@ -1389,7 +1389,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_nomor_induk_berusaha_perorangan
                 ]);
@@ -1405,7 +1405,7 @@ class PartnerController extends Controller
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
-                    'document' => $file_name,
+                    'document' => 'storage/uploads/perorangan/'.$file_name,
                     'document_type' => $file->getClientOriginalExtension(),
                     'document_type_name' => $request->doc_name_kbli_perorangan
                 ]);

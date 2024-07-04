@@ -871,7 +871,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
@@ -885,7 +885,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
@@ -899,7 +899,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
@@ -913,7 +913,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
