@@ -20,6 +20,14 @@
                         <label for="user_role">Role</label>
                         <select class="form-control" name="user_role" id="user_role" style="width: 100% !important;"></select>
                     </div>
+                    <div class="form-group">
+                        <label for="user_office">Office</label>
+                        <select class="form-control" name="user_office" id="user_office" style="width: 100% !important;"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_department">Department</label>
+                        <select class="form-control" name="user_department" id="user_department" style="width: 100% !important;"></select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

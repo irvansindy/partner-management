@@ -48,8 +48,8 @@ class EventServiceProvider extends ServiceProvider
                 'icon' => 'fas fa-fw fa-tasks',
             ],);
             $event->menu->add([
-                'text' => 'Partner',
-                'url'  => 'partner',
+                'text' => 'Partner ',
+                'url'  => 'partner-management',
                 'icon' => 'fas fa-fw fa-handshake',
             ],);
         });

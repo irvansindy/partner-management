@@ -7,7 +7,17 @@
             // placeholder: "Select an option",
             // allowClear: true
         })
+        $('#user_office').select2({
+            dropdownParent: $('#formCreateUser'),
+            tags: "true",
+            selectOnClose: true
+            // placeholder: "Select an option",
+            // allowClear: true
+        })
         $('#update_user_role').select2({
+            dropdownParent: $('#formUpdateUser')
+        })
+        $('#update_user_office').select2({
             dropdownParent: $('#formUpdateUser')
         })
 
@@ -57,9 +67,16 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
-                    $.each(res.data, function(i, role) {
+                    $('#user_role').empty()
+                    $.each(res.data['roles'], function(i, role) {
                         $('#user_role').append(`
                             <option value="${role.name}">${role.name}</option>
+                        `)
+                    })
+                    $('#user_office').empty()
+                    $.each(res.data['offices'], function(i, office) {
+                        $('#user_office').append(`
+                            <option value="${office.id}">${office.name}</option>
                         `)
                     })
                 },
@@ -79,6 +96,7 @@
             let user_name = $('#user_name').val()
             let user_email = $('#user_email').val()
             let user_role = $('#user_role').val()
+            let user_office = $('#user_office').val()
 
             $.ajax({
                 headers: {
@@ -90,6 +108,7 @@
                     name: user_name,
                     email: user_email,
                     role: user_role,
+                    office: user_office,
                 },
                 dataType: 'json',
                 async: true,
@@ -130,14 +149,25 @@
                 success: function(res) {
                     $('#update_user_name').val(res.data[0].name)
                     $('#update_user_email').val(res.data[0].email)
+
                     $('#update_current_role').val(res.data[0].roles[0].name)
                     $('#update_user_role').empty()
                     $('#update_user_role').append(`
                         <option value="${res.data[0].roles[0].name}">${res.data[0].roles[0].name}</option>
                     `)
-                    $.each(res.data[1], function(i, role) {
+                    $.each(res.data['roles'], function(i, role) {
                         $('#update_user_role').append(`
                             <option value="${role.name}">${role.name}</option>
+                        `)
+                    })
+                    $('#update_current_office').val(res.data[0].office.name)
+                    $('#update_user_office').empty()
+                    $('#update_user_office').append(`
+                        <option value="${res.data[0].office.id}">${res.data[0].office.name}</option>
+                    `)
+                    $.each(res.data['offices'], function(i, office) {
+                        $('#update_user_office').append(`
+                            <option value="${office.id}">${office.name}</option>
                         `)
                     })
                     // $('.update_user').attr('data-update_user_id', res.data[0].id)
@@ -161,6 +191,7 @@
             let update_user_email = $('#update_user_email').val()
             let update_current_role = $('#update_current_role').val()
             let update_user_role = $('#update_user_role').val()
+            let update_user_office = $('#update_user_office').val()
 
             $.ajax({
                 headers: {
@@ -174,6 +205,7 @@
                     email: update_user_email,
                     current_role: update_current_role,
                     role: update_user_role,
+                    office: update_user_office,
                 },
                 dataType: 'json',
                 async: true,

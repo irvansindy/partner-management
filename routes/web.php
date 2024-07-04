@@ -5,7 +5,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\RoleAndPermissionController;
 use App\Http\Controllers\UserManagementController;
-
+use App\Http\Controllers\PartnerManagementController;
+use App\Http\Controllers\API\ApiPartnerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,7 +22,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
@@ -60,5 +60,20 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('add-or-remove-permission', [RoleAndPermissionController::class,'addOrRemovePermissionToRole'])->name('add-or-remove-permission');
 });
 
+Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {
+    Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
+    Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');
+    Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
+    Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
+});
+Route::get('/token', function () {
+    return csrf_token(); 
+});
+// Route::get('fetch-data-partner', [ApiPartnerController::class, 'fetchPartner'])->name('fetch-data-partner');
+// Route::post('blacklist-partner', [ApiPartnerController::class, 'blacklistPartner']);
+Route::middleware(['auth:sanctum'])->group(function() {});
+
+
+Auth::routes();
 
 // Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');

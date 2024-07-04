@@ -29,8 +29,8 @@ class CompanyInfomation extends Model
     {
         return $this->hasMany(CompanyTax::class, 'company_id', 'id');
     }
-    public function add_info()
+    public function attachment()
     {
-        return $this->hasMany(CompanyAdditionalInformation::class, 'company_id', 'id');
+        return $this->hasMany(CompanySupportingDocument::class, 'company_id', 'id');
     }
 }

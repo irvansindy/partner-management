@@ -40,7 +40,7 @@ class PartnerController extends Controller
     public function fetchCompany()
     {
         try {
-            $company_profile = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'add_info'])
+            $company_profile = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'attachment'])
             ->where("user_id", auth()->user()->id)->first();
 
             $doc_type = CompanyDocumentTypeCategories::all();
@@ -48,8 +48,6 @@ class PartnerController extends Controller
             $doc_pt = CompanySupportingDocument::where('company_id', $company_profile->id)
             ->where('company_doc_type', 'pt')
             ->get();
-
-            // dd($doc_pt);
             
             $doc_cv = CompanySupportingDocument::where('company_id', $company_profile->id)
             ->where('company_doc_type', 'cv')
@@ -79,7 +77,7 @@ class PartnerController extends Controller
     public function fetchCompanyPartnerById()
     {
         try {
-            $company_profile = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'add_info'])
+            $company_profile = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'attachment'])
             ->where("user_id", auth()->user()->id)->first();
 
             return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
@@ -171,7 +169,7 @@ class PartnerController extends Controller
                 // $file_signature_name = time().'.'.$file_signature->getClientOriginalExtension();
                 $slug_name = Str::slug($request->company_name.' signature', '-');
                 $file_signature_name = $slug_name.'.'.$file_signature->getClientOriginalExtension();
-                $file_signature->move(public_path('uploads/signature'), $file_signature_name);
+                $file_signature->move(public_path('storage/uploads/signature'), $file_signature_name);
             }
             
             if($request->stamp_file != NULL) {
@@ -179,7 +177,7 @@ class PartnerController extends Controller
                 // $file_stamp_name = time().'.'.$file_stamp->getClientOriginalExtension();
                 $slug_name = Str::slug($request->company_name.' stamp', '-');
                 $file_stamp_name = $slug_name.'.'.$file_stamp->getClientOriginalExtension();
-                $file_stamp->move(public_path('uploads/stamp'), $file_stamp_name);
+                $file_stamp->move(public_path('storage/uploads/stamp'), $file_stamp_name);
             }
 
             $data_company_partner = [
@@ -201,7 +199,7 @@ class PartnerController extends Controller
                 'communication_language' => $request->communication_language,
                 'email_address' => $request->email_address,
                 'signature' => $request->signature_file != null ? $file_signature_name : null,
-                'stamp' => $request->stamp_file != null ? $file_signature_name : null,
+                'stamp' => $request->stamp_file != null ? $file_stamp_name : null,
             ];
             $partner = CompanyInfomation::create($data_company_partner);
 
@@ -268,7 +266,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('ktp_penanggung_jawab_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -283,7 +281,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -298,7 +296,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_kuasa_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -313,7 +311,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_keterangan_terdaftar_pajak_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -328,7 +326,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('npwp_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -344,7 +342,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -360,7 +358,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('tanda_daftar_perusahaan_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -376,7 +374,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -392,7 +390,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('siup_atau_situ_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -408,7 +406,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('company_organization_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -424,7 +422,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('customers_list_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -440,7 +438,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('products_list_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -456,7 +454,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('fakta_integritas_vendor_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -472,7 +470,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_kontruksi_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -488,7 +486,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('sertifikat_badan_usaha_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -504,7 +502,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('angka_pengenal_import_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -520,7 +518,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('nomor_induk_berusaha_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -536,7 +534,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('kbli_pt');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/pt'), $file_name);
+                $file->move(public_path('storage/uploads/pt'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'pt',
@@ -554,7 +552,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('ktp_penanggung_jawab_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -569,7 +567,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -584,7 +582,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_kuasa_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -600,7 +598,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_keterangan_terdaftar_pajak_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -616,7 +614,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('npwp_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -632,7 +630,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -648,7 +646,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('tanda_daftar_perusahaan_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -664,7 +662,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -680,7 +678,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('siup_atau_situ_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -696,7 +694,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('company_organization_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -712,7 +710,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('customers_list_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -729,7 +727,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('products_list_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -745,7 +743,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('fakta_integritas_vendor_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -761,7 +759,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_kontruksi_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -777,7 +775,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('sertifikat_badan_usaha_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -793,7 +791,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('angka_pengenal_import_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -809,7 +807,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('nomor_induk_berusaha_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -825,7 +823,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('kbli_cv');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/cv'), $file_name);
+                $file->move(public_path('storage/uploads/cv'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'cv',
@@ -843,7 +841,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('ktp_penanggung_jawab_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -858,7 +856,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -873,7 +871,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_kuasa_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -889,7 +887,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_keterangan_terdaftar_pajak_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -905,7 +903,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('npwp_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -921,7 +919,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -937,7 +935,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('tanda_daftar_perusahaan_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -953,7 +951,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -969,7 +967,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('siup_atau_situ_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -985,7 +983,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('company_organization_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1001,7 +999,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('customers_list_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1018,7 +1016,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('products_list_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1034,7 +1032,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('fakta_integritas_vendor_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1050,7 +1048,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_kontruksi_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1066,7 +1064,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('sertifikat_badan_usaha_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1082,7 +1080,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('angka_pengenal_import_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1098,7 +1096,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('nomor_induk_berusaha_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1114,7 +1112,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('kbli_ud_or_pd');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/ud_or_pd'), $file_name);
+                $file->move(public_path('storage/uploads/ud_or_pd'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'ud_or_pd',
@@ -1132,7 +1130,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('ktp_penanggung_jawab_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1147,7 +1145,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('akte_pendirian_beserta_akte_perubahan_terakhir_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1162,7 +1160,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_kuasa_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1178,7 +1176,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_keterangan_terdaftar_pajak_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1194,7 +1192,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('npwp_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1210,7 +1208,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_pengukuhan_pengusaha_kena_pajak_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1226,7 +1224,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('tanda_daftar_perusahaan_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1242,7 +1240,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_perdagangan_atau_izin_usaha_tetap_untuk_pma_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1258,7 +1256,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('siup_atau_situ_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1274,7 +1272,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('company_organization_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1290,7 +1288,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('customers_list_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1307,7 +1305,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('products_list_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1323,7 +1321,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('fakta_integritas_vendor_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1339,7 +1337,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('surat_izin_usaha_kontruksi_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1355,7 +1353,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('sertifikat_badan_usaha_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1371,7 +1369,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('angka_pengenal_import_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1387,7 +1385,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('nomor_induk_berusaha_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1403,7 +1401,7 @@ class PartnerController extends Controller
                 ]);
                 $file = $request->file('kbli_perorangan');
                 $file_name = time().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/perorangan'), $file_name);
+                $file->move(public_path('storage/uploads/perorangan'), $file_name);
                 CompanySupportingDocument::create([
                     'company_id'=> $partner->id,
                     'company_doc_type' => 'perorangan',
@@ -1417,7 +1415,7 @@ class PartnerController extends Controller
             DB::commit();
             // return FormatResponseJson::success($partner, 'partner profile created successfully');
             return FormatResponseJson::success('success', 'partner profile created successfully');
-        }  catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
@@ -1429,6 +1427,7 @@ class PartnerController extends Controller
     public function update(Request $request)
     {
         try {
+            // dd($request->all());
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'detail_company_name' => 'required|string',
@@ -1481,15 +1480,54 @@ class PartnerController extends Controller
                 'detail_telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
                 'detail_fax.*.required' => 'Fax tidak boleh kosong',
             ]);
+            
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
+
+            if($request->signature_file != NULL) {
+                $file_signature = $request->file('signature_file');
+                // $file_signature_name = time().'.'.$file_signature->getClientOriginalExtension();
+                $slug_name = Str::slug($request->company_name.' signature', '-');
+                $file_signature_name = $slug_name.'.'.$file_signature->getClientOriginalExtension();
+                // $file_signature->move(public_path('storage/uploads/signature'), $file_signature_name);
+            }
+            
+            if($request->stamp_file != NULL) {
+                $file_stamp = $request->file('stamp_file');
+                // $file_stamp_name = time().'.'.$file_stamp->getClientOriginalExtension();
+                $slug_name = Str::slug($request->company_name.' stamp', '-');
+                $file_stamp_name = $slug_name.'.'.$file_stamp->getClientOriginalExtension();
+                // $file_stamp->move(public_path('storage/uploads/stamp'), $file_stamp_name);
+            }
+            
+            $data_company_partner = [
+                'user_id' =>\Auth::user()->id,
+                'name' => $request->company_name,
+                'group_name' => $request->company_group_name,
+                'type' => $request->company_type,
+                'established_year' => $request->established_year,
+                'total_employee' => $request->total_employee,
+                'liable_person_and_position' => $request->liable_person_and_position,
+                'owner_name' => $request->owner_name,
+                'board_of_directors' => $request->board_of_directors,
+                'major_shareholders' => $request->major_shareholders,
+                'business_classification' => $request->business_classification,
+                'other_business' => $request->business_classification_other_detail,
+                'website_address' => $request->website_address,
+                'system_management' => $request->system_management,
+                'contact_person' => $request->contact_person,
+                'communication_language' => $request->communication_language,
+                'email_address' => $request->email_address,
+                'signature' => $request->signature_file != null ? $file_signature_name : null,
+                'stamp' => $request->stamp_file != null ? $file_stamp_name : null,
+            ];
             DB::commit();
-        }  catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
             DB::rollback();
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\MasterOffice;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -36,12 +37,18 @@ class UserManagementController extends Controller
                 'name' => 'required|string',
                 'email' => 'required|unique:users,email',
                 'role' => 'required',
+                'office' => 'required',
+                'parent_user'=> 'required',
+                'department'=> 'required',
             ]);
 
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make('pass12345'),
+                'office_id' => $request->office,
+                'parent_user_id' => $request->parent_user,
+                'department_id' => $request->department,
             ]);
 
             $user->assignRole($request->role);
@@ -55,11 +62,13 @@ class UserManagementController extends Controller
     public function detailUser(Request $request)
     {
         try {
-            $user = User::with(['roles', 'permissions'])->where('users.id', $request->id)->first();
+            $user = User::with(['roles', 'permissions', 'office'])->where('users.id', $request->id)->first();
             $roles = Role::all();
+            $offices = MasterOffice::all();
             $data = [
                 $user,
-                $roles
+                'roles' => $roles,
+                'offices' => $offices
             ];
             return FormatResponseJson::success($data, 'user fetched successfully');
         } catch (\Exception $e) {
@@ -75,11 +84,13 @@ class UserManagementController extends Controller
                 'name' => 'required|string',
                 'email' => 'required',
                 'role' => 'required',
+                'office' => 'required',
             ]);
 
             $data = [
                 'name'=> $request->name,
                 'email'=> $request->email,
+                'office_id'=> $request->office,
             ];
 
             $user = User::findOrFail($request->id);

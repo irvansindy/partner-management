@@ -23,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'office_id',
+        'parent_user_id',
+        'department_id'
     ];
 
     /**
@@ -61,7 +64,8 @@ class User extends Authenticatable
         return 'profile';
     }
 
-    // public function role() {
-    //     return $this->hasOne(Role::class);
-    // }
+    public function office()
+    {
+        return $this->hasOne(MasterOffice::class, 'id', 'office_id');
+    }
 }

@@ -21,6 +21,16 @@
                         <label for="update_user_role">Role</label>
                         <select class="form-control" name="update_user_role" id="update_user_role" style="width: 100% !important;"></select>
                     </div>
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" name="update_current_office" id="update_current_office">
+                        <label for="update_user_office">Office</label>
+                        <select class="form-control" name="update_user_office" id="update_user_office" style="width: 100% !important;"></select>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" name="update_current_department" id="update_current_department">
+                        <label for="update_user_department">Office</label>
+                        <select class="form-control" name="update_user_department" id="update_user_department" style="width: 100% !important;"></select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

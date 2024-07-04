@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterOffice;
 use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\SubMenu;
@@ -23,7 +24,13 @@ class RoleAndPermissionController extends Controller
     {
         try {
             $fetch_role = Role::all();
-            return FormatResponseJson::success($fetch_role, 'role fetched successfully');
+            $fetch_office = MasterOffice::all();
+
+            $data = [
+                "roles"=> $fetch_role,
+                "offices"=> $fetch_office
+            ];
+            return FormatResponseJson::success($data, 'role fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 404);
         }

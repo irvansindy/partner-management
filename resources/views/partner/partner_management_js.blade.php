@@ -1,36 +1,60 @@
 <script>
-    $('#detail_company_type').select2({
-        // dropdownParent: $('#modalCreatePartner'),
-        // width:'100%'
-    })
     $(document).ready(function() {
-        fetchDetailPartner()
-
-        function fetchDetailPartner() {
-            $.ajax({
-                url: '{{ route('fetch-partner') }}',
+        $('#partner_table').DataTable({
+            processing: true,
+            // serverside: true,
+            ajax: {
+                url: '{{ route("fetch-partner-list") }}',
                 type: 'GET',
+            },
+            columns: [
+                {
+                    "data": null,
+                    "render": function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+                    "data": "name",
+                    "defaultContent": "<i>Not set</i>"
+                },
+                {
+                    "data": "group_name",
+                    "defaultContent": "<i>Not set</i>"
+                },
+                {
+                    "data": "status",
+                    "defaultContent": "<i>Not set</i>"
+                },
+                {
+                    'data': null,
+                    title: 'Action',
+                    wrap: true,
+                    "render": function(item) {
+                        return '<button type="button" data-partner_id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_partner" data-toggle="modal" data-target="#ModalDetailPartner">View</button>'
+                    }
+                },
+            ]
+        })
+        // <button type="button" data-partner_id="'+item.id+'" data-partner_name="'+item.name+'" class="btn btn-outline-danger btn-sm mt-2 delete_user" data-toggle="modal" data-target="#confirmDeleteUser">Delete</button>
+        $(document).on('click', '.detail_partner', function(e) {
+            e.preventDefault()
+            let partner_id = $(this).data('partner_id')
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("fetch-partner-detail") }}',
+                type: 'GET',
+                data: {
+                    partner_id: partner_id
+                },
                 dataType: 'json',
                 async: true,
                 success: function(res) {
                     $('#field_form_detail_business_other').empty()
                     $('#form_detail_company_partner')[0].reset()
-
-                    $('#detail_company_type').empty()
-                    let data_company_type = [
-                        'customer',
-                        'vendor',
-                        'customer dan vendor'
-                    ]
-                    let selected_type = ''
-
-                    $.each(data_company_type, function(i, data_type) {
-                        selected_type = res.data[0].type == data_type ? 'selected' : ''
-                        $('#detail_company_type').append(`
-                            <option value="${data_type}" ${selected_type}>${data_type}</option>
-                        `)
-                    })
-
+                    $('#detail_company_id').val(res.data[0].id)
                     $('#detail_company_name').val(res.data[0].name)
                     $('#detail_company_group_name').val(res.data[0].group_name)
                     $('#detail_established_year').val(res.data[0].established_year)
@@ -83,29 +107,12 @@
                     $('#detail_website_address').val(res.data[0].website_address)
 
                     $('.detail_system_management').empty()
-                    let data_system_management = [
-                        'ISO',
-                        'SMK3',
-                        'Others Certificate'
-                    ]
-                    let checked_system_management      = ''
-                    $.each(data_system_management, function(i, system) {
-                        checked_system_management = res.data[0].system_management == system ? 'checked' : ''
-                        $('.detail_system_management').append(`
-                            <div class="form-check form-check-inline mb-1">
-                                <input class="form-check-input" type="radio" name="detail_system_management"
-                                    id="detail_system_management_${system.toLowerCase()}" value="${system}" ${checked_system_management}>
-                                <label class="form-check-label" for="detail_system_management_${system.toLowerCase()}">
-                                    ${system}
-                                    ${system == 'Others Certificate' ? `<p class="fs-6" style="margin-bottom: 0rem !important; font-size: 10px !important;">
-                                                        Sertifikat lainnya</p>` : ``}
-                                </label>
-                            </div>
-                        `)
-                    })
 
+                    $('#detail_system_management').val(res.data[0].system_management)
                     $('#detail_contact_person').val(res.data[0].contact_person)
-                    
+                    $('#btn_update_data_company').attr('data-id', res.data[0].id)
+                    $('#btn_update_data_company').attr('data-status', res.data[0].status)
+
                     // if($('input[name="detail_communication_language"]'))
                     $('.detail_option_languange').empty()
                     let data_language = ['Bahasa', 'English'];
@@ -130,26 +137,10 @@
                     })
                     // $('#detail_communication_language').val(res.data[0].contact_person)
                     $('#detail_email_address').val(res.data[0].email_address)
-                    let data_link_stamp = "{{ asset('uploads/stamp/') }}"+"/"+res.data[0].stamp
-                    $("#link_stamp").attr("href", data_link_stamp);
-                    let data_link_signature = "{{ asset('uploads/signature/') }}"+"/"+res.data[0].signature
-                    $("#link_signature").attr("href", data_link_signature);
-                    // $('#detail_stamp_file').val(res.data[0].stamp)
-                    // $('#detail_signature_file').val(res.data[0].signature)
-                    // $('#link_stamp').empty()
-                    // $('#link_stamp').append(
-                    //     `<a href=""><i class="fas fa-file"></i>Signature</a>`
-                    // )
-                    // {{ asset('uploads/stamp/${res.data[0].stamp}') }}
-                    // $('#link_signature').empty()
-                    // $('#link_signature').append(
-                    //     `<a href=""><i class="fas fa-file"></i>Signature</a>`
-                    // )
-                    // {{ asset('uploads/signature/${res.data[0].signature}') }}
 
                     let list_address = res.data[0].address
+                    $('#detail_company_address_additional').empty()
                     if (list_address.length <= 1) {
-                        $('#detail_company_address_additional').empty()
                         $.each(list_address, function(i, address) {
                             $('#detail_company_address_additional').append(`
                                 <div class="input-group mb-4">
@@ -261,15 +252,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col mb-4 align-items-end mr-4">
-                                                <button type="button" class="btn btn-primary float-right"
-                                                    id="add_detail_ynamic_address">+ Address</button>
-                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="detail_dynamic_company_address">
-    
                                 </div>
                             `)
                         })
@@ -277,7 +261,6 @@
                         <div class="detail_dynamic_company_address"></div>
                         `)
                     } else {
-                        $('#detail_company_address_additional').empty()
                         $.each(list_address, function(i, address) {
                             $('#detail_company_address_additional').append(`
                                 <div class="input-group mb-4">
@@ -389,15 +372,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col mb-4 align-items-end mr-4">
-                                                <button type="button" class="btn btn-primary float-right"
-                                                    id="add_detail_ynamic_address">+ Address</button>
-                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="detail_dynamic_company_address">
-    
                                 </div>
                             `)
                         })
@@ -406,20 +382,18 @@
                         `)
                     }
 
-                    if (res.data[0].status == 'checking') {
-                        $('#button_partner').empty()
-                        $('#button_partner').append(`
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-primary" id="btn_update_data_company" data-id="" data-status="">
-                                Update
-                            </button>
-                        </div>
-                        `)
-                        $('#btn_update_data_company').data('id', res.data[0].id)
-                        $('#btn_update_data_company').data('status', res.data[0].status)
-                    } else {
-                        $('#button_partner').empty()
-                    }
+                    // if (res.data[0].status == 'checking') {
+                    //     $('#button_partner').empty()
+                    //     $('#button_partner').append(`
+                    //     <div class="d-flex justify-content-end">
+                    //         <button type="button" class="btn btn-primary" id="btn_update_data_company" data-id="" data-status="">
+                    //             Update
+                    //         </button>
+                    //     </div>
+                    //     `)
+                    // } else {
+                    //     $('#button_partner').empty()
+                    // }
 
                     // alert(res.data[0].bank.length)
                     let list_bank = res.data[0].bank
@@ -537,17 +511,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
-                                    <button type="button" class="btn btn-primary" id="add_bank"> +
-                                        Bank</button>
-                                </div>
                             `)
                         })
-                        $('#list_data_bank').append(`
-                            <div class="dynamic_bank"></div>
-                        `)
                     } else {
                         $('#list_data_bank').empty()
+
                         $('#list_data_bank').append(`
                             <div class="input-group mt-4">
                                 <div class="col-md-6 mb-4">
@@ -659,18 +627,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
-                                <button type="button" class="btn btn-primary" id="add_bank"> +
-                                    Bank</button>
-                            </div>
-                        `)
-                        $('#list_data_bank').append(`
-                            <div class="dynamic_bank"></div>
                         `)
                     }
 
                     let list_tax = res.data[0].tax
-                    if (list_tax != 0) {
+                    if (list_tax.length != 0) {
                         $('#list_detail_tax').empty()
                         $.each(list_tax, function(i, tax) {
                             $('#list_detail_tax').append(`
@@ -922,68 +883,77 @@
                     })
                 }
             })
-        }
-
-        $(document).on('change', '.detail_business_classification', function() {
-            let value = $(this).val()
-            let business_other = 'Other'
-            if (value == business_other) {
-                $('#field_form_detail_business_other').append(`
-                    <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control" value="">
-                        `)
-            } else {
-                $('#field_form_detail_business_other').empty()
-            }
         })
 
-        // update-partner
-        $(document).on('click', '#btn_update_data_company', function(e) {
-            let id = $(this).data('id')
-            let status = $(this).data('status')
-            let data_form_detail_company_partner = new FormData($('#form_detail_company_partner')[0])
-            // alert(id)
-            console.log(data_form_detail_company_partner);
-
+        $(document).on('click', '#partner_approved', function(e) {
+            e.preventDefault()
+            let partner_id = $('#detail_company_id').val()
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '{{ route("update-partner") }}',
-                // type: 'POST',
-                method: 'POST',
-                processData: false,
-                contentType: false,
-                cache: false,
-                data: data_form_detail_company_partner,
-                // dataType: 'json',
-                // async: true,
-                enctype: 'multipart/form-data',
+                url: '{{ route("approval-partner") }}',
+                type: 'POST',
+                data: {
+                    partner_id: partner_id,
+                    status: 'approved'
+                },
+                dataType: 'json',
+                async: true,
                 success: function(res) {
-
+                    $('#partner_table').DataTable().ajax.reload();
+                    $('#ModalDetailPartner').modal('toggle');
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        class: 'bg-success',
+                        body: 'Partner berhasil di-approve.'
+                    });
                 },
                 error: function(xhr) {
-                    $('#modalLoading').modal('hide')
-                    // $('#modalLoading').hide()
-                    // $('#modalLoading').modal({show: false});
-                    // setTimeout(function() {
-                    //     $('#modalLoading').modal({show: false});
-                    // }, 5000)
                     let response_error = JSON.parse(xhr.responseText)
-                    $.each(response_error.meta.message.errors, function(i, value) {
-                        $(document).Toasts('create', {
-                            title: 'Error',
-                            class: 'bg-danger',
-                            body: value,
-                            delay: 10000,
-                            autohide: true,
-                            fade: true,
-                            close: true,
-                            autoremove: true,
-                        });
-                    })
-                },
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        class: 'bg-danger',
+                        body: 'gagal update, silahkan hubungi pihak ICT.'
+                    });
+                }
             })
-            // alert([id, status])
         })
+
+        $(document).on('click', '#partner_reject', function(e) {
+            e.preventDefault()
+            let partner_id = $('#detail_company_id').val()
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("approval-partner") }}',
+                type: 'POST',
+                data: {
+                    partner_id: partner_id,
+                    status: 'reject'
+                },
+                dataType: 'json',
+                async: true,
+                success: function(res) {
+                    $('#partner_table').DataTable().ajax.reload();
+                    $('#ModalDetailPartner').modal('toggle');
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        class: 'bg-success',
+                        body: 'Partner berhasil di-reject.'
+                    });
+                },
+                error: function(xhr) {
+                    let response_error = JSON.parse(xhr.responseText)
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        class: 'bg-danger',
+                        body: 'gagal update, silahkan hubungi pihak ICT.'
+                    });
+                }
+            })
+        })
+        
     })
 </script>

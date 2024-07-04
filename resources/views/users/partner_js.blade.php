@@ -469,12 +469,12 @@
                     });
                 },
                 error: function(xhr) {
-                    // $('#modalLoading').modal('hide')
+                    $('#modalLoading').modal('hide')
                     // $('#modalLoading').hide()
                     // $('#modalLoading').modal({show: false});
-                    setTimeout(function() {
-                        $('#modalLoading').modal({show: false});
-                    }, 5000)
+                    // setTimeout(function() {
+                    //     $('#modalLoading').modal({show: false});
+                    // }, 5000)
                     let response_error = JSON.parse(xhr.responseText)
                     $.each(response_error.meta.message.errors, function(i, value) {
                         $(document).Toasts('create', {

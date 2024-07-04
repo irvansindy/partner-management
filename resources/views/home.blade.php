@@ -13,9 +13,12 @@
     <button type="button" class="btn btn-primary" id="create_partner" data-toggle="modal" data-target="#modalCreatePartner">
         Registrasi
     </button>
-    <button type="button" class="btn btn-primary" id="loading_check" data-toggle="modal" data-target="#modalLoading">
-        Loading
+    <button type="button" class="btn btn-danger" id="blacklist" data-id='1'>
+        blacklist
     </button>
+    {{-- <button type="button" class="btn btn-primary" id="loading_check" data-toggle="modal" data-target="#modalLoading">
+        Loading
+    </button> --}}
     @include('users.modal_create_partner')
     @include('loading')
 @stop
