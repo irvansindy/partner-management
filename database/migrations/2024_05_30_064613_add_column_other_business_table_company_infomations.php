@@ -13,7 +13,7 @@ class AddColumnOtherBusinessTableCompanyInfomations extends Migration
      */
     public function up()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->string('other_business')->nullable()->after('business_classification');
         });
     }
@@ -25,7 +25,7 @@ class AddColumnOtherBusinessTableCompanyInfomations extends Migration
      */
     public function down()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->dropColumn('other_business')->after('business_classification');
         });
     }

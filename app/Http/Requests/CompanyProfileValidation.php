@@ -37,7 +37,7 @@ class CompanyProfileValidation extends FormRequest
             'system_management' => 'required|string',
             'contact_person' => 'required|string',
             'communication_language' => 'required|string',
-            'email_address' => 'required|string|unique:company_infomations,email_address',
+            'email_address' => 'required|string|unique:company_informations,email_address',
             'address.*' => 'string',
             'city.*' => 'string',
             'country.*' => 'string',

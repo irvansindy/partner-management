@@ -385,14 +385,14 @@
                                 <label for="detail_stamp_file">Stamp *</label>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;"> Stempel</p>
                                     <input type="file" name="detail_stamp_file" id="detail_stamp_file" class="form-control" />
-                                    <a id="link_stamp"><i class="fas fa-file"></i> Your Stamp</a>
+                                    <a id="link_stamp" target="_blank"><i class="fas fa-file"></i> Your Stamp</a>
                             </div>
                             <div class="col-sm-6">
                                 <label for="detail_signature_file">Signature *</label>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                     Tanda Tangan</p>
                                     <input type="file" name="detail_signature_file" id="detail_signature_file" class="form-control" />
-                                <a id="link_signature"><i class="fas fa-file"></i> Your Signature</a>
+                                <a id="link_signature" target="_blank"><i class="fas fa-file"></i> Your Signature</a>
                             </div>
                         </div>
                     </div>

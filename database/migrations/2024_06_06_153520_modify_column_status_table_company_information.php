@@ -13,8 +13,8 @@ class ModifyColumnStatusTableCompanyInformation extends Migration
      */
     public function up()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
-            DB::statement("ALTER TABLE company_infomations MODIFY status ENUM('checking', 'checking 2', 'approved', 'reject') NOT NULL");
+        Schema::table('company_informations', function (Blueprint $table) {
+            DB::statement("ALTER TABLE company_informations MODIFY status ENUM('checking', 'checking 2', 'approved', 'reject') NOT NULL");
         });
     }
 
@@ -25,8 +25,8 @@ class ModifyColumnStatusTableCompanyInformation extends Migration
      */
     public function down()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
-            DB::statement("ALTER TABLE company_infomations MODIFY status ENUM('checking', 'approved') NOT NULL");
+        Schema::table('company_informations', function (Blueprint $table) {
+            DB::statement("ALTER TABLE company_informations MODIFY status ENUM('checking', 'approved') NOT NULL");
         });
     }
 }

@@ -13,7 +13,7 @@ class AddColumnSupplierNumberForTableCompanyInfomations extends Migration
      */
     public function up()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->string('supplier_number')->nullable()->after('stamp');
             // Your Supplier No.
         });
@@ -26,7 +26,7 @@ class AddColumnSupplierNumberForTableCompanyInfomations extends Migration
      */
     public function down()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->dropColumn('supplier_number')->after('stamp');
         });
     }

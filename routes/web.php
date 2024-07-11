@@ -58,6 +58,8 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     
     Route::get('fetch-permission-in-role', [RoleAndPermissionController::class,'fetchPermissionInRole'])->name('fetch-permission-in-role');
     Route::post('add-or-remove-permission', [RoleAndPermissionController::class,'addOrRemovePermissionToRole'])->name('add-or-remove-permission');
+
+    Route::get('export-pdf', [PartnerManagementController::class,'exportPartnerToPdf'])->name('export-pdf');
 });
 
 Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {

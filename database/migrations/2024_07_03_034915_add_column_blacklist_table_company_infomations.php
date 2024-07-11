@@ -13,7 +13,7 @@ class AddColumnBlacklistTableCompanyInfomations extends Migration
      */
     public function up()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->boolean('blacklist')->after('status')->default(false);
         });
     }
@@ -25,7 +25,7 @@ class AddColumnBlacklistTableCompanyInfomations extends Migration
      */
     public function down()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->dropColumn('blacklist')->after('status');
         });
     }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\CompanyInfomation;
+use App\Models\CompanyInformation;
 use App\Models\CompanyAddress;
 use App\Models\CompanyBank;
 use App\Models\CompanyTax;
@@ -16,7 +16,7 @@ class ApiPartnerController extends Controller
     public function fetchPartner()
     {
         try {
-            $partner = CompanyInfomation::with(['address', 'bank', 'tax', 'attachment'])
+            $partner = CompanyInformation::with(['address', 'bank', 'tax', 'attachment'])
             ->where('blacklist', 0)
             ->get();
             return FormatResponseJson::success($partner, 'Data partner fetched successfully');
@@ -31,7 +31,7 @@ class ApiPartnerController extends Controller
         try {
             
             $id = $request->partner_id;
-            $partner = CompanyInfomation::find($id);
+            $partner = CompanyInformation::find($id);
             $partner->update([
                 'blacklist' => 1,
             ]);

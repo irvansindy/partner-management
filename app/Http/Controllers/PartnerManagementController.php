@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\CompanyInfomation;
+use App\Models\CompanyInformation;
 use App\Models\CompanyDocumentTypeCategories;
 use App\Models\CompanyAddress;
 use App\Models\CompanyBank;
@@ -13,6 +13,8 @@ use App\Models\Approval;
 use App\Models\CompanySupportingDocument;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\File;
+use PDF;
+use App\Exports\PartnerExport;
 class PartnerManagementController extends Controller
 {
     public function __construct()
@@ -27,9 +29,9 @@ class PartnerManagementController extends Controller
     {
         try {
             if (auth()->user()->roles->pluck('name')[0] == 'super-user') {
-                $partners = CompanyInfomation::where('status', 'checking')->get();
+                $partners = CompanyInformation::where('status', 'checking')->get();
             } else if (auth()->user()->roles->pluck('name')[0] == 'admin' || auth()->user()->roles->pluck('name')[0] == 'super-admin') {
-                $partners = CompanyInfomation::all();
+                $partners = CompanyInformation::all();
             }
             return FormatResponseJson::success($partners, 'Data partner fetched successfully');
         } catch (\Exception $e) {
@@ -39,7 +41,7 @@ class PartnerManagementController extends Controller
     public function detailPartner(Request $request)
     {
         try {
-            $partner_detail = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'attachment'])
+            $partner_detail = CompanyInformation::with(['user', 'address', 'bank', 'tax', 'attachment'])
             ->find($request->partner_id);
 
             $doc_type = CompanyDocumentTypeCategories::all();
@@ -78,7 +80,7 @@ class PartnerManagementController extends Controller
         try {
             $status = $request->status;
             if (auth()->user()->roles->pluck('name')[0] == 'super-user') {
-                $update_partner = CompanyInfomation::findOrFail($request->partner_id);
+                $update_partner = CompanyInformation::findOrFail($request->partner_id);
                 if ($status == 'approved') {
                     $update_partner->update([
                         'status' => 'checking 2'
@@ -88,23 +90,28 @@ class PartnerManagementController extends Controller
                         'status' => 'reject'
                     ]);
 
-                    $delete_address = CompanyAddress::where('company_id', $request->partner_id);
-                    $delete_bank = CompanyBank::where('company_id', $request->partner_id);
-                    $delete_tax =CompanyTax::where('company_id', $request->partner_id);
+                    $delete_address = CompanyAddress::where('company_id', $request->partner_id)->get();
+                    $delete_bank = CompanyBank::where('company_id', $request->partner_id)->get();
+                    $delete_tax =CompanyTax::where('company_id', $request->partner_id)->get();
                     $delete_attachment =CompanySupportingDocument::where('company_id', $request->partner_id)->get();
 
-                    $delete_address->delete();
-                    $delete_bank->delete();
-                    $delete_tax->delete();
-                    
-                    for ($i=0; $i < count($delete_attachment); $i++) { 
-                        # code...
+                    if (count($delete_attachment) > 0) {
+                        for ($i=0; $i < count($delete_attachment); $i++) { 
+                            if (File::exists(public_path($delete_attachment[$i]->document))) {
+                                // dd($delete_attachment[$i]->document);
+                                File::delete(public_path($delete_attachment[$i]->document));
+                            }
+                        }
                     }
 
-                    \File::exists(public_path('storage/uploads/pt'. $delete_attachment->partner_id .''));
+                    $delete_address->each->delete();
+                    $delete_bank->each->delete();
+                    $delete_tax->each->delete();
+                    $delete_attachment->each->delete();
+                    $list_partner = CompanyInformation::where('id', $request->partner_id)->get()->each->delete();
                 }
             } else if (auth()->user()->roles->pluck('name')[0] == 'admin') {
-                $update_partner = CompanyInfomation::findOrFail($request->partner_id);
+                $update_partner = CompanyInformation::findOrFail($request->partner_id);
                 if ($status == 'approved') {
                     $update_partner->update([
                         'status' => 'approved'
@@ -113,6 +120,27 @@ class PartnerManagementController extends Controller
                     $update_partner->update([
                         'status' => 'reject'
                     ]);
+
+                    $delete_address = CompanyAddress::where('company_id', $request->partner_id)->get();
+                    $delete_bank = CompanyBank::where('company_id', $request->partner_id)->get();
+                    $delete_tax =CompanyTax::where('company_id', $request->partner_id)->get();
+                    $delete_attachment =CompanySupportingDocument::where('company_id', $request->partner_id)->get();
+
+                    if (count($delete_attachment) > 0) {
+                        for ($i=0; $i < count($delete_attachment); $i++) { 
+                            if (File::exists(public_path($delete_attachment[$i]->document))) {
+                                // dd($delete_attachment[$i]->document);
+                                File::delete(public_path($delete_attachment[$i]->document));
+                            }
+                        }
+                    }
+
+                    $delete_address->each->delete();
+                    $delete_bank->each->delete();
+                    $delete_tax->each->delete();
+                    $delete_attachment->each->delete();
+                    $list_partner = CompanyInformation::where('id', $request->partner_id)->get()->each->delete();
+                    // \File::exists(public_path('storage/uploads/pt'. $delete_attachment->partner_id .''));
                 }
             }
             return FormatResponseJson::success($status, 'Company partner updated successfully');
@@ -120,5 +148,19 @@ class PartnerManagementController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
         
+    }
+    public function exportPartnerToXls()
+    {}
+    public function exportPartnerToPdf()
+    {
+        $partners = CompanyInformation::where('status','checking')->get();
+
+        $data = [
+            'partners' => $partners,
+            'foo' => 'hello 1',
+            'bar' => 'hello 2'
+        ];
+        $pdf = PDF::chunkLoadView('<html-separator/>', 'partner.export_pdf', $data);
+        return $pdf->stream('document.pdf');
     }
 }

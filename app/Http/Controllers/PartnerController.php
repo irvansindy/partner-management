@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\CompanyInfomation;
+use App\Models\CompanyInformation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CompanyDocumentTypeCategories;
 use App\Models\CompanyAddress;
@@ -40,7 +40,7 @@ class PartnerController extends Controller
     public function fetchCompany()
     {
         try {
-            $company_profile = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'attachment'])
+            $company_profile = CompanyInformation::with(['user', 'address', 'bank', 'tax', 'attachment'])
             ->where("user_id", auth()->user()->id)->first();
 
             $doc_type = CompanyDocumentTypeCategories::all();
@@ -77,7 +77,7 @@ class PartnerController extends Controller
     public function fetchCompanyPartnerById()
     {
         try {
-            $company_profile = CompanyInfomation::with(['user', 'address', 'bank', 'tax', 'attachment'])
+            $company_profile = CompanyInformation::with(['user', 'address', 'bank', 'tax', 'attachment'])
             ->where("user_id", auth()->user()->id)->first();
 
             return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
@@ -201,7 +201,7 @@ class PartnerController extends Controller
                 'signature' => $request->signature_file != null ? $file_signature_name : null,
                 'stamp' => $request->stamp_file != null ? $file_stamp_name : null,
             ];
-            $partner = CompanyInfomation::create($data_company_partner);
+            $partner = CompanyInformation::create($data_company_partner);
 
             if ($request->address[0] != null) {
                 $data_address = [];

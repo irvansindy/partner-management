@@ -13,7 +13,7 @@ class AddSomeColumnForTableCompanyInfomations extends Migration
      */
     public function up()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->enum('type', ['customer','vendor', 'customer dan vendor'])->after('group_name');
             $table->enum('status', ['checking','approved'])->after('supplier_number');
         });
@@ -26,7 +26,7 @@ class AddSomeColumnForTableCompanyInfomations extends Migration
      */
     public function down()
     {
-        Schema::table('company_infomations', function (Blueprint $table) {
+        Schema::table('company_informations', function (Blueprint $table) {
             $table->dropColumn('type');
             $table->dropColumn('status');
         });

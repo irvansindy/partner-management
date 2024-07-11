@@ -130,23 +130,11 @@
                     })
                     // $('#detail_communication_language').val(res.data[0].contact_person)
                     $('#detail_email_address').val(res.data[0].email_address)
-                    let data_link_stamp = "{{ asset('uploads/stamp/') }}"+"/"+res.data[0].stamp
+                    let data_link_stamp = "{{ asset('storage/uploads/stamp/') }}"+"/"+res.data[0].stamp
                     $("#link_stamp").attr("href", data_link_stamp);
-                    let data_link_signature = "{{ asset('uploads/signature/') }}"+"/"+res.data[0].signature
+                    let data_link_signature = "{{ asset('storage/uploads/signature/') }}"+"/"+res.data[0].signature
                     $("#link_signature").attr("href", data_link_signature);
-                    // $('#detail_stamp_file').val(res.data[0].stamp)
-                    // $('#detail_signature_file').val(res.data[0].signature)
-                    // $('#link_stamp').empty()
-                    // $('#link_stamp').append(
-                    //     `<a href=""><i class="fas fa-file"></i>Signature</a>`
-                    // )
-                    // {{ asset('uploads/stamp/${res.data[0].stamp}') }}
-                    // $('#link_signature').empty()
-                    // $('#link_signature').append(
-                    //     `<a href=""><i class="fas fa-file"></i>Signature</a>`
-                    // )
-                    // {{ asset('uploads/signature/${res.data[0].signature}') }}
-
+                    
                     let list_address = res.data[0].address
                     if (list_address.length <= 1) {
                         $('#detail_company_address_additional').empty()

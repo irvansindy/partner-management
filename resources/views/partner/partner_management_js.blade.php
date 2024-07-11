@@ -832,7 +832,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
@@ -846,7 +846,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
@@ -860,7 +860,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
@@ -874,7 +874,7 @@
                         <tr>
                             <td>${data.document_type_name}</td>
                             <td>
-                                <a href="{{ asset('uploads/pt/${data.document}') }}" target="_blank">
+                                <a href="{{ asset('${data.document}') }}" target="_blank">
                                     <i class="fas fa-regular fa-file"></i> ${data.document_type_name}
                                 </a>
                             </td>
@@ -955,5 +955,17 @@
             })
         })
         
+        $(document).on('click', '#for_export_pdf', function(e) {
+            e.preventDefault()
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("export-pdf") }}',
+                type: 'GET',
+                dataType: 'json',
+                async: true,
+            })
+        })
     })
 </script>
