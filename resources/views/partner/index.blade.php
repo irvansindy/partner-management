@@ -16,8 +16,7 @@
                             <p>Partner list</p>
                         </div>
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                            <button type="button" class="btn btn-outline-success mx-1" id=""><i class="fas fa-fw fa-file-excel"></i></button>
-                            {{-- <button type="button" class="btn btn-outline-danger mx-1" id="for_export_pdf"><i class="fas fa-fw fa-file-pdf"></i></button> --}}
+                            <a href="{{ route('export-excel') }}" class="btn btn-outline-success mx-1" target="_blank"><i class="fas fa-fw fa-file-excel"></i></a>
                             <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger mx-1" target="_blank"><i class="fas fa-fw fa-file-pdf"></i></a>
                         </div>
                     </div>

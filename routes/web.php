@@ -60,6 +60,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('add-or-remove-permission', [RoleAndPermissionController::class,'addOrRemovePermissionToRole'])->name('add-or-remove-permission');
 
     Route::get('export-pdf', [PartnerManagementController::class,'exportPartnerToPdf'])->name('export-pdf');
+    Route::get('export-excel', [PartnerManagementController::class,'exportPartnerToExcel'])->name('export-excel');
 });
 
 Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {

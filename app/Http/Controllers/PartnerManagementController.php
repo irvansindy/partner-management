@@ -13,7 +13,8 @@ use App\Models\Approval;
 use App\Models\CompanySupportingDocument;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\File;
-use PDF;
+use \Mpdf\Mpdf as mPDF;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PartnerExport;
 class PartnerManagementController extends Controller
 {
@@ -149,18 +150,59 @@ class PartnerManagementController extends Controller
         }
         
     }
-    public function exportPartnerToXls()
-    {}
+    public function exportPartnerToExcel()
+    {
+        return Excel::download(new PartnerExport(), 'list vendor.xlsx');
+    }
     public function exportPartnerToPdf()
     {
-        $partners = CompanyInformation::where('status','checking')->get();
-
+        $partners = CompanyInformation::all();
+        $imageLogo          = '<img src="'.public_path('uploads/logo/logo.png').'" width="70px" style="float: right;"/>';
+        $header             = '';
+        $header             .= '<table width="100%">
+                                    <tr>
+                                        <td style="padding-left:10px;">
+                                        <span style="font-size: 6px; font-weight: bold;margin-top:-10px"> '.$imageLogo.'</span>
+                                        <br>
+                                        <span style="font-size:8px;">Synergy Building #08-08</span> 
+                                        <br>
+                                        <span style="font-size:8px;">Jl. Jalur Sutera Barat 17 Alam Sutera, Serpong Tangerang 15143 - Indonesia</span>
+                                        <br>
+                                        <span style="font-size:8px;">Tangerang 15143 - Indonesia +62 21 304 38808</span>
+                                    </td>
+                                        </tr>
+                                        
+                                    </table>
+                                ';
+        $footer             = '<hr>
+        <table width="100%" style="font-size: 10px;">
+            <tr>
+                <td width="90%" align="left"><b>Disclaimer</b><br>this document is strictly private, confidential and personal to recipients and should not be copied, distributed or reproduced in whole or in part, not passed to any third party.</td>
+                <td width="10%" style="text-align: right;"> {PAGENO}</td>
+            </tr>
+        </table>';
         $data = [
             'partners' => $partners,
-            'foo' => 'hello 1',
-            'bar' => 'hello 2'
         ];
-        $pdf = PDF::chunkLoadView('<html-separator/>', 'partner.export_pdf', $data);
-        return $pdf->stream('document.pdf');
+        $mpdf = new mPDF();
+            $mpdf->SetHTMLHeader($header);
+            $mpdf->SetHTMLFooter($footer);
+            $mpdf->AddPage(
+                'L', // L - landscape, P - portrait 
+                '',
+                '',
+                '',
+                '',
+                5, // margin_left
+                5, // margin right
+                35, // margin top
+                20, // margin bottom
+                5, // margin header
+                5
+            ); // m
+        $cetak = view('partner.export_pdf',$data);
+        $mpdf->WriteHTML($cetak);
+        ob_clean();
+        $mpdf->Output('Report Daily'.'('.date('Y-m-d').').pdf', 'I');
     }
 }
