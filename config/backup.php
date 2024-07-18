@@ -103,9 +103,11 @@ return [
          * If not specified, the file extension will be .archive for MongoDB and .sql for all other databases
          * The file extension should be specified without a leading .
          */
-        'database_dump_file_extension' => '',
+        // 'database_dump_file_extension' => 'txt',
 
-        'database_dump_file_timestamp_format' => 'Y-m-d-H-i-s',
+        // 'database_dump_filename_base' => 'connection',
+
+        // 'database_dump_file_timestamp_format' => 'Y-m-d-H-i-s',
 
         'destination' => [
 
