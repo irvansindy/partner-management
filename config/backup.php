@@ -8,7 +8,7 @@ return [
          * The name of this application. You can use this name to monitor
          * the backups.
          */
-        'name' => env('APP_NAME', 'laravel-backup'),
+        'name' => env('APP_NAME', 'Partner Management'),
 
         'source' => [
 
@@ -19,6 +19,10 @@ return [
                  */
                 'include' => [
                     base_path(),
+                    // base_path().'/public/upload/__CSV_DATA/',
+                    // base_path().'/public/upload/csv/',
+                    // base_path().'/app/',
+                    // base_path().'resources/views/'
                 ],
 
                 /*
@@ -87,7 +91,7 @@ return [
         /*
          * The database dump can be compressed to decrease diskspace usage.
          *
-         * Out of the box Laravel-backup supplies
+         * Out of the box Partner Management supplies
          * Spatie\DbDumper\Compressors\GzipCompressor::class.
          *
          * You can also create custom compressor. More info on that here:
@@ -114,7 +118,7 @@ return [
             /*
              * The filename prefix used for the backup zip file.
              */
-            'filename_prefix' => '',
+            'filename_prefix' => 'backup_db_pm_',
 
             /*
              * The disk names on which the backups will be stored.
@@ -170,10 +174,10 @@ return [
         'notifiable' => \Spatie\Backup\Notifications\Notifiable::class,
 
         'mail' => [
-            'to' => 'your@example.com',
+            'to' => 'irvanmuhammad22@gmail.com',
 
             'from' => [
-                'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+                'address' => env('MAIL_FROM_ADDRESS', 'irvansindy7@gmail.com'),
                 'name' => env('MAIL_FROM_NAME', 'Example'),
             ],
         ],
@@ -208,7 +212,7 @@ return [
      */
     'monitor_backups' => [
         [
-            'name' => env('APP_NAME', 'laravel-backup'),
+            'name' => env('APP_NAME', 'Partner Management'),
             'disks' => ['local'],
             'health_checks' => [
                 \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumAgeInDays::class => 1,
