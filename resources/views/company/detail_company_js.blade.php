@@ -13,6 +13,12 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    if (res.data[0].status != 'checking') {
+                        // alert(res.data[0].status)
+                        document.getElementById('btn_update_data_company').style.display = 'none';
+                        document.getElementById('add_detail_ynamic_address').style.display = 'none';
+
+                    }
                     $('#field_form_detail_business_other').empty()
                     $('#form_detail_company_partner')[0].reset()
 
@@ -134,6 +140,13 @@
                     $("#link_stamp").attr("href", data_link_stamp);
                     let data_link_signature = "{{ asset('storage/uploads/signature/') }}"+"/"+res.data[0].signature
                     $("#link_signature").attr("href", data_link_signature);
+
+                    if (res.data[0].stamp != '' || res.data[0].stamp != null) {
+                        $("#detail_stamp_file").prop("type", "hidden");
+                    }
+                    if (res.data[0].signature != '' || res.data[0].signature != null) {
+                        $("#detail_signature_file").prop("type", "hidden");
+                    }
                     
                     let list_address = res.data[0].address
                     if (list_address.length <= 1) {

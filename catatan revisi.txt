@@ -2,6 +2,6 @@ penambahan :
 1. list table approval (done)
 2. method blacklist pada API untuk hash micro (done)
 3. export data menjadi xls, pdf (done)
-4. emport backup data via scheduler
+4. emport backup data via scheduler (done)
 5. update data pada sisi customer/vendor dalam kondisi checking 1
 6. pengajuan update data pada sisi customer/vendor dalam kondisi approved (membuat form pengajuan update data)
