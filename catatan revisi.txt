@@ -5,3 +5,21 @@ penambahan :
 4. emport backup data via scheduler (done)
 5. update data pada sisi customer/vendor dalam kondisi checking 1
 6. pengajuan update data pada sisi customer/vendor dalam kondisi approved (membuat form pengajuan update data)
+
+tanggal 11 september 2024
+1. perubahan halaman awal web, login & register dijadikan satu halaman, dibedakan berdasarkan tab aktif dan non-aktif.
+2. register email wajib gmail
+3. register password harus menggunakan unique karakter, uppercase, lowercase, number. (combine)
+4. notifikasi email saat register, dan pengajuan data cs atau vendor
+5. halaman awal ketika user sudah login atau register :
+    tampilan muncul card 
+    ada 4 card di bagian atas : nama perusahaan, group, status, type, 
+    bagian bawah :
+    log register pm 
+    detail 
+    upload supporting document
+6. upload file supporting document dipisah setelah user mendaftarkan diri sebagai cs/vendor.
+7. remember me delete
+8. handling error change to text span.
+
+9. step approval : approval pertama rebutan, untuk ke dua berdasarkan atasan dari approval.

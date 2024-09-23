@@ -76,11 +76,11 @@
                 </div>
             </div>
         </div>
-        @include('role_and_permission.create_role')
-        @include('role_and_permission.detail_role')
-        @include('role_and_permission.add_permission')
-        @include('role_and_permission.create_permission')
-        @include('role_and_permission.detail_permission')
+        @include('admin.role_and_permission.create_role')
+        @include('admin.role_and_permission.detail_role')
+        @include('admin.role_and_permission.add_permission')
+        @include('admin.role_and_permission.create_permission')
+        @include('admin.role_and_permission.detail_permission')
     </div>
 @stop
 
@@ -98,5 +98,5 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <!-- select 2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    @include('role_and_permission.role_permission_js')
+    @include('admin.role_and_permission.role_permission_js')
 @stop

@@ -550,6 +550,12 @@
                 // dataType: 'json',
                 // async: true,
                 enctype: 'multipart/form-data',
+                success: function (res) {
+                    toastr['success'](res.meta.message)
+                },
+                error: function(res) {
+                    toastr['success'](res.meta.message)
+                }
             })
         })
     })

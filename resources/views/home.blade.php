@@ -9,6 +9,7 @@
 @section('content')
     {{-- <p>Welcome to this beautiful admin panel.</p> --}}
     <div class="data-partner"></div>
+
     <p>Kamu belum mendaftakan diri sebagai Partner <br> silahkan klik tombol di bawah untuk registrasi</p>
     <button type="button" class="btn btn-primary" id="create_partner" data-toggle="modal" data-target="#modalCreatePartner">
         Registrasi

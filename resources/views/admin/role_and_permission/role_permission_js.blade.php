@@ -100,6 +100,48 @@
         $(document).on('click', '#for_create_permission', function(e) {
             e.preventDefault()
             $('#form_create_new_permission')[0].reset();
+            $('#get_menu').empty()
+        })
+
+        $(document).on('change', '.for_set_menu_or_submenu', function() {
+            if ($('#select_menu').is(':checked')) {
+                $('#get_menu').empty()
+            } else if ($('#select_submenu').is(':checked')) {
+                $('#get_menu').empty()
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '{{ route("fetch-menu") }}',
+                    type: 'GET',
+                    async: true,
+                    success: function(res) {
+                        $('#get_menu').empty()
+                        $('#get_menu').append(`
+                            <div class="form-group">
+                                <label for=""></label>
+                                <select class="form-select" aria-label="select menu" id="select_list_menu">
+                                </select>
+                            </div>
+                        `)
+                        $('#select_list_menu').empty()
+                        $.each(res.data, function(i, menu) {
+                            $('#select_list_menu').append(`
+                                <option value="${menu.id}">${menu.name_text}</option>
+                            `)
+                        })
+                    },
+                    error: function(xhr) {
+                    let response_error = JSON.parse(xhr.responseText)
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        class: 'bg-danger',
+                        body: response_error.meta.message
+                    });
+                }
+                })
+                
+            }
         })
 
         $(document).on('click', '#save_permission', function(e) {

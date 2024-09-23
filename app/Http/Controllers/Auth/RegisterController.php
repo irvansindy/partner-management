@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Validation\Rules\Password;
 class RegisterController extends Controller
 {
     /*
@@ -51,8 +51,25 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
+            // 'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols(),
+                function ($attribute, $value, $fail) {
+                    // Cek karakter unik
+                    if (strlen($value) !== count(array_unique(str_split($value)))) {
+                        $fail($attribute.' harus mengandung karakter unik.');
+                    }
+                }
+            ]
+        ], [
+            'email.regex' => 'Email must use the Gmail domain (@gmail.com).'
         ]);
     }
 

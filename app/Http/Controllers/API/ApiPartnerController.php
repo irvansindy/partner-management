@@ -18,10 +18,11 @@ class ApiPartnerController extends Controller
         try {
             $partner = CompanyInformation::with(['address', 'bank', 'tax', 'attachment'])
             ->where('blacklist', 0)
+            ->where('status', 'approved')
             ->get();
             return FormatResponseJson::success($partner, 'Data partner fetched successfully');
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            return FormatResponseJson::error(null, $e->getMessage(), 404);
         } catch (\Throwable $th) {
             return FormatResponseJson::error(null, $th->getMessage(), 500);
         }
@@ -37,7 +38,7 @@ class ApiPartnerController extends Controller
             ]);
             return FormatResponseJson::success($partner,'Partner data has been successfully blacklisted');
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            return FormatResponseJson::error(null, $e->getMessage(), 404);
         } catch (\Throwable $th) {
             return FormatResponseJson::error(null, $th->getMessage(), 500);
         }

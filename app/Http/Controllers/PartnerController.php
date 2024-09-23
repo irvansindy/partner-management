@@ -33,6 +33,10 @@ class PartnerController extends Controller
     {
         return view("company.index");
     }
+    public function viewCreatePartner()
+    {
+        return view('user_partner.index');
+    }
     public function detailPartner(Request $request)
     {
         return view('company.detail_company');
@@ -99,12 +103,18 @@ class PartnerController extends Controller
     {
         try {
             DB::beginTransaction();
-            // dd($request->all());
+            $existing_data = CompanyInformation::where('user_id', auth()->user()->id)->first();
+            if ($existing_data) {
+                // return response()->json([
+                //     'message' => 'sudah terdaftar.'
+                // ], 400);
+                return FormatResponseJson::error(null, 'Anda sudah mendaftar.', 400);
+            }
             $validator = Validator::make($request->all(), [
                 'company_name' => 'required|string',
                 'company_group_name' => 'required|string',
                 'company_type' => 'required|string',
-                'established_year' => 'required|string',
+                'established_year' => 'required|integer',
                 'total_employee' => 'required|string',
                 'liable_person_and_position' => 'required|string',
                 'owner_name' => 'required|string',
@@ -115,42 +125,47 @@ class PartnerController extends Controller
                 'system_management' => 'required|string',
                 'contact_person' => 'required|string',
                 'communication_language' => 'required|string',
-                'email_address' => 'required|string',
+                'email_address' => 'required|email|unique:company_informations',
                 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'address.*' => 'required|string',
                 'city.*' => 'required|string',
                 'country.*' => 'required|string',
                 'province.*' => 'required|string',
-                'zip_code.*' => 'required|string',
-                'telephone.*' => 'required|string',
-                'fax.*' => 'required|string',
-            ], [
-                'company_name.required' => 'Company name/Nama perusahaan tidak boleh kosong',
-                'company_group_name.required' => 'Company group name/Nama grup perusahaan tidak boleh kosong',
-                'company_type.required' => 'Company type/tipe perusahaan tidak boleh kosong',
-                'established_year.required' => 'Established since year/Tahun berdiri tidak boleh kosong',
-                'total_employee.required' => 'Total employee/Jumlah Karyawan tidak boleh kosong',
-                'liable_person_and_position.required' => 'Liable person/Penanggung jawab tidak boleh kosong',
-                'owner_name.required' => 'Owner name/Nama pemilik tidak boleh kosong',
-                'board_of_directors.required' => 'Board of directors/Dewan direktur tidak boleh kosong',
-                'major_shareholders.required' => 'Board of directors/Pemilik saham mayoritas tidak boleh kosong',
-                'business_classification.required' => 'Business classification/Jenis usaha tidak boleh kosong',
-                'website_address.required' => 'Website address/Alamat situs web tidak boleh kosong',
-                'system_management.required' => 'System management/Manajemen sistem tidak boleh kosong',
-                'contact_person.required' => 'Contact person/Kontak person tidak boleh kosong',
-                'communication_language.required' => 'Communication language/Bahasa komunikasi tidak boleh kosong',
-                'email_address.required' => 'Email address/Alamat email tidak boleh kosong',
-                'stamp_file.required' => 'Stamp/Stempel tidak boleh kosong',
-                'signature_file.required' => 'Signature/Tanda tangan tidak boleh kosong',
-                'address.*.required' => 'Address/Alamat tidak boleh kosong',
-                'city.*.required' => 'City/Kota tidak boleh kosong',
-                'country.*.required' => 'Country/Negara tidak boleh kosong',
-                'province.*.required' => 'Province/Provinsi tidak boleh kosong',
-                'zip_code.*.required' => 'Zip code/Kode pos tidak boleh kosong',
-                'telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
-                'fax.*.required' => 'Fax tidak boleh kosong',
-            ]);
+                'zip_code.*' => 'required|integer',
+                'telephone.*' => 'required|integer',
+                'fax.*' => 'required|integer',
+            ], 
+            [
+            //     'company_name.required' => 'Company name/Nama perusahaan tidak boleh kosong',
+            //     'company_group_name.required' => 'Company group name/Nama grup perusahaan tidak boleh kosong',
+            //     'company_type.required' => 'Company type/tipe perusahaan tidak boleh kosong',
+            //     'established_year.required' => 'Established since year/Tahun berdiri tidak boleh kosong',
+            //     'total_employee.required' => 'Total employee/Jumlah Karyawan tidak boleh kosong',
+            //     'liable_person_and_position.required' => 'Liable person/Penanggung jawab tidak boleh kosong',
+            //     'owner_name.required' => 'Owner name/Nama pemilik tidak boleh kosong',
+            //     'board_of_directors.required' => 'Board of directors/Dewan direktur tidak boleh kosong',
+            //     'major_shareholders.required' => 'Board of directors/Pemilik saham mayoritas tidak boleh kosong',
+            //     'business_classification.required' => 'Business classification/Jenis usaha tidak boleh kosong',
+            //     'website_address.required' => 'Website address/Alamat situs web tidak boleh kosong',
+            //     'system_management.required' => 'System management/Manajemen sistem tidak boleh kosong',
+            //     'contact_person.required' => 'Contact person/Kontak person tidak boleh kosong',
+            //     'communication_language.required' => 'Communication language/Bahasa komunikasi tidak boleh kosong',
+            //     'email_address.required' => 'Email address/Alamat email tidak boleh kosong',
+            //     'stamp_file.required' => 'Stamp/Stempel tidak boleh kosong',
+            //     'signature_file.required' => 'Signature/Tanda tangan tidak boleh kosong',
+                'address.*.required' => 'The address field is required',
+                'city.*.required' => 'The city field is required.',
+                'country.*.required' => 'The country field is required.',
+                'province.*.required' => 'The province field is required.',
+                'zip_code.*.required' => 'The zip_code field is required.',
+                'telephone.*.required' => 'The telephone field is required.',
+                'fax.*.required' => 'The fax field is required.',
+                // 'zip_code.*.integer' => 'The zip_code field is required.',
+                // 'telephone.*.integer' => 'The telephone field is required.',
+                // 'fax.*.integer' => 'The fax field is required.',
+            ]
+        );
 
             if ($request->business_classification == 'Other' && $request->business_classification_other_detail == NULL) {
                 $validator->after(function ($validator) {
@@ -1444,7 +1459,7 @@ class PartnerController extends Controller
                 'detail_system_management' => 'required|string',
                 'detail_contact_person' => 'required|string',
                 'detail_communication_language' => 'required|string',
-                'detail_email_address' => 'required|string',
+                'detail_email_address' => 'required|string|email|unique',
                 'detail_stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'detail_signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'detail_address.*' => 'required|string',
@@ -1527,7 +1542,7 @@ class PartnerController extends Controller
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             DB::rollback();
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }

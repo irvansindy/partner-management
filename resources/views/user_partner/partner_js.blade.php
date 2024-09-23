@@ -1,10 +1,10 @@
 <script>
     $('#company_type').select2({
-        dropdownParent: $('#modalCreatePartner'),
-        width:'100%'
+        // dropdownParent: $('#modalCreatePartner'),
+        width: '100%'
     })
     $(document).ready(function() {
-        fetchDataPartner()
+        // fetchDataPartner()
         function fetchDataPartner() {
             $('.data-partner').empty()
             $.ajax({
@@ -24,10 +24,67 @@
             })
         }
 
+        fetchDocSupport()
+
+        function fetchDocSupport() {
+            $.ajax({
+                url: '{{ route('fetch-doctype') }}',
+                type: 'GET',
+                dataType: 'json',
+                async: true,
+                success: function(res) {
+                    // alert('success')
+                    $('#field_form_create_business_other').empty()
+                    $('#data_doc_type_pt').empty()
+                    $('#data_doc_type_cv').empty()
+                    $('#data_doc_type_ud_or_pd').empty()
+                    $('#data_doc_type_perorangan').empty()
+
+                    $.each(res.data, function(i, data) {
+                        $('#data_doc_type_pt').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_pt'}" id="${'doc_name_'+data.name_id_class+'_pt'}" class="form-control ${'doc_name_'+data.name_id_class+'_pt'}" value="${data.name}" />
+                                <input type="file" name="${data.name_id_class+'_pt'}" id="${data.name_id_class+'_pt'}" class="form-control ${data.name_id_class+'_pt'}" />
+                            </td>
+                        </tr>`)
+
+                        $('#data_doc_type_cv').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_cv'}" id="${'doc_name_'+data.name_id_class+'_cv'}" class="form-control ${'doc_name_'+data.name_id_class+'_cv'}" value="${data.name}" />
+                                <input type="file" name="${data.name_id_class+'_cv'}" id="${data.name_id_class+'_cv'}" class="form-control ${data.name_id_class+'_cv'}" />
+                            </td>
+                        </tr>`)
+
+                        $('#data_doc_type_ud_or_pd').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" id="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" class="form-control ${'doc_name_'+data.name_id_class+'_ud_or_pd'}" value="${data.name}" />
+                                <input type="file" name="${data.name_id_class+'_ud_or_pd'}" id="${data.name_id_class+'_ud_or_pd'}" class="form-control ${data.name_id_class+'_ud_or_pd'}" />
+                            </td>
+                        </tr>`)
+
+                        $('#data_doc_type_perorangan').append(`
+                        <tr>
+                            <td>${data.name}</td>
+                            <td>
+                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_perorangan'}" id="${'doc_name_'+data.name_id_class+'_perorangan'}" class="form-control ${'doc_name_'+data.name_id_class+'_perorangan'}" value="${data.name}" />
+                                <input type="file" name="${data.name_id_class+'_perorangan'}" id="${data.name_id_class+'_perorangan'}" class="form-control ${data.name_id_class+'_perorangan'}" />
+                            </td>
+                        </tr>`)
+                    })
+                }
+            })
+        }
+
         $(document).on('click', '#create_partner', function(e) {
             e.preventDefault()
             $.ajax({
-                url: '{{ route("fetch-doctype") }}',
+                url: '{{ route('fetch-doctype') }}',
                 type: 'GET',
                 dataType: 'json',
                 async: true,
@@ -43,10 +100,9 @@
                                 <input type="hidden" name="${'doc_name_'+data.name_id_class+'_pt'}" id="${'doc_name_'+data.name_id_class+'_pt'}" class="form-control ${'doc_name_'+data.name_id_class+'_pt'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_pt'}" id="${data.name_id_class+'_pt'}" class="form-control ${data.name_id_class+'_pt'}" />
                             </td>
-                        </tr>`
-                        )
+                        </tr>`)
                     })
-                    
+
                     $('#data_doc_type_cv').empty()
                     $.each(res.data, function(i, data) {
                         $('#data_doc_type_cv').append(`
@@ -56,10 +112,9 @@
                                 <input type="hidden" name="${'doc_name_'+data.name_id_class+'_cv'}" id="${'doc_name_'+data.name_id_class+'_cv'}" class="form-control ${'doc_name_'+data.name_id_class+'_cv'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_cv'}" id="${data.name_id_class+'_cv'}" class="form-control ${data.name_id_class+'_cv'}" />
                             </td>
-                        </tr>`
-                        )
+                        </tr>`)
                     })
-                    
+
                     $('#document_type_ud_or_pd').empty()
                     $.each(res.data, function(i, data) {
                         $('#document_type_ud_or_pd').append(`
@@ -69,10 +124,9 @@
                                 <input type="hidden" name="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" id="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" class="form-control ${'doc_name_'+data.name_id_class+'_ud_or_pd'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_ud_or_pd'}" id="${data.name_id_class+'_ud_or_pd'}" class="form-control ${data.name_id_class+'_ud_or_pd'}" />
                             </td>
-                        </tr>`
-                        )
+                        </tr>`)
                     })
-                    
+
                     $('#data_doc_type_perorangan').empty()
                     $.each(res.data, function(i, data) {
                         $('#data_doc_type_perorangan').append(`
@@ -82,8 +136,7 @@
                                 <input type="hidden" name="${'doc_name_'+data.name_id_class+'_perorangan'}" id="${'doc_name_'+data.name_id_class+'_perorangan'}" class="form-control ${'doc_name_'+data.name_id_class+'_perorangan'}" value="${data.name}" />
                                 <input type="file" name="${data.name_id_class+'_perorangan'}" id="${data.name_id_class+'_perorangan'}" class="form-control ${data.name_id_class+'_perorangan'}" />
                             </td>
-                        </tr>`
-                        )
+                        </tr>`)
                     })
                 }
             })
@@ -101,9 +154,16 @@
             }
         })
 
-        $(document).on('click', '#add_dynamic_address',function(e) {
+        $(document).on('click', '#add_dynamic_address', function(e) {
             e.preventDefault()
-            let order = 0
+            let message_address = document.querySelectorAll('.message_address');
+            let message_city = document.querySelectorAll('.message_city');
+            let message_country = document.querySelectorAll('.message_country');
+            let message_province = document.querySelectorAll('.message_province');
+            let message_zip_code = document.querySelectorAll('.message_zip_code');
+            let message_telephone = document.querySelectorAll('.message_telephone');
+            let message_fax = document.querySelectorAll('.message_fax');
+
             $('.dynamic_company_address').append(`
                 <div class="input-group mb-4 array_company_address">
                     <div class="col-md-2">
@@ -117,6 +177,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-4">
                                 <input type="text" name="address[]" id="address" placeholder="" class="form-control">
+                                <span class="text-danger mt-2 message_address" id="message_address_${message_address.length -1 + 1}" role="alert"> alert    </span>
                             </div>
                             <div class="col-md-auto">
                                 <div class="row">
@@ -127,6 +188,7 @@
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="city[]" id="city" placeholder="" class="form-control">
+                                        <span class="text-danger mt-2 message_city" id="message_city_${message_city.length -1 + 1}" role="alert"></span>
                                     </div>
                                 </div>
                             </div>
@@ -141,6 +203,8 @@
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="country[]" id="country" placeholder="" class="form-control">
+                                        <span class="text-danger mt-2 message_country" id="message_country_${message_country.length -1 + 1}"
+                                            role="alert"></span>
                                     </div>
                                 </div>
                             </div>
@@ -153,6 +217,8 @@
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="province[]" id="province" placeholder="" class="form-control">
+                                        <span class="text-danger mt-2 message_province" id="message_province_${message_province.length -1 + 1}"
+                                            role="alert"></span>
                                     </div>
                                 </div>
                             </div>
@@ -165,6 +231,8 @@
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="zip_code[]" id="zip_code" placeholder="" class="form-control">
+                                        <span class="text-danger mt-2 message_zip_code" id="message_zip_code_${message_zip_code.length -1 + 1}"
+                                            role="alert"></span>
                                     </div>
                                 </div>
                             </div>
@@ -172,11 +240,15 @@
                                 <div class="row">
                                     <div class="col-md-auto">
                                         <label for="telephone">Telephone *</label>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area Code] [No.]
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area
+                                            Code] [No.]
                                             Telepon +[Negara-Area] [No.]</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="telephone[]" id="telephone" placeholder="" class="form-control">
+                                        <span class="text-danger mt-2 message_telephone" id="message_telephone_${message_telephone.length -1 + 1}"
+                                            role="alert"></span>
+
                                     </div>
                                 </div>
                             </div>
@@ -184,20 +256,15 @@
                                 <div class="row">
                                     <div class="col-md-auto">
                                         <label for="fax">Fax *</label>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area Code] [No.]
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area
+                                            Code] [No.]
                                             Fax +[Negara-Area] [No.]</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="fax[]" id="fax" placeholder="" class="form-control">
+                                        <span class="text-danger mt-2 message_fax" id="message_fax_${message_fax.length -1 + 1}" role="alert"></span>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input main_address" type="radio" name="main_address[]" id="main_address${order}">
-                                        <label class="form-check-label" for="main_address_${order}">
-                                            Main Address
-                                        </label>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Alamat Utama</p>
-                                        
-                                    </div>
+
                                 </div>
                             </div>
                             <div class="col mb-4 align-items-end mr-4">
@@ -207,11 +274,40 @@
                     </div>
                 </div>
             `)
+            updateFieldIds()
+            
         })
 
         $(document).on('click', '#delete_dynamic_address', function(e) {
-            $(this).closest('.array_company_address').remove()
+            if ($('.array_company_address').length != 0) {
+                $(this).closest('.array_company_address').remove();
+                updateFieldIds();
+            } else {
+                alert("You must have at least one address!");
+            }
         })
+
+        function updateFieldIds() {
+            $('.array_company_address').each(function (index) {
+                // Update IDs for input elements
+                $(this).find('input[name="address[]"]').attr('id', 'address_' + (index + 1));
+                $(this).find('input[name="city[]"]').attr('id', 'city_' + (index + 1));
+                $(this).find('input[name="country[]"]').attr('id', 'country_' + (index + 1));
+                $(this).find('input[name="province[]"]').attr('id', 'province_' + (index + 1));
+                $(this).find('input[name="zip_code[]"]').attr('id', 'zip_code_' + (index + 1));
+                $(this).find('input[name="telephone[]"]').attr('id', 'telephone_' + (index + 1));
+                $(this).find('input[name="fax[]"]').attr('id', 'fax_' + (index + 1));
+                
+                // Update IDs for span elements
+                $(this).find('.message_address').attr('id', 'message_address_' + (index + 1));
+                $(this).find('.message_city').attr('id', 'message_city_' + (index + 1));
+                $(this).find('.message_country').attr('id', 'message_country_' + (index + 1));
+                $(this).find('.message_province').attr('id', 'message_province_' + (index + 1));
+                $(this).find('.message_zip_code').attr('id', 'message_zip_code_' + (index + 1));
+                $(this).find('.message_telephone').attr('id', 'message_telephone_' + (index + 1));
+                $(this).find('.message_fax').attr('id', 'message_fax_' + (index + 1));
+            });
+        }
 
         $(document).on('click', '#add_bank', function(e) {
             e.preventDefault()
@@ -422,18 +518,18 @@
                 </div>
             `)
         })
-    
+
         $(document).on('click', '#delete_add_info', function(e) {
             e.preventDefault()
             $(this).closest('.array_add_info').remove()
         })
 
-        $(document).on('click', '#submit_form_partner', function(e) {
+        $(document).on('click', '#btn_submit_data_company', function(e) {
             e.preventDefault()
             // alert('save')
             let data_form_company = new FormData($('#form_company')[0])
             $.ajax({
-                url: '{{ route("submit-partner") }}',
+                url: '{{ route('submit-partner') }}',
                 // type: 'POST',
                 method: 'POST',
                 processData: false,
@@ -448,10 +544,12 @@
                 enctype: 'multipart/form-data',
                 beforeSend: function() {
                     setTimeout(function() {
-                        $('#modalLoading').modal({show: false});
+                        $('#modalLoading').modal({
+                            show: false
+                        });
                     }, 5000)
                 },
-                
+
                 success: function(res) {
                     // $('#role_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
@@ -471,43 +569,36 @@
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
                     let response_error = JSON.parse(xhr.responseText)
-                    
-                    if (response_error.meta.code == 500) {
-                        $.each(response_error.meta.message.errors, function(i, value) {
-                        $(document).Toasts('create', {
-                            title: 'Error',
-                            class: 'bg-danger',
-                            body: value,
-                            delay: 10000,
-                            autohide: true,
-                            fade: true,
-                            close: true,
-                            autoremove: true,
-                        });
-                    })
-                    }
 
-                    $.each(response_error.meta.message.errors, function(i, value) {
+                    if (response_error.meta.code == 500 || 400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
-                            body: value,
+                            body: response_error.meta.message,
                             delay: 10000,
                             autohide: true,
                             fade: true,
                             close: true,
                             autoremove: true,
                         });
+                    }
+                    $('.text-danger').text('')
+                    $.each(response_error.meta.message.errors, function(i, value) {
+                        $('#message_' + i.replace('.', '_')).text(value)
+
+                        // $(document).Toasts('create', {
+                        //     title: 'Error',
+                        //     class: 'bg-danger',
+                        //     body: value,
+                        //     delay: 10000,
+                        //     autohide: true,
+                        //     fade: true,
+                        //     close: true,
+                        //     autoremove: true,
+                        // });
                     })
                 },
-                // complete: function() {
-                //     // $('#modalLoading').modal({show: false});
-                //     setTimeout(function() {
-                //         $('#modalLoading').modal({show: false});
-                //     }, 5000)
-                // },
             })
         })
     })
-
 </script>

@@ -942,8 +942,6 @@
             let id = $(this).data('id')
             let status = $(this).data('status')
             let data_form_detail_company_partner = new FormData($('#form_detail_company_partner')[0])
-            // alert(id)
-            console.log(data_form_detail_company_partner);
 
             $.ajax({
                 headers: {
@@ -964,11 +962,6 @@
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
-                    // $('#modalLoading').hide()
-                    // $('#modalLoading').modal({show: false});
-                    // setTimeout(function() {
-                    //     $('#modalLoading').modal({show: false});
-                    // }, 5000)
                     let response_error = JSON.parse(xhr.responseText)
                     $.each(response_error.meta.message.errors, function(i, value) {
                         $(document).Toasts('create', {

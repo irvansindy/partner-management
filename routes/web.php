@@ -6,6 +6,9 @@ use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\RoleAndPermissionController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\PartnerManagementController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\RolePermissionController;
+
 use App\Http\Controllers\API\ApiPartnerController;
 /*
 |--------------------------------------------------------------------------
@@ -22,12 +25,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// for php artisan route cache
+// for php artisan optimize clear
+// Route::get('', function () {});
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/partner', [PartnerController::class,'index'])->name('partner');
+    Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
     Route::get('/detail-partner', [PartnerController::class,'detailPartner'])->name('detail-partner');
     Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
@@ -61,6 +68,12 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
     Route::get('export-pdf', [PartnerManagementController::class,'exportPartnerToPdf'])->name('export-pdf');
     Route::get('export-excel', [PartnerManagementController::class,'exportPartnerToExcel'])->name('export-excel');
+
+    Route::get('menu-setting', [MenuController::class,'index'])->name('menu-setting');
+    Route::get('fetch-menu', [MenuController::class,'fetchMenu'])->name('fetch-menu');
+    Route::post('store-menu', [MenuController::class,'storeMenu'])->name('store-menu');
+
+    // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });
 
 Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {
@@ -69,9 +82,7 @@ Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
     Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
 });
-Route::get('/token', function () {
-    return csrf_token(); 
-});
+
 // Route::get('fetch-data-partner', [ApiPartnerController::class, 'fetchPartner'])->name('fetch-data-partner');
 // Route::post('blacklist-partner', [ApiPartnerController::class, 'blacklistPartner']);
 Route::middleware(['auth:sanctum'])->group(function() {});

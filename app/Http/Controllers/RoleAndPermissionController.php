@@ -10,6 +10,9 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 class RoleAndPermissionController extends Controller
 {
     public function __construct()
@@ -18,19 +21,13 @@ class RoleAndPermissionController extends Controller
     }
     public function index()
     {
-        return view("role_and_permission.index");
+        return view("admin.role_and_permission.index");
     }
     public function fetchRole()
     {
         try {
             $fetch_role = Role::all();
-            $fetch_office = MasterOffice::all();
-
-            $data = [
-                "roles"=> $fetch_role,
-                "offices"=> $fetch_office
-            ];
-            return FormatResponseJson::success($data, 'role fetched successfully');
+            return FormatResponseJson::success($fetch_role, 'role fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 404);
         }
@@ -43,6 +40,10 @@ class RoleAndPermissionController extends Controller
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 404);
         }
+    }
+    public function menu()
+    {
+        
     }
     public function storeRole(Request $request)
     {
@@ -97,17 +98,30 @@ class RoleAndPermissionController extends Controller
     public function storePermission(Request $request)
     {
         try {
-            $request->validate([
+            DB::beginTransaction();
+            $validator = Validator::make($request->all(), [
                 'permission_name'=> 'required|string|unique:permissions,name',
+            ], [
+                'permission_name.required' => 'Permission tidak boleh kosong',
+                'permission_name.unique' => 'Permission tersebut sudah tersedia'
             ]);
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
             $data = [
                 'name' => $request->permission_name,
                 'guard_name'=>'web',
             ];
             $permission = Permission::create($data);
+            DB::commit();
             return FormatResponseJson::success($permission,'permission created successfully');
+        } catch (ValidationException $e) {
+            // Return validation errors as JSON response
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
         }
     }
     public function detailPermission(Request $request)
