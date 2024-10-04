@@ -23,3 +23,7 @@ tanggal 11 september 2024
 8. handling error change to text span.
 
 9. step approval : approval pertama rebutan, untuk ke dua berdasarkan atasan dari approval.
+
+DATABASE NAME : pralonco_partner-management
+USER DATABASE : pralonco_partner-management
+PASS USER : #PartneR10424

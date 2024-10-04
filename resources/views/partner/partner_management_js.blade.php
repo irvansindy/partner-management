@@ -107,7 +107,6 @@
                     $('#detail_website_address').val(res.data[0].website_address)
 
                     $('.detail_system_management').empty()
-
                     $('#detail_system_management').val(res.data[0].system_management)
                     $('#detail_contact_person').val(res.data[0].contact_person)
                     $('#btn_update_data_company').attr('data-id', res.data[0].id)
@@ -381,19 +380,6 @@
                         <div class="detail_dynamic_company_address"></div>
                         `)
                     }
-
-                    // if (res.data[0].status == 'checking') {
-                    //     $('#button_partner').empty()
-                    //     $('#button_partner').append(`
-                    //     <div class="d-flex justify-content-end">
-                    //         <button type="button" class="btn btn-primary" id="btn_update_data_company" data-id="" data-status="">
-                    //             Update
-                    //         </button>
-                    //     </div>
-                    //     `)
-                    // } else {
-                    //     $('#button_partner').empty()
-                    // }
 
                     // alert(res.data[0].bank.length)
                     let list_bank = res.data[0].bank
@@ -881,6 +867,17 @@
                         </tr>`
                         )
                     })
+
+                    $('#button-for-approval').empty()
+                    $('#button-for-approval').append(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
+
+                    if (res.data.role == 'super-user' && res.data[0].status == 'checking') {
+                        $('#button-for-approval').append(`<button type="button" class="btn btn-danger" id="partner_reject">Reject</button><button type="button" class="btn btn-primary" id="partner_approved">Approved</button>`)
+                    }
+
+                    if (res.data.stagging_approval != null) {
+                        $('#button-for-approval').append(`<button type="button" class="btn btn-danger" id="partner_reject">Reject</button><button type="button" class="btn btn-primary" id="partner_approved">Approved</button>`)
+                    }
                 }
             })
         })

@@ -1,37 +1,40 @@
 @extends('adminlte::page')
 
-@section('title', 'User Management')
+@section('title', 'Master Approval')
 
 @section('content_header')
-    <h1>Menu Management</h1>
+    <h1>Master Approval</h1>
 @stop
 
 @section('content')
     <div class="container-fluid py-4">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card mb-4">
                     <div class="card-header d-flex bd-highlight">
                         <div class="pt-2 flex-fill bd-highlight">
-                            <p>list Menu Permission</p>
+                            <p>Approval List</p>
                         </div>
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                            <button type="button" class="btn bg-gradient-primary" id="for_create_menu" data-toggle="modal" data-target="#formCreateMenu">+ Menu</button>
+                            <button type="button" class="btn bg-gradient-primary" id="for_create_approval" data-toggle="modal" data-target="#formCreateApproval">+ Approval</button>
                         </div>
                     </div>
                     <div class="card-body px-0 pt-2 pb-2">
                         <div class="table-responsive p-0 px-md-2">
-                            <table class="table table-hover align-items-center mb-0 data_tables" id="menu_table" style="width:100%">
+                            <table class="table table-hover align-items-center mb-0 data_tables" id="approval_table" style="width: 100%">
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             No
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Name
+                                            Approval Name
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Url
+                                            Lokasi
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Department
                                         </th>
                                         <th class="text-secondary opacity-7">#</th>
                                     </tr>
@@ -45,7 +48,8 @@
                 </div>
             </div>
         </div>
-        @include('admin.menus.create')
+        @include('admin.approval_setting.create_approval_master')
+        @include('admin.approval_setting.add_view_approval_detail_modal')
     </div>
 @stop
 
@@ -76,5 +80,5 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <!-- select 2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    @include('admin.menus.menu_js')
+    @include('admin.approval_setting.approval_js')
 @stop

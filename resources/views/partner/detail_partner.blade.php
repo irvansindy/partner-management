@@ -902,7 +902,7 @@
                     </form>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id="button-for-approval">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-danger" id="partner_reject">Reject</button>
                 <button type="button" class="btn btn-primary" id="partner_approved">Approved</button>

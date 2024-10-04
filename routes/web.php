@@ -8,6 +8,7 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\PartnerManagementController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\ApprovalSettingController;
 
 use App\Http\Controllers\API\ApiPartnerController;
 /*
@@ -72,6 +73,13 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('menu-setting', [MenuController::class,'index'])->name('menu-setting');
     Route::get('fetch-menu', [MenuController::class,'fetchMenu'])->name('fetch-menu');
     Route::post('store-menu', [MenuController::class,'storeMenu'])->name('store-menu');
+
+    Route::get('approval-setting', [ApprovalSettingController::class,'index'])->name('approval-setting');
+    Route::get('fetch-approval', [ApprovalSettingController::class,'fetchApproval'])->name('fetch-approval');
+    Route::get('fetch-user-approval', [ApprovalSettingController::class,'fetchUserApproval'])->name('fetch-user-approval');
+    Route::get('fetch-office-department', [ApprovalSettingController::class,'fetchOfficeAndDepartment'])->name('fetch-office-department');
+    Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalMaster'])->name('store-approval-master');
+    Route::post('store-approval-detail', [ApprovalSettingController::class,'storeApprovalDetail'])->name('store-approval-detail');
 
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });

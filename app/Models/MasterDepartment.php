@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MasterOffice extends Model
+class MasterDepartment extends Model
 {
     use HasFactory;
-    protected $table = 'master_offices';
+    protected $table = 'master_departments';
     protected $guarded = [];
 }

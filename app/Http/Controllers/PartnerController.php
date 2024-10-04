@@ -35,7 +35,7 @@ class PartnerController extends Controller
     }
     public function viewCreatePartner()
     {
-        return view('user_partner.index');
+        return view('cs_vendor.index');
     }
     public function detailPartner(Request $request)
     {
@@ -161,9 +161,9 @@ class PartnerController extends Controller
                 'zip_code.*.required' => 'The zip_code field is required.',
                 'telephone.*.required' => 'The telephone field is required.',
                 'fax.*.required' => 'The fax field is required.',
-                // 'zip_code.*.integer' => 'The zip_code field is required.',
-                // 'telephone.*.integer' => 'The telephone field is required.',
-                // 'fax.*.integer' => 'The fax field is required.',
+                'zip_code.*.integer' => 'The zip_code field is required.',
+                'telephone.*.integer' => 'The telephone field is required.',
+                'fax.*.integer' => 'The fax field is required.',
             ]
         );
 
