@@ -69,12 +69,16 @@ class PartnerManagementController extends Controller
             $doc_perorangan = CompanySupportingDocument::where('company_id', $partner_detail->id)
             ->where('company_doc_type', 'perorangan')
             ->get();
-
+// dd();
             // check existing data approval by role and id
-            if (auth()->user()->roles->pluck('name')[0] != 'super-user') {
+            if (auth()->user()->roles->pluck('name')[0] == 'admin') {
                 $existing_master_approval = ApprovalMaster::where('company_information_id', $request->partner_id)->first();
                 if ($existing_master_approval) {
-                $existing_stagging_approval = ApprovalDetails::where(['approval_id', $existing_master_approval->id, 'user_id' => \Auth::user()->id])->first();
+                $existing_stagging_approval = ApprovalDetails::where([
+                    'approval_id' => $existing_master_approval->id,
+                    'user_id' => \Auth::user()->id,
+                    'status' => 1,
+                ])->first();
                 } else {
                     $existing_stagging_approval = null;
                 }
@@ -105,12 +109,13 @@ class PartnerManagementController extends Controller
     {
         try {
             $status = $request->status;
+            $get_office_approval = \auth()->user()->office_id;
+            $get_office_department = \auth()->user()->department_id;
+
             if (auth()->user()->roles->pluck('name')[0] == 'super-user') {
                 
                 $update_partner = CompanyInformation::findOrFail($request->partner_id);
                 if ($status == 'approved') {
-                    $get_office_approval = \auth()->user()->office_id;
-                    $get_office_department = \auth()->user()->department_id;
     
                     $get_master_approval_model = MasterApprovalModel::where([
                         'location_id' => $get_office_approval,
@@ -146,7 +151,7 @@ class PartnerManagementController extends Controller
                         'status' => 'checking 2'
                     ]);
                     $update_approval_master = ApprovalMaster::where([
-                        'company_information_id' => $request->partner_id,,
+                        'company_information_id' => $request->partner_id,
                         'user_id' => auth()->user()->id,
                     ])
                     ->update([
@@ -187,7 +192,20 @@ class PartnerManagementController extends Controller
             } else if (auth()->user()->roles->pluck('name')[0] == 'admin') {
                 $update_partner = CompanyInformation::findOrFail($request->partner_id);
                 if ($status == 'approved') {
-
+                    $update_approval_master = ApprovalMaster::where([
+                        'company_information_id' => $request->partner_id,
+                        // 'user_id' => auth()->user()->id,
+                    ])->first();
+                    $update_approval_master->update([
+                        'status' => 2
+                    ]);
+                    $update_approval_detail = ApprovalDetails::where([
+                        'approval_id' => $update_approval_master->id,
+                        'user_id' => auth()->user()->id,
+                    ])
+                    ->update([
+                        'status' => 2
+                    ]);
                     $update_partner->update([
                         'status' => 'approved'
                     ]);
