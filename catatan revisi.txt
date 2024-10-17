@@ -33,3 +33,241 @@ PASS USER : #PartneR10424
 2. nomor document untuk record data.
 3. 
 
+
+public function updateOld2(Request $request)
+{
+    try {
+        DB::beginTransaction();
+        $existing_data = CompanyInformation::where('id', $request->detail_id)->first();
+        
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'detail_company_name' => 'required|string',
+            'detail_company_group_name' => 'required|string',
+            'detail_company_type' => 'required|string',
+            'detail_established_year' => 'required|string',
+            'detail_total_employee' => 'required|string',
+            'detail_liable_person_and_position' => 'required|string',
+            'detail_owner_name' => 'required|string',
+            'detail_board_of_directors' => 'required|string',
+            'detail_major_shareholders' => 'required|string',
+            'detail_business_classification' => 'required|string',
+            'detail_website_address' => 'required|string',
+            'detail_system_management' => 'required|string',
+            'detail_contact_person' => 'required|string',
+            'detail_communication_language' => 'required|string',
+            'detail_email_address' => 'required|string|email',
+            'detail_stamp_file' => 'image|max:10000|mimes:jpg,jpeg,png', // Signature/Stamp files can be optional if old file exists
+            'detail_signature_file' => 'image|max:10000|mimes:jpg,jpeg,png',
+            'detail_address.*' => 'required|string',
+            'detail_city.*' => 'required|string',
+            'detail_country.*' => 'required|string',
+            'detail_province.*' => 'required|string',
+            'detail_zip_code.*' => 'required|string',
+            'detail_telephone.*' => 'required|string',
+            'detail_fax.*' => 'required|string',
+        ], [
+            // Custom validation error messages (same as before)
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        // Check and delete existing signature file if a new one is provided
+        if ($request->hasFile('detail_signature_file')) {
+            if ($existing_data->signature != null) {
+                // Delete old signature file
+                $oldSignaturePath = public_path('storage/uploads/signature/' . $existing_data->signature);
+                if (file_exists($oldSignaturePath)) {
+                    unlink($oldSignaturePath);
+                }
+            }
+            // Handle new signature file upload
+            $file_signature = $request->file('detail_signature_file');
+            $slug_name = Str::slug($request->detail_company_name . ' signature', '-');
+            $file_signature_name = $slug_name . '.' . $file_signature->getClientOriginalExtension();
+            // Save signature file (example: move it to storage/uploads/signature)
+            $file_signature->move(public_path('storage/uploads/signature'), $file_signature_name);
+        } else {
+            // Keep the old signature if no new one is uploaded
+            $file_signature_name = $existing_data->signature;
+        }
+
+        // Check and delete existing stamp file if a new one is provided
+        if ($request->hasFile('detail_stamp_file')) {
+            if ($existing_data->stamp != null) {
+                // Delete old stamp file
+                $oldStampPath = public_path('storage/uploads/stamp/' . $existing_data->stamp);
+                if (file_exists($oldStampPath)) {
+                    unlink($oldStampPath);
+                }
+            }
+            // Handle new stamp file upload
+            $file_stamp = $request->file('detail_stamp_file');
+            $slug_name = Str::slug($request->detail_company_name . ' stamp', '-');
+            $file_stamp_name = $slug_name . '.' . $file_stamp->getClientOriginalExtension();
+            // Save stamp file (example: move it to storage/uploads/stamp)
+            $file_stamp->move(public_path('storage/uploads/stamp'), $file_stamp_name);
+        } else {
+            // Keep the old stamp if no new one is uploaded
+            $file_stamp_name = $existing_data->stamp;
+        }
+
+        // Update company information
+        $data_company_partner = [
+            'user_id' => \Auth::user()->id,
+            'name' => $request->detail_company_name,
+            'group_name' => $request->detail_company_group_name,
+            'type' => $request->detail_company_type,
+            'established_year' => $request->detail_established_year,
+            'total_employee' => $request->detail_total_employee,
+            'liable_person_and_position' => $request->detail_liable_person_and_position,
+            'owner_name' => $request->detail_owner_name,
+            'board_of_directors' => $request->detail_board_of_directors,
+            'major_shareholders' => $request->detail_major_shareholders,
+            'business_classification' => $request->detail_business_classification,
+            'other_business' => $request->business_classification_other_detail,
+            'website_address' => $request->detail_website_address,
+            'system_management' => $request->detail_system_management,
+            'contact_person' => $request->detail_contact_person,
+            'communication_language' => $request->detail_communication_language,
+            'email_address' => $request->detail_email_address,
+            'signature' => $file_signature_name,
+            'stamp' => $file_stamp_name,
+        ];
+
+        // Save the updated company information
+        $existing_data->update($data_company_partner);
+
+        DB::commit();
+        return FormatResponseJson::success(null, 'Company information updated successfully');
+    } catch (ValidationException $e) {
+        DB::rollback();
+        return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+    } catch (\Throwable $e) {
+        DB::rollback();
+        return FormatResponseJson::error(null, $e->getMessage(), 500);
+    }
+    }
+    public function updateOld(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $existing_data = CompanyInformation::where('id', $request->detail_id)->first();
+            if ($existing_data->signature != null) {
+                dd($existing_data->signature);
+            }
+            $validator = Validator::make($request->all(), [
+                'detail_company_name' => 'required|string',
+                'detail_company_group_name' => 'required|string',
+                'detail_company_type' => 'required|string',
+                'detail_established_year' => 'required|string',
+                'detail_total_employee' => 'required|string',
+                'detail_liable_person_and_position' => 'required|string',
+                'detail_owner_name' => 'required|string',
+                'detail_board_of_directors' => 'required|string',
+                'detail_major_shareholders' => 'required|string',
+                'detail_business_classification' => 'required|string',
+                'detail_website_address' => 'required|string',
+                'detail_system_management' => 'required|string',
+                'detail_contact_person' => 'required|string',
+                'detail_communication_language' => 'required|string',
+                'detail_email_address' => 'required|string|email',
+                'detail_stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+                'detail_signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+                'detail_address.*' => 'required|string',
+                'detail_city.*' => 'required|string',
+                'detail_country.*' => 'required|string',
+                'detail_province.*' => 'required|string',
+                'detail_zip_code.*' => 'required|string',
+                'detail_telephone.*' => 'required|string',
+                'detail_fax.*' => 'required|string',
+            ], [
+                'detail_company_name.required' => 'Company name/Nama perusahaan tidak boleh kosong',
+                'detail_company_group_name.required' => 'Company group name/Nama grup perusahaan tidak boleh kosong',
+                'detail_company_type.required' => 'Company type/tipe perusahaan tidak boleh kosong',
+                'detail_established_year.required' => 'Established since year/Tahun berdiri tidak boleh kosong',
+                'detail_total_employee.required' => 'Total employee/Jumlah Karyawan tidak boleh kosong',
+                'detail_liable_person_and_position.required' => 'Liable person/Penanggung jawab tidak boleh kosong',
+                'detail_owner_name.required' => 'Owner name/Nama pemilik tidak boleh kosong',
+                'detail_board_of_directors.required' => 'Board of directors/Dewan direktur tidak boleh kosong',
+                'detail_major_shareholders.required' => 'Board of directors/Pemilik saham mayoritas tidak boleh kosong',
+                'detail_business_classification.required' => 'Business classification/Jenis usaha tidak boleh kosong',
+                'detail_website_address.required' => 'Website address/Alamat situs web tidak boleh kosong',
+                'detail_system_management.required' => 'System management/Manajemen sistem tidak boleh kosong',
+                'detail_contact_person.required' => 'Contact person/Kontak person tidak boleh kosong',
+                'detail_communication_language.required' => 'Communication language/Bahasa komunikasi tidak boleh kosong',
+                'detail_email_address.required' => 'Email address/Alamat email tidak boleh kosong',
+                'detail_stamp_file.required' => 'Stamp/Stempel tidak boleh kosong',
+                'detail_signature_file.required' => 'Signature/Tanda tangan tidak boleh kosong',
+                'detail_address.*.required' => 'Address/Alamat tidak boleh kosong',
+                'detail_city.*.required' => 'City/Kota tidak boleh kosong',
+                'detail_country.*.required' => 'Country/Negara tidak boleh kosong',
+                'detail_province.*.required' => 'Province/Provinsi tidak boleh kosong',
+                'detail_zip_code.*.required' => 'Zip code/Kode pos tidak boleh kosong',
+                'detail_telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
+                'detail_fax.*.required' => 'Fax tidak boleh kosong',
+            ]);
+
+            if ($existing_data->signature != null) {
+                $validator->after(function ($validator) {
+                    $validator->errors()->add(
+                        'detail_stamp_file', 'Business classification/Jenis usaha tidak boleh kosong!'
+                    );
+                });
+            }
+            
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+
+            if($request->signature_file != NULL) {
+                $file_signature = $request->file('signature_file');
+                // $file_signature_name = time().'.'.$file_signature->getClientOriginalExtension();
+                $slug_name = Str::slug($request->company_name.' signature', '-');
+                $file_signature_name = $slug_name.'.'.$file_signature->getClientOriginalExtension();
+                // $file_signature->move(public_path('storage/uploads/signature'), $file_signature_name);
+            }
+            
+            if($request->stamp_file != NULL) {
+                $file_stamp = $request->file('stamp_file');
+                // $file_stamp_name = time().'.'.$file_stamp->getClientOriginalExtension();
+                $slug_name = Str::slug($request->company_name.' stamp', '-');
+                $file_stamp_name = $slug_name.'.'.$file_stamp->getClientOriginalExtension();
+                // $file_stamp->move(public_path('storage/uploads/stamp'), $file_stamp_name);
+            }
+            
+            $data_company_partner = [
+                'user_id' =>\Auth::user()->id,
+                'name' => $request->company_name,
+                'group_name' => $request->company_group_name,
+                'type' => $request->company_type,
+                'established_year' => $request->established_year,
+                'total_employee' => $request->total_employee,
+                'liable_person_and_position' => $request->liable_person_and_position,
+                'owner_name' => $request->owner_name,
+                'board_of_directors' => $request->board_of_directors,
+                'major_shareholders' => $request->major_shareholders,
+                'business_classification' => $request->business_classification,
+                'other_business' => $request->business_classification_other_detail,
+                'website_address' => $request->website_address,
+                'system_management' => $request->system_management,
+                'contact_person' => $request->contact_person,
+                'communication_language' => $request->communication_language,
+                'email_address' => $request->email_address,
+                'signature' => $request->signature_file != null ? $file_signature_name : null,
+                'stamp' => $request->stamp_file != null ? $file_stamp_name : null,
+            ];
+
+            $existing_data->update($data_company_partner);
+            DB::commit();
+        } catch (ValidationException $e) {
+            // Return validation errors as JSON response
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Throwable $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }

@@ -1386,7 +1386,6 @@
                 },
 
                 success: function(res) {
-                    // $('#role_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -1405,39 +1404,65 @@
                     $('#modalLoading').modal('hide')
                     let response_error = JSON.parse(xhr.responseText)
 
-                    if (response_error.meta.code == 500) {
-                        $.each(response_error.meta.message.errors, function(i, value) {
-                            $(document).Toasts('create', {
-                                title: 'Error',
-                                class: 'bg-danger',
-                                body: value,
-                                delay: 10000,
-                                autohide: true,
-                                fade: true,
-                                close: true,
-                                autoremove: true,
-                            });
-                        })
-                    }
-
-                    $.each(response_error.meta.message.errors, function(i, value) {
+                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
-                            body: value,
+                            body: response_error.meta.message,
                             delay: 10000,
                             autohide: true,
                             fade: true,
                             close: true,
                             autoremove: true,
                         });
-                    })
+                    } else {
+                        $('.text-danger').text('')
+                        $.each(response_error.meta.message.errors, function(i, value) {
+                            $('#message_' + i.replace('.', '_')).text(value)
+                        })
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: 'Silahkan isi data yang masih kosong',
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    }
                 },
-                // complete: function() {
-                //     // $('#modalLoading').modal({show: false});
-                //     setTimeout(function() {
-                //         $('#modalLoading').modal({show: false});
-                //     }, 5000)
+                // error: function(xhr) {
+                //     $('#modalLoading').modal('hide')
+                //     let response_error = JSON.parse(xhr.responseText)
+
+                //     if (response_error.meta.code == 500) {
+                //         $.each(response_error.meta.message.errors, function(i, value) {
+                //             $(document).Toasts('create', {
+                //                 title: 'Error',
+                //                 class: 'bg-danger',
+                //                 body: value,
+                //                 delay: 10000,
+                //                 autohide: true,
+                //                 fade: true,
+                //                 close: true,
+                //                 autoremove: true,
+                //             });
+                //         })
+                //     }
+
+                //     $.each(response_error.meta.message.errors, function(i, value) {
+                //         $(document).Toasts('create', {
+                //             title: 'Error',
+                //             class: 'bg-danger',
+                //             body: value,
+                //             delay: 10000,
+                //             autohide: true,
+                //             fade: true,
+                //             close: true,
+                //             autoremove: true,
+                //         });
+                //     })
                 // },
             })
         })

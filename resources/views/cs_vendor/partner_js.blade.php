@@ -527,11 +527,9 @@
 
         $(document).on('click', '#btn_submit_data_company', function(e) {
             e.preventDefault()
-            // alert('save')
             let data_form_company = new FormData($('#form_company')[0])
             $.ajax({
                 url: '{{ route('submit-partner') }}',
-                // type: 'POST',
                 method: 'POST',
                 processData: false,
                 contentType: false,
@@ -540,8 +538,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: data_form_company,
-                // dataType: 'json',
-                // async: true,
                 enctype: 'multipart/form-data',
                 beforeSend: function() {
                     setTimeout(function() {
@@ -552,7 +548,6 @@
                 },
 
                 success: function(res) {
-                    // $('#role_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -586,17 +581,6 @@
                     $('.text-danger').text('')
                     $.each(response_error.meta.message.errors, function(i, value) {
                         $('#message_' + i.replace('.', '_')).text(value)
-
-                        // $(document).Toasts('create', {
-                        //     title: 'Error',
-                        //     class: 'bg-danger',
-                        //     body: value,
-                        //     delay: 10000,
-                        //     autohide: true,
-                        //     fade: true,
-                        //     close: true,
-                        //     autoremove: true,
-                        // });
                     })
                 },
             })
