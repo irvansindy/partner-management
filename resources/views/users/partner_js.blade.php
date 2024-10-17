@@ -1432,38 +1432,6 @@
                         });
                     }
                 },
-                // error: function(xhr) {
-                //     $('#modalLoading').modal('hide')
-                //     let response_error = JSON.parse(xhr.responseText)
-
-                //     if (response_error.meta.code == 500) {
-                //         $.each(response_error.meta.message.errors, function(i, value) {
-                //             $(document).Toasts('create', {
-                //                 title: 'Error',
-                //                 class: 'bg-danger',
-                //                 body: value,
-                //                 delay: 10000,
-                //                 autohide: true,
-                //                 fade: true,
-                //                 close: true,
-                //                 autoremove: true,
-                //             });
-                //         })
-                //     }
-
-                //     $.each(response_error.meta.message.errors, function(i, value) {
-                //         $(document).Toasts('create', {
-                //             title: 'Error',
-                //             class: 'bg-danger',
-                //             body: value,
-                //             delay: 10000,
-                //             autohide: true,
-                //             fade: true,
-                //             close: true,
-                //             autoremove: true,
-                //         });
-                //     })
-                // },
             })
         })
     })
