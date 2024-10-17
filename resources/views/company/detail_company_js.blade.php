@@ -16,7 +16,7 @@
                     if (res.data[0].status != 'checking') {
                         // alert(res.data[0].status)
                         document.getElementById('btn_update_data_company').style.display = 'none';
-                        document.getElementById('add_detail_ynamic_address').style.display = 'none';
+                        document.getElementById('add_detail_dynamic_address').style.display = 'none';
 
                     }
                     $('#field_form_detail_business_other').empty()
@@ -264,7 +264,7 @@
                                             </div>
                                             <div class="col mb-4 align-items-end mr-4">
                                                 <button type="button" class="btn btn-primary float-right"
-                                                    id="add_detail_ynamic_address">+ Address</button>
+                                                    id="add_detail_dynamic_address">+ Address</button>
                                             </div>
                                         </div>
                                     </div>
@@ -392,7 +392,7 @@
                                             </div>
                                             <div class="col mb-4 align-items-end mr-4">
                                                 <button type="button" class="btn btn-primary float-right"
-                                                    id="add_detail_ynamic_address">+ Address</button>
+                                                    id="add_detail_dynamic_address">+ Address</button>
                                             </div>
                                         </div>
                                     </div>

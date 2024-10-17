@@ -1,19 +1,21 @@
 <!-- Modal -->
-<div class="modal fade" id="modalCreatePartner" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalCreatePartnerLabel" aria-hidden="true">
+<div class="modal fade" id="dataDetailPartner" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="dataDetailPartnerLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalCreatePartnerLabel">Form Partner</h5>
+                <h5 class="modal-title" id="dataDetailPartnerLabel">Detail Data</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <form action="" method="" id="form_company">
+                    <form action="" method="" id="form_detail_partner_data_by_user">
                         {{-- company information master --}}
                         <div class="card card-info">
                             <div class="card-header">
+                                <input type="hidden" name="detail_id" id="detail_id">
                                 <h3 class="card-title">1. COMPANY INFORMATION (Informasi Perusahaan)</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -26,7 +28,7 @@
                                 <div class="row px-2 py-2" style="line-height: 1">
                                     <div class="input-group my-4">
                                         <div class="col-md-3">
-                                            <label for="company_type">Company Type *</label>
+                                            <label for="detail_company_type">Company Type *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -34,18 +36,18 @@
                                                 Perusahaan</p>
                                         </div>
                                         <div class="col-md-9">
-                                            {{-- <input type="text" name="company_name" id="company_name" placeholder=""
-                                                class="form-control"> --}}
-                                                <select name="company_type" id="company_type">
-                                                    <option value="customer">Customer</option>
-                                                    <option value="vendor">Vendor</option>
-                                                    <option value="customer dan vendor">Keduanya</option>
-                                                </select>
+                                            <select name="detail_company_type" id="detail_company_type"
+                                                class="form-control">
+                                                <option value="customer">Customer</option>
+                                                <option value="vendor">Vendor</option>
+                                                <option value="customer dan vendor">Keduanya</option>
+                                            </select>
+                                            <span class="text-danger mt-2" id="message_detail_company_type" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group my-4">
                                         <div class="col-md-3">
-                                            <label for="">Company Name *</label>
+                                            <label for="detail_company_name">Company Name *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -53,38 +55,38 @@
                                                 Perusahaan</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="company_name" id="company_name" placeholder=""
-                                                class="form-control">
+                                            <input type="text" name="detail_company_name" id="detail_company_name" placeholder="" class="form-control">
+                                                <span class="text-danger mt-2" id="message_detail_company_name" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-4 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="company_group_name">Company Group Name *</label>
+                                                    <label for="detail_company_group_name">Company Group Name *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Nama Grup Perusahaan</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="company_group_name"
-                                                        id="company_group_name" placeholder="" class="form-control">
+                                                    <input type="text" name="detail_company_group_name" id="detail_company_group_name" placeholder="" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="established_year">Established Since (Year) *</label>
+                                                    <label for="detail_established_year">Established Since (Year)
+                                                        *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Didirikan Sejak (Tahun)</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="established_year" id="established_year"
-                                                        placeholder="" class="form-control">
+                                                    <input type="number" name="detail_established_year" id="detail_established_year" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_established_year" role="alert"></span>
                                                 </div>
 
                                             </div>
@@ -92,15 +94,15 @@
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="total_employee">Total Employee *</label>
+                                                    <label for="detail_total_employee">Total Employee *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Jumlah Karyawan</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="total_employee" id="total_employee"
-                                                        placeholder="" class="form-control">
+                                                    <input type="number" name="detail_total_employee" id="detail_total_employee" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_total_employee" role="alert"></span>
                                                 </div>
 
                                             </div>
@@ -110,7 +112,8 @@
                                         <div class="col-md-6 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="liable_person_and_position">Liable Person & Position
+                                                    <label for="detail_liable_person_and_position">Liable Person &
+                                                        Position
                                                         *</label>
                                                     <br>
                                                     <p class="fs-6"
@@ -118,24 +121,23 @@
                                                         Nama penanggung Jawab & Jabatan</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="liable_person_and_position"
-                                                        id="liable_person_and_position" placeholder=""
-                                                        class="form-control">
+                                                    <input type="text" name="detail_liable_person_and_position" id="detail_liable_person_and_position" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_liable_person_and_position" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="owner_name">Owner’s Name *</label>
+                                                    <label for="detail_owner_name">Owner’s Name *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Nama Pemilik/Presiden</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="owner_name" id="owner_name"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_owner_name" id="detail_owner_name" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_owner_name" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -144,22 +146,22 @@
                                         <div class="col-md-6 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="board_of_directors">Board of Directors *</label>
+                                                    <label for="detail_board_of_directors">Board of Directors *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Nama Dewan Direktur</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="board_of_directors"
-                                                        id="board_of_directors" placeholder="" class="form-control">
+                                                    <input type="text" name="detail_board_of_directors" id="detail_board_of_directors" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_board_of_directors" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="major_shareholders">Major Shareholders *</label>
+                                                    <label for="detail_major_shareholders">Major Shareholders *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -167,8 +169,8 @@
                                                         Saham Mayoritas</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="major_shareholders"
-                                                        id="major_shareholders" placeholder="" class="form-control">
+                                                    <input type="text" name="detail_major_shareholders" id="detail_major_shareholders" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_major_shareholders" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -176,7 +178,7 @@
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-auto">
-                                            <label for="">Business Classification *</label>
+                                            <label for="detail_business_classification">Business Classification *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -184,14 +186,14 @@
                                         </div>
                                         <div class="col-md-auto">
                                             <div class="row px-2">
-                                                <div class="col-md-auto">
+                                                <div class="col-md-auto" id="list_business_classification">
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input" style="margin-bottom: 1rem;"
-                                                            type="radio" name="business_classification"
-                                                            id="business_classification_manufacturer"
+                                                            type="radio" name="detail_business_classification"
+                                                            id="detail_business_classification_manufacturer"
                                                             value="Manufacturer">
                                                         <label class="form-check-label"
-                                                            for="business_classification_manufacturer">
+                                                            for="detail_business_classification_manufacturer">
                                                             Manufacturer
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -200,10 +202,11 @@
                                                     </div>
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input" style="margin-bottom: 1rem;"
-                                                            type="radio" name="business_classification"
-                                                            id="business_classification_trading" value="Trading">
+                                                            type="radio" name="detail_business_classification"
+                                                            id="detail_business_classification_trading"
+                                                            value="Trading">
                                                         <label class="form-check-label"
-                                                            for="business_classification_trading">
+                                                            for="detail_business_classification_trading">
                                                             Trading
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -213,10 +216,10 @@
                                                     </div>
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input" style="margin-bottom: 1rem;"
-                                                            type="radio" name="business_classification"
-                                                            id="business_classification_agent" value="Agent">
+                                                            type="radio" name="detail_business_classification"
+                                                            id="detail_business_classification_agent" value="Agent">
                                                         <label class="form-check-label"
-                                                            for="business_classification_agent">
+                                                            for="detail_business_classification_agent">
                                                             Agent
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -226,11 +229,11 @@
                                                     </div>
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input" style="margin-bottom: 1rem;"
-                                                            type="radio" name="business_classification"
-                                                            id="business_classification_distributor"
+                                                            type="radio" name="detail_business_classification"
+                                                            id="detail_business_classification_distributor"
                                                             value="Distributor">
                                                         <label class="form-check-label"
-                                                            for="business_classification_distributor">
+                                                            for="detail_business_classification_distributor">
                                                             Distributor
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -240,10 +243,11 @@
                                                     </div>
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input" style="margin-bottom: 1rem;"
-                                                            type="radio" name="business_classification"
-                                                            id="business_classification_services" value="Services">
+                                                            type="radio" name="detail_business_classification"
+                                                            id="detail_business_classification_services"
+                                                            value="Services">
                                                         <label class="form-check-label"
-                                                            for="business_classification_services">
+                                                            for="detail_business_classification_services">
                                                             Services
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -253,11 +257,11 @@
                                                     </div>
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input" style="margin-bottom: 1rem;"
-                                                            type="radio" name="business_classification"
-                                                            id="business_classification_contractor"
+                                                            type="radio" name="detail_business_classification"
+                                                            id="detail_business_classification_contractor"
                                                             value="Contractor">
                                                         <label class="form-check-label"
-                                                            for="business_classification_contractor">
+                                                            for="detail_business_classification_contractor">
                                                             Contractor
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -267,10 +271,10 @@
                                                     </div>
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input" style="margin-bottom: 1rem;"
-                                                            type="radio" name="business_classification"
-                                                            id="business_classification_other" value="Other">
+                                                            type="radio" name="detail_business_classification"
+                                                            id="detail_business_classification_other" value="Other">
                                                         <label class="form-check-label"
-                                                            for="business_classification_other">
+                                                            for="detail_business_classification_other">
                                                             Other
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -279,94 +283,96 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-auto" id="field_form_create_business_other">
-                                                    
+                                                <div class="col-md-auto" id="field_form_detail_business_other">
+
                                                 </div>
+                                                <span class="text-danger mt-2" id="message_detail_business_classification" role="alert"></span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-3">
-                                            <label for="website_address">Website Address *</label>
+                                            <label for="detail_website_address">Website Address *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                 Alamat Situs</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="website_address" id="website_address"
-                                                placeholder="" class="form-control">
+                                            <input type="text" name="detail_website_address" id="detail_website_address" placeholder="" class="form-control">
+                                            <span class="text-danger mt-2" id="message_detail_website_address" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-auto">
-                                            <label for="">System Management *</label>
+                                            <label for="detail_system_management">System Management *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                 Jenis Usaha</p>
                                         </div>
-                                        <div class="col-md-auto">
+                                        <div class="col-md-auto detail_system_management">
                                             <div class="form-check form-check-inline mb-1">
                                                 <input class="form-check-input" type="radio"
-                                                    name="system_management" id="system_management_iso"
+                                                    name="detail_system_management" id="detail_system_management_iso"
                                                     value="ISO">
-                                                <label class="form-check-label" for="system_management_iso">
+                                                <label class="form-check-label" for="detail_system_management_iso">
                                                     ISO</label>
                                             </div>
                                             <div class="form-check form-check-inline mb-1">
                                                 <input class="form-check-input" type="radio"
-                                                    name="system_management" id="system_management_smk3"
+                                                    name="detail_system_management" id="detail_system_management_smk3"
                                                     value="SMK3">
-                                                <label class="form-check-label" for="system_management_smk3">
+                                                <label class="form-check-label" for="detail_system_management_smk3">
                                                     SMK3</label>
                                             </div>
                                             <div class="form-check form-check-inline mb-1">
                                                 <input class="form-check-input" style="margin-bottom: 1rem !important"
-                                                    type="radio" name="system_management"
-                                                    id="system_management_other" value="Others Certificate">
-                                                <label class="form-check-label" for="system_management_other">
+                                                    type="radio" name="detail_system_management"
+                                                    id="detail_system_management_other" value="Others Certificate">
+                                                <label class="form-check-label" for="detail_system_management_other">
                                                     Others Certificate
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Sertifikat lainnya</p>
                                                 </label>
                                             </div>
+                                            <span class="text-danger mt-2" id="message_detail_system_management" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-6 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="contact_person">Contact Persons *</label>
+                                                    <label for="detail_contact_person">Contact Persons *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Staff yang dapat dihubungi</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="contact_person" id="contact_person"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_contact_person" id="detail_contact_person" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_contact_person" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="communication_language">Comm. Language *</label>
+                                                    <label for="detail_communication_language">Comm. Language *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Bahasa Komunikasi</p>
                                                 </div>
-                                                <div class="col-md-auto">
+                                                <div class="col-md-auto detail_option_languange">
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input"
                                                             style="margin-bottom: 1rem !important" type="radio"
-                                                            name="communication_language"
-                                                            id="communication_language_bahasa" value="Bahasa">
+                                                            name="detail_communication_language"
+                                                            id="detail_communication_language_bahasa" value="Bahasa">
                                                         <label class="form-check-label"
-                                                            for="communication_language_bahasa">
+                                                            for="detail_communication_language_bahasa">
                                                             Bahasa
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -376,10 +382,11 @@
                                                     <div class="form-check form-check-inline mb-1">
                                                         <input class="form-check-input"
                                                             style="margin-bottom: 1rem !important" type="radio"
-                                                            name="communication_language"
-                                                            id="communication_language_english" value="English">
+                                                            name="detail_communication_language"
+                                                            id="detail_communication_language_english"
+                                                            value="English">
                                                         <label class="form-check-label"
-                                                            for="communication_language_english">
+                                                            for="detail_communication_language_english">
                                                             English
                                                             <p class="fs-6"
                                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -387,178 +394,59 @@
                                                         </label>
                                                     </div>
                                                 </div>
+                                                <span class="text-danger mt-2" id="message_detail_communication_language" role="alert"></span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-3">
-                                            <label for="email_address">Email Address (Correspondence) *</label>
+                                            <label for="detail_email_address">Email Address (Correspondence) *</label>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                 Alamat email (Koresponden)</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="email_address" id="email_address"
-                                                placeholder="" class="form-control">
+                                            <input type="text" name="detail_email_address" id="detail_email_address" placeholder="" class="form-control">
+                                            <span class="text-danger mt-2" id="message_detail_email_address" role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
-                                        <div class="col-md-6">
-                                            <label for="email_address">Stamp *</label>
-                                            <p class="fs-6"
-                                                style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Stempel</p>
-                                            <input type="file" name="stamp_file" id="stamp_file" class="form-control"/>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="email_address">Signature *</label>
-                                            <p class="fs-6"
-                                                style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Tanda Tangan</p>
-                                            <input type="file" name="signature_file" id="signature_file" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="company_address_additional" id="company_address_additional">
-                                        {{-- <fieldset>
-                                        </fieldset> --}}
-                                        <div class="input-group mb-4">
-                                            <div class="col-md-2">
-                                                <label for="address">Company Address *<br>
-                                                    (according to Company Address stated in the Tax Register Number):
-                                                    *</label>
-                                                <br>
-                                                <p class="fs-6"
-                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Alamat Perusahaan
-                                                    (sesuai dengan NPWP)</p>
+                                        <div class="col-sm-6">
+                                            <label for="detail_stamp_file">Stamp *</label>
+                                            <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
+                                                Stempel
+                                            </p>
+                                            <div class="form_field_detail_stamp">
+                                                <input type="file" name="detail_stamp_file" id="detail_stamp_file" class="form-control mb-2" />
                                             </div>
-                                            <div class="col-md-10">
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-4">
-                                                        <input type="text" name="address[]" id="address"
-                                                            placeholder="" class="form-control">
-                                                    </div>
-                                                    <div class="col-md-auto">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <label for="city">City *</label>
-                                                                <br>
-                                                                <p class="fs-6"
-                                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                                    Kota</p>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <input type="text" name="city[]" id="city"
-                                                                    placeholder="" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-auto mb-4">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <label for="country">Country *</label>
-                                                                <br>
-                                                                <p class="fs-6"
-                                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                                    Negara</p>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <input type="text" name="country[]" id="country"
-                                                                    placeholder="" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-auto mb-4">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <label for="province">Province *</label>
-                                                                <br>
-                                                                <p class="fs-6"
-                                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                                    Provinsi</p>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <input type="text" name="province[]"
-                                                                    id="province" placeholder=""
-                                                                    class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-auto mb-4">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <label for="zip_code">Zip Code *</label>
-                                                                <br>
-                                                                <p class="fs-6"
-                                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                                    Kode Pos</p>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <input type="text" name="zip_code[]"
-                                                                    id="zip_code" placeholder=""
-                                                                    class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-auto mb-4">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <label for="telephone">Telephone *</label>
-                                                                <p class="fs-6"
-                                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                                    + [Country-Area Code] [No.]
-                                                                    Telepon +[Negara-Area] [No.]</p>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <input type="text" name="telephone[]"
-                                                                    id="telephone" placeholder=""
-                                                                    class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-auto mb-4">
-                                                        <div class="row">
-                                                            <div class="col-md-auto">
-                                                                <label for="fax">Fax *</label>
-                                                                <p class="fs-6"
-                                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                                    + [Country-Area Code] [No.]
-                                                                    Fax +[Negara-Area] [No.]</p>
-                                                            </div>
-                                                            <div class="col-md-auto">
-                                                                <input type="text" name="fax[]" id="fax"
-                                                                    placeholder="" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-auto">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input main_address" type="radio" name="main_address[]" id="main_address">
-                                                            <label class="form-check-label" for="main_address">
-                                                                Main Address
-                                                            </label>
-                                                            <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Alamat Utama</p>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col mb-4 align-items-end mr-4">
-                                                        <button type="button" class="btn btn-primary float-right"
-                                                            id="add_dynamic_address">+ Address</button>
-                                                    </div>
-                                                </div>
+                                            <a id="link_stamp" target="_blank">
+                                                <i class="fas fa-file"></i> Your Stamp
+                                            </a>
+                                            <div class="button-change-stamp" style="cursor: pointer;"></div>
+                                        </div>
+                                        <span class="text-danger mt-2" id="message_detail_stamp_file" role="alert"></span>
+                                        <div class="col-sm-6">
+                                            <label for="detail_signature_file">Signature *</label>
+                                            <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
+                                                Tanda Tangan
+                                            </p>
+                                            <div class="form_field_detail_signature">
+                                                <input type="file" name="detail_signature_file" id="detail_signature_file" class="form-control mb-2" />
                                             </div>
+                                            <a id="link_signature" target="_blank">
+                                                <i class="fas fa-file"></i> Your Signature
+                                            </a>
+                                            <div class="button-change-signature" style="cursor: pointer;"></div>
                                         </div>
-                                        <div class="dynamic_company_address">
-
-                                        </div>
+                                        <span class="text-danger mt-2" id="message_detail_signature_file" role="alert"></span>
                                     </div>
                                 </div>
+                                <div class="detail_company_address_additional" id="detail_company_address_additional">
+                                    
+                                </div>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        {{-- end master --}}
+                        <!-- /.card-body -->
 
                         {{-- company bank --}}
                         <div class="card card-info">
@@ -573,34 +461,34 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="row px-2 py-2" style="line-height: 1">
+                                <div class="row px-2 py-2" id="list_data_bank" style="line-height: 1">
                                     <div class="input-group mt-4">
                                         <div class="col-md-6 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="bank_name">Bank Name *</label>
+                                                    <label for="detail_bank_name">Bank Name *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Nama Bank</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="bank_name[]" id="bank_name"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_bank_name[]"
+                                                        id="detail_bank_name" placeholder="" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="branch">Branch *</label>
+                                                    <label for="detail_branch">Branch *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Cabang</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="branch[]" id="branch"
+                                                    <input type="text" name="detail_branch[]" id="detail_branch"
                                                         placeholder="" class="form-control">
                                                 </div>
                                             </div>
@@ -610,30 +498,31 @@
                                         <div class="col-md-6 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="account_name">Account Name *</label>
+                                                    <label for="detail_account_name">Account Name *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Rekening Atas Nama</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="account_name[]" id="account_name"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_account_name[]"
+                                                        id="detail_account_name" placeholder="" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="city_or_country">City/Country *</label>
+                                                    <label for="detail_city_or_country">City/Country *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Kota/Negara</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="city_or_country[]"
-                                                        id="city_or_country" placeholder="" class="form-control">
+                                                    <input type="text" name="detail_city_or_country[]"
+                                                        id="detail_city_or_country" placeholder=""
+                                                        class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -642,45 +531,46 @@
                                         <div class="col-md-auto mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="account_number">Account No. *</label>
+                                                    <label for="detail_account_number">Account No. *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         No Rekening</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="account_number[]" id="account_number"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_account_number[]"
+                                                        id="detail_account_number" placeholder=""
+                                                        class="form-control">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-auto mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="currency">Currency *</label>
+                                                    <label for="detail_currency">Currency *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Mata Uang</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="currency[]" id="currency"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_currency[]"
+                                                        id="detail_currency" placeholder="" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-auto">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="swift_code">Swift Code *</label>
+                                                    <label for="detail_swift_code">Swift Code *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Optional</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="swift_code[]" id="swift_code"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_swift_code[]"
+                                                        id="detail_swift_code" placeholder="" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -710,12 +600,13 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="row px-2 py-2" style="line-height: 1">
+                                <div class="row px-2 py-2" id="list_detail_tax" style="line-height: 1">
                                     <div class="input-group mt-4">
                                         <div class="col-md-auto mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="register_number_as_in_tax_invoice">Tax Register Number
+                                                    <label for="detail_register_number_as_in_tax_invoice">Tax Register
+                                                        Number
                                                         (As in Tax Invoice) *</label>
                                                     <br>
                                                     <p class="fs-6"
@@ -723,8 +614,9 @@
                                                         Nomor NPWP (Sesuai dengan Faktur Pajak)</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="register_number_as_in_tax_invoice"
-                                                        id="register_number_as_in_tax_invoice" placeholder=""
+                                                    <input type="text"
+                                                        name="detail_register_number_as_in_tax_invoice"
+                                                        id="detail_register_number_as_in_tax_invoice" placeholder=""
                                                         class="form-control">
                                                 </div>
                                             </div>
@@ -732,15 +624,15 @@
                                         <div class="col-md-auto mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="trc_number">TRC No. *</label>
+                                                    <label for="detail_trc_number">TRC No. *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Nomor TRC</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="trc_number" id="trc_number"
-                                                        placeholder="" class="form-control">
+                                                    <input type="text" name="detail_trc_number"
+                                                        id="detail_trc_number" placeholder="" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -749,7 +641,8 @@
                                         <div class="col-md-auto mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="register_number_related_branch">Tax Register Number
+                                                    <label for="detail_register_number_related_branch">Tax Register
+                                                        Number
                                                         (Related Branch) *</label>
                                                     <br>
                                                     <p class="fs-6"
@@ -757,8 +650,8 @@
                                                         Nomor NPWP (Cabang Terkait)</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="register_number_related_branch"
-                                                        id="register_number_related_branch" placeholder=""
+                                                    <input type="text" name="detail_register_number_related_branch"
+                                                        id="detail_register_number_related_branch" placeholder=""
                                                         class="form-control">
                                                 </div>
                                             </div>
@@ -766,151 +659,57 @@
                                         <div class="col-md-auto mb-4">
                                             <div class="row">
                                                 <div class="col-md-auto">
-                                                    <label for="valid_until">Valid Until *</label>
+                                                    <label for="detail_valid_until">Valid Until *</label>
                                                     <br>
                                                     <p class="fs-6"
                                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                         Berlaku Sampai</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="date" name="valid_until" id="valid_until"
-                                                        placeholder="" class="form-control">
+                                                    <input type="date" name="detail_valid_until"
+                                                        id="detail_valid_until" placeholder="" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-3">
-                                            <label for="taxable_entrepreneur_number">Taxable Entrepreneur Number
+                                            <label for="detail_taxable_entrepreneur_number">Taxable Entrepreneur Number
                                                 *</label>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                 Nomor Surat Pengukuhan PKP</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="taxable_entrepreneur_number"
-                                                id="taxable_entrepreneur_number" placeholder="" class="form-control">
+                                            <input type="text" name="detail_taxable_entrepreneur_number"
+                                                id="detail_taxable_entrepreneur_number" placeholder=""
+                                                class="form-control">
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-3">
-                                            <label for="tax_invoice_serial_number">Tax Invoice Serial No. *</label>
+                                            <label for="detail_tax_invoice_serial_number">Tax Invoice Serial No.
+                                                *</label>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                 Nomor Serial Faktur Pajak (pada SK-PKP)</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="tax_invoice_serial_number"
-                                                id="tax_invoice_serial_number" placeholder="" class="form-control">
+                                            <input type="text" name="detail_tax_invoice_serial_number"
+                                                id="detail_tax_invoice_serial_number" placeholder=""
+                                                class="form-control">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {{-- end company tax --}}
-
-                        {{-- support document --}}
-                        <div class="card card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    4. SUPPORTING DOCUMENTS (Dokumen yang harus dilengkapi)
-                                </h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row px-2 py-2" style="line-height: 1">
-                                    <div class="input-group mt-2">
-                                        <ul class="nav nav-tabs" role="tablist">
-                                            <li class="nav-item">
-                                                <a class="nav-link active" href="#document_type_pt" role="tab"
-                                                    data-toggle="tab">PT</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#document_type_cv" role="tab"
-                                                    data-toggle="tab">CV</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#document_type_ud_or_pd" role="tab"
-                                                    data-toggle="tab">UD/PD</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#document_type_perorangan" role="tab"
-                                                    data-toggle="tab">Perorangan</a>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-content mt-4">
-                                            <div role="tabpanel" class="tab-pane fade" id="document_type_pt">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Doc Type</th>
-                                                            <th>File</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="data_doc_type_pt">
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div role="tabpanel" class="tab-pane fade" id="document_type_cv">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Doc Type</th>
-                                                            <th>File</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="data_doc_type_cv">
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div role="tabpanel" class="tab-pane fade" id="document_type_ud_or_pd">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Doc Type</th>
-                                                            <th>File</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="data_doc_type_ud_or_pd">
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div role="tabpanel" class="tab-pane fade" id="document_type_perorangan">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Doc Type</th>
-                                                            <th>File</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="data_doc_type_perorangan">
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="d-flex justify-content-end">
-                                    <button type="button" class="btn btn-primary" id="btn_submit_data_company">
-                                        submit
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        {{-- end support document --}}
-                    </form>
                 </div>
+                {{-- end master --}}
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="submit_form_partner">Create</button>
+            <div class="modal-footer" id="button_update_partner">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn_update_data_company">Update</button>
             </div>
         </div>
     </div>

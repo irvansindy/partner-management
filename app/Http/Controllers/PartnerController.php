@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-// use Illuminate\Support\Facades\Validator;
 class PartnerController extends Controller
 {
     /**
@@ -47,23 +46,32 @@ class PartnerController extends Controller
             $company_profile = CompanyInformation::with(['user', 'address', 'bank', 'tax', 'attachment'])
             ->where("user_id", auth()->user()->id)->first();
 
-            $doc_type = CompanyDocumentTypeCategories::all();
+            $result_detail_partner = $company_profile != null ? $company_profile : null;
+            $doc_pt = null;
+            $doc_cv = null;
+            $doc_ud_or_pd = null;
+            $doc_perorangan = null;
+            $supporting_document_user = null;
+            $doc_type = CompanyDocumentTypeCategories::get(['id', 'name', 'name_id_class']);
+            if ($result_detail_partner != null) {
+                $doc_pt = CompanySupportingDocument::where('company_id', $company_profile->id)
+                ->where('company_doc_type', 'pt')
+                ->get();
+                
+                $doc_cv = CompanySupportingDocument::where('company_id', $company_profile->id)
+                ->where('company_doc_type', 'cv')
+                ->get();
+                
+                $doc_ud_or_pd = CompanySupportingDocument::where('company_id', $company_profile->id)
+                ->where('company_doc_type', 'ud_or_pd')
+                ->get();
+                
+                $doc_perorangan = CompanySupportingDocument::where('company_id', $company_profile->id)
+                ->where('company_doc_type', 'perorangan')
+                ->get();
 
-            $doc_pt = CompanySupportingDocument::where('company_id', $company_profile->id)
-            ->where('company_doc_type', 'pt')
-            ->get();
-            
-            $doc_cv = CompanySupportingDocument::where('company_id', $company_profile->id)
-            ->where('company_doc_type', 'cv')
-            ->get();
-            
-            $doc_ud_or_pd = CompanySupportingDocument::where('company_id', $company_profile->id)
-            ->where('company_doc_type', 'ud_or_pd')
-            ->get();
-            
-            $doc_perorangan = CompanySupportingDocument::where('company_id', $company_profile->id)
-            ->where('company_doc_type', 'perorangan')
-            ->get();
+                $supporting_document_user = CompanySupportingDocument::where('company_id', $company_profile->id)->get();
+            }
 
             $data = [
                 $company_profile,
@@ -71,9 +79,18 @@ class PartnerController extends Controller
                 'pt' => $doc_pt,
                 'cv' => $doc_cv,
                 'ud_or_pd' => $doc_ud_or_pd,
-                'perorangan' => $doc_perorangan
+                'perorangan' => $doc_perorangan,
+                'document' => $supporting_document_user
             ];
             return FormatResponseJson::success($data, 'Company profile fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+    public function fetchDocument()
+    {
+        try {
+
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
@@ -105,9 +122,6 @@ class PartnerController extends Controller
             DB::beginTransaction();
             $existing_data = CompanyInformation::where('user_id', auth()->user()->id)->first();
             if ($existing_data) {
-                // return response()->json([
-                //     'message' => 'sudah terdaftar.'
-                // ], 400);
                 return FormatResponseJson::error(null, 'Anda sudah mendaftar.', 400);
             }
             $validator = Validator::make($request->all(), [
@@ -125,7 +139,7 @@ class PartnerController extends Controller
                 'system_management' => 'required|string',
                 'contact_person' => 'required|string',
                 'communication_language' => 'required|string',
-                'email_address' => 'required|email|unique:company_informations',
+                'email_address' => 'required|email|unique:company_informations,email_address',
                 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'address.*' => 'required|string',
@@ -1442,8 +1456,283 @@ class PartnerController extends Controller
     public function update(Request $request)
     {
         try {
-            // dd($request->all());
             DB::beginTransaction();
+            $existing_data = CompanyInformation::where('id', $request->detail_id)->first();
+            
+            // Dynamic validation rules
+            $rules = [
+                'detail_company_name' => 'required|string',
+                'detail_company_group_name' => 'required|string',
+                'detail_company_type' => 'required|string',
+                'detail_established_year' => 'required|string',
+                'detail_total_employee' => 'required|string',
+                'detail_liable_person_and_position' => 'required|string',
+                'detail_owner_name' => 'required|string',
+                'detail_board_of_directors' => 'required|string',
+                'detail_major_shareholders' => 'required|string',
+                'detail_business_classification' => 'required|string',
+                'detail_website_address' => 'required|string',
+                'detail_system_management' => 'required|string',
+                'detail_contact_person' => 'required|string',
+                'detail_communication_language' => 'required|string',
+                'detail_email_address' => 'required|string|email',
+                'detail_address.*' => 'required|string',
+                'detail_city.*' => 'required|string',
+                'detail_country.*' => 'required|string',
+                'detail_province.*' => 'required|string',
+                'detail_zip_code.*' => 'required|integer',
+                'detail_telephone.*' => 'required|string',
+                'detail_fax.*' => 'required|string',
+            ];
+            
+            // Only require stamp and signature if they are not already set
+            if ($existing_data->stamp == null) {
+                if($request->detail_stamp_file == null) {
+                    $rules['detail_stamp_file'] = 'required|image|max:10000|mimes:jpg,jpeg,png';
+                }
+            }
+
+            if ($existing_data->signature == null) {
+                if($request->detail_signature_file == null) {
+                    $rules['detail_signature_file'] = 'required|image|max:10000|mimes:jpg,jpeg,png';
+                }
+            }
+
+            // Validation messages
+            $messages = [
+                'detail_company_name.required' => 'Company name/Nama perusahaan tidak boleh kosong',
+                'detail_company_group_name.required' => 'Company group name/Nama grup perusahaan tidak boleh kosong',
+                'detail_company_type.required' => 'Company type/tipe perusahaan tidak boleh kosong',
+                'detail_established_year.required' => 'Established since year/Tahun berdiri tidak boleh kosong',
+                'detail_total_employee.required' => 'Total employee/Jumlah Karyawan tidak boleh kosong',
+                'detail_liable_person_and_position.required' => 'Liable person/Penanggung jawab tidak boleh kosong',
+                'detail_owner_name.required' => 'Owner name/Nama pemilik tidak boleh kosong',
+                'detail_board_of_directors.required' => 'Board of directors/Dewan direktur tidak boleh kosong',
+                'detail_major_shareholders.required' => 'Board of directors/Pemilik saham mayoritas tidak boleh kosong',
+                'detail_business_classification.required' => 'Business classification/Jenis usaha tidak boleh kosong',
+                'detail_website_address.required' => 'Website address/Alamat situs web tidak boleh kosong',
+                'detail_system_management.required' => 'System management/Manajemen sistem tidak boleh kosong',
+                'detail_contact_person.required' => 'Contact person/Kontak person tidak boleh kosong',
+                'detail_communication_language.required' => 'Communication language/Bahasa komunikasi tidak boleh kosong',
+                'detail_email_address.required' => 'Email address/Alamat email tidak boleh kosong',
+                'detail_stamp_file.required' => 'Stamp/Stempel tidak boleh kosong',
+                'detail_signature_file.required' => 'Signature/Tanda tangan tidak boleh kosong',
+                'detail_address.*.required' => 'Address/Alamat tidak boleh kosong',
+                'detail_city.*.required' => 'City/Kota tidak boleh kosong',
+                'detail_country.*.required' => 'Country/Negara tidak boleh kosong',
+                'detail_province.*.required' => 'Province/Provinsi tidak boleh kosong',
+                'detail_zip_code.*.required' => 'Zip code/Kode pos tidak boleh kosong',
+                'detail_telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
+                'detail_fax.*.required' => 'Fax tidak boleh kosong',
+            ];
+
+            // Apply validation
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+
+            // Check and delete existing signature file if a new one is provided
+            if ($request->hasFile('detail_signature_file')) {
+                if ($existing_data->signature != null) {
+                    // Delete old signature file
+                    $oldSignaturePath = public_path('storage/uploads/signature/' . $existing_data->signature);
+                    if (file_exists($oldSignaturePath)) {
+                        unlink($oldSignaturePath);
+                    }
+                }
+                // Handle new signature file upload
+                $file_signature = $request->file('detail_signature_file');
+                $slug_name = Str::slug($request->detail_company_name . ' signature', '-');
+                $file_signature_name = $slug_name . '.' . $file_signature->getClientOriginalExtension();
+                // Save signature file (example: move it to storage/uploads/signature)
+                $file_signature->move(public_path('storage/uploads/signature'), $file_signature_name);
+            } else {
+                // Keep the old signature if no new one is uploaded
+                $file_signature_name = $existing_data->signature;
+            }
+
+            // Check and delete existing stamp file if a new one is provided
+            if ($request->hasFile('detail_stamp_file')) {
+                if ($existing_data->stamp != null) {
+                    // Delete old stamp file
+                    $oldStampPath = public_path('storage/uploads/stamp/' . $existing_data->stamp);
+                    if (file_exists($oldStampPath)) {
+                        unlink($oldStampPath);
+                    }
+                }
+                // Handle new stamp file upload
+                $file_stamp = $request->file('detail_stamp_file');
+                $slug_name = Str::slug($request->detail_company_name . ' stamp', '-');
+                $file_stamp_name = $slug_name . '.' . $file_stamp->getClientOriginalExtension();
+                // Save stamp file (example: move it to storage/uploads/stamp)
+                $file_stamp->move(public_path('storage/uploads/stamp'), $file_stamp_name);
+            } else {
+                // Keep the old stamp if no new one is uploaded
+                $file_stamp_name = $existing_data->stamp;
+            }
+
+            // Update company information
+            $data_company_partner = [
+                // 'user_id' => \Auth::user()->id,
+                'name' => $request->detail_company_name,
+                'group_name' => $request->detail_company_group_name,
+                'type' => $request->detail_company_type,
+                'established_year' => $request->detail_established_year,
+                'total_employee' => $request->detail_total_employee,
+                'liable_person_and_position' => $request->detail_liable_person_and_position,
+                'owner_name' => $request->detail_owner_name,
+                'board_of_directors' => $request->detail_board_of_directors,
+                'major_shareholders' => $request->detail_major_shareholders,
+                'business_classification' => $request->detail_business_classification,
+                'other_business' => $request->detail_business_classification_other_detail,
+                'website_address' => $request->detail_website_address,
+                'system_management' => $request->detail_system_management,
+                'contact_person' => $request->detail_contact_person,
+                'communication_language' => $request->detail_communication_language,
+                'email_address' => $request->detail_email_address,
+                'signature' => $request->detail_signature_file != null ? $file_signature_name : $existing_data->signature,
+                'stamp' => $request->detail_stamp_file != null ? $file_stamp_name : $existing_data->stamp,
+            ];
+            // updating data
+            $existing_data->update($data_company_partner);
+            // Commit changes
+            DB::commit();
+            return FormatResponseJson::success('success', 'partner profile updated successfully');
+        } catch (ValidationException $e) {
+            // Return validation errors as JSON response
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Throwable $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+    public function update2(Request $request)
+{
+    try {
+        DB::beginTransaction();
+        $existing_data = CompanyInformation::where('id', $request->detail_id)->first();
+        
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'detail_company_name' => 'required|string',
+            'detail_company_group_name' => 'required|string',
+            'detail_company_type' => 'required|string',
+            'detail_established_year' => 'required|string',
+            'detail_total_employee' => 'required|string',
+            'detail_liable_person_and_position' => 'required|string',
+            'detail_owner_name' => 'required|string',
+            'detail_board_of_directors' => 'required|string',
+            'detail_major_shareholders' => 'required|string',
+            'detail_business_classification' => 'required|string',
+            'detail_website_address' => 'required|string',
+            'detail_system_management' => 'required|string',
+            'detail_contact_person' => 'required|string',
+            'detail_communication_language' => 'required|string',
+            'detail_email_address' => 'required|string|email',
+            'detail_stamp_file' => 'image|max:10000|mimes:jpg,jpeg,png', // Signature/Stamp files can be optional if old file exists
+            'detail_signature_file' => 'image|max:10000|mimes:jpg,jpeg,png',
+            'detail_address.*' => 'required|string',
+            'detail_city.*' => 'required|string',
+            'detail_country.*' => 'required|string',
+            'detail_province.*' => 'required|string',
+            'detail_zip_code.*' => 'required|string',
+            'detail_telephone.*' => 'required|string',
+            'detail_fax.*' => 'required|string',
+        ], [
+            // Custom validation error messages (same as before)
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        // Check and delete existing signature file if a new one is provided
+        if ($request->hasFile('detail_signature_file')) {
+            if ($existing_data->signature != null) {
+                // Delete old signature file
+                $oldSignaturePath = public_path('storage/uploads/signature/' . $existing_data->signature);
+                if (file_exists($oldSignaturePath)) {
+                    unlink($oldSignaturePath);
+                }
+            }
+            // Handle new signature file upload
+            $file_signature = $request->file('detail_signature_file');
+            $slug_name = Str::slug($request->detail_company_name . ' signature', '-');
+            $file_signature_name = $slug_name . '.' . $file_signature->getClientOriginalExtension();
+            // Save signature file (example: move it to storage/uploads/signature)
+            $file_signature->move(public_path('storage/uploads/signature'), $file_signature_name);
+        } else {
+            // Keep the old signature if no new one is uploaded
+            $file_signature_name = $existing_data->signature;
+        }
+
+        // Check and delete existing stamp file if a new one is provided
+        if ($request->hasFile('detail_stamp_file')) {
+            if ($existing_data->stamp != null) {
+                // Delete old stamp file
+                $oldStampPath = public_path('storage/uploads/stamp/' . $existing_data->stamp);
+                if (file_exists($oldStampPath)) {
+                    unlink($oldStampPath);
+                }
+            }
+            // Handle new stamp file upload
+            $file_stamp = $request->file('detail_stamp_file');
+            $slug_name = Str::slug($request->detail_company_name . ' stamp', '-');
+            $file_stamp_name = $slug_name . '.' . $file_stamp->getClientOriginalExtension();
+            // Save stamp file (example: move it to storage/uploads/stamp)
+            $file_stamp->move(public_path('storage/uploads/stamp'), $file_stamp_name);
+        } else {
+            // Keep the old stamp if no new one is uploaded
+            $file_stamp_name = $existing_data->stamp;
+        }
+
+        // Update company information
+        $data_company_partner = [
+            'user_id' => \Auth::user()->id,
+            'name' => $request->detail_company_name,
+            'group_name' => $request->detail_company_group_name,
+            'type' => $request->detail_company_type,
+            'established_year' => $request->detail_established_year,
+            'total_employee' => $request->detail_total_employee,
+            'liable_person_and_position' => $request->detail_liable_person_and_position,
+            'owner_name' => $request->detail_owner_name,
+            'board_of_directors' => $request->detail_board_of_directors,
+            'major_shareholders' => $request->detail_major_shareholders,
+            'business_classification' => $request->detail_business_classification,
+            'other_business' => $request->business_classification_other_detail,
+            'website_address' => $request->detail_website_address,
+            'system_management' => $request->detail_system_management,
+            'contact_person' => $request->detail_contact_person,
+            'communication_language' => $request->detail_communication_language,
+            'email_address' => $request->detail_email_address,
+            'signature' => $file_signature_name,
+            'stamp' => $file_stamp_name,
+        ];
+
+        // Save the updated company information
+        $existing_data->update($data_company_partner);
+
+        DB::commit();
+        return FormatResponseJson::success(null, 'Company information updated successfully');
+    } catch (ValidationException $e) {
+        DB::rollback();
+        return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+    } catch (\Throwable $e) {
+        DB::rollback();
+        return FormatResponseJson::error(null, $e->getMessage(), 500);
+    }
+    }
+    public function updateOld(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $existing_data = CompanyInformation::where('id', $request->detail_id)->first();
+            if ($existing_data->signature != null) {
+                dd($existing_data->signature);
+            }
             $validator = Validator::make($request->all(), [
                 'detail_company_name' => 'required|string',
                 'detail_company_group_name' => 'required|string',
@@ -1459,7 +1748,7 @@ class PartnerController extends Controller
                 'detail_system_management' => 'required|string',
                 'detail_contact_person' => 'required|string',
                 'detail_communication_language' => 'required|string',
-                'detail_email_address' => 'required|string|email|unique',
+                'detail_email_address' => 'required|string|email',
                 'detail_stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'detail_signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'detail_address.*' => 'required|string',
@@ -1495,6 +1784,14 @@ class PartnerController extends Controller
                 'detail_telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
                 'detail_fax.*.required' => 'Fax tidak boleh kosong',
             ]);
+
+            if ($existing_data->signature != null) {
+                $validator->after(function ($validator) {
+                    $validator->errors()->add(
+                        'detail_stamp_file', 'Business classification/Jenis usaha tidak boleh kosong!'
+                    );
+                });
+            }
             
             if ($validator->fails()) {
                 throw new ValidationException($validator);
@@ -1537,6 +1834,8 @@ class PartnerController extends Controller
                 'signature' => $request->signature_file != null ? $file_signature_name : null,
                 'stamp' => $request->stamp_file != null ? $file_stamp_name : null,
             ];
+
+            $existing_data->update($data_company_partner);
             DB::commit();
         } catch (ValidationException $e) {
             // Return validation errors as JSON response

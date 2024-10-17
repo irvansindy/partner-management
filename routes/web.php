@@ -32,14 +32,16 @@ Route::get('/', function () {
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/partner', [PartnerController::class,'index'])->name('partner');
+    // Route::get('/partner', [PartnerController::class,'index'])->name('partner');
     Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
+    Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
     Route::get('/detail-partner', [PartnerController::class,'detailPartner'])->name('detail-partner');
+    Route::get('/fetch-partner-byuser', [PartnerController::class,'fetchCompanyPartnerById'])->name('fetch-partner-byuser');
     Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
     Route::post('/update-partner', [PartnerController::class,'update'])->name('update-partner');
+    
 });
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {

@@ -383,15 +383,18 @@
                         <div class="input-group mb-4">
                             <div class="col-sm-6">
                                 <label for="detail_stamp_file">Stamp *</label>
-                                <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;"> Stempel</p>
-                                    <input type="file" name="detail_stamp_file" id="detail_stamp_file" class="form-control" />
-                                    <a id="link_stamp" target="_blank"><i class="fas fa-file"></i> Your Stamp</a>
+                                <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
+                                    Stempel</p>
+                                <input type="file" name="detail_stamp_file" id="detail_stamp_file"
+                                    class="form-control" />
+                                <a id="link_stamp" target="_blank"><i class="fas fa-file"></i> Your Stamp</a>
                             </div>
                             <div class="col-sm-6">
                                 <label for="detail_signature_file">Signature *</label>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                     Tanda Tangan</p>
-                                    <input type="file" name="detail_signature_file" id="detail_signature_file" class="form-control" />
+                                <input type="file" name="detail_signature_file" id="detail_signature_file"
+                                    class="form-control" />
                                 <a id="link_signature" target="_blank"><i class="fas fa-file"></i> Your Signature</a>
                             </div>
                         </div>
@@ -509,7 +512,7 @@
                                     </div>
                                     <div class="col mb-4 align-items-end mr-4">
                                         <button type="button" class="btn btn-primary float-right"
-                                            id="add_detail_ynamic_address">+ Address</button>
+                                            id="add_detail_dynamic_address">+ Address</button>
                                     </div>
                                 </div>
                             </div>

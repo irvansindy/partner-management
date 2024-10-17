@@ -534,7 +534,7 @@
                                                     </div>
                                                     <div class="col mb-4 align-items-end mr-4">
                                                         <button type="button" class="btn btn-primary float-right"
-                                                            id="add_detail_ynamic_address">+ Address</button>
+                                                            id="add_detail_dynamic_address">+ Address</button>
                                                     </div>
                                                 </div>
                                             </div>

@@ -27,3 +27,9 @@ tanggal 11 september 2024
 DATABASE NAME : pralonco_partner-management
 USER DATABASE : pralonco_partner-management
 PASS USER : #PartneR10424
+
+# catatan standarisasi
+1. format tanggal
+2. nomor document untuk record data.
+3. 
+
