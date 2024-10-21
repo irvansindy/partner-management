@@ -1,113 +1,63 @@
 <!-- Modal -->
 <div class="modal fade" id="modal_support_document" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="modal_support_documentLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal_support_documentLabel">List Supporting Document</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                {{-- support document --}}
-                <div class="row px-2 py-2" style="line-height: 1">
-                    <div class="input-group mt-2">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="#document_type_pt" role="tab"
-                                    data-toggle="tab">PT</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#document_type_cv" role="tab"
-                                    data-toggle="tab">CV</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#document_type_ud_or_pd" role="tab"
-                                    data-toggle="tab">UD/PD</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#document_type_perorangan" role="tab"
-                                    data-toggle="tab">Perorangan</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content mt-4">
-                            <div role="tabpanel" class="tab-pane fade" id="document_type_pt">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Doc Type</th>
-                                            <th>File</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="data_doc_type_pt">
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane fade" id="document_type_cv">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Doc Type</th>
-                                            <th>File</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="data_doc_type_cv">
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane fade" id="document_type_ud_or_pd">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Doc Type</th>
-                                            <th>File</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="data_doc_type_ud_or_pd">
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane fade" id="document_type_perorangan">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Doc Type</th>
-                                            <th>File</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="data_doc_type_perorangan">
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                {{-- <div class="card card-info">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            SUPPORTING DOCUMENTS (Dokumen yang harus dilengkapi)
-                        </h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                    </div>
-                </div> --}}
-                {{-- end support document --}}
-            </div>
-            <div class="modal-footer">
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-primary" id="btn_submit_data_company">
-                        submit
+            <form id="form_submit_supporting_document" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal_support_documentLabel">Form Supporting Documents</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-            </div>
+                <div class="modal-body">
+                    <div class="row row_list_supporting_document">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <select class="form-control select2_supporting_document" name="supporting_document_type[]" id="supporting_document_type_0">
+                                    
+                                </select>
+                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Dokumen</p>
+                                <span class="text-danger mt-2 message_supporting_document_type" id="message_supporting_document_type_0" role="alert"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <select class="form-control select2_supporting_document" name="supporting_document_business_type[]" id="supporting_document_business_type_0">
+                                    <option value="">tipe bisnis dokumen</option>
+                                </select>
+                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Usaha</p>
+                                <span class="text-danger mt-2 message_supporting_document_business_type" id="message_supporting_document_business_type_0" role="alert"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <input type="file" name="file_supporting_document[]" id="file_supporting_document_0" placeholder="" class="form-control" required/>
+                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen</p>
+                                <span class="text-danger mt-2 message_file_supporting_document" id="message_file_supporting_document_0" role="alert"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary btn_add_supporting_document" id="btn_add_supporting_document">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dynamic_row_list_supporting_document">
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-end">
+                        <input type="hidden" name="supporting_document_partner_id" id="supporting_document_partner_id">
+                        <button type="button" class="btn btn-primary" id="btn_submit_supporting_document">
+                            submit
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

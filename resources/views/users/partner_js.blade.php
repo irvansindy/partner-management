@@ -3,6 +3,10 @@
         dropdownParent: $('#modalCreatePartner'),
         width: '100%'
     })
+    $('.select2_supporting_document').select2({
+        dropdownParent: $('#modal_support_document'),
+        width: '100%'
+    })
 
     $(document).ready(function() {
         fetchDataPartner()
@@ -27,7 +31,7 @@
                         $('#data-company-established-year').html('<small>Not Set</small>')
                         $('#data-company-type').empty()
                         $('#data-company-type').html('<small>Not Set</small>')
-
+                        
                     }
 
                     if (res.data[0] != null) {
@@ -43,23 +47,28 @@
                         $('#data-company-type').empty()
                         $('#data-company-type').html('<small>' + res.data[0].type + '</small>')
 
+                        $('#add_data_support_document').attr('data-data_id', res.data[0].id)
+
                         const supporting_document = res.data.document
+                        
                         $('#company_support_document').DataTable().clear().destroy();
                         $('#company_support_document tbody').empty();
 
                         supporting_document.forEach((docx, index) => {
-                            let id = docx.id != null ? docx.user.id : 'not set'
+                            let id = docx.id != null ? docx.id : 'not set'
+                            let data_link_docx = "{{ asset('') }}" + docx.document
                             $('#company_support_document tbody').append(`
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${docx.document != null ? docx.document : 'not set'}</td>
                                     <td>${docx.document_type_name != null ? docx.document_type_name : 'not set'}</td>
-                                    <td>${docx.user != null ? docx.user.username : 'not set'}</td>
+                                    <td>${docx.document != null ? `<a href="" id="link_docx_${index}" target="blank_">Link</a>` : 'not set'}</td>
                                     <td>
                                         <button class="btn btn-sm btn-outline-info edit_supporting_document" data-toggle="modal" data-target="#modal_support_document_edit"><i class="fas fa-edit"></i></button>
                                     </td>
                                 </tr>
                             `);
+                            $("#link_docx_"+index).attr("href", data_link_docx);
                         });
 
                         $('#company_support_document').DataTable({
@@ -69,68 +78,7 @@
                 }
             })
         }
-
-        $(document).on('click', '#add_data_support_document', function(e) {
-            e.preventDefault()
-            $.ajax({
-                url: '{{ route('fetch-doctype') }}',
-                type: 'GET',
-                dataType: 'json',
-                async: true,
-                success: function(res) {
-                    console.log(res.data)
-                    // $('#field_form_create_business_other').empty()
-                    $('#data_doc_type_pt').empty()
-                    $.each(res.data, function(i, data) {
-                        $('#data_doc_type_pt').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_pt'}" id="${'doc_name_'+data.name_id_class+'_pt'}" class="form-control ${'doc_name_'+data.name_id_class+'_pt'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_pt'}" id="${data.name_id_class+'_pt'}" class="form-control ${data.name_id_class+'_pt'}" />
-                            </td>
-                        </tr>`)
-                    })
-
-                    $('#data_doc_type_cv').empty()
-                    $.each(res.data, function(i, data) {
-                        $('#data_doc_type_cv').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_cv'}" id="${'doc_name_'+data.name_id_class+'_cv'}" class="form-control ${'doc_name_'+data.name_id_class+'_cv'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_cv'}" id="${data.name_id_class+'_cv'}" class="form-control ${data.name_id_class+'_cv'}" />
-                            </td>
-                        </tr>`)
-                    })
-
-                    $('#document_type_ud_or_pd').empty()
-                    $.each(res.data, function(i, data) {
-                        $('#document_type_ud_or_pd').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" id="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" class="form-control ${'doc_name_'+data.name_id_class+'_ud_or_pd'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_ud_or_pd'}" id="${data.name_id_class+'_ud_or_pd'}" class="form-control ${data.name_id_class+'_ud_or_pd'}" />
-                            </td>
-                        </tr>`)
-                    })
-
-                    $('#data_doc_type_perorangan').empty()
-                    $.each(res.data, function(i, data) {
-                        $('#data_doc_type_perorangan').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_perorangan'}" id="${'doc_name_'+data.name_id_class+'_perorangan'}" class="form-control ${'doc_name_'+data.name_id_class+'_perorangan'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_perorangan'}" id="${data.name_id_class+'_perorangan'}" class="form-control ${data.name_id_class+'_perorangan'}" />
-                            </td>
-                        </tr>`)
-                    })
-                }
-            })
-        })
-
+        // menampilkan hover title jika kursor berada pada card partner name
         $('#card-info-company-name').hover(
             function(event) {
                 // On mouse enter
@@ -154,7 +102,7 @@
                 left: event.pageX + 10 + 'px'
             });
         });
-
+        // menampilkan keseluruhan detail partner/company data
         $(document).on('dblclick', '#card-info-company-name', function(e) {
             e.preventDefault()
             $('#dataDetailPartner').modal('hide')
@@ -440,10 +388,17 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+                                            <div class="col mb-4 align-items-end" id="button-for-add-address_${i}">
+                                                
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            `)
+                            $('#button-for-add-address_'+i).append(`
+                                <button type="button" class="btn btn-primary float-right" id="add_detail_dynamic_address">
+                                    + Address
+                                </button>
                             `)
                         })
                         $('#detail_company_address_additional').append(`
@@ -1043,7 +998,7 @@
                 }
             })
         })
-
+        // untuk update urutan id setiap element pada form dynamic alamat data
         function updateIdAddress() {
             $('.array_detail_company_address').each(function (index) {
                 // Update IDs for input elements
@@ -1065,18 +1020,18 @@
                 $(this).find('.message_fax').attr('id', 'message_fax_' + (index + 1));
             });
         }
-
-        $(document).on('change', 'input[name="business_classification"]', function() {
+        // menambah atau menghapus elemet input jika class/type bisnis adalah other
+        $(document).on('change', 'input[name="detail_business_classification"]', function() {
             let value = $(this).val()
             if (value == 'Other') {
-                $('#field_form_create_business_other').append(`
-                    <input type="text" name="business_classification_other_detail" id="business_classification_other_detail" placeholder="Other" class="form-control">
+                $('#field_form_detail_business_other').append(`
+                    <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control">
                 `)
             } else {
-                $('#field_form_create_business_other').empty()
+                $('#field_form_detail_business_other').empty()
             }
         })
-
+        // menambah form dynamic alamat data
         $(document).on('click', '#add_detail_dynamic_address', function(e) {
             e.preventDefault()
             $('.detail_dynamic_company_address').append(`
@@ -1184,12 +1139,12 @@
             `)
             updateIdAddress()
         })
-
+        // menghapus form dynamic alamat data
         $(document).on('click', '#delete_dynamic_address', function(e) {
             $(this).closest('.array_detail_company_address').remove();
             updateIdAddress();
         })
-
+        // untuk update urutan id setiap element pada form dynamic bank data
         function updateIdBank() {
             $('.array_dymanic_bank').each(function(index) {
                 $(this).find('input[name="detail_bank_name[]"]').attr('id', 'detail_bank_name_' + (index + 1));
@@ -1201,7 +1156,7 @@
                 $(this).find('input[name="detail_swift_code[]"]').attr('id', 'detail_swift_code_' + (index + 1));
             })
         }
-
+        // menambah form dynamic bank data
         $(document).on('click', '#add_bank', function(e) {
             e.preventDefault()
             $('.dynamic_bank').append(`
@@ -1311,13 +1266,13 @@
             `)
             updateIdBank()
         })
-
+        // menghapus form dynamic bank data
         $(document).on('click', '#delete_bank', function(e) {
             e.preventDefault()
             $(this).closest('.array_dymanic_bank').remove()
             updateIdBank()
         })
-
+        // opsi update data foto/scan stempel
         $(document).on('click', '.title_change_stamp', function() {
             // $('#detail_stamp_file').attr('hidden', false)
             $('.form_field_detail_stamp').empty()
@@ -1328,7 +1283,7 @@
                 <span class="info-box-text text-danger cancel_change_stamp" id="cancel_change_stamp" title="Cancel perubahan stempel"><small>Cancel perubahan stempel</small></span>
             `)
         })
-
+        // opsi update data foto/scan tanda tangan
         $(document).on('click', '.title_change_signature', function() {
             // $('#detail_signature_file').attr('hidden', false)
             $('.form_field_detail_signature').empty()
@@ -1339,7 +1294,7 @@
                 <span class="info-box-text text-danger cancel_change_signature" id="cancel_change_signature" title="Cancel perubahan tanda tangan"><small>Cancel perubahan tanda tangan</small></span>
             `)
         })
-        
+        // cancel update data foto/scan stempel
         $(document).on('click', '#cancel_change_stamp', function() {
             // $("#detail_stamp_file").attr("hidden",true);
             $('.form_field_detail_stamp').empty()
@@ -1349,7 +1304,7 @@
                 <span class="info-box-text title_change_stamp" id="title_change_stamp" title="Ubah data stempel"><small>Ubah data stempel</small></span>
             `)
         })
-
+        // cancel update data foto/scan tanda tangan
         $(document).on('click', '#cancel_change_signature', function() {
             // $("#detail_signature_file").attr("hidden",true);
             $('.form_field_detail_signature').empty()
@@ -1359,13 +1314,13 @@
                 <span class="info-box-text title_change_signature" id="title_change_signature" title="Ubah data tanda tangan"><small>Ubah data tanda tangan</small></span>
             `)
         })
-
+        // update data ketika kondisi masih checking 1
         $(document).on('click', '#btn_update_data_company', function(e) {
             e.preventDefault()
             let data_form_company = new FormData($('#form_detail_partner_data_by_user')[0])
+            
             $.ajax({
                 url: '{{ route("update-partner") }}',
-                // type: 'POST',
                 method: 'POST',
                 processData: false,
                 contentType: false,
@@ -1374,8 +1329,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: data_form_company,
-                // dataType: 'json',
-                // async: true,
                 enctype: 'multipart/form-data',
                 beforeSend: function() {
                     setTimeout(function() {
@@ -1402,6 +1355,200 @@
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
+                    let response_error = JSON.parse(xhr.responseText)
+
+                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: response_error.meta.message,
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    } else {
+                        $('.text-danger').text('')
+                        $.each(response_error.meta.message.errors, function(i, value) {
+                            $('#message_' + i.replace('.', '_')).text(value)
+                        })
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: 'Silahkan isi data yang masih kosong',
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    }
+                },
+            })
+        })
+        // menambahkan data attachment partner
+        $(document).on('click', '#add_data_support_document', function(e) {
+            e.preventDefault()
+            let data_id = $(this).data('data_id')
+            $('#form_submit_supporting_document')[0].reset()
+            $.ajax({
+                url: '{{ route('fetch-doctype') }}',
+                type: 'GET',
+                dataType: 'json',
+                async: true,
+                success: function(res) {
+                    $('#dynamic_row_list_supporting_document').empty()
+                    $('.message_supporting_document_type').text('')
+                    $('.message_supporting_document_business_type').text('')
+                    $('.message_file_supporting_document').text('')
+                    
+                    // add all data tipe dokumen
+                    $('#supporting_document_partner_id').val(data_id)
+                    $('#supporting_document_type_0').empty()
+                    $('#supporting_document_type_0').append(`<option value="">tipe dokumen</option>`)
+                    $.each(res.data, function(i, data) {
+                        $('#supporting_document_type_0').append(`<option value="${data.id+`|`+data.name}">${data.name}</option>`)
+                    })
+                    
+                    // add all data class business
+                    let list_class_business = [
+                        'pt',
+                        'cv',
+                        'ud_or_pd',
+                        'perorangan'
+                    ]
+                    $('#supporting_document_business_type_0').empty()
+                    $('#supporting_document_business_type_0').append(`<option value="">tipe usaha</option>`)
+                    $.each(list_class_business, function(i, data) {
+                        $('#supporting_document_business_type_0').append(`<option value="${data}">${data}</option>`)
+                    })
+                }
+            })
+        })
+        // update each id supporting document
+        function updateIdCreateAttachment() {
+            $('.array_data_supporting_document').each(function(i) {
+                $(this).find('select[name="supporting_document_type[]"]').attr('id', 'supporting_document_type_' + (i + 1));
+                $(this).find('select[name="supporting_document_business_type[]"]').attr('id', 'supporting_document_business_type_' + (i + 1));
+                $(this).find('input[name="file_supporting_document[]"]').attr('id', 'file_supporting_document_' + (i + 1));
+
+                $(this).find('.message_supporting_document_type').attr('id', 'message_supporting_document_type_' + (i + 1));
+                $(this).find('.message_supporting_document_business_type').attr('id', 'message_supporting_document_business_type_' + (i + 1));
+                $(this).find('.message_file_supporting_document').attr('id', 'message_file_supporting_document_' + (i + 1));
+            })
+        }
+        // menambahkan form field data file supporting document
+        $(document).on('click', '#btn_add_supporting_document', function(e) {
+            e.preventDefault()
+            $('#dynamic_row_list_supporting_document').append(`
+                <div class="row array_data_supporting_document mt-2">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <select class="form-control select2_supporting_document" name="supporting_document_type[]" id="supporting_document_type">
+                                <option value="">tipe dokumen</option>
+                            </select>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Dokumen</p>
+                            <span class="text-danger mt-2 message_supporting_document_type" id="" role="alert"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <select class="form-control select2_supporting_document" name="supporting_document_business_type[]" id="supporting_document_business_type">
+                                <option value="">tipe bisnis dokumen</option>
+                            </select>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Usaha</p>
+                            <span class="text-danger mt-2 message_supporting_document_business_type" id="" role="alert"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <input type="file" name="file_supporting_document[]" id="file_supporting_document" placeholder="" class="form-control">
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen</p>
+                            <span class="text-danger mt-2 message_file_supporting_document" id="" role="alert"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-danger btn_delete_supporting_document">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `)
+            
+            $('.select2_supporting_document').select2({
+                dropdownParent: $('#modal_support_document'),
+                width: '100%'
+            })
+            updateIdCreateAttachment()
+            let total_field_document = $('.array_data_supporting_document').length
+            $.ajax({
+                url: '{{ route('fetch-doctype') }}',
+                type: 'GET',
+                dataType: 'json',
+                async: true,
+                success: function(res) {
+                    // add all data tipe dokumen
+                    $('#supporting_document_type_' + total_field_document).empty()
+                    $('#supporting_document_type_' + total_field_document).append(`<option value="">tipe dokumen</option>`)
+                    $.each(res.data, function(i, data) {
+                        $('#supporting_document_type_0').append(`<option value="${data.id+`|`+data.name}">${data.name}</option>`)
+                    })
+                    // add all data class business
+                    let list_class_business = [
+                        'pt',
+                        'cv',
+                        'ud_or_pd',
+                        'perorangan'
+                    ]
+                    $('#supporting_document_business_type_' + total_field_document).empty()
+                    $('#supporting_document_business_type_' + total_field_document).append(`<option value="">tipe usaha</option>`)
+                    $.each(list_class_business, function(i, data) {
+                        $('#supporting_document_business_type_' + total_field_document).append(`<option value="${data}">${data}</option>`)
+                    })
+                }
+            })
+        })
+        // menghapus form field data file supporting document
+        $(document).on('click', '.btn_delete_supporting_document', function(e) {
+            e.preventDefault()
+            $(this).closest('.array_data_supporting_document').remove()
+            updateIdCreateAttachment()
+        })
+        // submit data supporting document
+        $(document).on('click', '#btn_submit_supporting_document', function(e) {
+            // Create a FormData object to handle files and form data
+            var formData = new FormData($('#form_submit_supporting_document')[0]);
+            $.ajax({
+                url: '{{ route("store-attachment") }}',
+                type: 'POST',
+                data: formData,
+                processData: false,   // Prevent jQuery from processing the data
+                contentType: false,   // Prevent jQuery from setting content type
+                cache: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                enctype: 'multipart/form-data',
+                success: function (res) {
+                    // alert('Documents submitted successfully!');
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        class: 'bg-success',
+                        body: res.meta.message,
+                        delay: 5000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
+                    });
+                    fetchDataPartner()
+                    $('#modal_support_document').modal('hide');  // Close modal on success
+                },
+                error: function(xhr) {
+                    fetchDataPartner()
                     let response_error = JSON.parse(xhr.responseText)
 
                     if (response_error.meta.code === 500 || response_error.meta.code === 400) {

@@ -110,7 +110,6 @@ class PartnerController extends Controller
     {
         try {
             $doc_type = CompanyDocumentTypeCategories::all();
-            // dd($doc_type);
             return FormatResponseJson::success($doc_type,'Document Type fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
@@ -1664,6 +1663,59 @@ class PartnerController extends Controller
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Throwable $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+    public function storeAttachment(Request $request)
+    {
+        try {
+            $rules = [
+                'supporting_document_type.*' => 'required|string|max:255',
+                'supporting_document_business_type.*' => 'required|string|max:255',
+                'file_supporting_document.*' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10480', // Validate file uploads
+            ];
+            $validator = Validator::make($request->all(), $rules, [
+                'supporting_document_type.*.required' => 'The supporting document type field is required',
+                'supporting_document_business_type.*.required' => 'The supporting document business type field is required',
+                'file_supporting_document.*.required' => 'The file supporting document field is required',
+            ]);
+            // throw validation error
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+            // check file uploaded
+            $data_docx_attachment = [];
+            $list_docx_attachment_data = [];
+            if($request->file('file_supporting_document') != null) {
+                for ($i = 0; $i < count($request->file_supporting_document); $i++) {
+                    // setup name file
+                    $explode_docx_type = explode('|', $request->supporting_document_type[$i]);
+                    $result_docx_name = Str::slug($explode_docx_type[1], '_');
+                    $file = $request->file('file_supporting_document')[$i];
+                    $file_name = $result_docx_name.'_'.$request->supporting_document_business_type[$i].'.'.$file->getClientOriginalExtension();
+                    $path = public_path('storage/uploads/'.$request->supporting_document_business_type[$i].'/');
+                    $file->move($path, $file_name);
+                    
+                    // insert data to database
+                    $list_docx_attachment_data = [
+                        'company_id'=> $request->supporting_document_partner_id,
+                        'company_doc_type' => $request->supporting_document_business_type[$i],
+                        'document' => 'storage/uploads/'.$request->supporting_document_business_type[$i].'/'.$file_name,
+                        'document_type' => $file->getClientOriginalExtension(),
+                        'document_type_name' => $request->supporting_document_business_type[$i],
+                    ];
+                    $result_array = array_push($data_docx_attachment, $list_docx_attachment_data);
+                }
+                CompanySupportingDocument::insert($data_docx_attachment);
+                // dd($data_docx_attachment);
+            }
+            DB::commit();
+            return FormatResponseJson::success('success', 'documents uploaded successfully');
+        } catch (ValidationException $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
             DB::rollback();
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }

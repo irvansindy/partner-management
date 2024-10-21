@@ -41,7 +41,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/fetch-partner-byuser', [PartnerController::class,'fetchCompanyPartnerById'])->name('fetch-partner-byuser');
     Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
     Route::post('/update-partner', [PartnerController::class,'update'])->name('update-partner');
-    
+    Route::post('store-attachment', [PartnerController::class,'storeAttachment'])->name('store-attachment');
 });
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {

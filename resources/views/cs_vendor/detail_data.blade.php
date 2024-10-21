@@ -42,7 +42,8 @@
                                                 <option value="vendor">Vendor</option>
                                                 <option value="customer dan vendor">Keduanya</option>
                                             </select>
-                                            <span class="text-danger mt-2" id="message_detail_company_type" role="alert"></span>
+                                            <span class="text-danger mt-2" id="message_detail_company_type"
+                                                role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group my-4">
@@ -55,8 +56,10 @@
                                                 Perusahaan</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="detail_company_name" id="detail_company_name" placeholder="" class="form-control">
-                                                <span class="text-danger mt-2" id="message_detail_company_name" role="alert"></span>
+                                            <input type="text" name="detail_company_name" id="detail_company_name"
+                                                placeholder="" class="form-control">
+                                            <span class="text-danger mt-2" id="message_detail_company_name"
+                                                role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
@@ -70,7 +73,9 @@
                                                         Nama Grup Perusahaan</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="detail_company_group_name" id="detail_company_group_name" placeholder="" class="form-control">
+                                                    <input type="text" name="detail_company_group_name"
+                                                        id="detail_company_group_name" placeholder=""
+                                                        class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -85,8 +90,11 @@
                                                         Didirikan Sejak (Tahun)</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="number" name="detail_established_year" id="detail_established_year" placeholder="" class="form-control">
-                                                    <span class="text-danger mt-2" id="message_detail_established_year" role="alert"></span>
+                                                    <input type="number" name="detail_established_year"
+                                                        id="detail_established_year" placeholder=""
+                                                        class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_established_year"
+                                                        role="alert"></span>
                                                 </div>
 
                                             </div>
@@ -101,8 +109,11 @@
                                                         Jumlah Karyawan</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="number" name="detail_total_employee" id="detail_total_employee" placeholder="" class="form-control">
-                                                    <span class="text-danger mt-2" id="message_detail_total_employee" role="alert"></span>
+                                                    <input type="number" name="detail_total_employee"
+                                                        id="detail_total_employee" placeholder=""
+                                                        class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_total_employee"
+                                                        role="alert"></span>
                                                 </div>
 
                                             </div>
@@ -121,8 +132,12 @@
                                                         Nama penanggung Jawab & Jabatan</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="detail_liable_person_and_position" id="detail_liable_person_and_position" placeholder="" class="form-control">
-                                                    <span class="text-danger mt-2" id="message_detail_liable_person_and_position" role="alert"></span>
+                                                    <input type="text" name="detail_liable_person_and_position"
+                                                        id="detail_liable_person_and_position" placeholder=""
+                                                        class="form-control">
+                                                    <span class="text-danger mt-2"
+                                                        id="message_detail_liable_person_and_position"
+                                                        role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -136,8 +151,10 @@
                                                         Nama Pemilik/Presiden</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="detail_owner_name" id="detail_owner_name" placeholder="" class="form-control">
-                                                    <span class="text-danger mt-2" id="message_detail_owner_name" role="alert"></span>
+                                                    <input type="text" name="detail_owner_name"
+                                                        id="detail_owner_name" placeholder="" class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_owner_name"
+                                                        role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -153,8 +170,11 @@
                                                         Nama Dewan Direktur</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="detail_board_of_directors" id="detail_board_of_directors" placeholder="" class="form-control">
-                                                    <span class="text-danger mt-2" id="message_detail_board_of_directors" role="alert"></span>
+                                                    <input type="text" name="detail_board_of_directors"
+                                                        id="detail_board_of_directors" placeholder=""
+                                                        class="form-control">
+                                                    <span class="text-danger mt-2"
+                                                        id="message_detail_board_of_directors" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -169,8 +189,11 @@
                                                         Saham Mayoritas</p>
                                                 </div>
                                                 <div class="col-md-7">
-                                                    <input type="text" name="detail_major_shareholders" id="detail_major_shareholders" placeholder="" class="form-control">
-                                                    <span class="text-danger mt-2" id="message_detail_major_shareholders" role="alert"></span>
+                                                    <input type="text" name="detail_major_shareholders"
+                                                        id="detail_major_shareholders" placeholder=""
+                                                        class="form-control">
+                                                    <span class="text-danger mt-2"
+                                                        id="message_detail_major_shareholders" role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -178,7 +201,8 @@
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-md-auto">
-                                            <label for="detail_business_classification">Business Classification *</label>
+                                            <label for="detail_business_classification">Business Classification
+                                                *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
@@ -286,7 +310,8 @@
                                                 <div class="col-md-auto" id="field_form_detail_business_other">
 
                                                 </div>
-                                                <span class="text-danger mt-2" id="message_detail_business_classification" role="alert"></span>
+                                                <span class="text-danger mt-2"
+                                                    id="message_detail_business_classification" role="alert"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -299,8 +324,10 @@
                                                 Alamat Situs</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="detail_website_address" id="detail_website_address" placeholder="" class="form-control">
-                                            <span class="text-danger mt-2" id="message_detail_website_address" role="alert"></span>
+                                            <input type="text" name="detail_website_address"
+                                                id="detail_website_address" placeholder="" class="form-control">
+                                            <span class="text-danger mt-2" id="message_detail_website_address"
+                                                role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
@@ -337,7 +364,8 @@
                                                         Sertifikat lainnya</p>
                                                 </label>
                                             </div>
-                                            <span class="text-danger mt-2" id="message_detail_system_management" role="alert"></span>
+                                            <span class="text-danger mt-2" id="message_detail_system_management"
+                                                role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
@@ -351,8 +379,11 @@
                                                         Staff yang dapat dihubungi</p>
                                                 </div>
                                                 <div class="col-md-auto">
-                                                    <input type="text" name="detail_contact_person" id="detail_contact_person" placeholder="" class="form-control">
-                                                    <span class="text-danger mt-2" id="message_detail_contact_person" role="alert"></span>
+                                                    <input type="text" name="detail_contact_person"
+                                                        id="detail_contact_person" placeholder=""
+                                                        class="form-control">
+                                                    <span class="text-danger mt-2" id="message_detail_contact_person"
+                                                        role="alert"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -394,7 +425,8 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <span class="text-danger mt-2" id="message_detail_communication_language" role="alert"></span>
+                                                <span class="text-danger mt-2"
+                                                    id="message_detail_communication_language" role="alert"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -406,43 +438,51 @@
                                                 Alamat email (Koresponden)</p>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" name="detail_email_address" id="detail_email_address" placeholder="" class="form-control">
-                                            <span class="text-danger mt-2" id="message_detail_email_address" role="alert"></span>
+                                            <input type="text" name="detail_email_address"
+                                                id="detail_email_address" placeholder="" class="form-control">
+                                            <span class="text-danger mt-2" id="message_detail_email_address"
+                                                role="alert"></span>
                                         </div>
                                     </div>
                                     <div class="input-group mb-4">
                                         <div class="col-sm-6">
                                             <label for="detail_stamp_file">Stamp *</label>
-                                            <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
+                                            <p class="fs-6"
+                                                style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                 Stempel
                                             </p>
                                             <div class="form_field_detail_stamp">
-                                                <input type="file" name="detail_stamp_file" id="detail_stamp_file" class="form-control mb-2" />
+                                                <input type="file" name="detail_stamp_file" id="detail_stamp_file"
+                                                    class="form-control mb-2" />
                                             </div>
                                             <a id="link_stamp" target="_blank">
                                                 <i class="fas fa-file"></i> Your Stamp
                                             </a>
                                             <div class="button-change-stamp" style="cursor: pointer;"></div>
                                         </div>
-                                        <span class="text-danger mt-2" id="message_detail_stamp_file" role="alert"></span>
+                                        <span class="text-danger mt-2" id="message_detail_stamp_file"
+                                            role="alert"></span>
                                         <div class="col-sm-6">
                                             <label for="detail_signature_file">Signature *</label>
-                                            <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
+                                            <p class="fs-6"
+                                                style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
                                                 Tanda Tangan
                                             </p>
                                             <div class="form_field_detail_signature">
-                                                <input type="file" name="detail_signature_file" id="detail_signature_file" class="form-control mb-2" />
+                                                <input type="file" name="detail_signature_file"
+                                                    id="detail_signature_file" class="form-control mb-2" />
                                             </div>
                                             <a id="link_signature" target="_blank">
                                                 <i class="fas fa-file"></i> Your Signature
                                             </a>
                                             <div class="button-change-signature" style="cursor: pointer;"></div>
                                         </div>
-                                        <span class="text-danger mt-2" id="message_detail_signature_file" role="alert"></span>
+                                        <span class="text-danger mt-2" id="message_detail_signature_file"
+                                            role="alert"></span>
                                     </div>
                                 </div>
                                 <div class="detail_company_address_additional" id="detail_company_address_additional">
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -711,6 +751,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="btn_update_data_company">Update</button>
             </div>
+            </form>
         </div>
     </div>
 </div>
