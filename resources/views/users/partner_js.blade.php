@@ -1494,7 +1494,7 @@
                     $('#supporting_document_type_' + total_field_document).empty()
                     $('#supporting_document_type_' + total_field_document).append(`<option value="">tipe dokumen</option>`)
                     $.each(res.data, function(i, data) {
-                        $('#supporting_document_type_0').append(`<option value="${data.id+`|`+data.name}">${data.name}</option>`)
+                        $('#supporting_document_type_' + total_field_document).append(`<option value="${data.id+`|`+data.name}">${data.name}</option>`)
                     })
                     // add all data class business
                     let list_class_business = [
