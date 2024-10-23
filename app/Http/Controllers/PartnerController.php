@@ -1689,8 +1689,6 @@ class PartnerController extends Controller
             
             // check file uploaded
             if($request->file('file_supporting_document') != null) {
-                // $data_docx_attachment = [];
-                // $list_docx_attachment_data = [];
                 for ($i = 0; $i < count($request->file_supporting_document); $i++) {
                     // setup name file
                     $explode_docx_type = explode('|', $request->supporting_document_type[$i]);
@@ -1730,6 +1728,65 @@ class PartnerController extends Controller
             }
             DB::commit();
             return FormatResponseJson::success('success', 'documents uploaded successfully');
+        } catch (ValidationException $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+    public function fetchAttachmentById(Request $request)
+    {
+        try {
+            $existing_docx = CompanySupportingDocument::where([
+                'company_id' => $request->supporting_document_partner_id, 
+            ])->first();
+        } catch (ValidationException $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+    public function updateAttachmentById(Request $request)
+    {
+        try {
+            
+            DB::beginTransaction();
+            $existing_partner = CompanyInformation::find($request->update_supporting_document_partner_id)->first('status');
+            
+            $existing_docx = CompanySupportingDocument::where([
+                'id' => $request->update_supporting_document_id,
+                'company_id' => $request->update_supporting_document_partner_id,
+            ])->first();
+            // set file name
+            $company_docx_type = $existing_docx->company_doc_type;
+            $docx_type = $existing_docx->document_type;
+            $document_type_name = $existing_docx->document_type_name;
+
+            $file = $request->file('update_file_supporting_document');
+            $file_name = strtolower($document_type_name.'.'.$file->getClientOriginalExtension());
+            $path = ('storage/uploads/'.$company_docx_type.'/');
+            $result_file_name = strtolower('storage/uploads/'.$company_docx_type.'/'.$file_name);
+
+            if($existing_partner->status === 'checking') {
+                // Delete old attachment file
+                $old_attachment_path = public_path($existing_docx->document);
+                if (file_exists($old_attachment_path)) {
+                    unlink($old_attachment_path);
+                }
+                // save new attachment
+                $existing_docx->update([
+                    'document' => $result_file_name,
+                ]);
+                $file->move($path, $file_name);
+                // store new attachment file
+            }
+
+            DB::commit();
+            return FormatResponseJson::success('success', 'documents updated successfully');
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);

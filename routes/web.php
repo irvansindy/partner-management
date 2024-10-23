@@ -42,6 +42,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
     Route::post('/update-partner', [PartnerController::class,'update'])->name('update-partner');
     Route::post('store-attachment', [PartnerController::class,'storeAttachment'])->name('store-attachment');
+    Route::post('update-attachment', [PartnerController::class,'updateAttachmentById'])->name('update-attachment');
 });
 
 Route::middleware(['auth', 'role:super-admin'])->group(function () {

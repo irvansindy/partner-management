@@ -64,7 +64,7 @@
                                     <td>${docx.document_type_name != null ? docx.document_type_name : 'not set'}</td>
                                     <td>${docx.document != null ? `<a href="" id="link_docx_${index}" target="blank_">Link</a>` : 'not set'}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-info edit_supporting_document" data-toggle="modal" data-target="#modal_support_document_edit"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-info edit_supporting_document" data-toggle="modal" data-target="#modal_support_document_edit" data-id="${docx.id}" data-company_id="${docx.company_id}" data-link="${data_link_docx}"><i class="fas fa-edit"></i></button>
                                     </td>
                                 </tr>
                             `);
@@ -1546,6 +1546,80 @@
                     });
                     fetchDataPartner()
                     $('#modal_support_document').modal('hide');  // Close modal on success
+                },
+                error: function(xhr) {
+                    fetchDataPartner()
+                    let response_error = JSON.parse(xhr.responseText)
+
+                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: response_error.meta.message,
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    } else {
+                        $('.text-danger').text('')
+                        $.each(response_error.meta.message.errors, function(i, value) {
+                            $('#message_' + i.replace('.', '_')).text(value)
+                        })
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: 'Silahkan isi data yang masih kosong',
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    }
+                },
+            })
+        })
+        // call data modal for update attachment 
+        $(document).on('click', '.edit_supporting_document', function() {
+            $('#form_update_supporting_document')[0].reset()
+            let id = $(this).data('id')
+            let company_id = $(this).data('company_id')
+            let link = $(this).data('link')
+            
+            $("#detail_link_attachment").attr('href', link)
+            $("#update_supporting_document_id").val(id)
+            $("#update_supporting_document_partner_id").val(company_id)
+        })
+        // update setiap file attachment 
+        $(document).on('click', '#btn_update_supporting_document', function(e) {
+            e.preventDefault()
+            var formData = new FormData($('#form_update_supporting_document')[0]);
+            $.ajax({
+                url: '{{ route("update-attachment") }}',
+                type: 'POST',
+                data: formData,
+                processData: false,   // Prevent jQuery from processing the data
+                contentType: false,   // Prevent jQuery from setting content type
+                cache: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                enctype: 'multipart/form-data',
+                success: function (res) {
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        class: 'bg-success',
+                        body: res.meta.message,
+                        delay: 5000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
+                    });
+                    fetchDataPartner()
+                    $('#modal_support_document_edit').modal('hide');  // Close modal on success
                 },
                 error: function(xhr) {
                     fetchDataPartner()

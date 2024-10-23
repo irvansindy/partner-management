@@ -119,6 +119,7 @@
     @include('cs_vendor.detail_data')
     @include('cs_vendor.modal_alert_data_null')
     @include('cs_vendor.support_docx_modal')
+    @include('cs_vendor.modal_detail_edit_attachment')
     @include('loading')
 @stop
 

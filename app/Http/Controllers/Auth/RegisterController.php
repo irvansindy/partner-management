@@ -52,25 +52,18 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
-            // 'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'password' => ['required', 'min:8', 'regex:/[A-Za-z]/', 'regex:/[0-9]/', 'regex:/[@$!%*#?&]/']
-            // 'password' => [
-            //     'required',
-            //     'string',
-            //     Password::min(8)
-            //         ->mixedCase()
-            //         ->letters()
-            //         ->numbers()
-            //         ->symbols(),
-            //     function ($attribute, $value, $fail) {
-            //         // Cek karakter unik
-            //         if (strlen($value) !== count(array_unique(str_split($value)))) {
-            //             $fail($attribute.' harus mengandung karakter unik.');
-            //         }
-            //     }
-            // ]
+            'password' => [
+                'required',
+                'string',
+                'min:8',           // Minimal 8 karakter
+                'regex:/[a-z]/',   // Harus mengandung huruf kecil
+                'regex:/[A-Z]/',   // Harus mengandung huruf besar
+                'regex:/[0-9]/',   // Harus mengandung angka
+                'regex:/[@$!%*#?&]/' // Harus mengandung simbol
+            ],
         ], [
-            'email.regex' => 'Email must use the Gmail domain (@gmail.com).'
+            'email.regex' => 'Email must use the Gmail domain (@gmail.com).',
+            'password.regex' => 'The password must consist of upper & lower case letters, numbers and symbols.'
         ]);
     }
 
