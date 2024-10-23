@@ -23,7 +23,7 @@
     </style>
 
 </head>
-<body class="sidebar-mini sidebar-collapse">
+<body class="sidebar-mini">
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -76,20 +76,6 @@
                 </div>
             </div>
         </nav>
-
-      
-            @php
-            // if (Auth::user()->roles->pluck('user')) {
-            // $role_user = Auth::user()->getRoleNames();
-            $role_user = auth()->user()->hasRole('user');
-            dd($role_user);
-            
-            if ($role_user == 1) {
-                $body =  `sidebar-mini sidebar-collapse`;
-            } else {
-                $body =  '';
-            }
-           
         @endphp
         <main class="py-4">
             @yield('content')

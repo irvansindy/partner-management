@@ -52,20 +52,21 @@ class User extends Authenticatable
         return 'https://picsum.photos/300/300';
         // return asset('images/'.\Auth::user()->avatar);
     }
-
     public function adminlte_desc()
     {
         return 'That\'s a nice guy';
     }
-
     public function adminlte_profile_url()
     {
         // return 'profile/username';
         return 'profile';
     }
-
     public function office()
     {
         return $this->hasOne(MasterOffice::class, 'id', 'office_id');
+    }
+    public function dept()
+    {
+        return $this->hasOne(MasterDepartment::class, 'id', 'department_id');
     }
 }

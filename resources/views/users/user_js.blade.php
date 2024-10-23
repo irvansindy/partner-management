@@ -4,20 +4,24 @@
             dropdownParent: $('#formCreateUser'),
             tags: "true",
             selectOnClose: true
-            // placeholder: "Select an option",
-            // allowClear: true
         })
         $('#user_office').select2({
             dropdownParent: $('#formCreateUser'),
             tags: "true",
             selectOnClose: true
-            // placeholder: "Select an option",
-            // allowClear: true
+        })
+        $('#user_department').select2({
+            dropdownParent: $('#formCreateUser'),
+            tags: "true",
+            selectOnClose: true
         })
         $('#update_user_role').select2({
             dropdownParent: $('#formUpdateUser')
         })
         $('#update_user_office').select2({
+            dropdownParent: $('#formUpdateUser')
+        })
+        $('#update_user_department').select2({
             dropdownParent: $('#formUpdateUser')
         })
 
@@ -57,25 +61,35 @@
         $(document).on('click', '#for_create_user', function(e) {
             e.preventDefault()
             $('#form_create_new_user')[0].reset()
-            
+            $('.message_user_name').text('')
+            $('.message_user_email').text('')
+            $('.message_user_role').text('')
+            $('.message_user_office').text('')
+            $('.message_user_department').text('')
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '{{ route("fetch-role") }}',
+                url: '{{ route("fetch-role-office-dept") }}',
                 type: 'GET',
                 dataType: 'json',
                 async: true,
                 success: function(res) {
                     $('#user_role').empty()
-                    $.each(res.data['roles'], function(i, role) {
+                    $.each(res.data.roles, function(i, role) {
                         $('#user_role').append(`
                             <option value="${role.name}">${role.name}</option>
                         `)
                     })
                     $('#user_office').empty()
-                    $.each(res.data['offices'], function(i, office) {
+                    $.each(res.data.offices, function(i, office) {
                         $('#user_office').append(`
+                            <option value="${office.id}">${office.name}</option>
+                        `)
+                    })
+                    $('#user_department').empty()
+                    $.each(res.data.departments, function(i, office) {
+                        $('#user_department').append(`
                             <option value="${office.id}">${office.name}</option>
                         `)
                     })
@@ -97,7 +111,8 @@
             let user_email = $('#user_email').val()
             let user_role = $('#user_role').val()
             let user_office = $('#user_office').val()
-
+            let user_department = $('#user_department').val()
+            // superusersales@gmail.com
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -109,6 +124,7 @@
                     email: user_email,
                     role: user_role,
                     office: user_office,
+                    department: user_department,
                 },
                 dataType: 'json',
                 async: true,
@@ -118,16 +134,50 @@
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
-                        body: 'User berhasil dibuat.'
+                        body: 'User berhasil dibuat.',
+                        delay: 10000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
                     });
                 },
                 error: function(xhr, status, error) {
                     let response_error = JSON.parse(xhr.responseText)
-                    $(document).Toasts('create', {
-                        title: 'Error',
-                        class: 'bg-danger',
-                        body: 'User gagal dibuat, silahkan hubungi pihak ICT.'
-                    });
+                    // $(document).Toasts('create', {
+                    //     title: 'Error',
+                    //     class: 'bg-danger',
+                    //     // body: 'User gagal dibuat, silahkan hubungi pihak ICT.'
+                    //     body: response_error.meta.message
+                    // });
+                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: response_error.meta.message,
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    } else {
+                        $('.text-danger').text('')
+                        $.each(response_error.meta.message.errors, function(i, value) {
+                            // alert(value)
+                            $('#message_user_' + i).text(value)
+                        })
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: 'Silahkan isi data yang masih kosong',
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    }
                 }
             })
         })
@@ -135,6 +185,11 @@
         $(document).on('click', '.detail_user', function(e) {
             let user_id = $(this).data('user_id')
             $('#form_detail_current_user')[0].reset()
+            $('.message_update_user_name').text('')
+            $('.message_update_user_email').text('')
+            $('.message_update_user_role').text('')
+            $('.message_update_user_office').text('')
+            $('.message_update_user_department').text('')
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -155,19 +210,31 @@
                     $('#update_user_role').append(`
                         <option value="${res.data[0].roles[0].name}">${res.data[0].roles[0].name}</option>
                     `)
-                    $.each(res.data['roles'], function(i, role) {
+                    $.each(res.data.roles, function(i, role) {
                         $('#update_user_role').append(`
                             <option value="${role.name}">${role.name}</option>
                         `)
                     })
+
                     $('#update_current_office').val(res.data[0].office.name)
                     $('#update_user_office').empty()
                     $('#update_user_office').append(`
                         <option value="${res.data[0].office.id}">${res.data[0].office.name}</option>
                     `)
-                    $.each(res.data['offices'], function(i, office) {
+                    $.each(res.data.offices, function(i, office) {
                         $('#update_user_office').append(`
                             <option value="${office.id}">${office.name}</option>
+                        `)
+                    })
+                    
+                    // $('#update_current_department').val(res.data[0].office.name)
+                    $('#update_user_department').empty()
+                    $('#update_user_department').append(`
+                        <option value="${res.data[0].office.id}">${res.data[0].dept.name}</option>
+                    `)
+                    $.each(res.data.departments, function(i, department) {
+                        $('#update_user_department').append(`
+                            <option value="${department.id}">${department.name}</option>
                         `)
                     })
                     // $('.update_user').attr('data-update_user_id', res.data[0].id)
@@ -192,6 +259,7 @@
             let update_current_role = $('#update_current_role').val()
             let update_user_role = $('#update_user_role').val()
             let update_user_office = $('#update_user_office').val()
+            let update_user_department = $('#update_user_department').val()
 
             $.ajax({
                 headers: {
@@ -206,6 +274,7 @@
                     current_role: update_current_role,
                     role: update_user_role,
                     office: update_user_office,
+                    department: update_user_department,
                 },
                 dataType: 'json',
                 async: true,
@@ -215,16 +284,44 @@
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
-                        body: 'User berhasil diubah.'
+                        body: 'User berhasil diubah.',
+                        delay: 10000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
                     });
                 },
-                error: function(xhr) {
+                error: function(xhr, status, error) {
                     let response_error = JSON.parse(xhr.responseText)
-                    $(document).Toasts('create', {
-                        title: 'Error',
-                        class: 'bg-danger',
-                        body: 'gagal update, silahkan hubungi pihak ICT.'
-                    });
+                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: response_error.meta.message,
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    } else {
+                        $('.text-danger').text('')
+                        $.each(response_error.meta.message.errors, function(i, value) {
+                            // alert(value)
+                            $('#message_update_user_' + i).text(value)
+                        })
+                        $(document).Toasts('create', {
+                            title: 'Error',
+                            class: 'bg-danger',
+                            body: 'Silahkan isi data yang masih kosong',
+                            delay: 10000,
+                            autohide: true,
+                            fade: true,
+                            close: true,
+                            autoremove: true,
+                        });
+                    }
                 }
             })
         })

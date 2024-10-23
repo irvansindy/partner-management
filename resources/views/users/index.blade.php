@@ -48,8 +48,6 @@
         @include('users.create_user')
         @include('users.detail_user')
         @include('users.delete_user')
-        {{-- @include('role_and_permission.create_permission')
-        @include('role_and_permission.detail_permission') --}}
     </div>
 @stop
 

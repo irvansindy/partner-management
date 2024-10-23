@@ -11,22 +11,29 @@
                     <div class="form-group">
                         <label for="user_name">Name</label>
                         <input type="text" class="form-control" name="user_name" id="user_name">
+                        <span class="text-danger mt-2 message_user_name" id="message_user_name" role="alert"></span>
                     </div>           
                     <div class="form-group">
                         <label for="user_email">Email</label>
                         <input type="email" class="form-control" name="user_email" id="user_email">
+                        <span class="text-danger mt-2 message_user_email" id="message_user_email" role="alert"></span>
+
                     </div>           
                     <div class="form-group">
                         <label for="user_role">Role</label>
                         <select class="form-control" name="user_role" id="user_role" style="width: 100% !important;"></select>
+                        <span class="text-danger mt-2 message_user_role" id="message_user_role" role="alert"></span>
+
                     </div>
                     <div class="form-group">
                         <label for="user_office">Office</label>
                         <select class="form-control" name="user_office" id="user_office" style="width: 100% !important;"></select>
+                        <span class="text-danger mt-2 message_user_office" id="message_user_office" role="alert"></span>
                     </div>
                     <div class="form-group">
                         <label for="user_department">Department</label>
                         <select class="form-control" name="user_department" id="user_department" style="width: 100% !important;"></select>
+                        <span class="text-danger mt-2 message_user_department" id="message_user_department" role="alert"></span>
                     </div>
                 </div>
                 <div class="modal-footer">

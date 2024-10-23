@@ -7,6 +7,8 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class EventServiceProvider extends ServiceProvider
 {

@@ -69,24 +69,18 @@ class PartnerManagementController extends Controller
             $doc_perorangan = CompanySupportingDocument::where('company_id', $partner_detail->id)
             ->where('company_doc_type', 'perorangan')
             ->get();
-// dd();
-            // check existing data approval by role and id
-            if (auth()->user()->roles->pluck('name')[0] == 'admin') {
-                $existing_master_approval = ApprovalMaster::where('company_information_id', $request->partner_id)->first();
-                if ($existing_master_approval) {
-                $existing_stagging_approval = ApprovalDetails::where([
-                    'approval_id' => $existing_master_approval->id,
-                    'user_id' => \Auth::user()->id,
-                    'status' => 1,
-                ])->first();
-                } else {
-                    $existing_stagging_approval = null;
-                }
-            } else if (auth()->user()->roles->pluck('name')[0] == 'super-user') {
-                $existing_master_approval = null;
-                $existing_stagging_approval = null;
+            
+            // check can be approve
+            $existing_stagging_approval_master = ApprovalMaster::where('company_information_id', $request->partner_id)->first('id');
+            $existing_stagging_approval_detail = ApprovalDetails::where([
+                'approval_id' => $existing_stagging_approval_master->id,
+                'user_id' => \Auth::user()->id,
+                'status'=> 1,
+            ])->first();
+            $is_approved = false;
+            if($existing_stagging_approval_detail) {
+                $is_approved = true;
             }
-
             $data = [
                 $partner_detail,
                 $doc_type,
@@ -94,8 +88,7 @@ class PartnerManagementController extends Controller
                 'cv' => $doc_cv,
                 'ud_or_pd' => $doc_ud_or_pd,
                 'perorangan' => $doc_perorangan,
-                'master_approval' => $existing_master_approval,
-                'stagging_approval' => $existing_stagging_approval,
+                'is_approved' => $is_approved,
                 'role' => auth()->user()->roles->pluck('name')[0],
                 'office' => \auth()->user()->office_id,
                 'department' => \auth()->user()->department_id,

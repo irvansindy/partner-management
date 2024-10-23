@@ -113,7 +113,7 @@ class ApprovalSettingController extends Controller
                         'approval_id' => $request->master_approval_id,
                         'user_id' => $request->stagging_approval_name[$i],
                         'step_ordering' => $i+1,
-                        'status' => '1'
+                        'status' => $i == 0 ? 0 : 1,
                     ]);
                 }
             }

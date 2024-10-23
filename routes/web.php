@@ -48,6 +48,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('/user-manage', [UserManagementController::class,'index'])->name('user-manage');
     Route::get('/fetch-user', [UserManagementController::class,'fetchUser'])->name('fetch-user');
+    Route::get('/fetch-role-office-dept', [UserManagementController::class,'fetchRoleOfficeDepartment'])->name('fetch-role-office-dept');
     Route::post('/store-user', [UserManagementController::class,'storeUser'])->name('store-user');
     Route::get('/detail-user', [UserManagementController::class,'detailUser'])->name('detail-user');
     Route::post('/update-user', [UserManagementController::class,'updateUser'])->name('update-user');
