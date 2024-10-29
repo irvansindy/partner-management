@@ -88,7 +88,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });
 
-Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {
+Route::middleware(['auth', 'role:super-user|admin'])->group(function () {
     Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
     Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');

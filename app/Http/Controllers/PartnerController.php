@@ -172,7 +172,6 @@ class PartnerController extends Controller
                 'country.*.required' => 'The country field is required.',
                 'province.*.required' => 'The province field is required.',
                 'zip_code.*.required' => 'The zip_code field is required.',
-                'telephone.*.required' => 'The telephone field is required.',
                 'fax.*.required' => 'The fax field is required.',
                 'zip_code.*.integer' => 'The zip_code field is required.',
                 'telephone.*.integer' => 'The telephone field is required.',

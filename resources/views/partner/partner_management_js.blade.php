@@ -871,7 +871,7 @@
                     $('#button-for-approval').empty()
                     $('#button-for-approval').append(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
 
-                    if(res.data.is_approved === true) {
+                    if(res.data.is_approved == true) {
                         $('#button-for-approval').append(`<button type="button" class="btn btn-danger" id="partner_reject">Reject</button><button type="button" class="btn btn-primary" id="partner_approved">Approved</button>`)
                     }
                 }
@@ -899,7 +899,12 @@
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
-                        body: 'Partner berhasil di-approve.'
+                        body: 'Partner berhasil di-approve.',
+                        delay: 10000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
                     });
                 },
                 error: function(xhr) {
@@ -907,7 +912,13 @@
                     $(document).Toasts('create', {
                         title: 'Error',
                         class: 'bg-danger',
-                        body: 'gagal update, silahkan hubungi pihak ICT.'
+                        // body: 'gagal update, silahkan hubungi pihak ICT.'
+                        body: response_error.meta.message,
+                        delay: 10000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
                     });
                 }
             })

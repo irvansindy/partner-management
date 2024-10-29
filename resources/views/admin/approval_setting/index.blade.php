@@ -64,13 +64,14 @@
         .select2-container--default .select2-selection--single {
             background-color: #f8fafc !important;
         }
-
         .select2-container .select2-selection--single {
             height: 38px !important;
         }
-
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 36px !important;
+        }
+        .toasts-top-right {
+            z-index: 9999 !important;
         }
     </style>
 @stop
