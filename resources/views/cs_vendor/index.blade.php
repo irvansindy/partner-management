@@ -286,6 +286,24 @@
                                     </div>
                                 </div>
                                 <div class="input-group mb-4">
+                                    <div class="col-md-12 mb-4">
+                                        <div class="row">
+                                            <div class="col-md-auto">
+                                                <label for="business_classification_detail">Business Classification Detail*</label>
+                                                <br>
+                                                <p class="fs-6"
+                                                    style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
+                                                    Detail Jenis Usaha</p>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <textarea class="form-control" name="business_classification_detail" id="business_classification_detail" cols="20" rows="8"></textarea>
+                                                <span class="text-danger mt-2" id="message_business_classification_detail" role="alert"></span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-4">
                                     <div class="col-md-3">
                                         <label for="website_address">Website Address *</label>
                                         <br>

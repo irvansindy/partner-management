@@ -315,6 +315,8 @@
         $(document).on('click', '.add_permission', function(e) {
             e.preventDefault()
             let role_id = $(this).data('role_id')
+            // alert(role_id)
+            $('.permission-checkbox').removeAttr('checked');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -327,15 +329,22 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    $('#role_id_for_permission').val(role_id)
                     $('#list_permission_data').empty()
-                    $.each(res.data['permissions'], function(i, permission) {
+                    let permissions = res.data.permissions;
+                    let permission_by_role = res.data.permission_by_role;
+                    
+                    $.each(permissions, function(i, permission) {
+                        let is_checked = permission_by_role.some(rp => rp.id === permission.id) ? 'checked' : '';
                         $('#list_permission_data').append(`
                             <tr>
                                 <td>
-                                    <input class="form-check-input ms-3 permission-checkbox" type="checkbox" value="${permission.name}" id="${permission.name}" data-permission_id="${permission.id}">
+                                    <input class="form-check-input ms-3 permission-checkbox" type="checkbox" name="permissions[]" value="${permission.name}" id="${permission.name}" data-permission_id="${permission.id}" ${is_checked}>
                                 </td>
                                 <td>
-                                    <p>${permission.name}</p>
+                                    <label class="form-check-label" for="${permission.name}">
+                                        ${permission.name}
+                                    </label>
                                 </td>
                             </tr>
                         `)
@@ -354,22 +363,44 @@
         })
 
         $(document).on('change', '.permission-checkbox', function() {
-            // let role_id 
-            let permission_id = $(this).data('permission_id')
-            var is_checked = $(this).is(':checked');
-            
+            var formData = new FormData($('#form_add_remove_permissions')[0]);
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 url: '{{ route("add-or-remove-permission") }}',
                 type: 'POST',
-                data: {
-                    role_id: update_role_id,
-                    role_name: update_role_name
+                data: formData,
+                processData: false,   // Prevent jQuery from processing the data
+                contentType: false,   // Prevent jQuery from setting content type
+                cache: false,
+                success: function(res) {
+                    $('#role_table').DataTable().ajax.reload();
+                    // $('#formAddPermission').modal('toggle');
+                    $(document).Toasts('create', {
+                        title: 'Success',
+                        class: 'bg-success',
+                        body: res.meta.message,
+                        delay: 10000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
+                    });
                 },
-                dataType: 'json',
-                async: true,
+                error: function(xhr) {
+                    let response_error = JSON.parse(xhr.responseText)
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        class: 'bg-danger',
+                        body: response_error.meta.message,
+                        delay: 10000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
+                    });
+                }
             })
         })
     });

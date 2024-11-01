@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Event;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-
+use App\Models\Menu;
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -31,29 +31,16 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
-            // Add some items to the menu...
-            $event->menu->add('MAIN MENU');
-            $event->menu->add([
-                'text' => 'Company Data',
-            'url' => 'detail-partner',
-            'icon' => 'fas fa-fw fa-building',
-            'topnav_user' => true,
-            ],);
-            $event->menu->add([
-                'text' => 'User Management',
-                'url'  => 'user-manage',
-                'icon' => 'fas fa-fw fa-user',
-            ],);
-            $event->menu->add([
-                'text' => 'Role Permission',
-                'url'  => 'role-permission',
-                'icon' => 'fas fa-fw fa-tasks',
-            ],);
-            $event->menu->add([
-                'text' => 'Partner ',
-                'url'  => 'partner-management',
-                'icon' => 'fas fa-fw fa-handshake',
-            ],);
+            $menus = Menu::all()->map(function (Menu $menu) {
+                return [
+                    'text' => $menu['name_text'],
+                    // 'key'  => 'partner-management',
+                    'url'  => $menu['url_name'],
+                    'icon' => $menu['icon'],
+                ];
+            });
+            $event->menu->add(...$menus);
+            // dd($menus);
         });
     }
 }

@@ -69,10 +69,12 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('delete-permission', [RoleAndPermissionController::class,'deletePermission'])->name('delete-permission');
     
     Route::get('fetch-permission-in-role', [RoleAndPermissionController::class,'fetchPermissionInRole'])->name('fetch-permission-in-role');
+    Route::get('fetch-permission-in-role-v2', [RoleAndPermissionController::class,'fetchPermissionInRoleV2'])->name('fetch-permission-in-role-v2');
     Route::post('add-or-remove-permission', [RoleAndPermissionController::class,'addOrRemovePermissionToRole'])->name('add-or-remove-permission');
 
     Route::get('export-pdf', [PartnerManagementController::class,'exportPartnerToPdf'])->name('export-pdf');
     Route::get('export-excel', [PartnerManagementController::class,'exportPartnerToExcel'])->name('export-excel');
+    Route::get('getMenusWithSubmenus', [PartnerManagementController::class,'getMenusWithSubmenus'])->name('getMenusWithSubmenus');
 
     Route::get('menu-setting', [MenuController::class,'index'])->name('menu-setting');
     Route::get('fetch-menu', [MenuController::class,'fetchMenu'])->name('fetch-menu');
@@ -88,7 +90,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });
 
-Route::middleware(['auth', 'role:super-user|admin'])->group(function () {
+Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {
     Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
     Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');

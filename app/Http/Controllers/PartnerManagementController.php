@@ -22,6 +22,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PartnerExport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Menu;
+use App\Models\SubMenu;
 class PartnerManagementController extends Controller
 {
     public function __construct()
@@ -351,5 +353,40 @@ class PartnerManagementController extends Controller
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
+    }
+    public function getMenusWithSubmenus()
+    {
+        // Ambil user yang sedang login
+        $user = Auth::user();
+
+        // Dapatkan semua menu dengan submenus yang sesuai role dan permission
+        // $menus = Menu::with(['submenus' => function ($query) use ($user) {
+        //     $query->whereHas('permissions', function ($q) use ($user) {
+        //         $q->whereIn('name', $user->getAllPermissions()->pluck('name'));
+        //     });
+        // }])->whereHas('permissions', function ($query) use ($user) {
+        //     $query->whereIn('name', $user->getAllPermissions()->pluck('name'));
+        // })->get();
+        
+        // $menus = Menu::with(['submenus' => function ($query) use ($user) {
+        //     $query->whereHas('permissions', function ($query) use ($user) {
+        //         $query->whereIn('name', $user->getPermissionNames());
+        //     });
+        // }])->get();
+
+        // Ambil data Menu yang diizinkan untuk user
+        $menus = Menu::with(['submenus' => function ($query) use ($user) {
+            $query->whereHas('permissions', function ($permissionQuery) use ($user) {
+                $permissionQuery->where('name', $user->getAllPermissions()->pluck('name')->toArray());
+            });
+        }])
+        // ->whereHas('permissions', function ($permissionQuery) use ($user) {
+        //     $permissionQuery->where('name', $user->getAllPermissions()->pluck('name')->toArray());
+        // })
+        ->get();
+        dd($menus);
+
+
+        return response()->json($menus);
     }
 }

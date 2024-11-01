@@ -163,21 +163,70 @@ class RoleAndPermissionController extends Controller
         try {
             $permissions = Permission::all();
             $role = Role::findOrFail($request->role_id);
+            $permission_by_role = $role->getAllPermissions();
             $data = [
                 'permissions' => $permissions,
-                'role' => $role
+                'permission_by_role' => $permission_by_role
             ];
             return FormatResponseJson::success($data,'permission fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 404);
         }
     }
-    public function addOrRemovePermissionToRole()
+    public function addOrRemovePermissionToRole(Request $request)
     {
         try {
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
+            DB::beginTransaction();
+            // dd($request->all());
+            $role_id = $request->role_id_for_permission;
+            
+            // get data role user and new permission
+            $existing_role = Role::findOrFail($role_id);
+            $list_new_permissions = $request->permissions;
+            
+            // get permission relation with role user 
+            $permission_from_role = $existing_role->permissions;
+            if (count($permission_from_role) != false) {
+                // clear permission 
+                // dd($permission_from_role);
+                $existing_role->syncPermissions([]);
+            }
+            // dd('hahahahah');
+            $existing_role->givePermissionTo($list_new_permissions);
+            $existing_role->syncPermissions($list_new_permissions);
+            DB::commit();
+            return FormatResponseJson::success($list_new_permissions,'Berhasil mengsinkronkan permission.');
+        } catch (ValidationException $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+
+    public function fetchPermissionInRoleV2()
+    {
+        try {
+            $role = Role::findOrFail(4);
+
+            // Dapatkan semua permissions
+            $permissions = Permission::all();
+
+            // Tandai permission yang sudah dimiliki oleh role
+            $permissions = $permissions->map(function ($permission) use ($role) {
+                $permission->assigned = $role->hasPermissionTo($permission);
+                return $permission;
+            });
+
+            $data = [
+                'permissions' => $permissions,
+                'role' => $role
+            ];
+
+            return FormatResponseJson::success($data, 'Permissions fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 404);
         }
     }
 }

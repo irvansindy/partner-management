@@ -116,12 +116,12 @@
                 method: 'GET',
                 async: true,
                 success: function(res) {
-                    if (res.data.status != 'checking') {
-                        document.getElementById('btn_update_data_company').style.display =
-                            'none';
-                        document.getElementById('add_detail_dynamic_address').style.display =
-                            'none';
-                    }
+                    // if (res.data.status != 'checking') {
+                    //     document.getElementById('btn_update_data_company').style.display =
+                    //         'none';
+                    //     document.getElementById('add_detail_dynamic_address').style.display =
+                    //         'none';
+                    // }
                     $('#field_form_detail_business_other').empty()
 
                     $('#detail_company_type').empty()
@@ -542,9 +542,9 @@
                         `)
                     }
 
-                    if (res.data.status == 'checking') {
-                        $('#button_update_partner').empty()
-                        $('#button_update_partner').append(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
+                    $('#button_update_partner').empty()
+                    $('#button_update_partner').append(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
+                    if (res.data.status == 'checking' && res.data.location_id == null && res.data.department_id == null) {
                         $('#button_update_partner').append(`
                         <div class="d-flex justify-content-end">
                             <button type="button" class="btn btn-primary" id="btn_update_data_company" data-id="" data-status="">
@@ -554,9 +554,7 @@
                         `)
                         $('#btn_update_data_company').attr('data-id', res.data.id)
                         $('#btn_update_data_company').attr('data-status', res.data.status)
-                    } else {
-                        $('#button_update_partner').empty()
-                    }
+                    } 
 
                     let list_bank = res.data.bank
                     if (list_bank.length != 0) {
