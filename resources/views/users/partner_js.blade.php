@@ -181,6 +181,8 @@
                         `)
                     })
                     
+                    $('#detail_business_classification_detail').val(res.data.business_classification_detail)
+
                     let checked_business_value = $(
                         'input[name="detail_business_classification"]:checked').val()
                     // if (checked_business_value = 'Other') {

@@ -418,7 +418,7 @@ class PartnerController extends Controller
                 'board_of_directors' => $request->detail_board_of_directors,
                 'major_shareholders' => $request->detail_major_shareholders,
                 'business_classification' => $request->detail_business_classification,
-                'detail_business_classification_detail' => $request->detail_business_classification_detail,
+                'business_classification_detail' => $request->detail_business_classification_detail,
                 'other_business' => $request->detail_business_classification_other_detail,
                 'website_address' => $request->detail_website_address,
                 'system_management' => $request->detail_system_management,

@@ -327,7 +327,7 @@
                                                 </div>
                                                 <div class="col-md-7">
                                                     <textarea class="form-control" name="detail_business_classification_detail" id="detail_business_classification_detail" cols="20" rows="8"></textarea>
-                                                    <span class="text-danger mt-2" id="message_business_classification_detail" role="alert"></span>
+                                                    <span class="text-danger mt-2" id="message_detail_business_classification_detail" role="alert"></span>
     
                                                 </div>
                                             </div>
