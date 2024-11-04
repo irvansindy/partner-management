@@ -1,6 +1,7 @@
 <script>
     $(document).ready(function() {
         fetchEULA()
+
         function fetchEULA() {
             $('#data_eula').empty()
             $.ajax({
@@ -12,7 +13,7 @@
                 async: true,
                 success: function(res) {
                     console.log(res.data);
-                    
+
                     if (res.data == null) {
                         $('#data_eula').append(`
                             <p>End User License Agreement is empty</p>
@@ -33,12 +34,6 @@
             $('#summernote_end_user_license_agreements').summernote('reset');
             $('#summernote_end_user_license_agreements').summernote('fullscreen.isFullscreen');
             // re-setup summernote
-            $('#summernote_end_user_license_agreements').summernote({
-                placeholder: 'End User License Agreements',
-                tabsize: 2,
-                height: 100,
-                focus: true,
-            });
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -47,10 +42,65 @@
                 method: 'GET',
                 async: true,
                 success: function(res) {
-                    console.log(res.data.length);
+                    $('#summernote_end_user_license_agreements').summernote({
+                        placeholder: 'End User License Agreements',
+                        tabsize: 2,
+                        height: 100,
+                        focus: true,
+                        codeviewFilter: false,
+                        codeviewIframeFilter: true,
+                        spellCheck: true,
+                    });
+                    $('#summernote_end_user_license_agreements').summernote({
+                        toolbar: [
+                            // Tambahkan toolbar `fontSize`
+                            ['font', ['bold', 'italic', 'underline', 'clear']],
+                            ['fontsize', [
+                                'fontsize'
+                            ]], // Menambahkan opsi fontSize
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['height', ['height']]
+                        ],
+                        fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18',
+                            '20', '22', '24', '26', '28', '36', '48', '64',
+                            '82', '150'
+                        ],
+                        popover: {
+                            image: [
+                                ['image', ['resizeFull', 'resizeHalf',
+                                    'resizeQuarter', 'resizeNone'
+                                ]],
+                                ['float', ['floatLeft', 'floatRight',
+                                    'floatNone'
+                                ]],
+                                ['remove', ['removeMedia']]
+                            ],
+                            link: [
+                                ['link', ['linkDialogShow', 'unlink']]
+                            ],
+                            table: [
+                                ['add', ['addRowDown', 'addRowUp', 'addColLeft',
+                                    'addColRight'
+                                ]],
+                                ['delete', ['deleteRow', 'deleteCol',
+                                    'deleteTable'
+                                ]],
+                            ],
+                            air: [
+                                ['color', ['color']],
+                                ['font', ['bold', 'underline', 'clear']],
+                                ['para', ['ul', 'paragraph']],
+                                ['table', ['table']],
+                                ['insert', ['link', 'picture']]
+                            ]
+                        }
+                    });
+
                     if (res.data.length != 0) {
                         $('#end_user_license_agreements_id').val(res.data.id)
-                        $('#summernote_end_user_license_agreements').summernote('code', res.data.content)
+                        $('#summernote_end_user_license_agreements').summernote('code', res
+                            .data.content)
                     }
                 }
             })
@@ -65,7 +115,7 @@
             }
             console.log(data);
             $.ajax({
-                url: '{{ route("submit-end-user-license-agreement") }}',
+                url: '{{ route('submit-end-user-license-agreement') }}',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -82,12 +132,15 @@
                         close: true,
                         autoremove: true,
                     });
+                    fetchEULA()
+                    $('#AddOrEditEULA').modal('hide')
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
                     let response_error = JSON.parse(xhr.responseText)
 
-                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                    if (response_error.meta.code === 500 || response_error.meta.code ===
+                        400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
@@ -116,7 +169,7 @@
                     }
                 },
             })
-            
+
         })
     })
 </script>
