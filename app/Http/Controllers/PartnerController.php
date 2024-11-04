@@ -577,10 +577,10 @@ class PartnerController extends Controller
                 'company_id' => $request->supporting_document_partner_id, 
             ])->first();
         } catch (ValidationException $e) {
-            DB::rollback();
+            // DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            DB::rollback();
+            // DB::rollback();
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }
     }

@@ -9,6 +9,7 @@ use App\Http\Controllers\PartnerManagementController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ApprovalSettingController;
+use App\Http\Controllers\EndUserLicenseAgreementController;
 
 use App\Http\Controllers\API\ApiPartnerController;
 /*
@@ -86,6 +87,10 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('fetch-office-department', [ApprovalSettingController::class,'fetchOfficeAndDepartment'])->name('fetch-office-department');
     Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalMaster'])->name('store-approval-master');
     Route::post('store-approval-detail', [ApprovalSettingController::class,'storeApprovalDetail'])->name('store-approval-detail');
+
+    Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');
+    Route::get('fetch-end-user-license-agreement', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement');
+    Route::post('submit-end-user-license-agreement', [EndUserLicenseAgreementController::class,'submitEula'])->name('submit-end-user-license-agreement');
 
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });
