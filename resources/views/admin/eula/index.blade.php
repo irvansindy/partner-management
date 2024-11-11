@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'User Management')
+@section('title', 'License Agreements - Term and Conditions')
 
 @section('content_header')
     <h1>End User License Aggrement</h1>
@@ -16,10 +16,37 @@
                             <p>list Menu Permission</p>
                         </div> --}}
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                            <button type="button" class="btn bg-gradient-primary" id="for_add_or_edit_eula" data-toggle="modal" data-target="#AddOrEditEULA"><i class="fas fa-edit"></i></button>
+                            <button type="button" class="btn bg-gradient-primary" id="for_create_eula"
+                                data-toggle="modal" data-target="#AddOrEditEULA"><i class="fas fa-edit"></i></button>
                         </div>
                     </div>
                     <div class="card-body px-4 py-2" id="data_eula">
+                    </div>
+                    <div class="card-body px-4 py-2">
+                        <div class="table-responsive p-0 px-md-2">
+                            <table class="table table-hover align-items-center mb-0 data_tables" id="eula_tnc_table" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            No
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Name T & C
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Year
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Status
+                                        </th>
+                                        <th class="text-secondary opacity-7">#</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -41,13 +68,15 @@
         .select2-container--default .select2-selection--single {
             background-color: #f8fafc !important;
         }
+
         .select2-container .select2-selection--single {
             height: 38px !important;
         }
+
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 36px !important;
         }
-        
+
         .toasts-top-right {
             z-index: 9999 !important;
         }

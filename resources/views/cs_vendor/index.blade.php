@@ -3,7 +3,7 @@
 @section('title', 'Partner Management')
 
 @section('content_header')
-    <h1>Partner Management</h1>
+    <h1>Form Register</h1>
 @stop
 
 @section('content')
@@ -37,7 +37,7 @@
                                         <select name="company_type" id="company_type" class="mb-2">
                                             <option value="customer">Customer</option>
                                             <option value="vendor">Vendor</option>
-                                            <option value="customer dan vendor">Keduanya</option>
+                                            {{-- <option value="customer dan vendor">Keduanya</option> --}}
                                         </select>
                                         <span class="text-danger mt-2" id="message_company_type" role="alert"></span>
                                     </div>
@@ -867,7 +867,7 @@
                     {{-- end company tax --}}
 
                     {{-- support document --}}
-                    <div class="card card-info">
+                    {{-- <div class="card card-info">
                         <div class="card-header">
                             <h3 class="card-title">
                                 4. SUPPORTING DOCUMENTS (Dokumen yang harus dilengkapi)
@@ -954,7 +954,7 @@
                             </div>
                         </div>
                         
-                    </div>
+                    </div> --}}
                     {{-- end support document --}}
                 </form>
             </div>

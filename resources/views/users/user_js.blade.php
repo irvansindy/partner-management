@@ -144,12 +144,6 @@
                 },
                 error: function(xhr, status, error) {
                     let response_error = JSON.parse(xhr.responseText)
-                    // $(document).Toasts('create', {
-                    //     title: 'Error',
-                    //     class: 'bg-danger',
-                    //     // body: 'User gagal dibuat, silahkan hubungi pihak ICT.'
-                    //     body: response_error.meta.message
-                    // });
                     if (response_error.meta.code === 500 || response_error.meta.code === 400) {
                         $(document).Toasts('create', {
                             title: 'Error',

@@ -566,7 +566,7 @@
                     $('#modalLoading').modal('hide')
                     let response_error = JSON.parse(xhr.responseText)
 
-                    if (response_error.meta.code == 500 || 400) {
+                    if (response_error.meta.code == 500 || response_error.meta.code == 400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
@@ -582,6 +582,16 @@
                     $.each(response_error.meta.message.errors, function(i, value) {
                         $('#message_' + i.replace('.', '_')).text(value)
                     })
+                    $(document).Toasts('create', {
+                        title: 'Error',
+                        class: 'bg-danger',
+                        body: 'Harap isi data yang masih kosong',
+                        delay: 10000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
+                    });
                 },
             })
         })

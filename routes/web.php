@@ -10,6 +10,9 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ApprovalSettingController;
 use App\Http\Controllers\EndUserLicenseAgreementController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\TenderForVendorController;
 
 use App\Http\Controllers\API\ApiPartnerController;
 /*
@@ -32,6 +35,15 @@ Route::get('/', function () {
 // Route::get('', function () {});
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement-wo-auth');
+// Login routes
+// Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+// Route::post('login', [LoginController::class, 'login']);
+// Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+// Register routes
+// Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+// Route::post('register', [RegisterController::class, 'register']);
 
 Route::middleware(['auth', 'role:user'])->group(function () {
     // Route::get('/partner', [PartnerController::class,'index'])->name('partner');
@@ -88,10 +100,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalMaster'])->name('store-approval-master');
     Route::post('store-approval-detail', [ApprovalSettingController::class,'storeApprovalDetail'])->name('store-approval-detail');
 
-    Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');
-    Route::get('fetch-end-user-license-agreement', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement');
-    Route::post('submit-end-user-license-agreement', [EndUserLicenseAgreementController::class,'submitEula'])->name('submit-end-user-license-agreement');
-
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });
 
@@ -102,10 +110,17 @@ Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function
     Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
 });
 
-// Route::get('fetch-data-partner', [ApiPartnerController::class, 'fetchPartner'])->name('fetch-data-partner');
-// Route::post('blacklist-partner', [ApiPartnerController::class, 'blacklistPartner']);
-Route::middleware(['auth:sanctum'])->group(function() {});
+Route::middleware(['auth','role:admin|super-admin'])->group(function () {
+    Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');
+    Route::get('fetch-end-user-license-agreement', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement');
+    Route::get('fetch-end-user-license-agreement-by-id', [EndUserLicenseAgreementController::class,'fetchEulaById'])->name('fetch-end-user-license-agreement-by-id');
+    Route::post('submit-end-user-license-agreement', [EndUserLicenseAgreementController::class,'submitEula'])->name('submit-end-user-license-agreement');
+    
+    Route::get('tender-vendor', [TenderForVendorController::class,'index'])->name('tender-vendor');
+    Route::get('fetch-tender-vendor', [TenderForVendorController::class,'fetchTenderVendor'])->name('fetch-tender-vendor');
+});
 
+Route::middleware(['auth:sanctum'])->group(function() {});
 
 Auth::routes();
 

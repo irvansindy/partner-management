@@ -34970,7 +34970,8 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 }
 
 .login-page,
-.register-page {
+.register-page,
+.term-condition-register-page {
   -ms-flex-align: center;
   align-items: center;
   background-color: #e9ecef;
@@ -34985,24 +34986,31 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 
 .login-box,
 .register-box {
-  width: 360px;
+  width: 500px !important;
+}
+
+.term-condition-register {
+  width: 660px;
 }
 
 @media (max-width: 576px) {
   .login-box,
-  .register-box {
+  .register-box,
+  .term-condition-register {
     margin-top: .5rem;
     width: 90%;
   }
 }
 
 .login-box .card,
-.register-box .card {
+.register-box .card,
+.term-condition-register {
   margin-bottom: 0;
 }
 
 .login-card-body,
-.register-card-body {
+.register-card-body,
+.term-condition-register {
   background-color: #fff;
   border-top: 0;
   color: #666;

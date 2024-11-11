@@ -16,8 +16,6 @@
 @section('auth_body')
     <form action="{{ $register_url }}" method="post">
         @csrf
-
-        {{-- Name field --}}
         <div class="input-group mb-3">
             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                 value="{{ old('name') }}" placeholder="{{ __('adminlte::adminlte.full_name') }}" autofocus>
@@ -34,8 +32,6 @@
                 </span>
             @enderror
         </div>
-
-        {{-- Email field --}}
         <div class="input-group mb-3">
             <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                 value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}">
@@ -52,8 +48,6 @@
                 </span>
             @enderror
         </div>
-
-        {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
                 placeholder="{{ __('adminlte::adminlte.password') }}">
@@ -70,8 +64,6 @@
                 </span>
             @enderror
         </div>
-
-        {{-- Confirm password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password_confirmation"
                 class="form-control @error('password_confirmation') is-invalid @enderror"
@@ -89,8 +81,6 @@
                 </span>
             @enderror
         </div>
-
-        {{-- Register button --}}
         <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
             <span class="fas fa-user-plus"></span>
             {{ __('adminlte::adminlte.register') }}

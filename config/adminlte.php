@@ -63,6 +63,13 @@ return [
     |
     */
 
+    // 'logo' => '<b>Pralon</b> Indonesia',
+    // 'logo_img' => 'uploads/logo/logo.png',
+    // 'logo_img_class' => 'brand-image img-circle elevation-3 rounded-circle',
+    // 'logo_img_xl' => null,
+    // 'logo_img_xl_class' => 'brand-image-xs',
+    // 'logo_img_alt' => 'Logo Pralon',
+    
     'logo' => '<b>Pralon</b> Indonesia',
     'logo_img' => 'uploads/logo/logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3 rounded-circle',
@@ -83,20 +90,20 @@ return [
     |
     */
 
-    'auth_logo' => [
-        'enabled' => false,
-        'img' => [
-            'path' => 'uploads/logo/logo.png',
-            'alt' => 'Auth Logo',
-            'class' => 'rounded-circle brand-image img-circle elevation-3',
-            'logo_img_class' => 'brand-image img-circle elevation-3',
-            'logo_img_xl' => null,
-            'logo_img_xl_class' => 'brand-image-xs',
-            'logo_img_alt' => 'Logo Pralon',
-            'width' => 50,
-            'height' => 50,
-        ],
-    ],
+    // 'auth_logo' => [
+    //     'enabled' => true,
+    //     'img' => [
+    //         'path' => 'uploads/logo/logo.png',
+    //         'alt' => 'Auth Logo',
+    //         'class' => 'rounded-circle brand-image img-circle elevation-3',
+    //         'logo_img_class' => 'brand-image img-circle elevation-3',
+    //         'logo_img_xl' => null,
+    //         'logo_img_xl_class' => 'brand-image-xs',
+    //         'logo_img_alt' => 'Logo Pralon',
+    //         'width' => 50,
+    //         'height' => 50,
+    //     ],
+    // ],
 
     /*
     |--------------------------------------------------------------------------
@@ -114,7 +121,7 @@ return [
         'enabled' => true,
         'img' => [
             'path' => 'uploads/logo/logo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'alt' => 'Loading',
             'effect' => 'animation__shake',
             'width' => 60,
             'height' => 60,
@@ -171,12 +178,18 @@ return [
     |
     */
 
-    'classes_auth_card' => 'card-outline card-primary',
+    // 'classes_auth_card' => 'card-outline card-primary',
+    // 'classes_auth_header' => '',
+    // 'classes_auth_body' => '',
+    // 'classes_auth_footer' => '',
+    // 'classes_auth_icon' => '',
+    // 'classes_auth_btn' => 'btn-flat btn-primary',
+    'classes_auth_card' => 'card-outline card-light bg-gradient-light',
     'classes_auth_header' => '',
-    'classes_auth_body' => '',
-    'classes_auth_footer' => '',
-    'classes_auth_icon' => '',
-    'classes_auth_btn' => 'btn-flat btn-primary',
+    'classes_auth_body' => 'bg-gradient-light',
+    'classes_auth_footer' => 'text-center',
+    'classes_auth_icon' => 'fa-fw text-light',
+    'classes_auth_btn' => 'btn-flat btn-dark',
 
     /*
     |--------------------------------------------------------------------------
