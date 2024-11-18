@@ -224,7 +224,6 @@
 
         $(document).on('click', '#add_bank', function(e) {
             e.preventDefault()
-            alert('di company_js blade')
             $('.dynamic_bank').append(`
                 <div class="array_dymanic_bank">
                     <div class="input-group mt-4">

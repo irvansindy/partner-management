@@ -126,9 +126,6 @@
             let data_eula_name = $('#end_user_license_agreements_name').val()
             let data_eula_year = $('#end_user_license_agreements_year').val()
             let data_eula_is_active = $('end_user_license_agreements_is_active')
-            // if ($("#end_user_license_agreements_is_active").prop('checked', true)) {
-            //     alert('checklist bos')
-            // }
             let eula_is_active = data_eula_is_active.is(':checked') ? 1 : 0;
             // alert(eula_is_active)
             let data = {

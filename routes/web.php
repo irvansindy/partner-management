@@ -107,6 +107,7 @@ Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function
     Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
     Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
+    Route::get('/fetch-vendor-for-tender', [PartnerManagementController::class,'fetchVendorForTender'])->name('fetch-vendor-for-tender');
     Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
 });
 
@@ -118,6 +119,8 @@ Route::middleware(['auth','role:admin|super-admin'])->group(function () {
     
     Route::get('tender-vendor', [TenderForVendorController::class,'index'])->name('tender-vendor');
     Route::get('fetch-tender-vendor', [TenderForVendorController::class,'fetchTenderVendor'])->name('fetch-tender-vendor');
+    Route::get('fetch-tender-vendor-by-id', [TenderForVendorController::class,'fetchTenderVendorById'])->name('fetch-tender-vendor-by-id');
+    Route::post('store-tender-vendor', [TenderForVendorController::class,'storeTenderVendor'])->name('store-tender-vendor');
 });
 
 Route::middleware(['auth:sanctum'])->group(function() {});

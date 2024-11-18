@@ -389,4 +389,27 @@ class PartnerManagementController extends Controller
 
         return response()->json($menus);
     }
+    public function fetchVendorForTender(){
+        try {
+            $list_company = CompanyInformation::where([
+                'type' => 'vendor',
+                'status' => 'approved',
+                'blacklist' => 0
+            ])->get([
+                'id',
+                'name',
+                'type',
+                'liable_person_and_position',
+                'owner_name',
+                'board_of_directors',
+                'major_shareholders',
+                'business_classification',
+                'business_classification_detail',
+                'contact_person',
+            ]);
+            return FormatResponseJson::success($list_company, 'vendor fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 404);
+        }
+    }
 }

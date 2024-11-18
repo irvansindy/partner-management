@@ -513,6 +513,29 @@ return [
                 ],
             ],
         ],
+        'locale' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    // 'location' => 'vendor/almasaeed2010/adminlte/plugins/moment/locales.min.js',
+                    // 'location' => 'vendor/moment/locales.js',
+                    'location' => 'vendor/moment/moment-with-locales.js',
+                ],
+            ],
+        ],
+        'moment' => [
+        'active' => true,
+        'files' => [
+            [
+                'type' => 'js',
+                'asset' => true,
+                // 'location' => 'vendor/almasaeed2010/adminlte/plugins/moment/locales.min.js',
+                'location' => 'vendor/moment/moment.min.js',
+            ],
+        ],
+    ],
     ],
 
     /*

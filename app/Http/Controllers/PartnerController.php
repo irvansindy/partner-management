@@ -87,14 +87,6 @@ class PartnerController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
-    public function fetchDocument()
-    {
-        try {
-
-        } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
-        }
-    }
     public function fetchCompanyPartnerById()
     {
         try {
