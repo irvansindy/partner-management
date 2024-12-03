@@ -116,12 +116,6 @@
                 method: 'GET',
                 async: true,
                 success: function(res) {
-                    // if (res.data.status != 'checking') {
-                    //     document.getElementById('btn_update_data_company').style.display =
-                    //         'none';
-                    //     document.getElementById('add_detail_dynamic_address').style.display =
-                    //         'none';
-                    // }
                     $('#field_form_detail_business_other').empty()
 
                     $('#detail_company_type').empty()

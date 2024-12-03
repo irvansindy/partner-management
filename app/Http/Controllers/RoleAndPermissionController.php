@@ -41,6 +41,16 @@ class RoleAndPermissionController extends Controller
             return FormatResponseJson::error(null,$e->getMessage(), 404);
         }
     }
+    public function fetchPermissionView()
+    {
+        try {
+            $fetch_permission = Permission::where('name', 'LIKE', '%view_%')
+            ->get(['id','name', 'guard_name']);
+            return FormatResponseJson::success($fetch_permission, 'permission fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null,$e->getMessage(), 404);
+        }
+    }
     public function menu()
     {
         

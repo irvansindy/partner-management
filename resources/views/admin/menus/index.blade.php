@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'User Management')
+@section('title', 'Menu Management')
 
 @section('content_header')
     <h1>Menu Management</h1>
@@ -9,11 +9,11 @@
 @section('content')
     <div class="container-fluid py-4">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card mb-4">
                     <div class="card-header d-flex bd-highlight">
                         <div class="pt-2 flex-fill bd-highlight">
-                            <p>list Menu Permission</p>
+                            <p>List Menu Permission</p>
                         </div>
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
                             <button type="button" class="btn bg-gradient-primary" id="for_create_menu" data-toggle="modal" data-target="#formCreateMenu">+ Menu</button>
@@ -60,13 +60,14 @@
         .select2-container--default .select2-selection--single {
             background-color: #f8fafc !important;
         }
-
         .select2-container .select2-selection--single {
             height: 38px !important;
         }
-
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 36px !important;
+        }
+        .toasts-top-right {
+            z-index: 9999 !important;
         }
     </style>
 @stop

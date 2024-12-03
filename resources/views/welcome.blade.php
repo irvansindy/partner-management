@@ -13,12 +13,41 @@
     <!-- Main css -->
     {{-- <link rel="stylesheet" href="css/style.css"> --}}
     <link rel="stylesheet" href="{{ asset('css/css_auth/style.css') }}">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet"/>
 
 </head>
 <body>
 
     {{-- @extends('adminlte::auth.passwords.reset') --}}
-    <div class="main" id="section_form_auth"></div>
+    <div class="main" id="section_form_auth">
+        <section class="sign-in">
+            <div class="container">
+                <div class="signin-content">
+                    <div class="signin-image">
+                        <!-- <figure><img src="images/signin-image.jpg" alt="sing up image"></figure> -->
+                        <figure><img src="images/17-removebg-preview.png" alt="sing up image"></figure>
+                        {{-- <p class="signup-image-link create_account_link" style="cursor:pointer;">Create an account</p> --}}
+                    </div>
+                    <div class="signin-form">
+                        <img src="{{ asset('uploads/logo/logo.png') }}" alt="" width="140">
+                        <div class="form-title">
+                            <h6 class="">Selamat datang</h6>
+                            <h1 class="">Partner Managements</h1>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="{{ route('register') }}" class="btn btn-primary">Register</a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
     <!-- JS -->
     {{-- <script src="vendor/jquery/jquery.min.js"></script> --}}
     <script src="{{ asset('js/vendor_auth/jquery/jquery.min.js') }}"></script>
@@ -27,7 +56,7 @@
 
     <script>
         $(document).ready(function() {
-            first_load()
+            // first_load()
             function first_load() {
                 $('#section_form_auth').empty()
                 $('#section_form_auth').append(`
@@ -113,5 +142,5 @@
             })
         })
     </script>
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</body>
 </html>

@@ -14,11 +14,17 @@
                     </div>
                     <div class="form-group">
                         <label for="menu_url">Url</label>
-                        <input type="text" class="form-control" id="menu_url" placeholder="Name">
+                        <input type="text" class="form-control" id="menu_url" placeholder="Url">
                     </div>
                     <div class="form-group">
                         <label for="menu_icon">Icon</label>
-                        <input type="text" class="form-control" id="menu_icon" placeholder="Name">
+                        <input type="text" class="form-control" id="menu_icon" placeholder="Icon">
+                    </div>
+                    <div class="form-group">
+                        <label for="menu_permission">Permission</label>
+                        <select class="form-control" name="menu_permission" id="menu_permission" style="width: 100%">
+                            
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">

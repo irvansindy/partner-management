@@ -82,7 +82,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('delete-permission', [RoleAndPermissionController::class,'deletePermission'])->name('delete-permission');
     
     Route::get('fetch-permission-in-role', [RoleAndPermissionController::class,'fetchPermissionInRole'])->name('fetch-permission-in-role');
-    Route::get('fetch-permission-in-role-v2', [RoleAndPermissionController::class,'fetchPermissionInRoleV2'])->name('fetch-permission-in-role-v2');
+    // Route::get('fetch-permission-in-role-v2', [RoleAndPermissionController::class,'fetchPermissionInRoleV2'])->name('fetch-permission-in-role-v2');
     Route::post('add-or-remove-permission', [RoleAndPermissionController::class,'addOrRemovePermissionToRole'])->name('add-or-remove-permission');
 
     Route::get('export-pdf', [PartnerManagementController::class,'exportPartnerToPdf'])->name('export-pdf');
@@ -91,6 +91,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
     Route::get('menu-setting', [MenuController::class,'index'])->name('menu-setting');
     Route::get('fetch-menu', [MenuController::class,'fetchMenu'])->name('fetch-menu');
+    Route::get('/fetch-permission-view', [RoleAndPermissionController::class,'fetchPermissionView'])->name('fetch-permission-view');
     Route::post('store-menu', [MenuController::class,'storeMenu'])->name('store-menu');
 
     Route::get('approval-setting', [ApprovalSettingController::class,'index'])->name('approval-setting');

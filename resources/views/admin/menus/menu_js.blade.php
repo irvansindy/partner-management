@@ -1,5 +1,7 @@
 <script>
     $(document).ready(function() {
+        fetchMenu()
+
         function fetchMenu() {
             $.ajax({
                 headers: {
@@ -42,11 +44,26 @@
             })
         }
 
-        fetchMenu()
-
         $(document).on('click', '#for_create_menu', function(e) {
             e.preventDefault()
             $('#form_create_new_menu')[0].reset()
+            $('#menu_permission').empty()
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route('fetch-permission-view') }}',
+                method: 'GET',
+                success: function(res) {
+                    const list_permission = res.data
+                    // console.log(list_permission);
+                    $('#menu_permission').empty()
+                    $('#menu_permission').append(`<option value="">Select One</option>`)
+                    $.each(list_permission, (i, permission) => {
+                        $('#menu_permission').append(`<option value="${permission.name}">${permission.name}</option>`)
+                    })
+                }
+            })
         })
 
         $(document).on('click', '#submit_create_menu', function(e) {
@@ -74,6 +91,11 @@
                         icon: "success",
                         title: 'Success!',
                         text: res.meta.message,
+                        delay: 3000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
                     })
                     fetchMenu()
                 },
@@ -83,9 +105,18 @@
                         icon: "error",
                         title: 'Error!',
                         text: 'gagal memuat data, silahkan hubungi admin.',
+                        delay: 3000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
                     })
                 }
             })
+        })
+
+        $('#menu_permission').select2({
+            dropdownParent: $('#formCreateMenu')
         })
     })
 </script>
