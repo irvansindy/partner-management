@@ -62,8 +62,12 @@ class RegisterController extends Controller
                 'regex:/[@$!%*#?&]/' // Harus mengandung simbol
             ],
         ], [
-            'email.regex' => 'Email must use the Gmail domain (@gmail.com).',
-            'password.regex' => 'The password must consist of upper & lower case letters, numbers and symbols.'
+            'name.required' => 'Nama tidak boleh kosong',
+            'email.required' => 'Email tidak boleh kosong',
+            'password.required' => 'Kata sandi tidak boleh kosong',
+            'email.regex' => 'Email harus menggunakan domain gmail (@gmail.com).',
+            'password.regex' => 'Kata sandi harus terdiri dari huruf besar & kecil, angka dan simbol.',
+            'password.min' => 'Kata sandi minimal terdiri dari 8 karakter',
         ]);
     }
 

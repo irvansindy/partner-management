@@ -28,7 +28,7 @@ use App\Http\Controllers\API\ApiPartnerController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('/');
 
 // for php artisan route cache
 // for php artisan optimize clear
