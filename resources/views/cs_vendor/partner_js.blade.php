@@ -743,6 +743,7 @@
                     input.readOnly = false;
                 });
                 $('#total-financial-ratio').empty()
+
                 $('#action_button_confirm_currency').empty()
                 $('#action_button_confirm_currency').html(`
                     <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
@@ -797,6 +798,13 @@
                                             id="debt_asset_" name="debt_asset_"></td>
                                 </tr>
                                 <tr>
+                                    <td>Debt to Asset Ratio</td>
+                                    <td><input type="number" step="0.01" class="form-control percent"
+                                            id="account_receivable_turn_over_" name="account_receivable_turn_over_"></td>
+                                    <td><input type="number" step="0.01" class="form-control percent"
+                                            id="account_receivable_turn_over_" name="account_receivable_turn_over_"></td>
+                                </tr>
+                                <tr>
                                     <td>Net Profit Margin</td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="net_profit_margin_" name="net_profit_margin_"></td>
@@ -807,6 +815,47 @@
                         </table>
                     </div>
                 `)
+                
+                $('.percent').attr('readonly', true)
+
+                updateFieldIdsFinance('wc_ratio_')
+                updateFieldIdsFinance('cf_coverage_')
+                updateFieldIdsFinance('tie_ratio_')
+                updateFieldIdsFinance('debt_asset_')
+                updateFieldIdsFinance('account_receivable_turn_over_')
+                updateFieldIdsFinance('net_profit_margin_')
+
+                let year_data = [aYearAgo, twoYearAgo]
+
+                for (let index = 0; index < year_data.length; index++) {
+                    let year = year_data[index]
+                    let revenue = parseFloat(document.getElementById("revenue_"+year).value)
+                    let netProfit = parseFloat(document.getElementById("net_profit_"+year).value)
+                    let currentAsset = parseFloat(document.getElementById("current_asset_"+year).value)
+                    let totalAsset = parseFloat(document.getElementById("total_asset_"+year).value)
+                    let currentLiabilities = parseFloat(document.getElementById("current_liabilities_"+year).value)
+                    let ebit = parseFloat(document.getElementById("ebit_"+year).value)
+                    let depreciationExprense = parseFloat(document.getElementById("depreciation_expense_"+year).value)
+                    let totalLiabilities = parseFloat(document.getElementById("total_current_liabilities_"+year).value)
+                    let interestExprense = parseFloat(document.getElementById("interest_expense_"+year).value)
+                    let accountReceivable = parseFloat(document.getElementById("acc_receivables_"+year).value)
+                    
+                    let workingCapitalRatio =+ (currentAsset / currentLiabilities) * 100;
+                    let cashFlowCoverageRatio =+ ((ebit + depreciationExprense) / totalLiabilities) * 100;
+                    let timeInterestEarnedRatio =+ (ebit / interestExprense) * 100;
+                    let debtToAssetRatio =+ (totalLiabilities / totalAsset) * 100;
+                    let accountReceivableTurnOver =+ (revenue / ((accountReceivable + accountReceivable) / 2)) * 100;
+                    let netProfitMargin =+ (revenue / netProfit) * 100;
+
+                    // Tampilkan hasil di field wc_ratio_
+                    $('#wc_ratio_'+year).val(workingCapitalRatio.toFixed(2))
+                    $('#cf_coverage_'+year).val(cashFlowCoverageRatio.toFixed(2))
+                    $('#tie_ratio_'+year).val(timeInterestEarnedRatio.toFixed(2))
+                    $('#debt_asset_'+year).val(debtToAssetRatio.toFixed(2))
+                    $('#account_receivable_turn_over_'+year).val(accountReceivableTurnOver.toFixed(2))
+                    $('#net_profit_margin_'+year).val(netProfitMargin.toFixed(2))
+                }
+                
                 $('#action_button_confirm_currency').empty()
                 $('#action_button_confirm_currency').html(`
                     <button type="button" class="btn btn-danger" id="reset_currency">Reset</button>
@@ -822,6 +871,7 @@
             currency_data.forEach(input => {
                 input.readOnly = false;
             });
+            $('#total-financial-ratio').empty()
             $('#action_button_confirm_currency').empty()
             $('#action_button_confirm_currency').html(`
                 <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
