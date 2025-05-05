@@ -27,6 +27,7 @@ class PartnerController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        // $this->middleware(['auth', 'check.company.info']);
     }
     public function index()
     {
@@ -110,6 +111,9 @@ class PartnerController extends Controller
     public function store(Request $request)
     {
         try {
+            $aYearAgo = date("Y", strtotime("-1 year"));
+            $twoYearAgo = date("Y", strtotime("-2 year"));
+            
             DB::beginTransaction();
             $existing_data = CompanyInformation::where('user_id', auth()->user()->id)->first();
             if ($existing_data) {
@@ -134,26 +138,25 @@ class PartnerController extends Controller
                 'email_address' => 'required|email|unique:company_informations,email_address',
                 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
-                'address.*' => 'required|string',
-                'city.*' => 'required|string',
-                'country.*' => 'required|string',
-                'province.*' => 'required|string',
-                'zip_code.*' => 'required|integer',
-                'telephone.*' => 'required|integer',
-                'fax.*' => 'required|integer',
+                'address.02' => 'required|string',
+                'city.02' => 'required|string',
+                'country.02' => 'required|string',
+                'province.02' => 'required|string',
+                'zip_code.02' => 'required|integer',
+                'telephone.02' => 'required|string',
+                'fax.02' => 'required|string',
             ], 
             [
-                'address.*.required' => 'The address field is required',
-                'city.*.required' => 'The city field is required.',
-                'country.*.required' => 'The country field is required.',
-                'province.*.required' => 'The province field is required.',
-                'zip_code.*.required' => 'The zip_code field is required.',
-                'fax.*.required' => 'The fax field is required.',
-                'zip_code.*.integer' => 'The zip_code field is required.',
-                'telephone.*.integer' => 'The telephone field is required.',
-                'fax.*.integer' => 'The fax field is required.',
-            ]
-        );
+                'address.0.required' => 'The address field is required',
+                'city.0.required' => 'The city field is required.',
+                'country.0.required' => 'The country field is required.',
+                'province.0.required' => 'The province field is required.',
+                'zip_code.0.required' => 'The zip_code field is required.',
+                'fax.0.required' => 'The fax field is required.',
+                'zip_code.0.integer' => 'The zip_code field is required.',
+                'telephone.0.integer' => 'The telephone field is required.',
+                'fax.0.integer' => 'The fax field is required.',
+            ]);
 
             if ($request->business_classification == 'Other' && $request->business_classification_other_detail == NULL) {
                 $validator->after(function ($validator) {

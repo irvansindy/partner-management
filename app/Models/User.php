@@ -69,4 +69,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(MasterDepartment::class, 'id', 'department_id');
     }
+    public function companyInformation()
+{
+    return $this->hasOne(CompanyInformation::class);
+}
+
 }

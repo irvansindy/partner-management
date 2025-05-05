@@ -36,9 +36,7 @@
                                         <th class="text-secondary opacity-7">#</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -46,6 +44,7 @@
             </div>
         </div>
         @include('admin.menus.create')
+        @include('admin.menus.modal_list_submenu')
     </div>
 @stop
 

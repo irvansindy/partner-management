@@ -31,16 +31,51 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
-            $menus = Menu::all()->map(function (Menu $menu) {
-                return [
-                    'text' => $menu['name_text'],
-                    // 'key'  => 'partner-management',
-                    'url'  => $menu['url_name'],
-                    'icon' => $menu['icon'],
+            $menus = Menu::with('children')
+                ->where('type', 1)
+                ->orderBy('order')
+                ->get();
+    
+            $user = auth()->user();
+    
+            // Ambil semua permission dari role-role yang dimiliki user
+            $rolePermissions = $user->roles
+                ->flatMap(function ($role) {
+                    return $role->permissions->pluck('name');
+                })
+                ->unique();
+    
+            foreach ($menus as $menu) {
+                // Cek permission menu utama
+                if ($menu->can_permission && !$rolePermissions->contains($menu->can_permission)) {
+                    continue;
+                }
+    
+                $menuItem = [
+                    'text' => $menu->name_text,
+                    'url'  => $menu->url_name,
+                    'icon' => $menu->icon,
                 ];
-            });
-            $event->menu->add(...$menus);
-            // dd($menus);
+    
+                // Filter submenu berdasarkan permission role
+                $children = $menu->children->filter(function ($submenu) use ($rolePermissions) {
+                    return !$submenu->can_permission || $rolePermissions->contains($submenu->can_permission);
+                })->sortBy('order');
+    
+                if ($children->isNotEmpty()) {
+                    $menuItem['submenu'] = $children->map(function ($submenu) {
+                        return [
+                            'text' => $submenu->name_text,
+                            'url'  => $submenu->url_name,
+                            'icon' => $submenu->icon,
+                        ];
+                    })->toArray();
+                }
+    
+                $event->menu->add($menuItem);
+            }
         });
     }
+    
+
 }

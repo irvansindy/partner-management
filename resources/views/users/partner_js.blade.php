@@ -22,7 +22,7 @@
                 async: true,
                 success: function(res) {
                     if (res.data[0] == null) {
-                        $('#alert_modal_data_null').modal('show')
+                        // $('#alert_modal_data_null').modal('show')
                         $('#data-company-name').empty()
                         $('#data-company-name').html('<small>Not Set</small>')
                         $('#data-company-group-name').empty()
@@ -35,7 +35,7 @@
                     }
 
                     if (res.data[0] != null) {
-                        $('#alert_modal_data_null').modal('hide')
+                        // $('#alert_modal_data_null').modal('hide')
                         $('#data-company-name').empty()
                         $('#data-company-name').html('<small>' + res.data[0].name + '</small>')
                         $('#data-company-group-name').empty()

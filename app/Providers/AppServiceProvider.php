@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
+use App\Services\MenuService;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -27,5 +29,11 @@ class AppServiceProvider extends ServiceProvider
         config(['app.locale' => 'id']);
         Carbon::setLocale('id');
         Schema::defaultStringLength(191);
+        View::composer('*', function ($view) {
+            if (auth()->check()) {
+                $menuService = new MenuService();
+                $view->with('menus', $menuService->getAccessibleMenus());
+            }
+        });
     }
 }

@@ -63,3 +63,63 @@ layout auth
 
     </a>
 </div>
+
+Joykowi@132
+
+Dua kondisi pada sisi Vendor:
+  1. Pihak vendor bisa register data ke sistem dengan sendirinya
+  2. Pihak vendor bisa register data ke sistem dengan bantuan pihak ketiga (PIC yang ditunjuk nanti sebagai admin sistem PM, dari pihak kantor atau divisi PPIC)
+
+  2. Pada sisi Customer :
+
+Role Case Vendor : 
+  - Vendor
+  - Customer
+  - Buyer (PPIC) : Siti Choirunissa, Rida Wanti, Siti Imas masitoh, Lia Marliani.
+  - Approval 1 (PPIC) : Fransisco Gultom
+  - Approval 2 (PPIC) : Tryvena Puspayanti 
+  - Legal (Legal) : Mario Gumpar (sebagai pihak yang koreksi ketika sudah full approval dari PPIC)
+start form Buyer - Approval 2, apabila reject maka drop data yang sudah disubmit oleh vendor.
+
+Role Case Customer : 
+  Role Case Sales Project :
+    - Customer
+    - Sales Admin : Arum, Desi cikol, deby, zahra
+    - Approval 1 (PPIC) : Sales Manager : Yohan
+    - Approval 2 (PPIC) : TBA
+    - Legal (Legal) as Viewer after full approval
+    - Acounting 1 (Accounting) : Leo as Viewer after full approval
+    - Acounting 2 (Accounting) : Shelly as Viewer after full approval
+    - Acounting 3 (Accounting) : Amri as Viewer after full approval
+
+  Role Case Sales Retail 1 :
+    - Customer
+    - Sales Admin : Stephanie, Maria Dwi, Franita tania, Aulia nurmala
+    - Approval 1 (PPIC) : TBA
+    - Approval 2 (PPIC) : Anen
+    - Legal (Legal) as Viewer after full approval
+    - Acounting 1 (Accounting) : Leo as Viewer after full approval
+    - Acounting 2 (Accounting) : Shelly as Viewer after full approval
+    - Acounting 3 (Accounting) : Amri as Viewer after full approval
+
+  Role Case Sales Retail 2 :
+    - Customer
+    - Sales Admin : Eka, Angel, Debora (optional)
+    - Approval 1 (PPIC) : Advent/Darwin
+    - Legal (Legal) as Viewer after full approval
+    - Acounting 1 (Accounting) : Leo as Viewer after full approval
+    - Acounting 2 (Accounting) : Shelly as Viewer after full approval
+    - Acounting 3 (Accounting) : Amri as Viewer after full approval
+
+Status Vendor or Customer :
+    Keaktifan Vendor atau Customer (Data akan tampil tergantung kondisi status keaktifan vendor atau customer.) :
+    - Active
+    - Inactive
+
+    Trasactional Vendor or Customer (Data akan tetap tampil.) :
+    - Blacklist
+    - Non Blacklist
+
+Prosedur untuk blacklist :
+    saat role final approval melakukan blacklist ataupun buka blacklist, maka harus mengisi remark atau reason untuk melakukan hal tersebut, dan itu tersimpan di dalam log.
+    saat role final approval melakukan blacklist, maka data vendor atau customer tidak bisa diakses oleh role yang lain, dan hanya bisa diakses oleh role final approval dan legal.

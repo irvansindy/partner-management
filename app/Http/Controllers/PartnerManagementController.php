@@ -358,31 +358,12 @@ class PartnerManagementController extends Controller
     {
         // Ambil user yang sedang login
         $user = Auth::user();
-
-        // Dapatkan semua menu dengan submenus yang sesuai role dan permission
-        // $menus = Menu::with(['submenus' => function ($query) use ($user) {
-        //     $query->whereHas('permissions', function ($q) use ($user) {
-        //         $q->whereIn('name', $user->getAllPermissions()->pluck('name'));
-        //     });
-        // }])->whereHas('permissions', function ($query) use ($user) {
-        //     $query->whereIn('name', $user->getAllPermissions()->pluck('name'));
-        // })->get();
-        
-        // $menus = Menu::with(['submenus' => function ($query) use ($user) {
-        //     $query->whereHas('permissions', function ($query) use ($user) {
-        //         $query->whereIn('name', $user->getPermissionNames());
-        //     });
-        // }])->get();
-
         // Ambil data Menu yang diizinkan untuk user
         $menus = Menu::with(['submenus' => function ($query) use ($user) {
             $query->whereHas('permissions', function ($permissionQuery) use ($user) {
                 $permissionQuery->where('name', $user->getAllPermissions()->pluck('name')->toArray());
             });
         }])
-        // ->whereHas('permissions', function ($permissionQuery) use ($user) {
-        //     $permissionQuery->where('name', $user->getAllPermissions()->pluck('name')->toArray());
-        // })
         ->get();
         dd($menus);
 

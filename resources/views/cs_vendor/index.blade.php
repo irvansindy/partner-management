@@ -8,6 +8,9 @@
 
 @section('content')
     <div class="container-fluid py-4">
+        {{-- @php
+            dd(\Auth::user()->roles->pluck('name')->first())
+        @endphp --}}
         <div class="row">
             <div class="container-fluid">
                 <form action="" method="" id="form_company">

@@ -110,12 +110,6 @@
             </table>
         </div>
     </x-adminlte-card>
-    {{-- <p>Kamu belum mendaftakan diri sebagai Partner <br> silahkan klik tombol di bawah untuk registrasi</p>
-    <button type="button" class="btn btn-primary" id="create_partner" data-toggle="modal"
-        data-target="#modalCreatePartner">
-        Registrasi
-
-    </button> --}}
     @include('cs_vendor.detail_data')
     @include('cs_vendor.modal_alert_data_null')
     @include('cs_vendor.support_docx_modal')

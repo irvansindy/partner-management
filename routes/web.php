@@ -30,23 +30,12 @@ Route::get('/', function () {
     return view('welcome');
 })->name('/');
 
-// for php artisan route cache
-// for php artisan optimize clear
-// Route::get('', function () {});
-
-Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement-wo-auth');
-// Login routes
-// Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-// Route::post('login', [LoginController::class, 'login']);
-// Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-
-// Register routes
-// Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-// Route::post('register', [RegisterController::class, 'register']);
-
+Route::middleware(['auth', 'check.company.info'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('role:user');
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
+});
 Route::middleware(['auth', 'role:user'])->group(function () {
-    // Route::get('/partner', [PartnerController::class,'index'])->name('partner');
     Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
@@ -58,7 +47,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::post('update-attachment', [PartnerController::class,'updateAttachmentById'])->name('update-attachment');
 });
 
-Route::middleware(['auth', 'role:super-admin'])->group(function () {
+Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     Route::get('/user-manage', [UserManagementController::class,'index'])->name('user-manage');
     Route::get('/fetch-user', [UserManagementController::class,'fetchUser'])->name('fetch-user');
     Route::get('/fetch-role-office-dept', [UserManagementController::class,'fetchRoleOfficeDepartment'])->name('fetch-role-office-dept');
@@ -91,6 +80,9 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
     Route::get('menu-setting', [MenuController::class,'index'])->name('menu-setting');
     Route::get('fetch-menu', [MenuController::class,'fetchMenu'])->name('fetch-menu');
+    Route::get('fetch-menu-by-id', [MenuController::class,'fetchMenuById'])->name('fetch-menu-by-id');
+    Route::get('fetch-parent-menu', [MenuController::class,'fetchParentMenu'])->name('fetch-parent-menu');
+    Route::get('fetch-children-menu', [MenuController::class,'fetchChildrenMenu'])->name('fetch-children-menu');
     Route::get('/fetch-permission-view', [RoleAndPermissionController::class,'fetchPermissionView'])->name('fetch-permission-view');
     Route::post('store-menu', [MenuController::class,'storeMenu'])->name('store-menu');
 
@@ -105,6 +97,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {
+    // Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
     Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
