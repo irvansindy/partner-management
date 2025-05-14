@@ -120,7 +120,6 @@ class UserManagementController extends Controller
                 'email' => 'required|email',
                 'role' => 'required',
                 'office' => 'required',
-                // 'parent_user'=> 'required',
                 'department'=> 'required',
             ]);
 

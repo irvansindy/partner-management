@@ -5,7 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\RoleAndPermissionController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\DepartmentManagementController;
 use App\Http\Controllers\PartnerManagementController;
+use App\Http\Controllers\OfficeManagementController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ApprovalSettingController;
@@ -13,7 +15,6 @@ use App\Http\Controllers\EndUserLicenseAgreementController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TenderForVendorController;
-
 use App\Http\Controllers\API\ApiPartnerController;
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +39,13 @@ Route::middleware(['auth', 'check.company.info'])->group(function () {
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
+    Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
+    
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
     Route::get('/detail-partner', [PartnerController::class,'detailPartner'])->name('detail-partner');
     Route::get('/fetch-partner-byuser', [PartnerController::class,'fetchCompanyPartnerById'])->name('fetch-partner-byuser');
+
+    Route::post('/result-financial-ratio', [PartnerController::class,'resultFinancialRatio'])->name('result-financial-ratio');
     Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
     Route::post('/update-partner', [PartnerController::class,'update'])->name('update-partner');
     Route::post('store-attachment', [PartnerController::class,'storeAttachment'])->name('store-attachment');
@@ -71,7 +76,6 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     Route::post('delete-permission', [RoleAndPermissionController::class,'deletePermission'])->name('delete-permission');
     
     Route::get('fetch-permission-in-role', [RoleAndPermissionController::class,'fetchPermissionInRole'])->name('fetch-permission-in-role');
-    // Route::get('fetch-permission-in-role-v2', [RoleAndPermissionController::class,'fetchPermissionInRoleV2'])->name('fetch-permission-in-role-v2');
     Route::post('add-or-remove-permission', [RoleAndPermissionController::class,'addOrRemovePermissionToRole'])->name('add-or-remove-permission');
 
     Route::get('export-pdf', [PartnerManagementController::class,'exportPartnerToPdf'])->name('export-pdf');
@@ -93,6 +97,24 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalMaster'])->name('store-approval-master');
     Route::post('store-approval-detail', [ApprovalSettingController::class,'storeApprovalDetail'])->name('store-approval-detail');
 
+    Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');
+    Route::get('fetch-end-user-license-agreement', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement');
+    Route::get('fetch-end-user-license-agreement-by-id', [EndUserLicenseAgreementController::class,'fetchEulaById'])->name('fetch-end-user-license-agreement-by-id');
+    Route::post('submit-end-user-license-agreement', [EndUserLicenseAgreementController::class,'submitEula'])->name('submit-end-user-license-agreement');
+    
+    Route::get('tender-vendor', [TenderForVendorController::class,'index'])->name('tender-vendor');
+    Route::get('fetch-tender-vendor', [TenderForVendorController::class,'fetchTenderVendor'])->name('fetch-tender-vendor');
+    Route::get('fetch-tender-vendor-by-id', [TenderForVendorController::class,'fetchTenderVendorById'])->name('fetch-tender-vendor-by-id');
+    Route::post('store-tender-vendor', [TenderForVendorController::class,'storeTenderVendor'])->name('store-tender-vendor');
+
+    Route::get('department-setting', [DepartmentManagementController::class,'index'])->name('department-setting');
+    Route::get('fetch-department-setting', [DepartmentManagementController::class,'fetchDepartment'])->name('fetch-department-setting');
+    Route::post('submit-department-setting', [DepartmentManagementController::class,'CreateOrUpdateDepartment'])->name('submit-department-setting');
+    
+    Route::get('office-setting', [OfficeManagementController::class,'index'])->name('office-setting');
+    Route::get('fetch-office-setting', [OfficeManagementController::class,'fetchOffice'])->name('fetch-office-setting');
+    Route::get('fetch-office-setting-by-id', [OfficeManagementController::class,'fetchOfficeById'])->name('fetch-office-setting-by-id');
+    Route::post('submit-office-setting', [OfficeManagementController::class,'CreateOrUpdateOffice'])->name('submit-office-setting');
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });
 
@@ -103,18 +125,6 @@ Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
     Route::get('/fetch-vendor-for-tender', [PartnerManagementController::class,'fetchVendorForTender'])->name('fetch-vendor-for-tender');
     Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
-});
-
-Route::middleware(['auth','role:admin|super-admin'])->group(function () {
-    Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');
-    Route::get('fetch-end-user-license-agreement', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement');
-    Route::get('fetch-end-user-license-agreement-by-id', [EndUserLicenseAgreementController::class,'fetchEulaById'])->name('fetch-end-user-license-agreement-by-id');
-    Route::post('submit-end-user-license-agreement', [EndUserLicenseAgreementController::class,'submitEula'])->name('submit-end-user-license-agreement');
-    
-    Route::get('tender-vendor', [TenderForVendorController::class,'index'])->name('tender-vendor');
-    Route::get('fetch-tender-vendor', [TenderForVendorController::class,'fetchTenderVendor'])->name('fetch-tender-vendor');
-    Route::get('fetch-tender-vendor-by-id', [TenderForVendorController::class,'fetchTenderVendorById'])->name('fetch-tender-vendor-by-id');
-    Route::post('store-tender-vendor', [TenderForVendorController::class,'storeTenderVendor'])->name('store-tender-vendor');
 });
 
 Route::middleware(['auth:sanctum'])->group(function() {});

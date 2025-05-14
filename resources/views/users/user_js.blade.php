@@ -222,10 +222,13 @@
                     })
                     
                     // $('#update_current_department').val(res.data[0].office.name)
+                    let current_dept = res.data[0].dept;
+
                     $('#update_user_department').empty()
                     $('#update_user_department').append(`
-                        <option value="${res.data[0].office.id}">${res.data[0].dept.name}</option>
+                        <option value="${current_dept != null ? current_dept.id : ''}">${current_dept != null ? current_dept.name : ''}</option>
                     `)
+                    
                     $.each(res.data.departments, function(i, department) {
                         $('#update_user_department').append(`
                             <option value="${department.id}">${department.name}</option>

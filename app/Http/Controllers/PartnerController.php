@@ -10,7 +10,11 @@ use App\Models\CompanyDocumentTypeCategories;
 use App\Models\CompanyAddress;
 use App\Models\CompanyBank;
 use App\Models\CompanyTax;
-use App\Models\CompanyAdditionalInformation;
+use App\Models\UserValueIncomeStatement;
+use App\Models\UserBalanceSheet;
+use App\Models\UserFinancialRatio;
+use App\Models\MasterIncomeStatement;
+use App\Models\MasterBalanceSheet;
 use App\Models\CompanySupportingDocument;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\Validator;
@@ -108,13 +112,43 @@ class PartnerController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
+    public function fetchIncomeStatementBalanceSheet()
+    {
+        try {
+            $income_statement = MasterIncomeStatement::orderBy('id', 'asc')->get(['id','name']);
+            $balance_sheet = MasterBalanceSheet::orderBy('id', 'asc')->get(['id','name']);
+            $data = [
+                'income_statement'=> $income_statement,
+                'balance_sheet'=> $balance_sheet
+            ];
+            return FormatResponseJson::success($data, 'Income Statement and Balance Sheet fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+    public function resultFinancialRatio(Request $request)
+    {
+        try {
+            $data = [];
+            $aYearAgo = date("Y", strtotime("-1 year"));
+            $twoYearAgo = date("Y", strtotime("-2 year"));
+            dd($request->all());
+
+            return FormatResponseJson::success($data, 'Financial ratio fetched successfully');
+        } catch (ValidationException $e) {
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
     public function store(Request $request)
     {
         try {
             $aYearAgo = date("Y", strtotime("-1 year"));
             $twoYearAgo = date("Y", strtotime("-2 year"));
-            
+            $years = [$aYearAgo, $twoYearAgo];
             DB::beginTransaction();
+
             $existing_data = CompanyInformation::where('user_id', auth()->user()->id)->first();
             if ($existing_data) {
                 return FormatResponseJson::error(null, 'Anda sudah mendaftar.', 400);
@@ -138,13 +172,13 @@ class PartnerController extends Controller
                 'email_address' => 'required|email|unique:company_informations,email_address',
                 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
                 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
-                'address.02' => 'required|string',
-                'city.02' => 'required|string',
-                'country.02' => 'required|string',
-                'province.02' => 'required|string',
-                'zip_code.02' => 'required|integer',
-                'telephone.02' => 'required|string',
-                'fax.02' => 'required|string',
+                'address.0' => 'required|string',
+                'city.0' => 'required|string',
+                'country.0' => 'required|string',
+                'province.0' => 'required|string',
+                'zip_code.0' => 'required|integer',
+                'telephone.0' => 'required|string',
+                'fax.0' => 'required|string',
             ], 
             [
                 'address.0.required' => 'The address field is required',
@@ -210,14 +244,25 @@ class PartnerController extends Controller
             ];
             $partner = CompanyInformation::create($data_company_partner);
 
-            if ($request->address[0] != null) {
+            if (!empty($request->address) && $request->address[0] != null) {
                 $data_address = [];
-                $list_address_data = [];
-                for ($i=0; $i < count($request->address); $i++) { 
-                    # code...
-                    $list_address_data = [
+            
+                for ($i = 0; $i < count($request->address); $i++) {
+                    // Lewati jika semua field kosong/null pada index ini
+                    if (
+                        empty($request->address[$i]) &&
+                        empty($request->city[$i]) &&
+                        empty($request->country[$i]) &&
+                        empty($request->province[$i]) &&
+                        empty($request->zip_code[$i]) &&
+                        empty($request->telephone[$i]) &&
+                        empty($request->fax[$i])
+                    ) {
+                        continue;
+                    }
+            
+                    $data_address[] = [
                         'company_id' => $partner->id,
-                        // 'company_id' => 'id',
                         'address' => $request->address[$i],
                         'city' => $request->city[$i],
                         'country' => $request->country[$i],
@@ -226,19 +271,32 @@ class PartnerController extends Controller
                         'telephone' => $request->telephone[$i],
                         'fax' => $request->fax[$i],
                     ];
-                    array_push($data_address, $list_address_data);
                 }
-                // $create_address = CompanyAddress::create($data_address);
-                $create_address = CompanyAddress::insert($data_address);
+            
+                if (!empty($data_address)) {
+                    CompanyAddress::insert($data_address);
+                }
             }
 
-            if ($request->bank_name[0] != null) {
+            if (!empty($request->bank_name) && $request->bank_name[0] != null) {
                 $data_bank = [];
-                $list_bank_data = [];
-                for ($i= 0; $i < count($request->bank_name); $i++) {
-                    $list_bank_data = [
+            
+                for ($i = 0; $i < count($request->bank_name); $i++) {
+                    // Lewati jika semua field kosong/null pada index ini
+                    if (
+                        empty($request->bank_name[$i]) &&
+                        empty($request->branch[$i]) &&
+                        empty($request->account_name[$i]) &&
+                        empty($request->city_or_country[$i]) &&
+                        empty($request->account_number[$i]) &&
+                        empty($request->currency[$i]) &&
+                        empty($request->swift_code[$i])
+                    ) {
+                        continue;
+                    }
+            
+                    $data_bank[] = [
                         'company_id' => $partner->id,
-                        // 'company_id' => 'id',
                         'name' => $request->bank_name[$i],
                         'branch' => $request->branch[$i],
                         'account_name' => $request->account_name[$i],
@@ -247,11 +305,13 @@ class PartnerController extends Controller
                         'currency' => $request->currency[$i],
                         'swift_code' => $request->swift_code[$i],
                     ];
-                    array_push($data_bank, $list_bank_data);
                 }
-                $create_bank = CompanyBank::insert($data_bank);
+            
+                if (!empty($data_bank)) {
+                    CompanyBank::insert($data_bank);
+                }
             }
-
+    
             if ($request->register_number_as_in_tax_invoice != null) {
                 $data_tax = [
                     'company_id' => $partner->id,
@@ -264,6 +324,105 @@ class PartnerController extends Controller
                     'tax_invoice_serial_number' => $request->tax_invoice_serial_number,
                 ];
                 $create_tax = CompanyTax::insert($data_tax);
+            }
+
+            switch ($request->company_type) {
+                case 'customer':
+                    $existing_income_statement = MasterIncomeStatement::orderBy('id', 'asc')->get(['id', 'name']);
+                    $existing_balance_sheet = MasterBalanceSheet::orderBy('id', 'asc')->get(['id', 'name']);
+            
+                    $data_income_statement = [];
+                    $data_balance_sheet = [];
+
+                    foreach ($existing_income_statement as $income_statement) {
+                        foreach ($years as $year) {
+                            // Buat nama field input seperti "revenue_2024"
+                            $field_key = Str::slug($income_statement->name, '_') . '_' . $year;
+
+                            // Ambil nilainya dari $request (default 0 jika tidak dikirim)
+                            $value = str_replace(',', '', $request->input($field_key, 0)); // hilangkan koma ribuan
+
+                            $data_income_statement[] = [
+                                'company_information_id' => $partner->id,
+                                'master_income_statement_id' => $income_statement->id,
+                                'value' => $value,
+                                'year' => $year,
+                                'created_at' => now(),
+                                'updated_at' => null,
+                            ];
+                        }
+                    }
+
+                    if (!empty($data_income_statement)) {
+                        UserValueIncomeStatement::insert($data_income_statement);
+                    }
+                    
+                    foreach ($existing_balance_sheet as $balance_sheet) {
+                        foreach ($years as $year) {
+                            // Buat nama field input seperti "revenue_2024"
+                            $field_key = Str::slug($balance_sheet->name, '_') . '_' . $year;
+
+                            // Ambil nilainya dari $request (default 0 jika tidak dikirim)
+                            $value = str_replace(',', '', $request->input($field_key, 0)); // hilangkan koma ribuan
+
+                            $data_balance_sheet[] = [
+                                'company_information_id' => $partner->id,
+                                'master_balance_sheets_id' => $balance_sheet->id,
+                                'value' => $value,
+                                'year' => $year,
+                                'created_at' => now(),
+                                'updated_at' => null,
+                            ];
+                        }
+                    }
+
+                    if (!empty($data_balance_sheet)) {
+                        UserBalanceSheet::insert($data_balance_sheet);
+                    }
+
+                    $ratio_keys = [
+                        'wc_ratio',
+                        'cf_coverage',
+                        'tie_ratio',
+                        'debt_asset',
+                        'account_receivable_turn_over',
+                        'net_profit_margin',
+                    ];
+                    
+                    $data_ratios = [];
+                    
+                    foreach ($ratio_keys as $key) {
+                        foreach ($years as $year) {
+                            $field_name = $key . '_' . $year;
+                    
+                            // Ambil nilai dari request (default 0), hilangkan koma jika ada
+                            $value = str_replace(',', '', $request->input($field_name, 0));
+                    
+                            // Skip jika kosong
+                            if ($value === null || $value === '') {
+                                continue;
+                            }
+                    
+                            $data_ratios[] = [
+                                'company_information_id' => $partner->id,
+                                // 'name' => $key,
+                                'value' => $value,
+                                'year' => $year,
+                                'created_at' => now(),
+                                'updated_at' => null,
+                            ];
+                        }
+                    }
+                    // Masukkan ke database jika ada data
+                    if (!empty($data_ratios)) {
+                        UserFinancialRatio::insert($data_ratios);
+                    }
+                    
+                    break;
+            
+                default:
+                    // handle other types if needed
+                    break;
             }
 
             DB::commit();

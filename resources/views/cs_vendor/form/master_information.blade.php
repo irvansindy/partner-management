@@ -238,7 +238,7 @@
                         </div>
                     
                         <div class="row mb-4">
-                            <div class="col-md-6">>
+                            <div class="col-md-6">
                                 <label for="province">Provinsi *</label>
                                 <input type="text" name="province[]" id="province" class="form-control">
                                 <span class="text-danger mt-2 message_province" id="message_province_0" role="alert"></span>
@@ -296,7 +296,7 @@
                         </div>
                     
                         <div class="row mb-4">
-                            <div class="col-md-6">>
+                            <div class="col-md-6">
                                 <label for="province">Provinsi *</label>
                                 <input type="text" name="province[]" id="province" class="form-control">
                                 <span class="text-danger mt-2 message_province" id="message_province_0" role="alert"></span>

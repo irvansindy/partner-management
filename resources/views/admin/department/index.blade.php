@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'User Management')
+@section('title', 'Department Management')
 
 @section('content_header')
-    <h1>User Management</h1>
+    <h1>Department Management</h1>
 @stop
 
 @section('content')
@@ -13,15 +13,17 @@
                 <div class="card mb-4">
                     <div class="card-header d-flex bd-highlight">
                         <div class="pt-2 flex-fill bd-highlight">
-                            <p>User List</p>
+                            <p>Department list</p>
                         </div>
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                            <button type="button" class="btn bg-gradient-primary" id="for_create_user" data-toggle="modal" data-target="#formCreateUser">+ User</button>
+                            <button type="button" class="btn bg-gradient-primary" id="for_create_department" data-toggle="modal" data-target="#formDepartment" data-backdrop="static" data-keyboard="false">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="card-body px-0 pt-2 pb-2">
                         <div class="table-responsive p-0 px-md-2">
-                            <table class="table table-hover align-items-center mb-0 data_tables" id="user_table">
+                            <table class="table table-hover align-items-center mb-0 data_tables" id="department_table" width="100%">
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -29,9 +31,6 @@
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Name
-                                        </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Role
                                         </th>
                                         <th class="text-secondary opacity-7">#</th>
                                     </tr>
@@ -45,9 +44,7 @@
                 </div>
             </div>
         </div>
-        @include('users.create_user')
-        @include('users.detail_user')
-        @include('users.delete_user')
+        @include('admin.department.modal_department')
     </div>
 @stop
 
@@ -77,5 +74,5 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <!-- select 2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    @include('users.user_js')
+    @include('admin.department.department_js')
 @stop

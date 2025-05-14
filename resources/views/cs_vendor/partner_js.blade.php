@@ -1,14 +1,13 @@
 <script>
     $('#company_type').select2({
-        // dropdownParent: $('#modalCreatePartner'),
         width: '100%'
     })
     
     $(document).ready(function() {
         var currentYear = new Date().getFullYear();
         $("#year-current").text(currentYear);
-        $("#year-prev-1, #bs_year_minus_1, #fr_year_minus_1").text(currentYear - 1);
-        $("#year-prev-2, #bs_year_minus_2, #fr_year_minus_2").text(currentYear - 2);
+        $("#year_prev_1, #bs_year_minus_1, #fr_year_minus_1").text(currentYear - 1);
+        $("#year_prev_2, #bs_year_minus_2, #fr_year_minus_2").text(currentYear - 2);
 
         let aYearAgo = currentYear - 1;
         let twoYearAgo = currentYear - 2;
@@ -28,268 +27,140 @@
                     break;
                 case 'customer':
                     $('.dynamic-form-income-statement').empty()
-                    $('.dynamic-form-income-statement').html(`
-                        <!-- FORM INCOME STATEMENT -->
-                        <div class="card card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    INCOME STATEMENT, BALANCE SHEET, FINANCIAL RATIO
-                                </h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row px-2 py-2" style="line-height: 1">
-                                    <div class="card py-2">
-                                        <strong><h4>INCOME STATEMENT</h4></strong>
-                                        <table class="table table-bordered my-2">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>(in IDR)</th>
-                                                    <th id="year-prev-1"></th>
-                                                    <th id="year-prev-2"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><strong>Revenue</strong></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="revenue_" id="revenue_" value=""></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="revenue_" id="revenue_" value=""></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cost Of Revenue</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="cost_of_revenue_" id="cost_of_revenue_" value="">
-                                                    </td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="cost_of_revenue_" id="cost_of_revenue_" value="">
-                                                    </td>
-                                                </tr>
-                                                <tr class="table-warning">
-                                                    <td><strong>Gross Profit</strong></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="gross_profit_" id="gross_profit_" value=""></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="gross_profit_" id="gross_profit_" value=""></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Operating Expense</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="opex_" id="opex_" value=""></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="opex_" id="opex_" value=""></td>
-                                                </tr>
-                                                <tr class="table-success">
-                                                    <td><strong>EBIT</strong></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="ebit_" id="ebit_" value=""></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="ebit_" id="ebit_" value=""></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Interest Expense</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="interest_expense_" id="interest_expense_"
-                                                            value=""></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="interest_expense_" id="interest_expense_"
-                                                            value=""></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Others Expense</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="others_expense_" id="others_expense_" value="">
-                                                    </td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="others_expense_" id="others_expense_" value="">
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Others Income</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="others_income_" id="others_income_" value="">
-                                                    </td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="others_income_" id="others_income_" value="">
-                                                    </td>
-                                                </tr>
-                                                <tr class="table-primary">
-                                                    <td><strong>Earnings Before Tax</strong></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="ebt_" id="ebt_" value="">
-                                                    </td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="ebt_" id="ebt_" value="">
-                                                    </td>
-                                                </tr>
-                                                <tr class="table-danger">
-                                                    <td><strong>Net Profit</strong></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="net_profit_" id="net_profit_" value=""></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="net_profit_" id="net_profit_" value=""></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Depreciation Expense</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="depreciation_expense_" id="depreciation_expense_"
-                                                            value=""></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            name="depreciation_expense_" id="depreciation_expense_"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="card py-2">
-                                        <strong><h4>BALANCE SHEET</h4></strong>
-                                        <table class="table table-bordered my-2">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>(in IDR)</th>
-                                                    <th id="bs_year_minus_1"></th>
-                                                    <th id="bs_year_minus_2"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Cash</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="cash_" name="cash_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="cash_" name="cash_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Acc Receivables</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="acc_receivables_" name="acc_receivables_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="acc_receivables_" name="acc_receivables_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Other Current Asset</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="other_current_asset_" name="other_current_asset_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="other_current_asset_" name="other_current_asset_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Current Asset</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="current_asset_" name="current_asset_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="current_asset_" name="current_asset_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Fixed Asset</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="fixed_asset_" name="fixed_asset_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="fixed_asset_" name="fixed_asset_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Total Asset</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="total_asset_" name="total_asset_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="total_asset_" name="total_asset_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Current Liabilities</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="current_liabilities_" name="current_liabilities_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="current_liabilities_" name="current_liabilities_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Non Current Liabilities</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="non_current_liabilities_" name="non_current_liabilities_">
-                                                    </td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="non_current_liabilities_" name="non_current_liabilities_">
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Total Current Liabilities</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="total_current_liabilities_" name="total_current_liabilities_">
-                                                    </td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="total_current_liabilities_" name="total_current_liabilities_">
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Equity</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="equity_" name="equity_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="equity_" name="equity_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Land and/or Building</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="land_and_or_building_" name="land_and_or_building_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="land_and_or_building_" name="land_and_or_building_"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Net Equity</td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="net_equity_" name="net_equity_"></td>
-                                                    <td><input type="text" class="form-control currency_data"
-                                                            id="net_equity_" name="net_equity_"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div id="total-financial-ratio"></div>
-                                    
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <div class="d-flex justify-content-end" id="action_button_confirm_currency">
-                                    <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- END FORM INCOME STATEMENT -->
-                    `)
-                    $("#year-current").text(currentYear);
-                    $("#year-prev-1, #bs_year_minus_1, #fr_year_minus_1").text(currentYear - 1);
-                    $("#year-prev-2, #bs_year_minus_2, #fr_year_minus_2").text(currentYear - 2);
-                    updateFieldIdsFinance('revenue_')
-                    updateFieldIdsFinance('cost_of_revenue_')
-                    updateFieldIdsFinance('gross_profit_')
-                    updateFieldIdsFinance('opex_')
-                    updateFieldIdsFinance('ebit_')
-                    updateFieldIdsFinance('interest_expense_')
-                    updateFieldIdsFinance('others_expense_')
-                    updateFieldIdsFinance('others_income_')
-                    updateFieldIdsFinance('ebt_')
-                    updateFieldIdsFinance('net_profit_')
-                    updateFieldIdsFinance('depreciation_expense_')
-                    updateFieldIdsFinance('cash_')
-                    updateFieldIdsFinance('acc_receivables_')
-                    updateFieldIdsFinance('other_current_asset_')
-                    updateFieldIdsFinance('current_asset_')
-                    updateFieldIdsFinance('fixed_asset_')
-                    updateFieldIdsFinance('total_asset_')
-                    updateFieldIdsFinance('current_liabilities_')
-                    updateFieldIdsFinance('non_current_liabilities_')
-                    updateFieldIdsFinance('total_current_liabilities_')
-                    updateFieldIdsFinance('equity_')
-                    updateFieldIdsFinance('land_and_or_building_')
-                    updateFieldIdsFinance('net_equity_')
 
-                    $('.currency_data').on('input', function() {
-                        let value = $(this).val().replace(/\D/g, '');
-                        $(this).val(value.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                    })
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: '{{ route('fetch-income-balance') }}',
+                        type: 'GET',
+                        dataType: 'json',
+                        async: true,
+                        success: function(res) {
+                            $('.dynamic-form-income-statement').empty();
+                            $('.dynamic-form-income-statement').html(`
+                                <div class="card card-info">
+                                    <div class="card-header">
+                                        <h3 class="card-title">
+                                            INCOME STATEMENT, BALANCE SHEET, FINANCIAL RATIO
+                                        </h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card py-2" id="table_income_statement">
+                                            <strong class="mx-2">
+                                                <h4>INCOME STATEMENT</h4>
+                                            </strong>
+                                            <table class="table table-bordered my-2">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>(in IDR)</th>
+                                                        <th class="year_prev_1"></th>
+                                                        <th class="year_prev_2"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="table_income_statement_body">
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div class="card py-2" id="table_balance_sheet">
+                                            <strong class="mx-2">
+                                                <h4>BALANCE SHEET</h4>
+                                            </strong>
+                                            <table class="table table-bordered my-2">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>(in IDR)</th>
+                                                        <th class="bs_year_minus_1"></th>
+                                                        <th class="bs_year_minus_2"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="table_balance_sheet_body">
+                                                    <tr>
+                                                        <td><strong>Revenue</strong></td>
+                                                        <td>
+                                                            <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div id="total_financial_ratio">
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex justify-content-end" id="action_button_confirm_currency">
+                                            <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `);
+                            
+                            $("#year-current").text(currentYear);
+                            $(".year_prev_1, .bs_year_minus_1, .fr_year_minus_1").text(currentYear - 1);
+                            $(".year_prev_2, .bs_year_minus_2, .fr_year_minus_2").text(currentYear - 2);
+
+                            $('#table_income_statement_body').empty()
+                            $('#table_balance_sheet_body').empty()
+                            $('#total_financial_ratio').hide()
+
+                            let income_statement_data = res.data.income_statement
+                            let balance_sheet_data = res.data.balance_sheet
+
+                            income_statement_data.forEach(data => {
+                                let id_1 = data.id+'_'+aYearAgo
+                                let id_2 = data.id+'_'+twoYearAgo
+                                let name_1 = data.name+'_'+aYearAgo
+                                let name_2 = data.name+'_'+twoYearAgo
+                                const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                $('#table_income_statement_body').append(`
+                                    <tr>
+                                        <td><strong>${fieldLabel}</strong></td>
+                                        <td>
+                                            <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
+                                        </td>
+                                    </tr>
+                                `)
+                            })
+
+                            balance_sheet_data.forEach(data => {
+                                let id_1 = data.id+'_'+aYearAgo
+                                let id_2 = data.id+'_'+twoYearAgo
+                                let name_1 = data.name+'_'+aYearAgo
+                                let name_2 = data.name+'_'+twoYearAgo
+                                const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                $('#table_balance_sheet_body').append(`
+                                    <tr>
+                                        <td><strong>${fieldLabel}</strong></td>
+                                        <td>
+                                            <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
+                                        </td>
+                                    </tr>
+                                `)
+                            })
+                            $('.currency_data').on('input', function() {
+                                let value = $(this).val().replace(/\D/g, '');
+                                $(this).val(value.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            })
+                        }
+                    });
                     break;
             
                 default:
@@ -298,10 +169,6 @@
             }
         })
         
-        // $(document).on('focus', '.currency_data', function() {
-        //     $(this).val($(this).val().replace(/,/g, ''));
-        // });
-        // fetchDataPartner()
         function fetchDataPartner() {
             $('.data-partner').empty()
             $.ajax({
@@ -721,7 +588,7 @@
             let currency_data = document.querySelectorAll(".currency_data");
             let all_filled = true
             
-            // Cek apakah ada input yang kosong
+            // Cek apakah ada input yang kosong.
             currency_data.forEach(input => {
                 if (input.value.trim() == "") {
                     all_filled = false;
@@ -742,7 +609,7 @@
                 currency_data.forEach(input => {
                     input.readOnly = false;
                 });
-                $('#total-financial-ratio').empty()
+                $('#total_financial_ratio').empty()
 
                 $('#action_button_confirm_currency').empty()
                 $('#action_button_confirm_currency').html(`
@@ -754,10 +621,30 @@
                     input.readOnly = all_filled;
                 });
 
-                // Disable tombol agar tidak bisa diklik lagi
-                // this.disabled = true;
-                $('#total-financial-ratio').empty()
-                $('#total-financial-ratio').append(`
+                // $.ajax({
+                //     header: {
+                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //     },
+                //     url: "{{ route('result-financial-ratio') }}",
+                //     type: 'POST',
+                //     dataType: 'json',
+                //     data: {
+                //         revenue: $('#revenue_').val(),
+                //         net_profit: $('#net_profit_').val(),
+                //         current_asset: $('#current_asset_').val(),
+                //         total_asset: $('#total_asset_').val(),
+                //         current_liabilities: $('#current_liabilities_').val(),
+                //         ebit: $('#ebit_').val(),
+                //         depreciation_expense: $('#depreciation_expense_').val(),
+                //         total_current_liabilities: $('#total_current_liabilities_').val(),
+                //         interest_expense: $('#interest_expense_').val(),
+                //         acc_receivables: $('#acc_receivables_').val()
+                //     },
+                    
+                // })
+
+                $('#total_financial_ratio').empty()
+                $('#total_financial_ratio').append(`
                     <div class="card py-2">
                         <strong><h4>FINANCIAL RATIO</h4></strong>
                         <table class="table table-bordered mt-3">
@@ -815,7 +702,7 @@
                         </table>
                     </div>
                 `)
-                
+                $('#total_financial_ratio').show()
                 $('.percent').attr('readonly', true)
 
                 updateFieldIdsFinance('wc_ratio_')
@@ -871,7 +758,7 @@
             currency_data.forEach(input => {
                 input.readOnly = false;
             });
-            $('#total-financial-ratio').empty()
+            $('#total_financial_ratio').empty()
             $('#action_button_confirm_currency').empty()
             $('#action_button_confirm_currency').html(`
                 <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
