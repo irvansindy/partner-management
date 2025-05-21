@@ -18,7 +18,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-2">
                         <div class="col-md-10">
                             <div class="form-group">
                                 <select class="form-control option_approval_detail" name="stagging_approval_name[]" id="stagging_approval_name_0" style="width: 100%">

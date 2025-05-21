@@ -28,14 +28,19 @@ class ApprovalSettingController extends Controller
             return FormatResponseJson::error(null,$e->getMessage(), 404);
         }
     }
-    public function fetchUserApproval()
+    public function fetchUserApproval(Request $request)
     {
         try {
+            // dd($request->master_approval_id);
             $user = User::with('roles')->whereHas('roles', function($q) {
-                $q->where('name', '!=', 'user');
+                $q->whereIn('name', ['admin', 'super-user']);
             })->get(['id', 'name']);
-            // $user = User::with('roles')->get();
-            return FormatResponseJson::success($user, 'user fetched successfully');
+            $existing_approval = DetailApprovalModel::where(['approval_id' => $request->master_approval_id])->get();
+            $data = [
+                'users' => $user,
+                'existing_approval' => $existing_approval,
+            ];
+            return FormatResponseJson::success($data, 'user fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 404);
         }
@@ -83,7 +88,7 @@ class ApprovalSettingController extends Controller
             
             DB::commit();
             // return FormatResponseJson::success($partner, 'partner profile created successfully');
-            return FormatResponseJson::success('success', 'data approval modal berhasil dibuat');
+            return FormatResponseJson::success('success', 'Master model approval berhasil dibuat');
         } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
@@ -93,10 +98,9 @@ class ApprovalSettingController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }
     }
-    public function storeApprovalDetail(Request $request)
+    public function submitApprovalDetail(Request $request)
     {
         try {
-            // dd($request);
             DB::beginTransaction();
 
             $validator = Validator::make($request->all(), [
@@ -106,15 +110,18 @@ class ApprovalSettingController extends Controller
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
-
-            if(count($request->stagging_approval_name) != 0) {
-                for ($i=0; $i < count($request->stagging_approval_name); $i++) {
-                    $approval_stagging = DetailApprovalModel::create([
-                        'approval_id' => $request->master_approval_id,
-                        'user_id' => $request->stagging_approval_name[$i],
-                        'step_ordering' => $i+1,
-                        'status' => $i == 0 ? 0 : 1,
-                    ]);
+            $delete_existing = DetailApprovalModel::where(['approval_id' => $request->master_approval_id])->delete();
+            if ($delete_existing) {
+                // return FormatResponseJson::error(null, 'data sudah ada.', 400);
+                if(count($request->stagging_approval_name) != 0) {
+                    for ($i=0; $i < count($request->stagging_approval_name); $i++) {
+                        $approval_stagging = DetailApprovalModel::create([
+                            'approval_id' => $request->master_approval_id,
+                            'user_id' => $request->stagging_approval_name[$i],
+                            'step_ordering' => $i+1,
+                            'status' => $i == 0 ? 0 : 1,
+                        ]);
+                    }
                 }
             }
 

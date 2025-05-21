@@ -20,4 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('fetch-data-partner', [ApiPartnerController::class, 'fetchPartner'])->name('fetch-data-partner');
+
+
+// Versi tanpa token, tapi dengan IP whitelist dari database
+Route::middleware(['api.ip_whitelist'])->prefix('v1')->group(function () {
+    Route::get('/company-information/public', [ApiPartnerController::class, 'fetchPartner']);
+});
+
 Route::post('blacklist-partner', [ApiPartnerController::class, 'blacklistPartner']);

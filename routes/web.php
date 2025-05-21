@@ -15,7 +15,7 @@ use App\Http\Controllers\EndUserLicenseAgreementController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TenderForVendorController;
-use App\Http\Controllers\API\ApiPartnerController;
+use App\Http\Controllers\API\Admin\APIWhiteListManageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -95,7 +95,7 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     Route::get('fetch-user-approval', [ApprovalSettingController::class,'fetchUserApproval'])->name('fetch-user-approval');
     Route::get('fetch-office-department', [ApprovalSettingController::class,'fetchOfficeAndDepartment'])->name('fetch-office-department');
     Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalMaster'])->name('store-approval-master');
-    Route::post('store-approval-detail', [ApprovalSettingController::class,'storeApprovalDetail'])->name('store-approval-detail');
+    Route::post('submit-approval-detail', [ApprovalSettingController::class,'submitApprovalDetail'])->name('submit-approval-detail');
 
     Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');
     Route::get('fetch-end-user-license-agreement', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement');
@@ -125,6 +125,14 @@ Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
     Route::get('/fetch-vendor-for-tender', [PartnerManagementController::class,'fetchVendorForTender'])->name('fetch-vendor-for-tender');
     Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
+});
+
+
+// Endpoint admin untuk whitelist IP
+Route::middleware(['auth', 'role:super-admin'])->group(function () {
+    Route::get('api-whitelist', [APIWhiteListManageController::class, 'index'])->name('api-whitelist');
+    Route::get('api-whitelist.fetch', [APIWhiteListManageController::class, 'fetch'])->name('api-whitelist.fetch');
+    Route::post('api-whitelist.submit', [APIWhiteListManageController::class, 'createOrUpdate'])->name('api-whitelist.submit');
 });
 
 Route::middleware(['auth:sanctum'])->group(function() {});
