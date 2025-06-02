@@ -16,6 +16,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TenderForVendorController;
 use App\Http\Controllers\API\Admin\APIWhiteListManageController;
+use Dedoc\Scramble\Scramble;
+use App\Http\Controllers\Api\ApiPartnerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -134,9 +136,9 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('api-whitelist.fetch', [APIWhiteListManageController::class, 'fetch'])->name('api-whitelist.fetch');
     Route::post('api-whitelist.submit', [APIWhiteListManageController::class, 'createOrUpdate'])->name('api-whitelist.submit');
 });
-
 Route::middleware(['auth:sanctum'])->group(function() {});
 
 Auth::routes();
+
 
 // Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');

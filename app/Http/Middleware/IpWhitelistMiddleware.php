@@ -18,8 +18,10 @@ class IpWhitelistMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+        if (strpos($request->userAgent(), 'Scramble') !== false || $request->is('docs/*')) {
+            return $next($request);
+        }
         $ip = $request->ip();
-        // dd($ip);
         $allowed = ApiWhitelist::where('ip_address', $ip)->exists();
 
         if (! $allowed) {

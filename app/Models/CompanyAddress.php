@@ -4,7 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+/**
+ * @property int $id
+ * @property int $company_id
+ * @property string $address
+ * @property string $country
+ * @property string $province
+ * @property string $city
+ * @property string $zip_code
+ * @property string $telephone
+ * @property string|null $fax
+ */
 class CompanyAddress extends Model
 {
     use HasFactory;

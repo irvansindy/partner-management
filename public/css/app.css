@@ -591,6 +591,18 @@ progress {
   display: none !important;
 }
 
+/* .nav-treeview>.nav-item>.nav-link {
+  padding-left: 30px;
+  padding-right: 15px;
+  border-radius: 8px;
+  margin-right: 8px;
+} */
+
+.nav-sidebar .nav-treeview {
+  display: none;
+  list-style: none;
+  padding-left: 5px !important;
+}
 .lead {
   font-size: 1.125rem;
   font-weight: 300;

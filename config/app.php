@@ -168,6 +168,9 @@ return [
         /*
          * Package Service Providers...
          */
+        Dedoc\Scramble\ScrambleServiceProvider::class,
+        // App\Providers\ScrambleCommandProvider::class,
+
         // Maatwebsite\Excel\ExcelServiceProvider::class,
         /*
          * Application Service Providers...

@@ -2,7 +2,6 @@
     $(document).ready(function() {
         $('#partner_table').DataTable({
             processing: true,
-            // serverside: true,
             ajax: {
                 url: '{{ route("fetch-partner-list") }}',
                 type: 'GET',
@@ -36,7 +35,7 @@
                 },
             ]
         })
-        // <button type="button" data-partner_id="'+item.id+'" data-partner_name="'+item.name+'" class="btn btn-outline-danger btn-sm mt-2 delete_user" data-toggle="modal" data-target="#confirmDeleteUser">Delete</button>
+        
         $(document).on('click', '.detail_partner', function(e) {
             e.preventDefault()
             let partner_id = $(this).data('partner_id')

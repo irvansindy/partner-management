@@ -109,7 +109,6 @@ class MenuController extends Controller
             DB::commit();
             return FormatResponseJson::success($menu, 'menu berhasil dibuat');
         } catch (ValidationException $e) {
-            // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 400);}
         catch (\Throwable $th) {

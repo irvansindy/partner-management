@@ -73,5 +73,6 @@ class Kernel extends HttpKernel
         // 'check.role' => \App\Http\Middleware\CheckRole::class,
         // 'check.permission' => \App\Http\Middleware\CheckPermission::class,
         'api.ip_whitelist' => \App\Http\Middleware\IpWhitelistMiddleware::class,
+        'docs' => \Dedoc\Scramble\Http\Middleware\PrepareDocs::class
     ];
 }

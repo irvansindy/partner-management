@@ -7,6 +7,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use App\Services\MenuService;
+use Illuminate\Support\Str;
+use Dedoc\Scramble\Scramble;
+use Illuminate\Routing\Route;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -35,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('menus', $menuService->getAccessibleMenus());
             }
         });
+
     }
 }
