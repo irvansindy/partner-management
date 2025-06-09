@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\CompanyInformation;
-use Illuminate\Support\Facades\Auth;
 use App\Models\CompanyDocumentTypeCategories;
 use App\Models\CompanyAddress;
 use App\Models\CompanyBank;
@@ -36,6 +34,21 @@ class PartnerController extends Controller
     public function index()
     {
         return view("company.index");
+    }
+    public function fetchPartnerByUserId()
+    {
+        try {
+            $company_profile = CompanyInformation::with(['user'])
+            ->where("user_id", auth()->user()->id)->get();
+
+            if ($company_profile) {
+                return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
+            } else {
+                return FormatResponseJson::error(null, 'Company profile not found', 404);
+            }
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
     }
     public function viewCreatePartner()
     {

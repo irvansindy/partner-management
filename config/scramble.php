@@ -75,4 +75,9 @@ return [
     ],
 
     'extensions' => [],
+    
+    'ignore_routes' => [
+            'fetch-partner',
+            'fetch-vendor-for-tender',
+        ],
 ];

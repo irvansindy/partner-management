@@ -19,6 +19,10 @@
                         <option value="vendor">Vendor</option>
                     </select>
                     <span class="text-danger" id="message_company_type" role="alert"></span>
+                    <div class="form-check form-switch mt-2 switch-customer" style="display: none;">
+                        <input class="form-check-input" type="checkbox" role="switch" id="switch-customer">
+                        <label class="form-check-label" for="switch-customer">Form Income Statement</label>
+                    </div>
                 </div>
             </div>
         

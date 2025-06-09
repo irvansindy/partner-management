@@ -3,8 +3,8 @@
 @section('title', 'Company Profile')
 
 @section('content_header')
-    <h1>List Data Partner
-        <br> Seleksi Customer
+    <h1>
+        List Data Partner
     </h1>
 @stop
 
@@ -12,7 +12,7 @@
     <div class="container-fluid">
         <div class="card mb-4">
             <div class="card-header pb-2">
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col">
                         <h6>Partner Company</h6>
                     </div>
@@ -21,11 +21,6 @@
                             <button type="button" class="btn bg-gradient-primary pull-right" id="create_partner_data" data-bs-toggle="modal" data-bs-target="#formCreateEvent" style="">+ Data</button>
                         </div>
                     </div>
-                <div class="align-items-center">
-                {{-- <div class="d-flex align-items-center"> --}}
-                    </div>
-
-                </div>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
                 <div class="table-responsive p-0 px-md-2">
@@ -39,10 +34,10 @@
                                     Name
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Quota
+                                    Company Name
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Date
+                                    Email
                                 </th>
                                 <th class="text-secondary opacity-7"></th>
                             </tr>
@@ -56,12 +51,10 @@
         </div>
     </div>
 @stop
-
-@section('css')
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    {{-- <link rel="stylesheet" href="{{ asset('css') }}"> --}}
-@stop
-
 @section('js')
+<!-- datatables -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+<!-- select 2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     @include('company.company_js')
 @stop

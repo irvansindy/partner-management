@@ -31,11 +31,19 @@ class LoginController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->roles->pluck('name')->first() === 'user') {
-            return route('home'); // route name untuk user biasa
+        if (!$user) {
+            return route('login'); // ✅ return string URL, bukan redirect
         }
 
-        return route('dashboard'); // route name untuk admin/super-admin
+        if ($user->roles->pluck('name')->first() === 'user') {
+            if (!$user->companyInformation) {
+                return route('create-partner'); // ✅ string path
+            } else {
+                return route('home');
+            }
+        }
+
+        return route('dashboard'); // fallback jika bukan user biasa
     }
 
     /**

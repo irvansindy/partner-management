@@ -14,27 +14,15 @@ use Dedoc\Scramble\Scramble;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-// Tambahkan dokumentasi API di URL /docs/api
-// Route::middleware('auth')->group(function () {
-//     Scramble::routes(function () {
-//         // Tidak perlu isi apapun jika tidak ada konfigurasi khusus
-//     });
-// });
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-// Route::get('fetch-data-partner', [ApiPartnerController::class, 'fetchPartner'])->name('fetch-data-partner');
 
 // Versi tanpa token, tapi dengan IP whitelist dari database
 Route::middleware(['api.ip_whitelist'])->prefix('v1')->group(function () {
     Route::get('/company-information/public', [ApiPartnerController::class, 'fetchPartner']);
+    Route::get('/company-information/vendor/public', [ApiPartnerController::class, 'fetchVendorForTender']);
 });
 
 Route::post('blacklist-partner', [ApiPartnerController::class, 'blacklistPartner']);
 
 Scramble::routes(function ($route) {
-    return in_array($route->getActionMethod(), ['fetchPartner', 'blacklistPartner']);
+    return in_array($route->getActionMethod(), ['fetchPartner', 'fetchVendorForTender', 'blacklistPartner']);
 });

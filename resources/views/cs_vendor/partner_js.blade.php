@@ -18,155 +18,167 @@
                 $(this).attr('name', prefix + [aYearAgo, twoYearAgo][index]);
             });
         }
-    
+        
         $('#company_type').change(function() {
             let value = $(this).val()
             switch (value) {
                 case 'vendor':
                     $('.dynamic-form-income-statement').empty()
+                    $('#switch-customer').prop('checked', false);
+                    $('.switch-customer').hide();
                     break;
                 case 'customer':
                     $('.dynamic-form-income-statement').empty()
-
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '{{ route('fetch-income-balance') }}',
-                        type: 'GET',
-                        dataType: 'json',
-                        async: true,
-                        success: function(res) {
-                            $('.dynamic-form-income-statement').empty();
-                            $('.dynamic-form-income-statement').html(`
-                                <div class="card card-info">
-                                    <div class="card-header">
-                                        <h3 class="card-title">
-                                            INCOME STATEMENT, BALANCE SHEET, FINANCIAL RATIO
-                                        </h3>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="card py-2" id="table_income_statement">
-                                            <strong class="mx-2">
-                                                <h4>INCOME STATEMENT</h4>
-                                            </strong>
-                                            <table class="table table-bordered my-2">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th>(in IDR)</th>
-                                                        <th class="year_prev_1"></th>
-                                                        <th class="year_prev_2"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="table_income_statement_body">
-                                                    
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
-                                        <div class="card py-2" id="table_balance_sheet">
-                                            <strong class="mx-2">
-                                                <h4>BALANCE SHEET</h4>
-                                            </strong>
-                                            <table class="table table-bordered my-2">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th>(in IDR)</th>
-                                                        <th class="bs_year_minus_1"></th>
-                                                        <th class="bs_year_minus_2"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="table_balance_sheet_body">
-                                                    <tr>
-                                                        <td><strong>Revenue</strong></td>
-                                                        <td>
-                                                            <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
-                                        <div id="total_financial_ratio">
-                                            
-                                        </div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="d-flex justify-content-end" id="action_button_confirm_currency">
-                                            <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `);
-                            
-                            $("#year-current").text(currentYear);
-                            $(".year_prev_1, .bs_year_minus_1, .fr_year_minus_1").text(currentYear - 1);
-                            $(".year_prev_2, .bs_year_minus_2, .fr_year_minus_2").text(currentYear - 2);
-
-                            $('#table_income_statement_body').empty()
-                            $('#table_balance_sheet_body').empty()
-                            $('#total_financial_ratio').hide()
-
-                            let income_statement_data = res.data.income_statement
-                            let balance_sheet_data = res.data.balance_sheet
-
-                            income_statement_data.forEach(data => {
-                                let id_1 = data.id+'_'+aYearAgo
-                                let id_2 = data.id+'_'+twoYearAgo
-                                let name_1 = data.name+'_'+aYearAgo
-                                let name_2 = data.name+'_'+twoYearAgo
-                                const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                                $('#table_income_statement_body').append(`
-                                    <tr>
-                                        <td><strong>${fieldLabel}</strong></td>
-                                        <td>
-                                            <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
-                                        </td>
-                                    </tr>
-                                `)
-                            })
-
-                            balance_sheet_data.forEach(data => {
-                                let id_1 = data.id+'_'+aYearAgo
-                                let id_2 = data.id+'_'+twoYearAgo
-                                let name_1 = data.name+'_'+aYearAgo
-                                let name_2 = data.name+'_'+twoYearAgo
-                                const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                                $('#table_balance_sheet_body').append(`
-                                    <tr>
-                                        <td><strong>${fieldLabel}</strong></td>
-                                        <td>
-                                            <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
-                                        </td>
-                                    </tr>
-                                `)
-                            })
-                            $('.currency_data').on('input', function() {
-                                let value = $(this).val().replace(/\D/g, '');
-                                $(this).val(value.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            })
-                        }
-                    });
+                    $('#switch-customer').prop('checked', false);
+                    $('.switch-customer').show();
                     break;
-            
                 default:
                     $('.dynamic-form-income-statement').empty()
+                    $('#switch-customer').prop('checked', false);
+                    $('.switch-customer').hide();
                     break;
             }
+            // $('.switch-customer').show();
+        })
+    
+        $('#switch-customer').on('change', function () {
+            $('.dynamic-form-income-statement').empty()
+            if ($(this).is(':checked')) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '{{ route('fetch-income-balance') }}',
+                    type: 'GET',
+                    dataType: 'json',
+                    async: true,
+                    success: function(res) {
+                        $('.dynamic-form-income-statement').empty();
+                        $('.dynamic-form-income-statement').html(`
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        INCOME STATEMENT, BALANCE SHEET, FINANCIAL RATIO
+                                    </h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="card py-2" id="table_income_statement">
+                                        <strong class="mx-2">
+                                            <h4>INCOME STATEMENT</h4>
+                                        </strong>
+                                        <table class="table table-bordered my-2">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>(in IDR)</th>
+                                                    <th class="year_prev_1"></th>
+                                                    <th class="year_prev_2"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="table_income_statement_body">
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="card py-2" id="table_balance_sheet">
+                                        <strong class="mx-2">
+                                            <h4>BALANCE SHEET</h4>
+                                        </strong>
+                                        <table class="table table-bordered my-2">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>(in IDR)</th>
+                                                    <th class="bs_year_minus_1"></th>
+                                                    <th class="bs_year_minus_2"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="table_balance_sheet_body">
+                                                <tr>
+                                                    <td><strong>Revenue</strong></td>
+                                                    <td>
+                                                        <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div id="total_financial_ratio">
+                                        
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-end" id="action_button_confirm_currency">
+                                        <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                        
+                        $("#year-current").text(currentYear);
+                        $(".year_prev_1, .bs_year_minus_1, .fr_year_minus_1").text(currentYear - 1);
+                        $(".year_prev_2, .bs_year_minus_2, .fr_year_minus_2").text(currentYear - 2);
+
+                        $('#table_income_statement_body').empty()
+                        $('#table_balance_sheet_body').empty()
+                        $('#total_financial_ratio').hide()
+
+                        let income_statement_data = res.data.income_statement
+                        let balance_sheet_data = res.data.balance_sheet
+
+                        income_statement_data.forEach(data => {
+                            let id_1 = data.id+'_'+aYearAgo
+                            let id_2 = data.id+'_'+twoYearAgo
+                            let name_1 = data.name+'_'+aYearAgo
+                            let name_2 = data.name+'_'+twoYearAgo
+                            const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            $('#table_income_statement_body').append(`
+                                <tr>
+                                    <td><strong>${fieldLabel}</strong></td>
+                                    <td>
+                                        <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
+                                    </td>
+                                </tr>
+                            `)
+                        })
+
+                        balance_sheet_data.forEach(data => {
+                            let id_1 = data.id+'_'+aYearAgo
+                            let id_2 = data.id+'_'+twoYearAgo
+                            let name_1 = data.name+'_'+aYearAgo
+                            let name_2 = data.name+'_'+twoYearAgo
+                            const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            $('#table_balance_sheet_body').append(`
+                                <tr>
+                                    <td><strong>${fieldLabel}</strong></td>
+                                    <td>
+                                        <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
+                                    </td>
+                                </tr>
+                            `)
+                        })
+                        $('.currency_data').on('input', function() {
+                            let value = $(this).val().replace(/\D/g, '');
+                            $(this).val(value.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                        })
+                    }
+                });
+            }
+            
         })
         
         function fetchDataPartner() {
@@ -798,9 +810,7 @@
                         close: true,
                         autoremove: true,
                     });
-                    $('#modalCreatePartner').modal('hide');
-                    $('#modalLoading').modal('hide')
-
+                    window.location.href = "{{ route('list-partner') }}";
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')

@@ -34,18 +34,19 @@ Route::get('/', function () {
 })->name('/');
 
 Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement-wo-auth');
-Route::middleware(['auth', 'check.company.info'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('role:user');
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
 });
 Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('check.company.info');
+    Route::get('/list-partner', [PartnerController::class,'index'])->name('list-partner');
     Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
     
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
     Route::get('/detail-partner', [PartnerController::class,'detailPartner'])->name('detail-partner');
-    Route::get('/fetch-partner-byuser', [PartnerController::class,'fetchCompanyPartnerById'])->name('fetch-partner-byuser');
+    Route::get('/fetch-partner-by-user', [PartnerController::class,'fetchCompanyPartnerById'])->name('fetch-partner-by-user');
 
     Route::post('/result-financial-ratio', [PartnerController::class,'resultFinancialRatio'])->name('result-financial-ratio');
     Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
@@ -136,7 +137,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('api-whitelist.fetch', [APIWhiteListManageController::class, 'fetch'])->name('api-whitelist.fetch');
     Route::post('api-whitelist.submit', [APIWhiteListManageController::class, 'createOrUpdate'])->name('api-whitelist.submit');
 });
-Route::middleware(['auth:sanctum'])->group(function() {});
 
 Auth::routes();
 
