@@ -28,6 +28,7 @@
                 </form>
             </div>
         </div>
+        {{-- @include('cs_vendor.detail_partner') --}}
     </div>
 @stop
 

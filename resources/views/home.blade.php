@@ -7,113 +7,246 @@
 @stop
 
 @section('content')
-    <div class="container-fluid">
-        {{-- main-data-company --}}
-        <div class="row" style="cursor: pointer;">
-            <div class="col-md-3 col-sm-6 col-xs-12" id="card-info-company-name"
-                data-title="Double click untuk melihat detail data">
-                <div class="info-box">
-                    <span class="info-box-icon bg-primary">
-                        <i class="fas fa-fw fa-user"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text font-weight-bold">Company Name</span>
-                        <span class="info-box-text" id="data-company-name">90<small>%</small></span>
-                    </div>
+    <div class="container mt-2">
+        <!-- Company Info Accordion -->
+        <div class="accordion mb-4" id="companyInfoAccordion">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light position-relative" id="headingInfo">
+                    <strong class="text-left text-dark" data-toggle="collapse" data-target="#collapseInfo" aria-expanded="true" aria-controls="collapseInfo" style="cursor: pointer;">
+                        🏢 Informasi Perusahaan
+                    </strong>
+                    <button class="btn btn-sm btn-outline-primary position-absolute mr-1" id="detail_company_information" data-toggle="modal" data-target="#dataDetailPartner" style="right: 15px; top: 10px;" data-partner_id="">
+                        <i class="fas fa-edit"></i>
+                    </button>
                 </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12" id="card-info-company-group-name">
-                <div class="info-box">
-                    <span class="info-box-icon bg-teal">
-                        <i class="fas fa-fw fa-users"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text font-weight-bold">Group Name</span>
-                        <span class="info-box-text" id="data-company-group-name">90<small>%</small></span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12" id="card-info-company-established-year">
-                <div class="info-box">
-                    <span class="info-box-icon bg-orange">
-                        <i class="fas fa-fw fa-user"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text font-weight-bold">Established Year</span>
-                        <span class="info-box-text" id="data-company-established-year">90<small>%</small></span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12" id="card-info-company-type">
-                <div class="info-box">
-                    <span class="info-box-icon bg-maroon">
-                        <i class="fas fa-fw fa-user"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text font-weight-bold">Company Type</span>
-                        <span class="info-box-text" id="data-company-type">90<small>%</small></span>
+
+                <div id="collapseInfo" class="collapse show" aria-labelledby="headingInfo"
+                    data-parent="#companyInfoAccordion">
+                    <div class="card-body">
+                        <div class="row text-dark">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-building text-secondary"></i> Company Name:</strong>
+                                    <span id="data-company-name"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-users text-secondary"></i> Group Name:</strong>
+                                    <span id="data-company-group-name"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-calendar-alt text-secondary"></i> Established Year:</strong>
+                                    <span id="data-company-established-year"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-user-tie text-secondary"></i> Company Type:</strong>
+                                    <span id="data-company-type"></span>
+                                </div>
+                            </div>
+
+                            <!-- Detail Kelengkapan Tambahan -->
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-users-cog text-secondary"></i> Total Employee:</strong>
+                                    <span id="data-company-total-employee"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-user-check text-secondary"></i> Liable Person:</strong>
+                                    <span id="data-company-liable-person"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-user text-secondary"></i> Owner Name:</strong>
+                                    <span id="data-company-owner-name"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-users text-secondary"></i> Board of Directors:</strong>
+                                    <span id="data-company-board-of-directors"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-chart-pie text-secondary"></i> Major Shareholders:</strong>
+                                    <span id="data-company-major-shareholders"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-industry text-secondary"></i> Business Classification:</strong>
+                                    <span id="data-company-business-classification"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-tasks text-secondary"></i> Business Detail:</strong>
+                                    <span id="data-company-business-detail"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-globe text-secondary"></i> Website:</strong>
+                                    <span id="data-company-website"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-cogs text-secondary"></i> System Management:</strong>
+                                    <span id="data-company-system-management"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-user-circle text-secondary"></i> Contact Person:</strong>
+                                    <span id="data-company-contact-person"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-language text-secondary"></i> Language:</strong>
+                                    <span id="data-company-language"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-envelope text-secondary"></i> Email:</strong>
+                                    <span id="data-company-email"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong><i class="fas fa-exclamation-circle text-secondary"></i> Status:</strong>
+                                    <span id="data-company-status"></span>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Tooltip container -->
-        <div id="tooltip"
-            style="display:none; position:absolute; background-color:#333; color:#fff; padding:5px; border-radius:5px; font-size:14px;">
+        <!-- Data Completeness - List JSON Based -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+                <strong>📋 Detail Data Perusahaan</strong>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <!-- Address -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong><i class="fas fa-map-marker-alt text-primary"></i> Alamat:</strong>
+                            <ul class="mt-2 list-data-address">
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="detail_company_address" data-toggle="modal" data-target="#dataDetailPartnerAddress" data-partner_id=""><i class="fas fa-edit"></i></button>
+                    </li>
+
+                    <!-- Bank Info -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong><i class="fas fa-university text-success"></i> Informasi Bank:</strong>
+                            <ul class="mt-2 list-data-bank">
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="detail_company_bank" data-toggle="modal" data-target="#dataDetailPartnerBank" data-partner_id=""><i class="fas fa-edit"></i></button>
+                    </li>
+
+                    <!-- Tax Info -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong><i class="fas fa-receipt text-warning"></i> NPWP & Pajak:</strong>
+                            <ul class="mt-2 list-data-tax">
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="detail_company_tax" data-toggle="modal" data-target="#dataDetailPartnerTax" data-partner_id=""><i class="fas fa-edit"></i></button>
+                    </li>
+
+                    <!-- Legal Document / Attachment -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong><i class="fas fa-file-alt text-danger"></i> Dokumen Legal/Pendukung:</strong>
+                            <ul class="mt-2 list-data-attachment text-muted">
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="add_data_support_document" data-toggle="modal" data-target="#modal_support_document" data-partner_id="" style="right: 15px; top: 10px;"><i class="fas fa-edit"></i></button>
+                    </li>
+                </ul>
+            </div>
         </div>
 
+        <!-- Document Section -->
+        {{-- <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light position-relative">
+                <strong>📂 Dokumen Pendukung</strong>
+                <button class="btn btn-sm btn-primary position-absolute mr-1" id="add_data_support_document"
+                    data-toggle="modal" data-target="#modal_support_document" style="right: 15px; top: 10px;">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div class="card-body text-center text-muted">
+                Belum ada dokumen yang diunggah.
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Dokumen</th>
+                            <th>Tipe</th>
+                            <th>Tanggal Upload</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>NPWP.pdf</td>
+                            <td>Pajak</td>
+                            <td>2025-06-10</td>
+                            <td><span class="badge badge-warning">Pending</span></td>
+                            <td>
+                                <a href="#" class="text-primary">Preview</a> |
+                                <a href="#" class="text-danger">Hapus</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> --}}
+
+        <!-- Recent Activity -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                {{-- <strong>🔔 <i class="fas fa-bell"></i> Aktivitas Terakhir</strong> --}}
+                <strong><i class="fas fa-bell text-warning"></i> Aktivitas Terakhir</strong>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li>• Anda mengupdate data perusahaan (2 hari lalu)</li>
+                    <li>• Dokumen SIUP disetujui (1 minggu lalu)</li>
+                    <li>• Admin meminta revisi dokumen TDP</li>
+                </ul>
+            </div>
+        </div>
     </div>
-
-    {{-- table attachment --}}
-    <x-adminlte-card title="Supporting Document" theme="info" icon="fas fa-lg fa-file" collapsible maximizable>
-        <button class="btn btn-sm btn-outline-primary mr-2 mb-2" id="add_data_support_document" data-toggle="modal"
-            data-target="#modal_support_document" style="float: right;">+ <i class="fas fa-file"></i></button>
-        <div class="table-responsive p-2 px-md-2 fluid">
-            <table class="table table-hover align-items-center mb-0 data_tables" id="company_support_document"
-                style="width: 100%">
-                <thead>
-                    <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                            No
-                        </th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                            Document Name
-                        </th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                            Document Company Type
-                        </th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                            Link
-                        </th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-                <tfoot>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                        No
-                    </th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                        Document Name
-                    </th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                        Document Company Type
-                    </th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                        Link
-                    </th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                        Action
-                    </th>
-                </tfoot>
-            </table>
-        </div>
-    </x-adminlte-card>
-    @include('cs_vendor.detail_data')
+    @include('cs_vendor.modal_detail_company_information')
+    @include('cs_vendor.modal_detail_address')
+    @include('cs_vendor.modal_detail_bank')
+    @include('cs_vendor.modal_detail_tax')
     @include('cs_vendor.modal_alert_data_null')
     @include('cs_vendor.support_docx_modal')
-    @include('cs_vendor.modal_detail_edit_attachment')
+    @include('cs_vendor.modal_detail_attachment')
     @include('loading')
 @stop
 

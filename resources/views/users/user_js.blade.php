@@ -29,8 +29,8 @@
             processing: true,
             // serverside: true,
             ajax: {
-                url: '{{ route("fetch-user") }}',
-                type: 'GET',
+                    url: '{{ route("fetch-user") }}',
+                    type: 'GET',
             },
             columns: [
                 {

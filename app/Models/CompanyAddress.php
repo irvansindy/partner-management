@@ -29,4 +29,9 @@ class CompanyAddress extends Model
         'telephone',
         'fax',
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(CompanyInformation::class, 'company_id', 'id');
+    }
 }

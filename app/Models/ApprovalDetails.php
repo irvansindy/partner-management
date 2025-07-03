@@ -17,6 +17,6 @@ class ApprovalDetails extends Model
     }
     public function approvalMaster()
     {
-        return $this->belongsTo(ApprovalMaster::class,'id','approval_id');
+        return $this->belongsTo(ApprovalMaster::class,'approval_id', 'id');
     }
 }

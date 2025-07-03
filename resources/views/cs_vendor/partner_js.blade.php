@@ -843,7 +843,13 @@
                         autoremove: true,
                     });
                 },
+                complete: function() {
+                    if (isSuccess) {
+                        window.location.href = "{{ route('user-attachment') }}";
+                    }
+                }
             })
         })
+    
     })
 </script>

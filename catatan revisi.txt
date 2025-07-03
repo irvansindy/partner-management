@@ -125,3 +125,25 @@ Prosedur untuk blacklist :
     saat role final approval melakukan blacklist, maka data vendor atau customer tidak bisa diakses oleh role yang lain, dan hanya bisa diakses oleh role final approval dan legal.
 
 Penyediaan export excel untuk data master vendor dan customer, dan juga untuk data log. excel tersebut untuk import ke dalam sistem ERP yang ada di Pralonco.
+
+20 Juni 2025
+Stagging approval :
+  1. Sales Retail dan Sales Project, saat melakukan pengajuan data customer, maka akan ada 2 tahap approval, yaitu :
+     - Approval 1 : Admin Sales (Sales Admin) 
+     - Approval 2 : Sales Manager
+    Contoh : 
+    - Sales Retail 1 : 
+      - Approval 1 : Admin Sales Retail 1 (Stephanie, Maria Dwi, Franita tania, Aulia nurmala)
+      - Approval 2 : Anen
+    - Sales Retail 2 :
+      - Approval 1 : Admin Sales Retail 2 (Eka, Angel, Debora)
+      - Approval 2 : Advent/Darwin
+
+  2. Purchasing
+     - Approval 1 : Admin Purchasing (PPIC)
+     - Approval 2 : Purchasing Manager
+  Contoh :
+      - Purchasing : 
+        - Approval 1 : Admin Purchasing (PPIC) (Siti Choirunissa, Rida Wanti, Siti Imas masitoh, Lia Marliani)
+        - Approval 2 : Tryvena Puspayanti/Fransisco Gultom
+        - Approval 3 : Djoko Widjaja 

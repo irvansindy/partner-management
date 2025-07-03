@@ -19,4 +19,9 @@ class CompanyTax extends Model
         'tax_invoice_serial_number',
     ];
     protected $hidden = [];
+
+    public function company()
+    {
+        return $this->belongsTo(CompanyInformation::class, 'company_id', 'id');
+    }
 }

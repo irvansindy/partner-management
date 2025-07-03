@@ -15,7 +15,7 @@ class MenuService
             ->get()
             ->filter(function ($menu) use ($user) {
                 return !$menu->permission_name || $user->can($menu->permission_name);
-            });
+            }); 
 
         return $this->buildMenuTree($menus);
     }

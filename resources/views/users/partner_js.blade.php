@@ -31,26 +31,154 @@
                         $('#data-company-established-year').html('<small>Not Set</small>')
                         $('#data-company-type').empty()
                         $('#data-company-type').html('<small>Not Set</small>')
-                        
                     }
 
                     if (res.data[0] != null) {
-                        // $('#alert_modal_data_null').modal('hide')
+                        $('#detail_company_information').attr('data-partner_id', res.data[0].id)
+                        $('#detail_company_address').attr('data-partner_id', res.data[0].id)
+                        $('#detail_company_bank').attr('data-partner_id', res.data[0].id)
+                        $('#detail_company_tax').attr('data-partner_id', res.data[0].id)
+                        $('#add_data_support_document').attr('data-partner_id', res.data[0].id)
+
                         $('#data-company-name').empty()
-                        $('#data-company-name').html('<small>' + res.data[0].name + '</small>')
+                        $('#data-company-name').html(res.data[0].name)
+
                         $('#data-company-group-name').empty()
-                        $('#data-company-group-name').html('<small>' + res.data[0].group_name +
-                            '</small>')
+                        $('#data-company-group-name').html(res.data[0].group_name)
+
                         $('#data-company-established-year').empty()
-                        $('#data-company-established-year').html('<small>' + res.data[0]
-                            .established_year + '</small>')
+                        $('#data-company-established-year').html(res.data[0].established_year)
+
                         $('#data-company-type').empty()
-                        $('#data-company-type').html('<small>' + res.data[0].type + '</small>')
+                        $('#data-company-type').html(res.data[0].type)
+
+                        $('#data-company-total-employee').empty()
+                        $('#data-company-total-employee').html(res.data[0].total_employee)
+
+                        $('#data-company-liable-person').empty()
+                        $('#data-company-liable-person').html(res.data[0]
+                            .liable_person_and_position)
+
+                        $('#data-company-owner-name').empty()
+                        $('#data-company-owner-name').html(res.data[0].owner_name)
+
+                        $('#data-company-board-of-directors').empty()
+                        $('#data-company-board-of-directors').html(res.data[0].board_of_directors)
+
+                        $('#data-company-major-shareholders').empty()
+                        $('#data-company-major-shareholders').html(res.data[0].major_shareholders)
+
+                        $('#data-company-business-classification').empty()
+                        $('#data-company-business-classification').html(res.data[0]
+                            .business_classification)
+
+                        $('#data-company-business-detail').empty()
+                        $('#data-company-business-detail').html(res.data[0]
+                            .business_classification_detail)
+
+                        $('#data-company-website').empty()
+                        $('#data-company-website').html(res.data[0].website_address)
+
+                        $('#data-company-system-management').empty()
+                        $('#data-company-system-management').html(res.data[0].system_management)
+
+                        $('#data-company-contact-person').empty()
+                        $('#data-company-contact-person').html(res.data[0].contact_person)
+
+                        $('#data-company-language').empty()
+                        $('#data-company-language').html(res.data[0].communication_language)
+
+                        $('#data-company-email').empty()
+                        $('#data-company-email').empty()
+
+                        $('#data-company-status').html(res.data[0].status)
+                        $('#data-company-status').html(res.data[0].status)
 
                         $('#add_data_support_document').attr('data-data_id', res.data[0].id)
 
-                        const supporting_document = res.data.document
+                        // let company_info = res.data[0]
+                        let company_address = res.data[0].address
+                        let company_bank = res.data[0].bank
+                        let company_tax = res.data[0].tax
+                        let company_attachment = res.data[0].attachment
                         
+                        $('.list-data-address').empty()
+                        $('.list-data-bank').empty()
+                        $('.list-data-tax').empty()
+                        $('.list-data-attachment').empty()
+
+
+                        switch (true) {
+                            case company_address && company_address.length > 0:
+                                
+                                $.each(company_address, (index, address) => {
+                                    $('.list-data-address').append(`
+                                        <li>
+                                            <i class="fas fa-map-pin text-danger"></i> ${address.address}, ${address.city}, ${address.province} ${address.zip_code} | Tel: ${address.telephone || '-'} | Fax: ${address.fax || '-'}
+                                        </li>
+                                    `);
+                                });
+                                break;
+                            default:
+                                $('.list-data-address').append(
+                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data alamat</li>`
+                                    );
+                                break;
+                        }
+
+                        switch (true) {
+                            case company_bank && company_bank.length > 0:
+                                $.each(company_bank, (index, bank) => {
+                                    $('.list-data-bank').append(`
+                                        <li>
+                                            <i class="fas fa-university text-muted"></i> ${bank.name} - ${bank.branch} | A/N: ${bank.account_name} | No: ${bank.account_number} | Swift: ${bank.swift_code} | Kota: ${bank.city_or_country} | ${bank.currency}
+                                        </li>
+                                    `);
+                                });
+                                break;
+                            default:
+                                $('.list-data-bank').append(
+                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data bank</li>`
+                                    );
+                                break;
+                        }
+
+                        switch (true) {
+                            case company_tax && company_tax.length > 0:
+                                $.each(company_tax, (index, tax) => {
+                                    $('.list-data-tax').append(`
+                                        <li>
+                                        <i class="fas fa-file-invoice text-muted"></i> NPWP: ${tax.register_number_as_in_tax_invoice} | TRC: ${tax.trc_number} | Branch: ${tax.register_number_related_branch} | PKP: ${tax.taxable_entrepreneur_number} | Serial: ${tax.tax_invoice_serial_number} | Valid s/d: ${tax.valid_until}
+                                        </li>
+                                    `);
+                                });
+                                break;
+                            default:
+                                $('.list-data-tax').append(
+                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data pajak</li>`
+                                    );
+                                break;
+                        }
+
+                        switch (true) {
+                            case company_attachment && company_attachment.length > 0:
+                                $.each(company_attachment, (index, attachment) => {
+                                    $('.list-data-attachment').append(`
+                                        <li>
+                                            <i class="fas fa-file-word"></i> ${attachment.document_type_name} - 
+                                            <a href="{{ asset('storage/uploads/legal_documents/') }}/${attachment.document}" target="_blank">Link</a>
+                                        </li>
+                                    `);
+                                });
+                                break;
+                            default:
+                                $('.list-data-attachment').append(
+                                    `<li><i class="fas fa-file-word"></i> Tidak ada dokumen yang diunggah</li>`
+                                    );
+                                break;
+                        }
+                        const supporting_document = res.data.document
+
                         $('#company_support_document').DataTable().clear().destroy();
                         $('#company_support_document tbody').empty();
 
@@ -68,7 +196,7 @@
                                     </td>
                                 </tr>
                             `);
-                            $("#link_docx_"+index).attr("href", data_link_docx);
+                            $("#link_docx_" + index).attr("href", data_link_docx);
                         });
 
                         $('#company_support_document').DataTable({
@@ -103,16 +231,14 @@
             });
         });
         // menampilkan keseluruhan detail partner/company data
-        $(document).on('dblclick', '#card-info-company-name', function(e) {
+        $(document).on('click', '#detail_company_information', function(e) {
             e.preventDefault()
-            $('#dataDetailPartner').modal('hide')
-            $('#dataDetailPartner').modal('show')
             $('#form_detail_partner_data_by_user')[0].reset()
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: "{{ route('fetch-partner-byuser') }}",
+                url: "{{ route('fetch-partner-by-user') }}",
                 method: 'GET',
                 async: true,
                 success: function(res) {
@@ -139,7 +265,8 @@
                     $('#detail_company_group_name').val(res.data.group_name)
                     $('#detail_established_year').val(res.data.established_year)
                     $('#detail_total_employee').val(res.data.total_employee)
-                    $('#detail_liable_person_and_position').val(res.data.liable_person_and_position)
+                    $('#detail_liable_person_and_position').val(res.data
+                        .liable_person_and_position)
                     $('#detail_owner_name').val(res.data.owner_name)
                     $('#detail_board_of_directors').val(res.data.board_of_directors)
                     $('#detail_major_shareholders').val(res.data.major_shareholders)
@@ -154,7 +281,7 @@
                         'Contractor',
                         'Other'
                     ];
-                    
+
                     let checked_business = '';
                     $.each(data_business_classification, function(i, business) {
                         checked_business = res.data.business_classification ==
@@ -174,8 +301,9 @@
                             </div>
                         `)
                     })
-                    
-                    $('#detail_business_classification_detail').val(res.data.business_classification_detail)
+
+                    $('#detail_business_classification_detail').val(res.data
+                        .business_classification_detail)
 
                     let checked_business_value = $(
                         'input[name="detail_business_classification"]:checked').val()
@@ -197,7 +325,7 @@
                         'SMK3',
                         'Others Certificate'
                     ]
-                    
+
                     let checked_system_management = ''
                     $.each(data_system_management, function(i, system) {
                         checked_system_management = res.data.system_management ==
@@ -208,8 +336,7 @@
                                     id="detail_system_management_${system.toLowerCase()}" value="${system}" ${checked_system_management}>
                                 <label class="form-check-label" for="detail_system_management_${system.toLowerCase()}">
                                     ${system}
-                                    ${system == 'Others Certificate' ? `<p class="fs-6" style="margin-bottom: 0rem !important; font-size: 10px !important;">
-                                                        Sertifikat lainnya</p>` : ``}
+                                    ${system == 'Others Certificate' ? `<p class="fs-6" style="margin-bottom: 0rem !important; font-size: 10px !important;">Sertifikat lainnya</p>` : ``}
                                 </label>
                             </div>
                         `)
@@ -241,11 +368,13 @@
                     })
 
                     $('#detail_email_address').val(res.data.email_address)
-                    
-                    let data_link_stamp = "{{ asset('storage/uploads/stamp/') }}" + "/" + res.data.stamp
+
+                    let data_link_stamp = "{{ asset('storage/uploads/stamp/') }}" + "/" +
+                        res.data.stamp
                     $("#link_stamp").attr("href", data_link_stamp);
-                    
-                    let data_link_signature = "{{ asset('storage/uploads/signature/') }}" + "/" + res.data.signature
+
+                    let data_link_signature = "{{ asset('storage/uploads/signature/') }}" +
+                        "/" + res.data.signature
                     $("#link_signature").attr("href", data_link_signature);
 
                     if (res.data.stamp != '' || res.data.stamp != null) {
@@ -268,13 +397,30 @@
                             <span class="info-box-text title_change_signature" id="title_change_signature" title="Ubah data tanda tangan"><small>Ubah data tanda tangan</small></span>
                         `)
                     }
+                }
+            })
+        })
 
-                    let list_address = res.data.address
-                    
+        $(document).on('click', '#detail_company_address', function(e) {
+            e.preventDefault()
+            let id = $(this).data('partner_id')
+            $.ajax({
+                header: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("fetch-partner-address") }}',
+                method: 'GET',
+                data: {
+                    id: id
+                },
+                async: true,
+                success: function(res) {
+                    let list_address = res.data
+                    alert(list_address.length)
                     if (list_address.length == 1) {
-                        $('#detail_company_address_additional').empty()
+                        $('#list_detail_address').empty()
                         $.each(list_address, function(i, address) {
-                            $('#detail_company_address_additional').append(`
+                            $('#list_detail_address').append(`
                                 <div class="input-group mb-4 array_detail_company_address">
                                     <div class="col-md-2">
                                         <label for="detail_address">Company Address *<br>
@@ -391,19 +537,19 @@
                                     </div>
                                 </div>
                             `)
-                            $('#button-for-add-address_'+i).append(`
+                            $('#button-for-add-address_' + i).append(`
                                 <button type="button" class="btn btn-primary float-right" id="add_detail_dynamic_address">
                                     + Address
                                 </button>
                             `)
                         })
-                        $('#detail_company_address_additional').append(`
+                        $('#list_detail_address').append(`
                             <div class="detail_dynamic_company_address"></div>
                         `)
                     } else {
-                        $('#detail_company_address_additional').empty()
+                        $('#list_detail_address').empty()
                         $.each(list_address, function(i, address) {
-                            $('#detail_company_address_additional').append(`
+                            $('#list_detail_address').append(`
                                 <div class="input-group mb-4 array_detail_company_address">
                                     <div class="col-md-2">
                                         <label for="detail_address">Company Address *<br>
@@ -521,42 +667,45 @@
                                 </div>
                             `)
                             if (i === 0) {
-                                $('#button-for-add-address_'+i).append(`
+                                $('#button-for-add-address_' + i).append(`
                                     <button type="button" class="btn btn-primary float-right" id="add_detail_dynamic_address">
                                         + Address
                                     </button>
                                 `)
                             } else {
-                                $('#button-for-add-address_'+i).append(`
+                                $('#button-for-add-address_' + i).append(`
                                     <button type="button" class="btn btn-danger float-right" id="delete_dynamic_address">- Address</button>
                                 `)
 
                             }
                         })
-                        $('#detail_company_address_additional').append(`
+                        $('#list_detail_address').append(`
                             <div class="detail_dynamic_company_address"></div>
                         `)
                     }
-
-                    $('#button_update_partner').empty()
-                    $('#button_update_partner').append(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
-                    if (res.data.status == 'checking' && res.data.location_id == null && res.data.department_id == null) {
-                        $('#button_update_partner').append(`
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-primary" id="btn_update_data_company" data-id="" data-status="">
-                                Update
-                            </button>
-                        </div>
-                        `)
-                        $('#btn_update_data_company').attr('data-id', res.data.id)
-                        $('#btn_update_data_company').attr('data-status', res.data.status)
-                    } 
-
-                    let list_bank = res.data.bank
+                }
+            })
+        })
+        
+        $(document).on('click', '#detail_company_bank', function(e) {
+            e.preventDefault()
+            let id = $(this).data('partner_id')
+            $.ajax({
+                header: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("fetch-partner-bank") }}',
+                method: 'GET',
+                data: {
+                    id: id
+                },
+                async: true,
+                success: function(res) {
+                    let list_bank = res.data
                     if (list_bank.length != 0) {
-                        $('#list_data_bank').empty()
+                        $('#list_detail_bank').empty()
                         $.each(list_bank, function(i, bank) {
-                            $('#list_data_bank').append(`
+                            $('#list_detail_bank').append(`
                                 <div class="input-group mt-4">
                                     <div class="col-md-6 mb-4">
                                         <div class="row">
@@ -673,12 +822,12 @@
                                 </div>
                             `)
                         })
-                        $('#list_data_bank').append(`
+                        $('#list_detail_bank').append(`
                             <div class="dynamic_bank"></div>
                         `)
                     } else {
-                        $('#list_data_bank').empty()
-                        $('#list_data_bank').append(`
+                        $('#list_detail_bank').empty()
+                        $('#list_detail_bank').append(`
                             <div class="input-group mt-4">
                                 <div class="col-md-6 mb-4">
                                     <div class="row">
@@ -794,12 +943,29 @@
                                     Bank</button>
                             </div>
                         `)
-                        $('#list_data_bank').append(`
+                        $('#list_detail_bank').append(`
                             <div class="dynamic_bank"></div>
                         `)
                     }
+                }
+            })
+        })
 
-                    let list_tax = res.data.tax
+        $(document).on('click', '#detail_company_tax', function(e) {
+            e.preventDefault()
+            let id = $(this).data('partner_id')
+            $.ajax({
+                header: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("fetch-partner-tax") }}',
+                method: 'GET',
+                data: {
+                    id: id
+                },
+                async: true,
+                success: function(res) {
+                    let list_tax = res.data
                     if (list_tax != 0) {
                         $('#list_detail_tax').empty()
                         $.each(list_tax, function(i, tax) {
@@ -992,9 +1158,10 @@
                 }
             })
         })
+
         // untuk update urutan id setiap element pada form dynamic alamat data
         function updateIdAddress() {
-            $('.array_detail_company_address').each(function (index) {
+            $('.array_detail_company_address').each(function(index) {
                 // Update IDs for input elements
                 $(this).find('input[name="detail_address[]"]').attr('id', 'address_' + (index + 1));
                 $(this).find('input[name="detail_city[]"]').attr('id', 'city_' + (index + 1));
@@ -1003,7 +1170,7 @@
                 $(this).find('input[name="detail_zip_code[]"]').attr('id', 'zip_code_' + (index + 1));
                 $(this).find('input[name="detail_telephone[]"]').attr('id', 'telephone_' + (index + 1));
                 $(this).find('input[name="detail_fax[]"]').attr('id', 'fax_' + (index + 1));
-                
+
                 // Update IDs for span elements
                 $(this).find('.message_address').attr('id', 'message_address_' + (index + 1));
                 $(this).find('.message_city').attr('id', 'message_city_' + (index + 1));
@@ -1141,13 +1308,20 @@
         // untuk update urutan id setiap element pada form dynamic bank data
         function updateIdBank() {
             $('.array_dymanic_bank').each(function(index) {
-                $(this).find('input[name="detail_bank_name[]"]').attr('id', 'detail_bank_name_' + (index + 1));
-                $(this).find('input[name="detail_branch[]"]').attr('id', 'detail_branch_' + (index + 1));
-                $(this).find('input[name="detail_account_name[]"]').attr('id', 'detail_account_name_' + (index + 1));
-                $(this).find('input[name="detail_city_or_country[]"]').attr('id', 'detail_city_or_country_' + (index + 1));
-                $(this).find('input[name="detail_account_number[]"]').attr('id', 'detail_account_number_' + (index + 1));
-                $(this).find('input[name="detail_currency[]"]').attr('id', 'detail_currency_' + (index + 1));
-                $(this).find('input[name="detail_swift_code[]"]').attr('id', 'detail_swift_code_' + (index + 1));
+                $(this).find('input[name="detail_bank_name[]"]').attr('id', 'detail_bank_name_' + (
+                    index + 1));
+                $(this).find('input[name="detail_branch[]"]').attr('id', 'detail_branch_' + (index +
+                    1));
+                $(this).find('input[name="detail_account_name[]"]').attr('id', 'detail_account_name_' +
+                    (index + 1));
+                $(this).find('input[name="detail_city_or_country[]"]').attr('id',
+                    'detail_city_or_country_' + (index + 1));
+                $(this).find('input[name="detail_account_number[]"]').attr('id',
+                    'detail_account_number_' + (index + 1));
+                $(this).find('input[name="detail_currency[]"]').attr('id', 'detail_currency_' + (index +
+                    1));
+                $(this).find('input[name="detail_swift_code[]"]').attr('id', 'detail_swift_code_' + (
+                    index + 1));
             })
         }
         // menambah form dynamic bank data
@@ -1270,7 +1444,9 @@
         $(document).on('click', '.title_change_stamp', function() {
             // $('#detail_stamp_file').attr('hidden', false)
             $('.form_field_detail_stamp').empty()
-            $('.form_field_detail_stamp').append(`<input type="file" name="detail_stamp_file" id="detail_stamp_file" class="form-control mb-2" />`)
+            $('.form_field_detail_stamp').append(
+                `<input type="file" name="detail_stamp_file" id="detail_stamp_file" class="form-control mb-2" />`
+            )
             $('.button-change-stamp').empty()
             $('.button-change-stamp').append(`
                 <i class="fas fa-times-circle text-danger cancel_change_stamp" title="Cancel perubahan stempel" for="cancel_change_stamp"></i>
@@ -1281,7 +1457,9 @@
         $(document).on('click', '.title_change_signature', function() {
             // $('#detail_signature_file').attr('hidden', false)
             $('.form_field_detail_signature').empty()
-            $('.form_field_detail_signature').append(`<input type="file" name="detail_signature_file" id="detail_signature_file" class="form-control mb-2" />`)
+            $('.form_field_detail_signature').append(
+                `<input type="file" name="detail_signature_file" id="detail_signature_file" class="form-control mb-2" />`
+            )
             $('.button-change-signature').empty()
             $('.button-change-signature').append(`
                 <i class="fas fa-times-circle text-danger cancel_change_signature" title="Cancel perubahan tanda tangan" for="cancel_change_signature"></i>
@@ -1312,9 +1490,9 @@
         $(document).on('click', '#btn_update_data_company', function(e) {
             e.preventDefault()
             let data_form_company = new FormData($('#form_detail_partner_data_by_user')[0])
-            
+
             $.ajax({
-                url: '{{ route("update-partner") }}',
+                url: '{{ route('update-partner') }}',
                 method: 'POST',
                 processData: false,
                 contentType: false,
@@ -1351,7 +1529,8 @@
                     $('#modalLoading').modal('hide')
                     let response_error = JSON.parse(xhr.responseText)
 
-                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                    if (response_error.meta.code === 500 || response_error.meta.code ===
+                        400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
@@ -1396,15 +1575,18 @@
                     $('.message_supporting_document_type').text('')
                     $('.message_supporting_document_business_type').text('')
                     $('.message_file_supporting_document').text('')
-                    
+
                     // add all data tipe dokumen
                     $('#supporting_document_partner_id').val(data_id)
                     $('#supporting_document_type_0').empty()
-                    $('#supporting_document_type_0').append(`<option value="">tipe dokumen</option>`)
+                    $('#supporting_document_type_0').append(
+                        `<option value="">tipe dokumen</option>`)
                     $.each(res.data, function(i, data) {
-                        $('#supporting_document_type_0').append(`<option value="${data.id+`|`+data.name}">${data.name}</option>`)
+                        $('#supporting_document_type_0').append(
+                            `<option value="${data.id+`|`+data.name}">${data.name}</option>`
+                        )
                     })
-                    
+
                     // add all data class business
                     let list_class_business = [
                         'pt',
@@ -1413,9 +1595,11 @@
                         'perorangan'
                     ]
                     $('#supporting_document_business_type_0').empty()
-                    $('#supporting_document_business_type_0').append(`<option value="">tipe usaha</option>`)
+                    $('#supporting_document_business_type_0').append(
+                        `<option value="">tipe usaha</option>`)
                     $.each(list_class_business, function(i, data) {
-                        $('#supporting_document_business_type_0').append(`<option value="${data}">${data}</option>`)
+                        $('#supporting_document_business_type_0').append(
+                            `<option value="${data}">${data}</option>`)
                     })
                 }
             })
@@ -1423,13 +1607,19 @@
         // update each id supporting document
         function updateIdCreateAttachment() {
             $('.array_data_supporting_document').each(function(i) {
-                $(this).find('select[name="supporting_document_type[]"]').attr('id', 'supporting_document_type_' + (i + 1));
-                $(this).find('select[name="supporting_document_business_type[]"]').attr('id', 'supporting_document_business_type_' + (i + 1));
-                $(this).find('input[name="file_supporting_document[]"]').attr('id', 'file_supporting_document_' + (i + 1));
+                $(this).find('select[name="supporting_document_type[]"]').attr('id',
+                    'supporting_document_type_' + (i + 1));
+                $(this).find('select[name="supporting_document_business_type[]"]').attr('id',
+                    'supporting_document_business_type_' + (i + 1));
+                $(this).find('input[name="file_supporting_document[]"]').attr('id',
+                    'file_supporting_document_' + (i + 1));
 
-                $(this).find('.message_supporting_document_type').attr('id', 'message_supporting_document_type_' + (i + 1));
-                $(this).find('.message_supporting_document_business_type').attr('id', 'message_supporting_document_business_type_' + (i + 1));
-                $(this).find('.message_file_supporting_document').attr('id', 'message_file_supporting_document_' + (i + 1));
+                $(this).find('.message_supporting_document_type').attr('id',
+                    'message_supporting_document_type_' + (i + 1));
+                $(this).find('.message_supporting_document_business_type').attr('id',
+                    'message_supporting_document_business_type_' + (i + 1));
+                $(this).find('.message_file_supporting_document').attr('id',
+                    'message_file_supporting_document_' + (i + 1));
             })
         }
         // menambahkan form field data file supporting document
@@ -1471,7 +1661,7 @@
                     </div>
                 </div>
             `)
-            
+
             $('.select2_supporting_document').select2({
                 dropdownParent: $('#modal_support_document'),
                 width: '100%'
@@ -1486,9 +1676,13 @@
                 success: function(res) {
                     // add all data tipe dokumen
                     $('#supporting_document_type_' + total_field_document).empty()
-                    $('#supporting_document_type_' + total_field_document).append(`<option value="">tipe dokumen</option>`)
+                    $('#supporting_document_type_' + total_field_document).append(
+                        `<option value="">tipe dokumen</option>`)
                     $.each(res.data, function(i, data) {
-                        $('#supporting_document_type_' + total_field_document).append(`<option value="${data.id+`|`+data.name}">${data.name}</option>`)
+                        $('#supporting_document_type_' + total_field_document)
+                            .append(
+                                `<option value="${data.id+`|`+data.name}">${data.name}</option>`
+                            )
                     })
                     // add all data class business
                     let list_class_business = [
@@ -1498,9 +1692,12 @@
                         'perorangan'
                     ]
                     $('#supporting_document_business_type_' + total_field_document).empty()
-                    $('#supporting_document_business_type_' + total_field_document).append(`<option value="">tipe usaha</option>`)
+                    $('#supporting_document_business_type_' + total_field_document).append(
+                        `<option value="">tipe usaha</option>`)
                     $.each(list_class_business, function(i, data) {
-                        $('#supporting_document_business_type_' + total_field_document).append(`<option value="${data}">${data}</option>`)
+                        $('#supporting_document_business_type_' +
+                            total_field_document).append(
+                            `<option value="${data}">${data}</option>`)
                     })
                 }
             })
@@ -1516,17 +1713,17 @@
             // Create a FormData object to handle files and form data
             var formData = new FormData($('#form_submit_supporting_document')[0]);
             $.ajax({
-                url: '{{ route("store-attachment") }}',
+                url: '{{ route('store-attachment') }}',
                 type: 'POST',
                 data: formData,
-                processData: false,   // Prevent jQuery from processing the data
-                contentType: false,   // Prevent jQuery from setting content type
+                processData: false, // Prevent jQuery from processing the data
+                contentType: false, // Prevent jQuery from setting content type
                 cache: false,
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 enctype: 'multipart/form-data',
-                success: function (res) {
+                success: function(res) {
                     // alert('Documents submitted successfully!');
                     $(document).Toasts('create', {
                         title: 'Success',
@@ -1539,13 +1736,14 @@
                         autoremove: true,
                     });
                     fetchDataPartner()
-                    $('#modal_support_document').modal('hide');  // Close modal on success
+                    $('#modal_support_document').modal('hide'); // Close modal on success
                 },
                 error: function(xhr) {
                     fetchDataPartner()
                     let response_error = JSON.parse(xhr.responseText)
 
-                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                    if (response_error.meta.code === 500 || response_error.meta.code ===
+                        400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
@@ -1581,7 +1779,7 @@
             let id = $(this).data('id')
             let company_id = $(this).data('company_id')
             let link = $(this).data('link')
-            
+
             $("#detail_link_attachment").attr('href', link)
             $("#update_supporting_document_id").val(id)
             $("#update_supporting_document_partner_id").val(company_id)
@@ -1591,17 +1789,17 @@
             e.preventDefault()
             var formData = new FormData($('#form_update_supporting_document')[0]);
             $.ajax({
-                url: '{{ route("update-attachment") }}',
+                url: '{{ route('update-attachment') }}',
                 type: 'POST',
                 data: formData,
-                processData: false,   // Prevent jQuery from processing the data
-                contentType: false,   // Prevent jQuery from setting content type
+                processData: false, // Prevent jQuery from processing the data
+                contentType: false, // Prevent jQuery from setting content type
                 cache: false,
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 enctype: 'multipart/form-data',
-                success: function (res) {
+                success: function(res) {
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -1613,13 +1811,15 @@
                         autoremove: true,
                     });
                     fetchDataPartner()
-                    $('#modal_support_document_edit').modal('hide');  // Close modal on success
+                    $('#modal_support_document_edit').modal(
+                        'hide'); // Close modal on success
                 },
                 error: function(xhr) {
                     fetchDataPartner()
                     let response_error = JSON.parse(xhr.responseText)
 
-                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                    if (response_error.meta.code === 500 || response_error.meta.code ===
+                        400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',

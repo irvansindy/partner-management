@@ -54,6 +54,10 @@ class PartnerController extends Controller
     {
         return view('cs_vendor.index');
     }
+    public function viewAttachment()
+    {
+        return view('cs_vendor.attachment');
+    }
     public function detailPartner(Request $request)
     {
         return view('company.detail_company');
@@ -108,10 +112,46 @@ class PartnerController extends Controller
     public function fetchCompanyPartnerById()
     {
         try {
-            $company_profile = CompanyInformation::with(['user', 'address', 'bank', 'tax', 'attachment'])
+            $company_profile = CompanyInformation::with(['user'])
             ->where("user_id", auth()->user()->id)->first();
 
             return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+    public function fetchAddressById(Request $request)
+    {
+        try {
+            $address = CompanyAddress::with(['company.user'])->whereHas('company', function ($q) use ($request) {
+                $q->where('company_id', $request->id);
+                $q->where('user_id', auth()->user()->id);
+            })->get();
+            return FormatResponseJson::success($address,'address fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+    public function fetchBankById(Request $request)
+    {
+        try {
+            $bank = CompanyBank::with(['company.user'])->whereHas('company', function ($q) use ($request) {
+                $q->where('company_id', $request->id);
+                $q->where('user_id', auth()->user()->id);
+            })->get();
+            return FormatResponseJson::success($bank,'bank fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+    public function fetchTaxById(Request $request)
+    {
+        try {
+            $tax = CompanyTax::with(['company.user'])->whereHas('company', function ($q) use ($request) {
+                $q->where('company_id', $request->id);
+                $q->where('user_id', auth()->user()->id);
+            })->get();
+            return FormatResponseJson::success($tax,'tax fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
@@ -197,7 +237,6 @@ class PartnerController extends Controller
             // return FormatResponseJson::error(null, 'Anda sudah mendaftar.', 400);
         }
     }
-
     private function validateRequest($request)
     {
         $validator = Validator::make($request->all(), [
@@ -245,7 +284,6 @@ class PartnerController extends Controller
 
         return $validator;
     }
-
     private function handleFileUploads($request)
     {
         $files = ['signature_file' => null, 'stamp_file' => null];
@@ -266,7 +304,6 @@ class PartnerController extends Controller
 
         return $files;
     }
-
     private function prepareCompanyData($request, $files)
     {
         return [
@@ -292,7 +329,6 @@ class PartnerController extends Controller
             'stamp' => $files['stamp_file'],
         ];
     }
-
     private function storeCompanyAddresses($request, $companyId)
     {
         $addresses = [];
@@ -315,7 +351,6 @@ class PartnerController extends Controller
             CompanyAddress::insert($addresses);
         }
     }
-
     private function storeCompanyBanks($request, $companyId)
     {
         $banks = [];
@@ -338,7 +373,6 @@ class PartnerController extends Controller
             CompanyBank::insert($banks);
         }
     }
-
     private function storeCompanyTax($request, $companyId)
     {
         if ($request->register_number_as_in_tax_invoice !== null) {
@@ -353,7 +387,6 @@ class PartnerController extends Controller
             ]);
         }
     }
-
     private function storeCustomerFinancialData($request, $companyId)
     {
         $aYearAgo = date('Y', strtotime('-1 year'));
@@ -416,7 +449,6 @@ class PartnerController extends Controller
         }
         UserFinancialRatio::insert($ratioData);
     }
-
     public function update(Request $request)
     {
         try {

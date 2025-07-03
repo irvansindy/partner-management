@@ -19,4 +19,9 @@ class CompanyBank extends Model
         'currency',
         'swift_code',
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(CompanyInformation::class, 'company_id', 'id');
+    }
 }
