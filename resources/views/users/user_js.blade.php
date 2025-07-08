@@ -1,28 +1,21 @@
 <script>
     $(document).ready(function() {
-        $('#user_role').select2({
+        $('#user_role, #user_job_title, #user_division, #user_department, #user_office, #user_parent').select2({
             dropdownParent: $('#formCreateUser'),
+            width: '100%', // biar responsif
             tags: "true",
-            selectOnClose: true
-        })
-        $('#user_office').select2({
-            dropdownParent: $('#formCreateUser'),
-            tags: "true",
-            selectOnClose: true
-        })
-        $('#user_department').select2({
-            dropdownParent: $('#formCreateUser'),
-            tags: "true",
-            selectOnClose: true
         })
         $('#update_user_role').select2({
-            dropdownParent: $('#formUpdateUser')
+            dropdownParent: $('#formUpdateUser'),
+            width: '100%', // biar responsif
         })
         $('#update_user_office').select2({
-            dropdownParent: $('#formUpdateUser')
+            dropdownParent: $('#formUpdateUser'),
+            width: '100%', // biar responsif
         })
         $('#update_user_department').select2({
-            dropdownParent: $('#formUpdateUser')
+            dropdownParent: $('#formUpdateUser'),
+            width: '100%', // biar responsif
         })
 
         $('#user_table').DataTable({
@@ -81,16 +74,45 @@
                             <option value="${role.name}">${role.name}</option>
                         `)
                     })
+
                     $('#user_office').empty()
                     $.each(res.data.offices, function(i, office) {
                         $('#user_office').append(`
                             <option value="${office.id}">${office.name}</option>
                         `)
                     })
+                    
                     $('#user_department').empty()
                     $.each(res.data.departments, function(i, office) {
                         $('#user_department').append(`
                             <option value="${office.id}">${office.name}</option>
+                        `)
+                    })
+
+                    // divisions
+                    $('#user_division').empty()
+                    $.each(res.data.divisions, function(i, division) {
+                        $('#user_division').append(`
+                            <option value="${division.id}">${division.name}</option>
+                        `)
+                    })
+                    
+                    // job_titles
+                    $('#user_job_title').empty()
+                    $.each(res.data.job_titles, function(i, job_title) {
+                        $('#user_job_title').append(`
+                            <option value="${job_title.id}">${job_title.name} - ${job_title.level.name}</option>
+                        `)
+                    })
+
+                    // parents
+                    $('#user_parent').empty()
+                    $('#user_parent').append(`
+                        <option value="">-- Optional --</option>
+                    `)
+                    $.each(res.data.parents, function(i, parent) {
+                        $('#user_parent').append(`
+                            <option value="${parent.id}">${parent.name}</option>
                         `)
                     })
                 },
@@ -110,8 +132,13 @@
             let user_name = $('#user_name').val()
             let user_email = $('#user_email').val()
             let user_role = $('#user_role').val()
+            let user_nik = $('#user_nik').val()
+            let user_employee_id = $('#user_employee_id').val()
             let user_office = $('#user_office').val()
+            let user_job_title = $('#user_job_title').val()
+            let user_division = $('#user_division').val()
             let user_department = $('#user_department').val()
+            let user_parent = $('#user_parent').val()
             // superusersales@gmail.com
             $.ajax({
                 headers: {
@@ -123,8 +150,13 @@
                     name: user_name,
                     email: user_email,
                     role: user_role,
+                    nik: user_nik,
+                    employee_id: user_employee_id,
                     office: user_office,
+                    job_title: user_job_title,
+                    division: user_division,
                     department: user_department,
+                    parent: user_parent,
                 },
                 dataType: 'json',
                 async: true,
@@ -177,86 +209,141 @@
         })
 
         $(document).on('click', '.detail_user', function(e) {
-            let user_id = $(this).data('user_id')
-            $('#form_detail_current_user')[0].reset()
-            $('.message_update_user_name').text('')
-            $('.message_update_user_email').text('')
-            $('.message_update_user_role').text('')
-            $('.message_update_user_office').text('')
-            $('.message_update_user_department').text('')
+            let user_id = $(this).data('user_id');
+
+            // Reset form dan error message
+            $('#form_detail_current_user')[0].reset();
+            $('.message_update_user_name').text('');
+            $('.message_update_user_email').text('');
+            $('.message_update_user_role').text('');
+            $('.message_update_user_office').text('');
+            $('.message_update_user_department').text('');
+
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 url: '{{ route("detail-user") }}',
                 type: 'GET',
-                data: {
-                    id: user_id
-                },
+                data: { id: user_id },
                 dataType: 'json',
                 async: true,
                 success: function(res) {
-                    $('#update_user_name').val(res.data[0].name)
-                    $('#update_user_email').val(res.data[0].email)
+                    const user = res.data.user;
 
-                    $('#update_current_role').val(res.data[0].roles[0].name)
-                    $('#update_user_role').empty()
-                    $('#update_user_role').append(`
-                        <option value="${res.data[0].roles[0].name}">${res.data[0].roles[0].name}</option>
-                    `)
-                    $.each(res.data.roles, function(i, role) {
-                        $('#update_user_role').append(`
-                            <option value="${role.name}">${role.name}</option>
-                        `)
-                    })
+                    // Isi input name & email
+                    $('#update_user_name').val(user.name);
+                    $('#update_user_email').val(user.email);
 
-                    $('#update_current_office').val(res.data[0].office.name)
-                    $('#update_user_office').empty()
-                    $('#update_user_office').append(`
-                        <option value="${res.data[0].office.id}">${res.data[0].office.name}</option>
-                    `)
-                    $.each(res.data.offices, function(i, office) {
-                        $('#update_user_office').append(`
-                            <option value="${office.id}">${office.name}</option>
-                        `)
-                    })
-                    
-                    // $('#update_current_department').val(res.data[0].office.name)
-                    let current_dept = res.data[0].dept;
+                    // Populate dropdown Role
+                    populateDropdown(
+                        '#update_user_role',
+                        res.data.roles,
+                        user.roles.length ? user.roles[0].name : null,
+                        '-- Pilih Role --'
+                    );
 
-                    $('#update_user_department').empty()
-                    $('#update_user_department').append(`
-                        <option value="${current_dept != null ? current_dept.id : ''}">${current_dept != null ? current_dept.name : ''}</option>
-                    `)
-                    
-                    $.each(res.data.departments, function(i, department) {
-                        $('#update_user_department').append(`
-                            <option value="${department.id}">${department.name}</option>
-                        `)
-                    })
-                    // $('.update_user').attr('data-update_user_id', res.data[0].id)
-                    $('.update_user').data('update_user_id', res.data[0].id)
+                    // Populate dropdown Parent User
+                    populateDropdown(
+                        '#update_user_parent',
+                        res.data.users,
+                        user.parent_user ? user.parent_user.id : null,
+                        '-- Pilih Parent User --'
+                    );
+
+                    // Populate dropdown Office
+                    populateDropdown(
+                        '#update_user_office',
+                        res.data.offices,
+                        user.office ? user.office.id : null,
+                        '-- Pilih Office --'
+                    );
+
+                    // Populate dropdown Department
+                    populateDropdown(
+                        '#update_user_department',
+                        res.data.departments,
+                        user.dept ? user.dept.id : null,
+                        '-- Pilih Department --'
+                    );
+
+                    // Populate dropdown Division
+                    populateDropdown(
+                        '#update_user_division',
+                        res.data.divisions,
+                        user.division ? user.division.id : null,
+                        '-- Pilih Division --'
+                    );
+
+                    // Populate dropdown Job Title
+                    populateDropdown(
+                        '#update_user_job_title',
+                        res.data.job_titles,
+                        user.job_title ? user.job_title.id : null,
+                        '-- Pilih Job Title --'
+                    );
+
+                    // Set data attribute untuk tombol Update
+                    $('.update_user').data('update_user_id', user.id);
                 },
                 error: function(xhr) {
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = JSON.parse(xhr.responseText);
                     $(document).Toasts('create', {
                         title: 'Error',
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
                 }
-            })
-        })
+            });
+        });
 
-        $(document).on('click', '.update_user', function() {
-            // e.preventDefault()
-            let update_user_id = $(this).data('update_user_id')
-            let update_user_name = $('#update_user_name').val()
-            let update_user_email = $('#update_user_email').val()
-            let update_current_role = $('#update_current_role').val()
-            let update_user_role = $('#update_user_role').val()
-            let update_user_office = $('#update_user_office').val()
-            let update_user_department = $('#update_user_department').val()
+        function populateDropdown(selector, dataList, selectedId = null, placeholder = '-- Pilih --') {
+            $(selector).empty();
+            $(selector).append(`<option value="">${placeholder}</option>`);
+
+            // Cek jika selector adalah role
+            const isRoleDropdown = selector.includes('user_role');
+
+            $.each(dataList, function (i, item) {
+                // Pakai name sebagai value untuk Role, id untuk lainnya
+                let value = isRoleDropdown ? item.name : item.id;
+
+                // Selected jika value sama dengan selectedId
+                let selected = (value === selectedId) ? 'selected' : '';
+
+                $(selector).append(`
+                    <option value="${value}" ${selected}>${item.name}</option>
+                `);
+            });
+
+            if ($(selector).hasClass('select2-hidden-accessible')) {
+                $(selector).select2('destroy');
+            }
+            $(selector).select2({
+                dropdownParent: $('#formDetailUser, #formUpdateUser'),
+                width: '100%'
+            });
+        }
+
+        $(document).on('click', '.update_user', function () {
+            let update_user_id = $(this).data('update_user_id');
+
+            // Ambil semua data input form
+            let payload = {
+                id: update_user_id,
+                name: $('#update_user_name').val(),
+                email: $('#update_user_email').val(),
+                current_role: $('#update_current_role').val(),
+                role: $('#update_user_role').val(),
+                office: $('#update_user_office').val(),
+                division: $('#update_user_division').val(),
+                department: $('#update_user_department').val(),
+                job_title: $('#update_user_job_title').val(),
+                parent_user: $('#update_user_parent').val(),
+            };
+
+            // Clear semua error message sebelumnya
+            $('.text-danger').text('');
 
             $.ajax({
                 headers: {
@@ -264,64 +351,63 @@
                 },
                 url: '{{ route("update-user") }}',
                 type: 'POST',
-                data: {
-                    id: update_user_id,
-                    name: update_user_name,
-                    email: update_user_email,
-                    current_role: update_current_role,
-                    role: update_user_role,
-                    office: update_user_office,
-                    department: update_user_department,
-                },
+                data: payload,
                 dataType: 'json',
                 async: true,
-                success: function(res) {
-                    $('#user_table').DataTable().ajax.reload();
-                    $('#formUpdateUser').modal('toggle');
+                success: function (res) {
+                    // Reload DataTable
+                    $('#user_table').DataTable().ajax.reload(null, false);
+
+                    // Tutup modal update
+                    $('#formUpdateUser').modal('hide');
+
+                    // Tampilkan toast success
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
-                        body: 'User berhasil diubah.',
-                        delay: 10000,
-                        autohide: true,
-                        fade: true,
-                        close: true,
-                        autoremove: true,
+                        body: res.meta.message ?? 'User berhasil diubah.',
+                        delay: 8000,
+                        autohide: true
                     });
                 },
-                error: function(xhr, status, error) {
-                    let response_error = JSON.parse(xhr.responseText)
-                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                error: function (xhr) {
+                    let response_error = JSON.parse(xhr.responseText);
+
+                    if (response_error.meta && (response_error.meta.code === 500 || response_error.meta.code === 400)) {
+                        // Error server
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
-                            body: response_error.meta.message,
-                            delay: 10000,
-                            autohide: true,
-                            fade: true,
-                            close: true,
-                            autoremove: true,
+                            body: response_error.meta.message ?? 'Terjadi kesalahan server.',
+                            delay: 8000,
+                            autohide: true
+                        });
+                    } else if (response_error.meta && response_error.meta.message && response_error.meta.message.errors) {
+                        // Error validasi field
+                        $.each(response_error.meta.message.errors, function (field, messages) {
+                            $('#message_update_user_' + field).text(messages[0]);
+                        });
+
+                        $(document).Toasts('create', {
+                            title: 'Validasi Gagal',
+                            class: 'bg-warning',
+                            body: 'Silakan lengkapi data yang masih kosong atau salah.',
+                            delay: 8000,
+                            autohide: true
                         });
                     } else {
-                        $('.text-danger').text('')
-                        $.each(response_error.meta.message.errors, function(i, value) {
-                            // alert(value)
-                            $('#message_update_user_' + i).text(value)
-                        })
+                        // Error tak terduga
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
-                            delay: 10000,
-                            autohide: true,
-                            fade: true,
-                            close: true,
-                            autoremove: true,
+                            body: 'Terjadi kesalahan tidak terduga.',
+                            delay: 8000,
+                            autohide: true
                         });
                     }
                 }
-            })
-        })
+            });
+        });
 
         $(document).on('click', '.delete_user', function() {
             let delete_user_id = $(this).data('user_id')

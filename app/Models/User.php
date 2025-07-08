@@ -58,13 +58,36 @@ class User extends Authenticatable
     {
         return $this->hasOne(MasterOffice::class, 'id', 'office_id');
     }
+    public function division()
+    {
+        return $this->belongsTo(MasterDivision::class, 'division_id');
+    }
     public function dept()
     {
         return $this->hasOne(MasterDepartment::class, 'id', 'department_id');
     }
+    public function jobTitle()
+    {
+        return $this->belongsTo(MasterJobTitles::class, 'job_title_id');
+    }
+    public function level()
+    {
+        return $this->hasOneThrough(
+            MasterLevelJobs::class,
+            MasterJobTitles::class,
+            'id',          // Foreign key di MasterJobTitles
+            'id',          // Foreign key di MasterLevelJobs
+            'job_title_id',// Local key di Users
+            'level_id'     // Local key di MasterJobTitles
+        );
+    }
+    public function parent()
+    {
+        return $this->hasMany(User::class, 'parent_user_id');
+    }
     public function companyInformation()
-{
-    return $this->hasOne(CompanyInformation::class);
-}
+    {
+        return $this->hasOne(CompanyInformation::class);
+    }
 
 }

@@ -30,7 +30,7 @@
                     if (window.pieChartInstance) {
                         window.pieChartInstance.destroy();
                     }
-
+                    
                     window.pieChartInstance = new Chart(ctx, {
                         type: 'pie',
                         data: {
@@ -54,19 +54,6 @@
                                         weight: 'bold',
                                         size: 14
                                     }
-                                },
-                                outlabels: {
-                                    text: '%l: %v',
-                                    color: '#111',
-                                    stretch: 25,
-                                    font: {
-                                        resizable: true,
-                                        minSize: 10,
-                                        maxSize: 14
-                                    },
-                                    lineColor: '#ccc',
-                                    padding: 6,
-                                    fontStyle: 'bold'
                                 }
                             }
                         }

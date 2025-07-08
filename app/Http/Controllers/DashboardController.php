@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\ApprovalMaster;
 use App\Models\ApprovalDetails;
+use App\Models\MasterDepartment;
 class DashboardController extends Controller
 {
     protected $userOfficeId;

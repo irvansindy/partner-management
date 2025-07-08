@@ -10,6 +10,8 @@ use App\Services\MenuService;
 use Illuminate\Support\Str;
 use Dedoc\Scramble\Scramble;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -29,6 +31,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            $dashboardUrl = $user->hasAnyRole(['super-admin', 'admin', 'super-user'])
+                ? 'dashboard'
+                : 'home';
+
+            // Replace config value (overwrite closure)
+            Config::set('adminlte.dashboard_url', $dashboardUrl);
+        }
+
         config(['app.locale' => 'id']);
         Carbon::setLocale('id');
         Schema::defaultStringLength(191);

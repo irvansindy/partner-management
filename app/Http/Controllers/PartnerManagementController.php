@@ -32,7 +32,6 @@ class PartnerManagementController extends Controller
     {
         return view('partner.index');
     }
-    #[Hidden]
     public function fetchPartner()
     {
         try {
@@ -204,13 +203,15 @@ class PartnerManagementController extends Controller
     {
         try {
             DB::beginTransaction();
+
             $status = $request->status;
             $user = auth()->user();
-            $role = $user->roles->pluck('name')[0];
+            $dept = $user->dept->name;
+            $role = $user->roles->pluck('name')->first();
             $partner = CompanyInformation::findOrFail($request->partner_id);
 
             $approvalMaster = ApprovalMaster::where('company_information_id', $partner->id)->first();
-            $approvalDetail = $approvalMaster 
+            $approvalDetail = $approvalMaster
                 ? ApprovalDetails::where([
                     'approval_id' => $approvalMaster->id,
                     'user_id' => $user->id
@@ -229,48 +230,85 @@ class PartnerManagementController extends Controller
                         return FormatResponseJson::error(null, 'Approval model tidak ditemukan, hubungi ICT.', 404);
                     }
 
-                    // Buat approval master
+                    // Buat ApprovalMaster baru
                     $approvalMaster = ApprovalMaster::create([
                         'company_information_id' => $partner->id,
                         'user_id' => $user->id,
                         'location_id' => $user->office_id,
                         'department_id' => $user->department_id,
-                        'step_ordering' => 2, // akan masuk ke step kedua setelah ini
+                        'step_ordering' => 2,
                         'status' => 1,
                     ]);
 
-                    // Masukkan user pertama (yang bukan bagian dari DetailApprovalModel)
-                    ApprovalDetails::create([
-                        'approval_id' => $approvalMaster->id,
-                        'user_id' => $user->id,
-                        'step_ordering' => 1,
-                        'status' => 2 // sudah diapprove
-                    ]);
-
-                    // Masukkan semua detail approval dari model
-                    $detailModels = DetailApprovalModel::where('approval_id', $masterModel->id)
-                        ->orderBy('step_ordering')
-                        ->get();
-
-                    foreach ($detailModels as $detail) {
+                    // ✅ SPECIAL CASE: Jika Department Purchasing
+                    if ($dept === 'Purchasing') {
+                        // Step 1: User pertama (Admin Purchasing)
                         ApprovalDetails::create([
                             'approval_id' => $approvalMaster->id,
-                            'user_id' => $detail->user_id,
-                            'step_ordering' => $detail->step_ordering + 1, // geser step_ordering +1 karena step 1 sudah dipakai
-                            'status' => $detail->step_ordering === 1 ? 1 : 0 // step 2 (asli step 1) = waiting
+                            'user_id' => $user->id,
+                            'step_ordering' => 1,
+                            'status' => 2 // langsung approved
+                        ]);
+
+                        // Step 2 & 3: Dari DetailApprovalModel
+                        $detailModels = DetailApprovalModel::where('approval_id', $masterModel->id)->orderBy('step_ordering')->get();
+
+                        $stepOrdering = 2;
+                        foreach ($detailModels as $detail) {
+                            ApprovalDetails::create([
+                                'approval_id' => $approvalMaster->id,
+                                'user_id' => $detail->user_id,
+                                'step_ordering' => $stepOrdering,
+                                'status' => $stepOrdering == 2 ? 1 : 0 // Step 2 langsung waiting
+                            ]);
+                            $stepOrdering++;
+                        }
+
+                        $partner->update([
+                            'status' => 'checking 2',
+                            'location_id' => $user->office_id,
+                            'department_id' => $user->department_id,
+                        ]);
+                    } else {
+                        // ✅ NORMAL CASE
+                        // Step 1: User pertama
+                        ApprovalDetails::create([
+                            'approval_id' => $approvalMaster->id,
+                            'user_id' => $user->id,
+                            'step_ordering' => 1,
+                            'status' => 2 // langsung approved
+                        ]);
+
+                        // Step 2+: Dari DetailApprovalModel
+                        $detailModels = DetailApprovalModel::where('approval_id', $masterModel->id)
+                            ->orderBy('step_ordering')
+                            ->get();
+
+                        $stepOrdering = 2;
+                        foreach ($detailModels as $detail) {
+                            ApprovalDetails::create([
+                                'approval_id' => $approvalMaster->id,
+                                'user_id' => $detail->user_id,
+                                'step_ordering' => $stepOrdering,
+                                'status' => $stepOrdering == 2 ? 1 : 0
+                            ]);
+                            $stepOrdering++;
+                        }
+
+                        $partner->update([
+                            'status' => 'checking 2',
+                            'location_id' => $user->office_id,
+                            'department_id' => $user->department_id,
                         ]);
                     }
-
-                    // Update status partner
-                    $partner->update([
-                        'status' => 'checking 2',
-                        'location_id' => $user->office_id,
-                        'department_id' => $user->department_id,
-                    ]);
                 } else {
-                    // APPROVAL LANJUTAN
+                    // ✅ APPROVAL LANJUTAN
                     if (!$approvalDetail || $approvalDetail->status === 2) {
                         return FormatResponseJson::error(null, 'Anda sudah melakukan approval.', 403);
+                    }
+
+                    if ($approvalDetail->status !== 1) {
+                        return FormatResponseJson::error(null, 'Approval ini belum sampai ke tahap Anda.', 403);
                     }
 
                     $approvalDetail->update(['status' => 2]);
@@ -288,24 +326,21 @@ class PartnerManagementController extends Controller
                         ]);
                         $partner->update(['status' => 'checking 2']);
                     } else {
-                        $approvalMaster->update(['status' => 2]);
+                        $approvalMaster->update(['status' => 2]); // Approved
                         $partner->update(['status' => 'approved']);
                     }
                 }
             } elseif ($status === 'reject') {
-                // SET STATUS REJECT
+                // ✅ REJECT
                 $partner->update(['status' => 'reject']);
                 $approvalMaster?->update(['status' => 3]);
                 $approvalDetail?->update(['status' => 3]);
 
-                // DELETE ALL RELATED DATA
-                $attachments = CompanySupportingDocument::where('company_id', $partner->id)->get();
-                foreach ($attachments as $file) {
-                    if (File::exists(public_path($file->document))) {
-                        File::delete(public_path($file->document));
-                    }
+                // Cleanup
+                if ($approvalMaster) {
+                    ApprovalDetails::where('approval_id', $approvalMaster->id)->delete();
+                    $approvalMaster->delete();
                 }
-
                 CompanyAddress::where('company_id', $partner->id)->delete();
                 CompanyBank::where('company_id', $partner->id)->delete();
                 CompanyTax::where('company_id', $partner->id)->delete();
@@ -320,6 +355,7 @@ class PartnerManagementController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
+
     public function getMenusWithSubmenus()
     {
         // Ambil user yang sedang login
@@ -336,7 +372,6 @@ class PartnerManagementController extends Controller
 
         return response()->json($menus);
     }
-    #[Hidden]
     public function fetchVendorForTender(){
         try {
             $list_company = CompanyInformation::where([
