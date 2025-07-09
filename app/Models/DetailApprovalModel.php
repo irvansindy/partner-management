@@ -9,7 +9,12 @@ class DetailApprovalModel extends Model
 {
     use HasFactory;
     protected $table = 'detail_approval_models';
-    protected $guarded = [];
+    protected $fillable = [
+        'approval_id',
+        'user_id',
+        'step_ordering',
+        'status'
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);

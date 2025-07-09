@@ -199,7 +199,7 @@ class PartnerManagementController extends Controller
         ob_clean();
         $mpdf->Output('Report Daily'.'('.date('Y-m-d').').pdf', 'I');
     }
-    public function approvalPartner(Request $request)
+    public function approvalPartnerOld(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -355,6 +355,142 @@ class PartnerManagementController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
+
+    function approvalPartner(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $status = $request->status;
+            $user = auth()->user();
+            $partner = CompanyInformation::findOrFail($request->partner_id);
+
+            $approvalMaster = ApprovalMaster::where('company_information_id', $partner->id)->first();
+            $approvalDetail = $approvalMaster
+                ? ApprovalDetails::where([
+                    'approval_id' => $approvalMaster->id,
+                    'user_id'     => $user->id
+                ])->first()
+                : null;
+
+            // === STEP: APPROVED ===
+            if ($status === 'approved') {
+
+                // === FIRST APPROVAL ===
+                if (!$approvalMaster) {
+                    $masterModel = MasterApprovalModel::where([
+                        'location_id'   => $user->office_id,
+                        'department_id' => $user->department_id,
+                    ])->first();
+
+                    if (!$masterModel) {
+                        return FormatResponseJson::error(null, 'Approval model tidak ditemukan. Hubungi ICT.', 404);
+                    }
+
+                    // Create ApprovalMaster
+                    $approvalMaster = ApprovalMaster::create([
+                        'company_information_id' => $partner->id,
+                        'user_id'                => $user->id,
+                        'location_id'            => $user->office_id,
+                        'department_id'          => $user->department_id,
+                        'step_ordering'          => 1,
+                        'status'                 => 1, // In Progress
+                    ]);
+
+                    // Step 1: Approver pertama (langsung approve)
+                    ApprovalDetails::create([
+                        'approval_id'   => $approvalMaster->id,
+                        'user_id'       => $user->id,
+                        'step_ordering' => 1,
+                        'status'        => 2 // Approved
+                    ]);
+
+                    // Copy next steps from MasterApprovalModel
+                    $detailModels = DetailApprovalModel::where('approval_id', $masterModel->id)
+                        ->orderBy('step_ordering')
+                        ->get();
+
+                    $stepOrdering = 2;
+                    foreach ($detailModels as $detail) {
+                        ApprovalDetails::create([
+                            'approval_id'   => $approvalMaster->id,
+                            'user_id'       => $detail->user_id,
+                            'step_ordering' => $stepOrdering,
+                            'status'        => $stepOrdering == 2 ? 1 : 0, // Next step: waiting
+                        ]);
+                        $stepOrdering++;
+                    }
+
+                    // Update Partner Status
+                    $partner->update([
+                        'status'        => 'checking 2',
+                        'location_id'   => $user->office_id,
+                        'department_id' => $user->department_id,
+                    ]);
+
+                } else {
+                    // === NEXT APPROVAL STEPS ===
+                    if (!$approvalDetail || $approvalDetail->status === 2) {
+                        return FormatResponseJson::error(null, 'Anda sudah melakukan approval.', 403);
+                    }
+
+                    if ($approvalDetail->status !== 1) {
+                        return FormatResponseJson::error(null, 'Approval belum sampai ke tahap Anda.', 403);
+                    }
+
+                    // Approve current step
+                    $approvalDetail->update(['status' => 2]);
+
+                    // Move to next step
+                    $nextStep = ApprovalDetails::where('approval_id', $approvalMaster->id)
+                        ->where('step_ordering', '>', $approvalDetail->step_ordering)
+                        ->orderBy('step_ordering')
+                        ->first();
+
+                    if ($nextStep) {
+                        $nextStep->update(['status' => 1]); // Set next step to waiting
+                        $approvalMaster->update([
+                            'status'        => 1, // In Progress
+                            'step_ordering' => $nextStep->step_ordering,
+                        ]);
+                        $partner->update(['status' => 'checking ' . $nextStep->step_ordering]);
+                    } else {
+                        // Final approval
+                        $approvalMaster->update(['status' => 2]); // Fully Approved
+                        $partner->update(['status' => 'approved']);
+                    }
+                }
+
+            // === STEP: REJECTED ===
+            } elseif ($status === 'reject') {
+
+                $partner->update(['status' => 'reject']);
+                $approvalMaster?->update(['status' => 3]); // Rejected
+                $approvalDetail?->update(['status' => 3]); // Rejected
+
+                // Cleanup Approval
+                if ($approvalMaster) {
+                    ApprovalDetails::where('approval_id', $approvalMaster->id)->delete();
+                    $approvalMaster->delete();
+                }
+
+                // Cleanup Related Partner Data
+                CompanyAddress::where('company_id', $partner->id)->delete();
+                CompanyBank::where('company_id', $partner->id)->delete();
+                CompanyTax::where('company_id', $partner->id)->delete();
+                CompanySupportingDocument::where('company_id', $partner->id)->delete();
+                $partner->delete();
+            }
+
+            DB::commit();
+            return FormatResponseJson::success($status, 'Approval berhasil diproses');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+
 
     public function getMenusWithSubmenus()
     {

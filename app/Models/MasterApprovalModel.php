@@ -9,7 +9,14 @@ class MasterApprovalModel extends Model
 {
     use HasFactory;
     protected $table = 'master_approval_models';
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'user_id',
+        'location_id',
+        'department_id',
+        'step_ordering',
+        'status'
+    ];
 
     public function user()
     {
