@@ -1,0 +1,42 @@
+# Gunakan PHP 8.2 dengan ekstensi yang dibutuhkan Laravel
+FROM php:8.2-fpm
+
+# Update all packages to their latest versions to reduce vulnerabilities
+RUN apt-get update && apt-get upgrade -y
+
+# Install ekstensi tambahan untuk Laravel
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    build-essential \
+    libssl-dev \
+    pkg-config \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql zip
+
+# ✅ Install PHP Redis extension
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy semua file Laravel ke container
+COPY . .
+
+# Set permission untuk storage & bootstrap cache
+# RUN chown -R www-data:www-data /var/www \
+#     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+# Expose port 9000 (default PHP-FPM)
+EXPOSE 9000
+

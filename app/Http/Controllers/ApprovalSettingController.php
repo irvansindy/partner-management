@@ -71,6 +71,8 @@ class ApprovalSettingController extends Controller
             $validator = Validator::make($request->all(), [
                 'stagging_approval_office' => 'required',
                 'stagging_approval_department' => 'required',
+            ], [
+                
             ]);
             
             if ($validator->fails()) {

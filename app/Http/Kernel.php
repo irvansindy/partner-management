@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\SanitizeInputMiddleware::class,
     ];
 
     /**
@@ -70,9 +71,8 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'check.company.info' => \App\Http\Middleware\CheckCompanyInformation::class,
-        // 'check.role' => \App\Http\Middleware\CheckRole::class,
-        // 'check.permission' => \App\Http\Middleware\CheckPermission::class,
         'api.ip_whitelist' => \App\Http\Middleware\IpWhitelistMiddleware::class,
-        'docs' => \Dedoc\Scramble\Http\Middleware\PrepareDocs::class
+        'docs' => \Dedoc\Scramble\Http\Middleware\PrepareDocs::class,
+        'sanitize.input' => \App\Http\Middleware\SanitizeInputMiddleware::class
     ];
 }

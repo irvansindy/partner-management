@@ -10,7 +10,9 @@
         "dedoc/scramble": "^0.8",
         "doctrine/dbal": "^4.0",
         "fruitcake/laravel-cors": "^2.0",
+        "geoip2/geoip2": "^3.2",
         "guzzlehttp/guzzle": "^7.0.1",
+        "jenssegers/agent": "^2.6",
         "jeroennoten/laravel-adminlte": "^3.9",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.15",
@@ -19,7 +21,8 @@
         "maatwebsite/excel": "^3.1",
         "mpdf/mpdf": "*",
         "spatie/laravel-backup": "^7.8",
-        "spatie/laravel-permission": "^6.4"
+        "spatie/laravel-permission": "^6.4",
+        "torann/geoip": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
