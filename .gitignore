@@ -21,3 +21,6 @@ docker-compose-old.yml
 .env.xampp
 serve-xampp.sh
 switch-env.sh
+Dockerfile
+composer.lock
+docker-compose.yml
