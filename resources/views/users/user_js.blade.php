@@ -215,6 +215,8 @@
             $('#form_detail_current_user')[0].reset();
             $('.message_update_user_name').text('');
             $('.message_update_user_email').text('');
+            $('.message_update_user_nik').text('');
+            $('.message_update_user_employee_id').text('');
             $('.message_update_user_role').text('');
             $('.message_update_user_office').text('');
             $('.message_update_user_department').text('');
@@ -234,7 +236,10 @@
                     // Isi input name & email
                     $('#update_user_name').val(user.name);
                     $('#update_user_email').val(user.email);
-
+                    $('#update_user_nik').val(user.nik);
+                    $('#update_user_employee_id').val(user.employee_id);
+                    console.log(user.parent_user_id);
+                    
                     // Populate dropdown Role
                     populateDropdown(
                         '#update_user_role',
@@ -246,8 +251,8 @@
                     // Populate dropdown Parent User
                     populateDropdown(
                         '#update_user_parent',
-                        res.data.users,
-                        user.parent_user ? user.parent_user.id : null,
+                        res.data.parents,
+                        user.parent_user_id ? user.parent_user_id : null,
                         '-- Pilih Parent User --'
                     );
 

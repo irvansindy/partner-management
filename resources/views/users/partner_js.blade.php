@@ -7,7 +7,7 @@
         dropdownParent: $('#modal_support_document'),
         width: '100%'
     })
-
+    
     $(document).ready(function() {
         fetchDataPartner()
 
@@ -22,7 +22,6 @@
                 async: true,
                 success: function(res) {
                     if (res.data[0] == null) {
-                        // $('#alert_modal_data_null').modal('show')
                         $('#data-company-name').empty()
                         $('#data-company-name').html('<small>Not Set</small>')
                         $('#data-company-group-name').empty()
@@ -101,16 +100,18 @@
                         let company_bank = res.data[0].bank
                         let company_tax = res.data[0].tax
                         let company_attachment = res.data[0].attachment
-                        
+                        let logs = res.data.logs;
+                        let listHtml = "";
+
                         $('.list-data-address').empty()
                         $('.list-data-bank').empty()
                         $('.list-data-tax').empty()
                         $('.list-data-attachment').empty()
-
-
+                        $('.list-data-attachment').empty()
+                        // data address
                         switch (true) {
                             case company_address && company_address.length > 0:
-                                
+
                                 $.each(company_address, (index, address) => {
                                     $('.list-data-address').append(`
                                         <li>
@@ -122,10 +123,10 @@
                             default:
                                 $('.list-data-address').append(
                                     `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data alamat</li>`
-                                    );
+                                );
                                 break;
                         }
-
+                        // data bank
                         switch (true) {
                             case company_bank && company_bank.length > 0:
                                 $.each(company_bank, (index, bank) => {
@@ -139,10 +140,10 @@
                             default:
                                 $('.list-data-bank').append(
                                     `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data bank</li>`
-                                    );
+                                );
                                 break;
                         }
-
+                        // data tax
                         switch (true) {
                             case company_tax && company_tax.length > 0:
                                 $.each(company_tax, (index, tax) => {
@@ -156,17 +157,17 @@
                             default:
                                 $('.list-data-tax').append(
                                     `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data pajak</li>`
-                                    );
+                                );
                                 break;
                         }
-
+                        // data attachment
                         switch (true) {
                             case company_attachment && company_attachment.length > 0:
                                 $.each(company_attachment, (index, attachment) => {
                                     $('.list-data-attachment').append(`
                                         <li>
                                             <i class="fas fa-file-word"></i> ${attachment.document_type_name} - 
-                                            <a href="{{ asset('storage/uploads/legal_documents/') }}/${attachment.document}" target="_blank">Link</a>
+                                            <a href="{{ asset('') }}${attachment.document}" target="_blank">Link</a>
                                         </li>
                                     `);
                                 });
@@ -174,7 +175,7 @@
                             default:
                                 $('.list-data-attachment').append(
                                     `<li><i class="fas fa-file-word"></i> Tidak ada dokumen yang diunggah</li>`
-                                    );
+                                );
                                 break;
                         }
                         const supporting_document = res.data.document
@@ -202,6 +203,45 @@
                         $('#company_support_document').DataTable({
                             pagingType: 'simple_numbers',
                         })
+                        // data user logs
+                        if (logs.data.length > 0) {
+                            $.each(logs.data, function(index, log) {
+                                let createdAt = new Date(log.created_at);
+                                let formattedDate = createdAt.toLocaleString("id-ID", {
+                                    dateStyle: "medium",
+                                    timeStyle: "short"
+                                });
+
+                                listHtml += `
+                            <li class="mb-2">
+                                <strong>[${log.action}]</strong> ${log.description} 
+                                <br><small class="text-muted">${formattedDate} | IP: ${log.ip_address ?? '-'}</small>
+                            </li>
+                        `;
+                            });
+                        } else {
+                            listHtml = `<li class="text-muted">Belum ada aktivitas.</li>`;
+                        }
+
+                        $("#activity-list").html(listHtml);
+
+                        // pagination links
+                        let paginationHtml = "";
+                        $.each(logs.links, function(index, link) {
+                            if (link.url === null) {
+                                paginationHtml += `
+                            <li class="page-item ${link.active ? 'active' : 'disabled'}">
+                                <span class="page-link">${link.label}</span>
+                            </li>`;
+                            } else {
+                                paginationHtml += `
+                            <li class="page-item ${link.active ? 'active' : ''}">
+                                <a class="page-link activity-page-link" href="#" data-page="${link.url.split('page=')[1]}">${link.label}</a>
+                            </li>`;
+                            }
+                        });
+
+                        $("#activity-pagination").html(paginationHtml);
                     }
                 }
             })
@@ -348,7 +388,6 @@
                     let data_language = ['Bahasa', 'English'];
                     let checked_language = '';
                     $.each(data_language, function(i, language) {
-                        // alert(language)
                         checked_language = res.data.communication_language ==
                             language ?
                             'checked' : ''
@@ -408,7 +447,7 @@
                 header: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '{{ route("fetch-partner-address") }}',
+                url: '{{ route('fetch-partner-address') }}',
                 method: 'GET',
                 data: {
                     id: id
@@ -416,7 +455,6 @@
                 async: true,
                 success: function(res) {
                     let list_address = res.data
-                    alert(list_address.length)
                     if (list_address.length == 1) {
                         $('#list_detail_address').empty()
                         $.each(list_address, function(i, address) {
@@ -686,7 +724,7 @@
                 }
             })
         })
-        
+
         $(document).on('click', '#detail_company_bank', function(e) {
             e.preventDefault()
             let id = $(this).data('partner_id')
@@ -694,7 +732,7 @@
                 header: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '{{ route("fetch-partner-bank") }}',
+                url: '{{ route('fetch-partner-bank') }}',
                 method: 'GET',
                 data: {
                     id: id
@@ -958,7 +996,7 @@
                 header: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: '{{ route("fetch-partner-tax") }}',
+                url: '{{ route('fetch-partner-tax') }}',
                 method: 'GET',
                 data: {
                     id: id
@@ -1710,6 +1748,12 @@
         })
         // submit data supporting document
         $(document).on('click', '#btn_submit_supporting_document', function(e) {
+            // Panggil validasi form
+            const result = secureValidator.validateForm('form_submit_supporting_document');
+
+            // Reset pesan error sebelum validasi
+            $('.text-danger').text('');
+
             // Create a FormData object to handle files and form data
             var formData = new FormData($('#form_submit_supporting_document')[0]);
             $.ajax({
@@ -1724,7 +1768,6 @@
                 },
                 enctype: 'multipart/form-data',
                 success: function(res) {
-                    // alert('Documents submitted successfully!');
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -1773,7 +1816,7 @@
                 },
             })
         })
-        // call data modal for update attachment 
+        // call data modal for update attachment
         $(document).on('click', '.edit_supporting_document', function() {
             $('#form_update_supporting_document')[0].reset()
             let id = $(this).data('id')
@@ -1784,7 +1827,7 @@
             $("#update_supporting_document_id").val(id)
             $("#update_supporting_document_partner_id").val(company_id)
         })
-        // update setiap file attachment 
+        // update setiap file attachment
         $(document).on('click', '#btn_update_supporting_document', function(e) {
             e.preventDefault()
             var formData = new FormData($('#form_update_supporting_document')[0]);

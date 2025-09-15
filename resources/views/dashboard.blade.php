@@ -20,7 +20,7 @@
                     <span class="info-box-icon bg-info"><i class="fa fa-handshake"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Total Partner</span>
+                        <span class="info-box-text">@lang('messages.Partner')</span>
                         <span class="info-box-number" id="text-total-partner"></span>
                     </div>
                     <!-- /.info-box-content -->
@@ -33,7 +33,7 @@
                     <span class="info-box-icon bg-red"><i class="fa fa-user"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Customer</span>
+                        <span class="info-box-text">@lang('messages.Customer')</span>
                         <span class="info-box-number" id="text-total-customer"></span>
                     </div>
                     <!-- /.info-box-content -->
@@ -50,7 +50,7 @@
                     <span class="info-box-icon bg-green"><i class="fa fa-users"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Vendor</span>
+                        <span class="info-box-text">@lang('messages.Vendor')</span>
                         <span class="info-box-number" id="text-total-vendor"></span>
                     </div>
                     <!-- /.info-box-content -->
@@ -63,7 +63,7 @@
                     <span class="info-box-icon bg-yellow"><i class="fa fa-american-sign-language-interpreting"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">New Members</span>
+                        <span class="info-box-text">@lang('messages.New Member')</span>
                         <span class="info-box-number" id="text-total-user"></span>
                     </div>
                     <!-- /.info-box-content -->
@@ -140,18 +140,30 @@
                 <!-- End Pie Chart -->
 
                 @can('viewApproval', \App\Models\CompanyInformation::class)
-                <!-- Last Approval -->
-                <x-adminlte-card title="Approvals" theme="info" theme-mode="outline" collapsible maximizable>
-                    <ul class="products-list product-list-in-box" id="list_recent_approvals">
-                        
-                    </ul>
-                </x-adminlte-card>
-                <!-- End Last Approval -->
+                    <!-- Last Approval -->
+                    <x-adminlte-card title="Approvals" theme="info" theme-mode="outline" collapsible maximizable>
+                        <ul class="products-list product-list-in-box" id="list_recent_approvals">
+
+                        </ul>
+                    </x-adminlte-card>
+                    <!-- End Last Approval -->
                 @endcan
             </section>
         </div>
         <!-- End Partner Table -->
     </div>
+    {{-- <div class="dropdown show floating-locale-btn">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ strtoupper(app()->getLocale()) }}
+            <i class="fa fas-language"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            @foreach (config('locales.supported') as $code => $label)
+                <a class="dropdown-item" href="{{ route('locale.switch', $code) }}">{{ $label }}</a>
+            @endforeach
+        </div>
+    </div> --}}
 @stop
 
 @section('css')
@@ -168,6 +180,7 @@
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 32px !important;
         }
+        
     </style>
     <!-- data table -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -181,7 +194,8 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- chartjs -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js">
+    </script>
     </script>
 
     @include('admin.dashboard_js')

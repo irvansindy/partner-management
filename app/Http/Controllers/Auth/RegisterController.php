@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Http\Request;
+
 class RegisterController extends Controller
 {
     /*
@@ -85,4 +87,18 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ])->assignRole('user');
     }
+    protected function registered(Request $request, $user)
+    {
+        // khusus role user, kirim verifikasi email
+        if ($user->hasRole('user') && !$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+
+            // redirect ke halaman notice verifikasi
+            return redirect()->route('verification.notice');
+        }
+
+        // kalau bukan role user, langsung redirect normal
+        return redirect($this->redirectTo);
+    }
+
 }

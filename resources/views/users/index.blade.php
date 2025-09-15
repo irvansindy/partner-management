@@ -21,7 +21,7 @@
                     </div>
                     <div class="card-body px-0 pt-2 pb-2">
                         <div class="table-responsive p-0 px-md-2">
-                            <table class="table table-hover align-items-center mb-0 data_tables" id="user_table">
+                            <table class="table table-hover align-items-center mb-0 data_tables" id="user_table" width="100%">
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">

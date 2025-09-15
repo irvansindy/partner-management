@@ -147,3 +147,38 @@ Stagging approval :
         - Approval 1 : Admin Purchasing (PPIC) (Siti Choirunissa, Rida Wanti, Siti Imas masitoh, Lia Marliani)
         - Approval 2 : Tryvena Puspayanti/Fransisco Gultom
         - Approval 3 : Djoko Widjaja 
+
+
+=========================================================================================================================================================================
+
+
+Meeting 28 Agustus 2025
+PKP (Pengusaha Kena Pajak)
+Non PKP (Bukan Pengusaha Kena Pajak)
+
+Company Group - treatmentnya disamakan dengan nama Company jika tidak memiliki Group; boleh kosong.
+
+Liable Person - job position dijadikan field terpisah (master data job position tidak diperlukan, hanya diketik manual)
+
+Sertifikasi - sertifikasi lainnya ditambahkan field terpisah 
+
+----> Tiap field buat placeholder untuk contoh
+
+Susunan field diperhatikan (Case: Contact Person baru Sertifikasi)
+
+Stempel - TTD: hold dlu (di-nonaktifkan dulu, tgg bahasan dengan Sales)
+
+
+
+Alamat:
+1. Alamat NPWP 
+2. Alamat lainnya; checkbox (bisa >1, opsional)
+
+--> Alamat jalan dimulai dengan Jl. (atau St.)
+
+
+Exception:
+1. Toko online perlu disesuaikan isiannya (consider tambah opsi Business Classification sbg e-commerce)
+
+Catatan:
+1. Perbaikan Bahasa yang digunakan dan isian2 perlu diberikan placeholder text

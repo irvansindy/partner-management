@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: partner_app
+    user: "www-data:www-data"
     volumes:
       - .:/var/www/html
     networks:
@@ -12,6 +13,7 @@ services:
       - mysql
       - redis
     command: /bin/bash -c "./switch-env.sh && php-fpm"
+
   nginx:
     image: nginx:alpine
     container_name: partner_nginx
@@ -28,6 +30,7 @@ services:
   mysql:
     image: mysql:8
     container_name: partner_mysql
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: partner_db
@@ -35,6 +38,8 @@ services:
       - "3308:3306"
     networks:
       - partnernet
+    volumes:
+      - partner_mysql_data:/var/lib/mysql
 
   redis:
     image: redis:alpine
@@ -43,6 +48,8 @@ services:
       - "6380:6379"
     networks:
       - partnernet
+    volumes:
+      - partner_redis_data:/data
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -58,7 +65,17 @@ services:
 
 networks:
   partnernet:
-    driver: bridge
+    external: true   # network dibuat manual sekali saja: docker network create partnernet
+
+volumes:
+  partner_mysql_data:
+    external: true
+    name: partner_mysql_data   # nama persis tanpa prefix
+  partner_redis_data:
+    external: true
+    name: partner_redis_data   # nama persis tanpa prefix
+
+
 
 # services:
 #   app:

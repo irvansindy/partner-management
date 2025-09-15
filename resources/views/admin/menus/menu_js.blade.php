@@ -91,7 +91,7 @@
         $(document).on('click', '#submit_create_menu', function(e) {
             e.preventDefault()
             let form_data = new FormData($('#form_create_new_menu')[0])
-
+            $('#submit_create_menu').prop('disabled', true)
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -114,6 +114,7 @@
                         autoremove: true,
                     });
                     fetchMenu()
+                    $('#submit_create_menu').prop('disabled', false)
                 },
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)

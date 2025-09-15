@@ -23,6 +23,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if (! auth()->user()->companyInformation()->exists()) {
+            return redirect()->route('create-partner'); 
+        }
+
         return view('home');
     }
 }

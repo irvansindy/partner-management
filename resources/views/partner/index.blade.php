@@ -15,10 +15,16 @@
                         <div class="pt-2 flex-fill bd-highlight">
                             <p>Partner list</p>
                         </div>
-                        @if (auth()->user()->roles->pluck('name')[0] == 'super-admin')
+                        @if (auth()->user()->roles->pluck('name')[0] == 'super-admin' || auth()->user()->roles->pluck('name')[0] == 'admin')
                             <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
                                 <a href="{{ route('export-excel') }}" class="btn btn-outline-success mx-1" target="_blank"><i class="fas fa-fw fa-file-excel"></i></a>
                                 <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger mx-1" target="_blank"><i class="fas fa-fw fa-file-pdf"></i></a>
+                            </div>
+                        @elseif (auth()->user()->roles->pluck('name')[0] == 'super-user')
+                            <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
+                                <a href="{{ route('export-excel') }}" class="btn btn-outline-success mx-1" target="_blank"><i class="fas fa-fw fa-file-excel"></i></a>
+                                <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger mx-1" target="_blank"><i class="fas fa-fw fa-file-pdf"></i></a>
+                                <button class="btn btn-outline-secondary mx-1" id="btn_form_create_partner" data-toggle="modal" data-target="#ModalCreatePartner"><i class="fas fa-fw fa-plus"></i></button>
                             </div>
                         @endif
                         
@@ -52,6 +58,7 @@
                 </div>
             </div>
         </div>
+        @include('partner.create_partner')
         @include('partner.detail_partner')
     </div>
 @stop

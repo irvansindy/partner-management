@@ -184,51 +184,9 @@
             </div>
         </div>
 
-        <!-- Document Section -->
-        {{-- <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-light position-relative">
-                <strong>📂 Dokumen Pendukung</strong>
-                <button class="btn btn-sm btn-primary position-absolute mr-1" id="add_data_support_document"
-                    data-toggle="modal" data-target="#modal_support_document" style="right: 15px; top: 10px;">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-            <div class="card-body text-center text-muted">
-                Belum ada dokumen yang diunggah.
-            </div>
-            <div class="table-responsive">
-                <table class="table table-sm table-bordered mb-0">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Dokumen</th>
-                            <th>Tipe</th>
-                            <th>Tanggal Upload</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>NPWP.pdf</td>
-                            <td>Pajak</td>
-                            <td>2025-06-10</td>
-                            <td><span class="badge badge-warning">Pending</span></td>
-                            <td>
-                                <a href="#" class="text-primary">Preview</a> |
-                                <a href="#" class="text-danger">Hapus</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div> --}}
-
         <!-- Recent Activity -->
-        <div class="card shadow-sm">
+        {{-- <div class="card shadow-sm">
             <div class="card-header bg-light">
-                {{-- <strong>🔔 <i class="fas fa-bell"></i> Aktivitas Terakhir</strong> --}}
                 <strong><i class="fas fa-bell text-warning"></i> Aktivitas Terakhir</strong>
             </div>
             <div class="card-body">
@@ -237,6 +195,23 @@
                     <li>• Dokumen SIUP disetujui (1 minggu lalu)</li>
                     <li>• Admin meminta revisi dokumen TDP</li>
                 </ul>
+            </div>
+        </div> --}}
+        <!-- Recent Activity -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <strong><i class="fas fa-bell text-warning"></i> Aktivitas Terakhir</strong>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0" id="activity-list">
+                    <li class="text-muted">Memuat aktivitas...</li>
+                </ul>
+                <!-- Pagination -->
+                <nav>
+                    <ul class="pagination justify-content-center mt-3" id="activity-pagination">
+                        <!-- pagination will be injected here -->
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

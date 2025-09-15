@@ -42,6 +42,7 @@ class UserManagementController extends Controller
     public function storeUser(Request $request)
     {
         try {
+            // dd($request->all());
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',

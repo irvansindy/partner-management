@@ -193,8 +193,6 @@
                 success: function(res) {
                     // console.log(res);
                     if (res.data != null) {
-                        // window.location.href
-                        // alert('anda sudah terdaftar')
                     }
                 }
             })
@@ -209,7 +207,6 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
-                    // alert('success')
                     $('#field_form_create_business_other').empty()
                     $('#data_doc_type_pt').empty()
                     $('#data_doc_type_cv').empty()
@@ -265,7 +262,6 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
-                    // alert('success')
                     $('#field_form_create_business_other').empty()
                     $('#data_doc_type_pt').empty()
                     $.each(res.data, function(i, data) {
@@ -318,9 +314,8 @@
             })
         })
 
-        $(document).on('change', 'input[name="business_classification"]', function() {
+        $(document).on('change', 'select[name="business_classification"]', function() {
             let value = $(this).val()
-            // alert(value)
             if (value == 'Other') {
                 $('#field_form_create_business_other').append(`
                     <input type="text" name="business_classification_other_detail" id="business_classification_other_detail" placeholder="Other" class="form-control" style="width: 50% !important;">
@@ -351,7 +346,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" name="address[]" id="address" class="form-control">
-                                <span class="text-danger mt-2 message_address" id="message_address_0" role="alert"></span>
+                                <span class="text-danger message-danger mt-2 message_address" id="message_address_0" role="alert"></span>
                             </div>
                         </div>
                     
@@ -359,13 +354,13 @@
                             <div class="col-md-6">
                                 <label for="city">Kota *</label>
                                 <input type="text" name="city[]" id="city" class="form-control">
-                                <span class="text-danger mt-2 message_city" id="message_city_0" role="alert"></span>
+                                <span class="text-danger message-danger mt-2 message_city" id="message_city_0" role="alert"></span>
                             </div>
                     
                             <div class="col-md-6">
                                 <label for="country">Negara *</label>
                                 <input type="text" name="country[]" id="country" class="form-control">
-                                <span class="text-danger mt-2 message_country" id="message_country_0" role="alert"></span>
+                                <span class="text-danger message-danger mt-2 message_country" id="message_country_0" role="alert"></span>
                             </div>
                         </div>
                     
@@ -373,13 +368,13 @@
                             <div class="col-md-6">>
                                 <label for="province">Provinsi *</label>
                                 <input type="text" name="province[]" id="province" class="form-control">
-                                <span class="text-danger mt-2 message_province" id="message_province_0" role="alert"></span>
+                                <span class="text-danger message-danger mt-2 message_province" id="message_province_0" role="alert"></span>
                             </div>
                     
                             <div class="col-md-6">
                                 <label for="zip_code">Kode Pos *</label>
                                 <input type="text" name="zip_code[]" id="zip_code" class="form-control">
-                                <span class="text-danger mt-2 message_zip_code" id="message_zip_code_0" role="alert"></span>
+                                <span class="text-danger message-danger mt-2 message_zip_code" id="message_zip_code_0" role="alert"></span>
                             </div>
                         </div>
                     
@@ -388,14 +383,14 @@
                                 <label for="telephone">Telephone *</label>
                                 <p class="fs-6 text-muted mb-2">+ [Country-Area Code] [No.]</p>
                                 <input type="number" name="telephone[]" id="telephone" class="form-control">
-                                <span class="text-danger mt-2 message_telephone" id="message_telephone_0" role="alert"></span>
+                                <span class="text-danger message-danger mt-2 message_telephone" id="message_telephone_0" role="alert"></span>
                             </div>
                     
                             <div class="col-md-6">
                                 <label for="fax">Fax *</label>
                                 <p class="fs-6 text-muted mb-2">+ [Country-Area Code] [No.]</p>
                                 <input type="number" name="fax[]" id="fax" class="form-control">
-                                <span class="text-danger mt-2 message_fax" id="message_fax_0" role="alert"></span>
+                                <span class="text-danger message-danger mt-2 message_fax" id="message_fax_0" role="alert"></span>
                             </div>
                         </div>
                     </div>
@@ -447,37 +442,37 @@
                             <div class="col-md-6 mb-3">
                                 <label for="bank_name">Nama Bank *</label>
                                 <input type="text" name="bank_name[]" id="bank_name" class="form-control">
-                                <span class="text-danger mt-2" id="message_bank_name" role="alert"></span>
+                                <span class="text-danger message-danger mt-2" id="message_bank_name" role="alert"></span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="branch">Cabang *</label>
                                 <input type="text" name="branch[]" id="branch" class="form-control">
-                                <span class="text-danger mt-2" id="message_branch" role="alert"></span>
+                                <span class="text-danger message-danger mt-2" id="message_branch" role="alert"></span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="account_name">Nama Akun *</label>
                                 <input type="text" name="account_name[]" class="form-control">
-                                <span class="text-danger mt-2" id="message_account_name" role="alert"></span>
+                                <span class="text-danger message-danger mt-2" id="message_account_name" role="alert"></span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="city_or_country">Kota/Negara *</label>
                                 <input type="text" name="city_or_country[]" class="form-control">
-                                <span class="text-danger mt-2" id="message_city_or_country" role="alert"></span>
+                                <span class="text-danger message-danger mt-2" id="message_city_or_country" role="alert"></span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="account_number">Nomor Akun *</label>
                                 <input type="number" name="account_number[]" class="form-control">
-                                <span class="text-danger mt-2" id="message_account_number" role="alert"></span>
+                                <span class="text-danger message-danger mt-2" id="message_account_number" role="alert"></span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="currency">Mata Uang *</label>
                                 <input type="text" name="currency[]" class="form-control">
-                                <span class="text-danger mt-2" id="message_currency" role="alert"></span>
+                                <span class="text-danger message-danger mt-2" id="message_currency" role="alert"></span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="swift_code">Swift Code (Optional)</label>
                                 <input type="text" name="swift_code[]" class="form-control">
-                                <span class="text-danger mt-2" id="message_swift_code" role="alert"></span>
+                                <span class="text-danger message-danger mt-2" id="message_swift_code" role="alert"></span>
                             </div>
                         </div>
                     </fieldset>
@@ -594,7 +589,6 @@
             e.preventDefault()
             $(this).closest('.array_add_info').remove()
         })
-
         $(document).on('click', '#confirm_currency', function(e) {
             e.preventDefault()
             let currency_data = document.querySelectorAll(".currency_data");
@@ -761,7 +755,7 @@
                 `)
             }
         })
-
+        
         $(document).on('click', '#reset_currency', function(e) {
             e.preventDefault()
             let currency_data = document.querySelectorAll(".currency_data");
@@ -810,7 +804,7 @@
                         close: true,
                         autoremove: true,
                     });
-                    window.location.href = "{{ route('list-partner') }}";
+                    window.location.href = "{{ route('user-attachment') }}";
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
@@ -828,7 +822,7 @@
                             autoremove: true,
                         });
                     }
-                    $('.text-danger').text('')
+                    $('.message-danger').text('')
                     $.each(response_error.meta.message.errors, function(i, value) {
                         $('#message_' + i.replace('.', '_')).text(value)
                     })

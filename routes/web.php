@@ -8,6 +8,7 @@ use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\RoleAndPermissionController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\DepartmentManagementController;
+use App\Http\Controllers\DivisionManagementController;
 use App\Http\Controllers\PartnerManagementController;
 use App\Http\Controllers\OfficeManagementController;
 use App\Http\Controllers\MenuController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ApprovalSettingController;
 use App\Http\Controllers\EndUserLicenseAgreementController;
 use App\Http\Controllers\TenderForVendorController;
 use App\Http\Controllers\API\Admin\APIWhiteListManageController;
+use App\Http\Controllers\LocaleController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,12 +31,12 @@ use App\Http\Controllers\API\Admin\APIWhiteListManageController;
 Route::get('/', function () {
     return view('welcome');
 })->name('/');
-
+Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement-wo-auth');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
 });
-Route::middleware(['auth', 'role:user'])->group(function () {
+Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/list-partner', [PartnerController::class,'index'])->name('list-partner');
     Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
@@ -115,6 +117,8 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     Route::get('fetch-department-setting', [DepartmentManagementController::class,'fetchDepartment'])->name('fetch-department-setting');
     Route::post('submit-department-setting', [DepartmentManagementController::class,'CreateOrUpdateDepartment'])->name('submit-department-setting');
     
+    Route::get('division-setting', [DivisionManagementController::class,'index'])->name('division-setting');
+
     Route::get('office-setting', [OfficeManagementController::class,'index'])->name('office-setting');
     Route::get('fetch-office-setting', [OfficeManagementController::class,'fetchOffice'])->name('fetch-office-setting');
     Route::get('fetch-office-setting-by-id', [OfficeManagementController::class,'fetchOfficeById'])->name('fetch-office-setting-by-id');
@@ -122,7 +126,7 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
 });
 
-Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function () {
+Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(function () {
     Route::get('fetch-data-count', [DashboardController::class, 'fetchDataCount'])->name('fetch-data-count');
     Route::get('fetch-recent-customer', [DashboardController::class, 'fetchRecentCustomer'])->name('fetch-recent-customer');
     Route::get('fetch-recent-vendor', [DashboardController::class, 'fetchRecentVendor'])->name('fetch-recent-vendor');
@@ -130,8 +134,11 @@ Route::middleware(['auth', 'role:super-user|admin|super-admin'])->group(function
 
     Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
     Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');
+    Route::get('/user-attachment', [PartnerController::class,'viewAttachment'])->name('user-attachment');
+    Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
     Route::get('/fetch-vendor-for-tender', [PartnerManagementController::class,'fetchVendorForTender'])->name('fetch-vendor-for-tender');
+    Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
     Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
 });
 
@@ -147,5 +154,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 
 Auth::routes();
 
+Auth::routes(['verify' => true]);
 
 // Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');

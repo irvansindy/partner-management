@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasInsertWithLog;
 /**
  * @property int $id
  * @property int $company_id
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CompanyAddress extends Model
 {
-    use HasFactory;
+    use HasFactory, HasInsertWithLog;
     protected $table = 'company_addresses';
     protected $fillable = [
         'company_id',

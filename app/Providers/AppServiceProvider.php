@@ -12,6 +12,19 @@ use Dedoc\Scramble\Scramble;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use App\Observers\GenericModelObserver;
+// Models yang mau di-observe
+use App\Models\CompanyInformation;
+use App\Models\CompanyBank;
+use App\Models\CompanyAddress;
+use App\Models\CompanyTax;
+use App\Models\CompanySupportingDocument;
+use App\Models\User;
+use App\Models\UserBalanceSheet;
+use App\Models\UserFinancialRatio;
+use App\Models\UserValueIncomeStatement;
+use App\Models\ApprovalMaster;
+use App\Models\ApprovalDetails;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -51,6 +64,24 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('menus', $menuService->getAccessibleMenus());
             }
         });
+
+        $models = [
+            CompanyInformation::class,
+            CompanyBank::class,
+            CompanyAddress::class,
+            CompanyTax::class,
+            CompanySupportingDocument::class,
+            User::class,
+            UserBalanceSheet::class,
+            UserFinancialRatio::class,
+            UserValueIncomeStatement::class,
+            ApprovalMaster::class,
+            ApprovalDetails::class,
+        ];
+
+        foreach ($models as $model) {
+            $model::observe(GenericModelObserver::class);
+        }
 
     }
 }

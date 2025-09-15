@@ -14,11 +14,13 @@ use App\Models\UserFinancialRatio;
 use App\Models\MasterIncomeStatement;
 use App\Models\MasterBalanceSheet;
 use App\Models\CompanySupportingDocument;
+use App\Models\ActivityLogs;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Helpers\UserActivityLogger;
 class PartnerController extends Controller
 {
     /**
@@ -95,6 +97,10 @@ class PartnerController extends Controller
                 $supporting_document_user = CompanySupportingDocument::where('company_id', $company_profile->id)->get();
             }
 
+            // 🔥 Log aktivitas di sini (langsung di function fetchCompany)
+            // Ambil log terbaru, paginasi 15 per halaman
+            $logs = ActivityLogs::where('user_id', auth()->user()->id)->latest()->paginate(15);
+
             $data = [
                 $company_profile,
                 $doc_type,
@@ -102,9 +108,19 @@ class PartnerController extends Controller
                 'cv' => $doc_cv,
                 'ud_or_pd' => $doc_ud_or_pd,
                 'perorangan' => $doc_perorangan,
-                'document' => $supporting_document_user
+                'document' => $supporting_document_user,
+                'logs' => $logs,
             ];
             return FormatResponseJson::success($data, 'Company profile fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+    public function ActivityLogs()
+    {
+        try {
+            $logs = ActivityLogs::latest()->paginate(15);
+            return FormatResponseJson::success($logs, 'Activity logs fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
@@ -199,7 +215,9 @@ class PartnerController extends Controller
         try {
             DB::beginTransaction();
 
-            $this->checkIfUserAlreadyRegistered();
+            if (auth()->user()->roles->pluck('name')[0] == 'user') {
+                $this->checkIfUserAlreadyRegistered();
+            }
 
             $validator = $this->validateRequest($request);
             if ($validator->fails()) {
@@ -255,9 +273,9 @@ class PartnerController extends Controller
             'system_management' => 'required|string',
             'contact_person' => 'required|string',
             'communication_language' => 'required|string',
-            'email_address' => 'required|email|unique:company_informations,email_address',
-            'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
-            'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+            'email_address' => 'required|email',
+            // 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+            // 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
             'address.0' => 'required|string',
             'city.0' => 'required|string',
             'country.0' => 'required|string',
@@ -266,6 +284,24 @@ class PartnerController extends Controller
             'telephone.0' => 'required|string',
             'fax.0' => 'required|string',
         ], [
+            'company_name.required' => 'The company name field is required.',
+            'company_group_name.required' => 'The company group name field is required.',
+            'company_type.required' => 'The company type field is required.',
+            'established_year.required' => 'The established year field is required.',
+            'total_employee.required' => 'The total employee field is required.',
+            'liable_person_and_position.required' => 'The liable person and position field is required.',
+            'owner_name.required' => 'The owner name field is required.',
+            'board_of_directors.required' => 'The board of directors field is required.',
+            'major_shareholders.required' => 'The major shareholders field is required.',
+            'business_classification.required' => 'The business classification field is required.',
+            'business_classification_detail.required' => 'The business classification detail field is required.',
+            'website_address.required' => 'The website address field is required.',
+            'system_management.required' => 'The system management field is required.',
+            'contact_person.required' => 'The contact person field is required.',
+            'communication_language.required' => 'The communication language field is required.',
+            'email_address.required' => 'The email address field is required.',
+            'stamp_file.required' => 'The stamp file field is required.',
+            'signature_file.required' => 'The signature file field is required.',
             'address.0.required' => 'The address field is required',
             'city.0.required' => 'The city field is required.',
             'country.0.required' => 'The country field is required.',
@@ -314,6 +350,7 @@ class PartnerController extends Controller
             'established_year' => $request->established_year,
             'total_employee' => $request->total_employee,
             'liable_person_and_position' => $request->liable_person_and_position,
+            'liable_position' => $request->liable_person_and_position,
             'owner_name' => $request->owner_name,
             'board_of_directors' => $request->board_of_directors,
             'major_shareholders' => $request->major_shareholders,
@@ -327,6 +364,9 @@ class PartnerController extends Controller
             'email_address' => $request->email_address,
             'signature' => $files['signature_file'],
             'stamp' => $files['stamp_file'],
+            'status' => auth()->user()->roles->pluck('name')[0] == 'user' ? 'checking' : 'approved',
+            'location_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
+            'department_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
         ];
     }
     private function storeCompanyAddresses($request, $companyId)
@@ -348,7 +388,7 @@ class PartnerController extends Controller
         }
 
         if (!empty($addresses)) {
-            CompanyAddress::insert($addresses);
+            CompanyAddress::insertWithLog($addresses);
         }
     }
     private function storeCompanyBanks($request, $companyId)
@@ -370,7 +410,7 @@ class PartnerController extends Controller
         }
 
         if (!empty($banks)) {
-            CompanyBank::insert($banks);
+            CompanyBank::insertWithLog($banks);
         }
     }
     private function storeCompanyTax($request, $companyId)
@@ -411,7 +451,9 @@ class PartnerController extends Controller
                 ];
             }
         }
-        UserValueIncomeStatement::insert($incomeData);
+        if (!empty($incomeData)) {
+            UserValueIncomeStatement::insertWithLog($incomeData);
+        }
 
         $balanceData = [];
         foreach ($balanceSheets as $item) {
@@ -428,7 +470,9 @@ class PartnerController extends Controller
                 ];
             }
         }
-        UserBalanceSheet::insert($balanceData);
+        if (!empty($balanceData)) {
+            UserBalanceSheet::insertWithLog($balanceData);
+        }
 
         $ratios = ['wc_ratio', 'cf_coverage', 'tie_ratio', 'debt_asset', 'account_receivable_turn_over', 'net_profit_margin'];
         $ratioData = [];
@@ -447,7 +491,10 @@ class PartnerController extends Controller
                 }
             }
         }
-        UserFinancialRatio::insert($ratioData);
+
+        if (!empty($ratioData)) {
+            UserFinancialRatio::insertWithLog($ratioData);
+        }
     }
     public function update(Request $request)
     {

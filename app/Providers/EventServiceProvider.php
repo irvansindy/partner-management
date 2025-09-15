@@ -7,8 +7,6 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use App\Models\Menu;
 class EventServiceProvider extends ServiceProvider
 {
@@ -30,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // menu
         Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
             $menus = Menu::with('children')
                 ->where('type', 1)
@@ -75,6 +74,7 @@ class EventServiceProvider extends ServiceProvider
                 $event->menu->add($menuItem);
             }
         });
+
     }
     
 

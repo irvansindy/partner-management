@@ -79,7 +79,19 @@
         @endphp
         <main class="py-4">
             @yield('content')
+            <div class="dropdown show floating-locale-btn">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ strtoupper(app()->getLocale()) }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    @foreach (config('locales.supported') as $code => $label)
+                        <a class="dropdown-item" href="{{ route('locale.switch', $code) }}">{{ $label }}</a>
+                    @endforeach
+                </div>
+            </div>
         </main>
     </div>
+    <script src="{{ asset('js/secureValidator.js') }}"></script>
 </body>
 </html>
