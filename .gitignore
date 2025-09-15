@@ -21,6 +21,3 @@ docker-compose-old.yml
 .env.xampp
 serve-xampp.sh
 switch-env.sh
-.wsl-start.sh
-rebuild.sh
-catatan revisi.txt
