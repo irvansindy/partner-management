@@ -151,19 +151,16 @@
             </section>
         </div>
         <!-- End Partner Table -->
+        
+        
+        <!-- Start Map -->
+        <x-adminlte-card title="Map Vendor and Customer" theme="info" theme-mode="outline" maximizable>
+            <div class="chart-responsive">
+                <div id="map" style="height:400px;"></div>
+            </div>
+        </x-adminlte-card>
+        <!-- End Map -->
     </div>
-    {{-- <div class="dropdown show floating-locale-btn">
-        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ strtoupper(app()->getLocale()) }}
-            <i class="fa fas-language"></i>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            @foreach (config('locales.supported') as $code => $label)
-                <a class="dropdown-item" href="{{ route('locale.switch', $code) }}">{{ $label }}</a>
-            @endforeach
-        </div>
-    </div> --}}
 @stop
 
 @section('css')
@@ -183,20 +180,29 @@
         
     </style>
     <!-- data table -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- leaflet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.css" />
 
 @stop
 @section('plugins.Chartjs', true)
 @section('js')
-    <!-- datatables -->
+    <!-- jQuery sudah otomatis dari AdminLTE -->
+    <!-- DataTables & Select2 -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <!-- chartjs -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js">
-    </script>
-    </script>
+    <!-- Chartjs -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    
+    <!-- Leaflet + AwesomeMarkers -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.js"></script>
 
     @include('admin.dashboard_js')
 @stop
+

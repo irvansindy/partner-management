@@ -53,6 +53,10 @@ class CompanyInformation extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function contact()
+    {
+        return $this->hasMany(CompanyContact::class,'company_informations_id','id');
+    }
     public function address()
     {
         return $this->hasMany(CompanyAddress::class, 'company_id', 'id');

@@ -15,7 +15,7 @@ return array (
   'Business Classification Detail' => 'Detail Klasifikasi Bisnis',
   'Website Address' => 'Alamat Situs Web',
   'Certificate Type' => 'Jenis Sertifikat',
-  'Contact Person' => 'Kontak Person',
+  'Contact Person' => 'Narahubung',
   'Communication Language' => 'Bahasa Komunikasi',
   'Email Address' => 'Alamat Email (Koresponden)',
   'Company Address (according to NPWP)' => 'Alamat Perusahaan (sesuai dengan NPWP)',
@@ -56,4 +56,9 @@ return array (
   'Mandatory' => 'Tanda bintang merah menandakan wajib diisi',
   'Liable Person' => 'Orang yang Bertanggung Jawab',
   'Liable Position' => 'Posisi Penanggung Jawab',
+  'Address Data' => 'Data Alamat',
+  'Department' => 'Departemen',
+  'Position' => 'Jabatan',
+  'Name' => 'Nama',
+  'Email' => 'E-mail',
 );

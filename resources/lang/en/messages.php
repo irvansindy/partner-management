@@ -56,4 +56,9 @@ return array (
   'Mandatory' => 'Red asterisk indicates that it is mandatory to fill in',
   'Liable Person' => 'Liable Person',
   'Liable Position' => 'Liable Position',
+  'Address Data' => 'Address Data',
+  'Department' => 'Department',
+  'Name' => 'Name',
+  'Position' => 'Position',
+  'Email' => 'Email',
 );

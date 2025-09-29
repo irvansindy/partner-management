@@ -24,7 +24,8 @@
         "spatie/laravel-backup": "^7.8",
         "spatie/laravel-permission": "^6.4",
         "tanmuhittin/laravel-google-translate": "*",
-        "torann/geoip": "*"
+        "torann/geoip": "*",
+        "wimski/laravel-nominatim": "^2.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -69,7 +70,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

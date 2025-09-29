@@ -45,11 +45,4 @@
             </div>
         </div>
     </div>
-    {{-- <div class="card-footer">
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-primary" id="btn_submit_data_company">
-                submit
-            </button>
-        </div>
-    </div> --}}
 </div>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1e634c623901d0d364fe8002121c2a6",
+    "content-hash": "3f7b8f14b4cf31f2e2664e095471aee1",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -4038,6 +4038,69 @@
             "time": "2025-08-01T08:46:24+00:00"
         },
         {
+            "name": "myclabs/php-enum",
+            "version": "1.8.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/myclabs/php-enum.git",
+                "reference": "e7be26966b7398204a234f8673fdad5ac6277802"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/e7be26966b7398204a234f8673fdad5ac6277802",
+                "reference": "e7be26966b7398204a234f8673fdad5ac6277802",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "1.*",
+                "vimeo/psalm": "^4.6.2 || ^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MyCLabs\\Enum\\": "src/"
+                },
+                "classmap": [
+                    "stubs/Stringable.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP Enum contributors",
+                    "homepage": "https://github.com/myclabs/php-enum/graphs/contributors"
+                }
+            ],
+            "description": "PHP Enum implementation",
+            "homepage": "https://github.com/myclabs/php-enum",
+            "keywords": [
+                "enum"
+            ],
+            "support": {
+                "issues": "https://github.com/myclabs/php-enum/issues",
+                "source": "https://github.com/myclabs/php-enum/tree/1.8.5"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mnapoli",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/myclabs/php-enum",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-01-14T11:49:03+00:00"
+        },
+        {
             "name": "nesbot/carbon",
             "version": "2.73.0",
             "source": {
@@ -4465,6 +4528,85 @@
                 "source": "https://github.com/paragonie/random_compat"
             },
             "time": "2020-10-15T08:29:30+00:00"
+        },
+        {
+            "name": "php-http/discovery",
+            "version": "1.20.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/discovery.git",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "reference": "82fe4c73ef3363caed49ff8dd1539ba06044910d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0|^2.0",
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "nyholm/psr7": "<1.0",
+                "zendframework/zend-diactoros": "*"
+            },
+            "provide": {
+                "php-http/async-client-implementation": "*",
+                "php-http/client-implementation": "*",
+                "psr/http-client-implementation": "*",
+                "psr/http-factory-implementation": "*",
+                "psr/http-message-implementation": "*"
+            },
+            "require-dev": {
+                "composer/composer": "^1.0.2|^2.0",
+                "graham-campbell/phpspec-skip-example-extension": "^5.0",
+                "php-http/httplug": "^1.0 || ^2.0",
+                "php-http/message-factory": "^1.0",
+                "phpspec/phpspec": "^5.1 || ^6.1 || ^7.3",
+                "sebastian/comparator": "^3.0.5 || ^4.0.8",
+                "symfony/phpunit-bridge": "^6.4.4 || ^7.0.1"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Http\\Discovery\\Composer\\Plugin",
+                "plugin-optional": true
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Discovery\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/Composer/Plugin.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                }
+            ],
+            "description": "Finds and installs PSR-7, PSR-17, PSR-18 and HTTPlug implementations",
+            "homepage": "http://php-http.org",
+            "keywords": [
+                "adapter",
+                "client",
+                "discovery",
+                "factory",
+                "http",
+                "message",
+                "psr17",
+                "psr7"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/discovery/issues",
+                "source": "https://github.com/php-http/discovery/tree/1.20.0"
+            },
+            "time": "2024-10-02T11:20:13+00:00"
         },
         {
             "name": "phpoffice/phpspreadsheet",
@@ -8627,6 +8769,139 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "wimski/laravel-nominatim",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wimski/laravel-nominatim.git",
+                "reference": "4da7bbab4f0b4db497ff847b47c319e9f32c9e17"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wimski/laravel-nominatim/zipball/4da7bbab4f0b4db497ff847b47c319e9f32c9e17",
+                "reference": "4da7bbab4f0b4db497ff847b47c319e9f32c9e17",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^8.0 || ^9.0",
+                "php": "^8.0",
+                "wimski/nominatim-geocoding-api-client": "^v1.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5",
+                "nunomaduro/larastan": "^2.0",
+                "nyholm/psr7": "^1.5",
+                "orchestra/testbench": "^7.0",
+                "phpstan/phpstan-mockery": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^9.5",
+                "swisnl/php-http-fixture-client": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Wimski\\LaravelNominatim\\Providers\\NominatimServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Wimski\\LaravelNominatim\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "wimski",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel integration for Nominatim Geocoding API Client",
+            "homepage": "https://github.com/wimski/laravel-nominatim",
+            "keywords": [
+                "api",
+                "client",
+                "forward",
+                "geocoding",
+                "laravel",
+                "nominatim",
+                "reverse",
+                "wimski"
+            ],
+            "support": {
+                "issues": "https://github.com/wimski/laravel-nominatim/issues",
+                "source": "https://github.com/wimski/laravel-nominatim/tree/v2.0.0"
+            },
+            "time": "2022-03-07T16:06:45+00:00"
+        },
+        {
+            "name": "wimski/nominatim-geocoding-api-client",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wimski/nominatim-geocoding-api-client.git",
+                "reference": "dc4630f03a9580b9b4785372a59e2e3af4938155"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wimski/nominatim-geocoding-api-client/zipball/dc4630f03a9580b9b4785372a59e2e3af4938155",
+                "reference": "dc4630f03a9580b9b4785372a59e2e3af4938155",
+                "shasum": ""
+            },
+            "require": {
+                "myclabs/php-enum": "^1.8",
+                "php": "^8.0",
+                "php-http/discovery": "^1.13",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5",
+                "nyholm/psr7": "^1.5",
+                "phpstan/phpstan": "^1.4",
+                "phpstan/phpstan-mockery": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^9.5",
+                "swisnl/php-http-fixture-client": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wimski\\Nominatim\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Wim Reckman",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Nominatim Geocoding API Client",
+            "homepage": "https://github.com/wimski/nominatim-geocoding-api-client",
+            "keywords": [
+                "api",
+                "client",
+                "forward",
+                "geocoding",
+                "nominatim",
+                "reverse",
+                "wimski"
+            ],
+            "support": {
+                "issues": "https://github.com/wimski/nominatim-geocoding-api-client/issues",
+                "source": "https://github.com/wimski/nominatim-geocoding-api-client/tree/v1.2.0"
+            },
+            "time": "2022-03-22T08:27:53+00:00"
         },
         {
             "name": "yandex/translate-api",

@@ -8,19 +8,21 @@ use App\Models\CompanyDocumentTypeCategories;
 use App\Models\CompanyAddress;
 use App\Models\CompanyBank;
 use App\Models\CompanyTax;
+use App\Models\CompanyContact;
 use App\Models\UserValueIncomeStatement;
 use App\Models\UserBalanceSheet;
 use App\Models\UserFinancialRatio;
 use App\Models\MasterIncomeStatement;
 use App\Models\MasterBalanceSheet;
 use App\Models\CompanySupportingDocument;
+use App\Models\MasterActivityLog;
 use App\Models\ActivityLogs;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Helpers\UserActivityLogger;
+use App\Jobs\GeocodeAddressJob;
 class PartnerController extends Controller
 {
     /**
@@ -67,7 +69,8 @@ class PartnerController extends Controller
     public function fetchCompany()
     {
         try {
-            $company_profile = CompanyInformation::with(['user', 'address', 'bank', 'tax', 'attachment'])
+            // dd(auth()->user()->id);
+            $company_profile = CompanyInformation::with(['user', 'contact', 'address', 'bank', 'tax', 'attachment'])
             ->where("user_id", auth()->user()->id)->first();
 
             $result_detail_partner = $company_profile != null ? $company_profile : null;
@@ -99,8 +102,13 @@ class PartnerController extends Controller
 
             // 🔥 Log aktivitas di sini (langsung di function fetchCompany)
             // Ambil log terbaru, paginasi 15 per halaman
-            $logs = ActivityLogs::where('user_id', auth()->user()->id)->latest()->paginate(15);
-
+            // $logs = ActivityLogs::where('user_id', auth()->user()->id)->latest()->paginate(15);
+            $logs = MasterActivityLog::with(['logs', 'user'])
+            ->whereHas('user', function ($query) {
+                $query->where('id', auth()->user()->id);
+            })
+            ->paginate(10);
+            
             $data = [
                 $company_profile,
                 $doc_type,
@@ -132,6 +140,18 @@ class PartnerController extends Controller
             ->where("user_id", auth()->user()->id)->first();
 
             return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 400);
+        }
+    }
+    public function fetchContactById(Request $request)
+    {
+        try {
+            $contact = CompanyContact::with(['company.user'])->whereHas('company', function ($q) use ($request) {
+                $q->where('company_informations_id', $request->id);
+                $q->where('user_id', auth()->user()->id);
+            })->get();
+            return FormatResponseJson::success($contact,'contact fetched successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
@@ -229,6 +249,7 @@ class PartnerController extends Controller
             $companyData = $this->prepareCompanyData($request, $files);
             $partner = CompanyInformation::create($companyData);
 
+            $this->storeContact($request, $partner->id);
             $this->storeCompanyAddresses($request, $partner->id);
             $this->storeCompanyBanks($request, $partner->id);
             $this->storeCompanyTax($request, $partner->id);
@@ -276,6 +297,11 @@ class PartnerController extends Controller
             'email_address' => 'required|email',
             // 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
             // 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+            'contact_department.0' => 'required|string',
+            'contact_position.0' => 'required|string',
+            'contact_name.0' => 'required|string',
+            'contact_email.0' => 'required|string',
+            'contact_telephone.0' => 'required|string',
             'address.0' => 'required|string',
             'city.0' => 'required|string',
             'country.0' => 'required|string',
@@ -369,6 +395,25 @@ class PartnerController extends Controller
             'department_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
         ];
     }
+    private function storeContact($request, $companyId)
+    {
+        $contacts = [];
+        foreach ($request->contact_department ?? [] as $i => $contact) {
+            if(!empty($contact)) {
+                $contacts[] = [
+                    'company_informations_id' => $companyId,
+                    'name' => $request->contact_name[$i],
+                    'department' => $contact,
+                    'position' => $request->contact_position[$i],
+                    'email' => $request->contact_email[$i],
+                    'telephone' => $request->contact_telephone[$i],
+                ];
+            }
+        }
+        if(!empty($contacts)) {
+            $contact = CompanyContact::insertWithLog($contacts);
+        }
+    }
     private function storeCompanyAddresses($request, $companyId)
     {
         $addresses = [];
@@ -383,12 +428,23 @@ class PartnerController extends Controller
                     'zip_code' => $request->zip_code[$i],
                     'telephone' => $request->telephone[$i],
                     'fax' => $request->fax[$i],
+                    'created_at' => now()->format('Y-m-d H:i:s'),
                 ];
             }
         }
 
         if (!empty($addresses)) {
             CompanyAddress::insertWithLog($addresses);
+            // Ambil id alamat yang baru saja ditambahkan
+            // Misal pakai created_at untuk mem-filter
+            $ids = CompanyAddress::where('company_id', $companyId)
+                ->latest('id')
+                ->take(count($addresses))
+                ->pluck('id');
+
+            foreach ($ids as $id) {
+                GeocodeAddressJob::dispatch($id);
+            }
         }
     }
     private function storeCompanyBanks($request, $companyId)

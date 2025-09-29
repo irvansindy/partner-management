@@ -141,6 +141,16 @@
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
+                    <!-- contact -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong><i class="fas fa-list-alt text-dark"></i> Kontak:</strong>
+                            <ul class="mt-2 list-data-contact">
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="detail_company_contact" data-toggle="modal" data-target="#dataDetailPartnerContact" data-partner_id=""><i class="fas fa-edit"></i></button>
+                    </li>
+
                     <!-- Address -->
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div>
@@ -185,35 +195,21 @@
         </div>
 
         <!-- Recent Activity -->
-        {{-- <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <strong><i class="fas fa-bell text-warning"></i> Aktivitas Terakhir</strong>
-            </div>
-            <div class="card-body">
-                <ul class="list-unstyled mb-0">
-                    <li>• Anda mengupdate data perusahaan (2 hari lalu)</li>
-                    <li>• Dokumen SIUP disetujui (1 minggu lalu)</li>
-                    <li>• Admin meminta revisi dokumen TDP</li>
-                </ul>
-            </div>
-        </div> --}}
-        <!-- Recent Activity -->
         <div class="card shadow-sm">
             <div class="card-header bg-light">
                 <strong><i class="fas fa-bell text-warning"></i> Aktivitas Terakhir</strong>
             </div>
             <div class="card-body">
-                <ul class="list-unstyled mb-0" id="activity-list">
-                    <li class="text-muted">Memuat aktivitas...</li>
-                </ul>
-                <!-- Pagination -->
-                <nav>
-                    <ul class="pagination justify-content-center mt-3" id="activity-pagination">
-                        <!-- pagination will be injected here -->
-                    </ul>
+                {{-- Master–Detail Accordion --}}
+                <div id="activity-accordion"></div>
+
+                {{-- Pagination --}}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-3" id="activity-pagination"></ul>
                 </nav>
             </div>
         </div>
+
     </div>
     @include('cs_vendor.modal_detail_company_information')
     @include('cs_vendor.modal_detail_address')

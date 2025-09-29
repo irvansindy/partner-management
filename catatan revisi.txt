@@ -182,3 +182,12 @@ Exception:
 
 Catatan:
 1. Perbaikan Bahasa yang digunakan dan isian2 perlu diberikan placeholder text
+
+====================================================
+
+16 september 2025
+(Vendor)
+1. Tablist Form untuk kontak dipisah menjadi seperti alamat atau bank atau pajak.
+2. Pada Dashboard, buat tampilan untuk pin point dari tiap vendor (referensi alamat).
+3. Hapus Stagging Approval, sekarang cukup 1 kali approve saja.
+4. 

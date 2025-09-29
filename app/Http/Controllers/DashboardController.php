@@ -120,5 +120,43 @@ class DashboardController extends Controller
             return FormatResponseJson::error(null, $e->getMessage());
         }
     }
+    public function mapPoint()
+    {
+        try {
+            $vendors = CompanyInformation::with(['address', 'user'])
+            ->where('type', 'vendor')
+            ->get();
+            $customers = CompanyInformation::with(['address', 'user'])
+            ->where('type', 'customer')
+            ->get();
 
+            $map_points = [];
+            foreach ($vendors as $vendor) {
+                foreach ($vendor->address as $address) {
+                    $map_points[] = [
+                        'type' => 'vendor',
+                        'name' => $vendor->name,
+                        'address' => $address->address,
+                        'latitude' => $address->latitude,
+                        'longitude' => $address->longitude,
+                    ];
+                }
+            }
+            foreach ($customers as $customer) {
+                foreach ($customer->address as $address) {
+                    $map_points[] = [
+                        'type' => 'vendor',
+                        'name' => $customer->name,
+                        'address' => $address->address,
+                        'latitude' => $address->latitude,
+                        'longitude' => $address->longitude,
+                    ];
+                }
+            }
+
+            return FormatResponseJson::success($map_points, 'Map Point Fetched Successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
 }

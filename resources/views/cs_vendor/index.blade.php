@@ -12,16 +12,15 @@
             <div class="container-fluid">
                 <form action="" method="" id="form_company">
                     @include('cs_vendor.form.master_information')
-                    {{-- end master --}}
-                    {{-- dynamic form income statement --}}
                     <div class="dynamic-form-income-statement"></div>
-                    {{-- end dynamic form income statement --}}
-                    {{-- company bank --}}
+
+                    @include('cs_vendor.form.contact')
+                    
+                    @include('cs_vendor.form.address')
+                    
                     @include('cs_vendor.form.bank')
-                    {{-- end company bank --}}
-                    {{-- company tax --}}
+                    
                     @include('cs_vendor.form.tax')
-                    {{-- end company tax --}}
                     <div class="d-flex justify-content-center">
                         <button type="button" class="btn btn-primary" id="btn_submit_data_company">
                             submit

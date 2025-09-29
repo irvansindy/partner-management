@@ -71,7 +71,7 @@ class AppServiceProvider extends ServiceProvider
             CompanyAddress::class,
             CompanyTax::class,
             CompanySupportingDocument::class,
-            User::class,
+            // User::class,
             UserBalanceSheet::class,
             UserFinancialRatio::class,
             UserValueIncomeStatement::class,

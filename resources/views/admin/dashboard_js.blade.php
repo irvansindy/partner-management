@@ -65,6 +65,72 @@
             });
         }
 
+        // =======================
+        // 1. Inisialisasi Peta
+        // =======================
+        const map = L.map('map').setView([-6.2, 106.8], 6); // posisi awal: Indonesia
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // =======================
+        // 2. Fungsi Buat Icon FA
+        // =======================
+        function createFaDivIcon(type) {
+            const isCustomer = type === 'customer';
+            const bg = isCustomer ? '#dc3545' : '#007bff';  // merah = customer, biru = vendor
+            const iconClass = isCustomer ? 'fa-user' : 'fa-home';
+
+            const html = `
+            <div style="
+                background:${bg};
+                width:34px;
+                height:34px;
+                border-radius:50%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                border:2px solid #fff;
+                box-shadow:0 1px 3px rgba(0,0,0,0.25);
+            ">
+                <i class="fa ${iconClass}" style="color:#fff;font-size:16px;"></i>
+            </div>
+            `;
+
+            return L.divIcon({
+                html: html,
+                className: '',
+                iconSize: [34, 34],
+                iconAnchor: [17, 34],   // tengah bawah
+                popupAnchor: [0, -34]
+            });
+        }
+
+        // =======================
+        // 3. Ambil Data via AJAX
+        // =======================
+        $.ajax({
+            url: '{{ route('fetch-map-point') }}', // pastikan route ini mengembalikan JSON {data: [...]}
+            type: 'GET',
+            dataType: 'json',
+            success: function (points) {
+                (points.data || []).forEach(function (p) {
+                    const marker = L.marker([p.latitude, p.longitude], {
+                        icon: createFaDivIcon(p.type)
+                    }).addTo(map);
+
+                    marker.bindPopup(`
+                        <strong>${p.type.toUpperCase()}</strong><br>
+                        <b>${p.name}</b><br>
+                        ${p.address}
+                    `);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Gagal memuat titik peta:', status, error);
+            }
+        });
+
         @can('viewCustomer', \App\Models\CompanyInformation::class)
             $('#table_recent_list_customer').DataTable({
                 processing: true,

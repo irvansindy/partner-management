@@ -7,7 +7,10 @@
         dropdownParent: $('#modal_support_document'),
         width: '100%'
     })
-    
+    $('#detail_established_year, #detail_total_employee').on('input', function () {
+        // hapus semua karakter non-digit
+        this.value = this.value.replace(/\D/g, '');
+    });    
     $(document).ready(function() {
         fetchDataPartner()
 
@@ -34,6 +37,7 @@
 
                     if (res.data[0] != null) {
                         $('#detail_company_information').attr('data-partner_id', res.data[0].id)
+                        $('#detail_company_contact').attr('data-partner_id', res.data[0].id)
                         $('#detail_company_address').attr('data-partner_id', res.data[0].id)
                         $('#detail_company_bank').attr('data-partner_id', res.data[0].id)
                         $('#detail_company_tax').attr('data-partner_id', res.data[0].id)
@@ -96,18 +100,36 @@
                         $('#add_data_support_document').attr('data-data_id', res.data[0].id)
 
                         // let company_info = res.data[0]
+                        let company_contact = res.data[0].contact
                         let company_address = res.data[0].address
                         let company_bank = res.data[0].bank
                         let company_tax = res.data[0].tax
                         let company_attachment = res.data[0].attachment
                         let logs = res.data.logs;
-                        let listHtml = "";
+                        // let listHtml = "";
 
+                        $('.list-data-contact').empty()
                         $('.list-data-address').empty()
                         $('.list-data-bank').empty()
                         $('.list-data-tax').empty()
                         $('.list-data-attachment').empty()
                         $('.list-data-attachment').empty()
+                        // data contact
+                        switch (true) {
+                            case company_contact && company_contact.length > 0:
+                                $.each(company_contact, (index, contact) => {
+                                    $('.list-data-contact').append(
+                                        `<li><i class="fas fa-phone text-danger"></i> ${contact.name}, ${contact.department} - ${contact.position}, ${contact.email}, ${contact.telephone}</li>`
+                                    );
+                                })
+                                break;
+                        
+                            default:
+                                $('.list-data-contact').append(
+                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data Kontak</li>`
+                                );
+                                break;
+                        }
                         // data address
                         switch (true) {
                             case company_address && company_address.length > 0:
@@ -203,44 +225,95 @@
                         $('#company_support_document').DataTable({
                             pagingType: 'simple_numbers',
                         })
-                        // data user logs
-                        if (logs.data.length > 0) {
-                            $.each(logs.data, function(index, log) {
-                                let createdAt = new Date(log.created_at);
-                                let formattedDate = createdAt.toLocaleString("id-ID", {
-                                    dateStyle: "medium",
-                                    timeStyle: "short"
-                                });
+
+                        let dataLogs = logs.data;   // <- perhatikan: logs.logs.data sesuai JSON Anda
+                        let listHtml = '';
+
+                        if (dataLogs != null) {
+                            $.each(logs.data, function(masterIndex, master) {
+                                // ID unik untuk setiap collapse
+                                let collapseId = `collapse-${master.id}`;
+                                let headingId  = `heading-${master.id}`;
+
+                                // Info master: user & waktu utama
+                                let createdAtMaster = new Date(master.created_at)
+                                    .toLocaleString("id-ID", {dateStyle: "medium", timeStyle: "short"});
 
                                 listHtml += `
-                            <li class="mb-2">
-                                <strong>[${log.action}]</strong> ${log.description} 
-                                <br><small class="text-muted">${formattedDate} | IP: ${log.ip_address ?? '-'}</small>
-                            </li>
-                        `;
+                                <div class="card mb-2">
+                                    <div class="card-header" id="${headingId}">
+                                        <h5 class="mb-0 d-flex justify-content-between align-items-center">
+                                            <button class="btn btn-link" data-toggle="collapse" data-target="#${collapseId}"
+                                                aria-expanded="false" aria-controls="${collapseId}">
+                                                #${master.id} — ${master.user.name} 
+                                                <small class="text-muted">(${createdAtMaster})</small>
+                                            </button>
+                                        </h5>
+                                    </div>
+
+                                    <div id="${collapseId}" class="collapse" aria-labelledby="${headingId}" data-parent="#activity-accordion">
+                                        <div class="card-body">
+                                            <ul class="list-unstyled mb-0">
+                                `;
+
+                                // Detail logs di dalam master
+                                if (master.logs && master.logs.length > 0) {
+                                    $.each(master.logs, function(detailIndex, log) {
+                                        let createdAtDetail = new Date(log.created_at)
+                                            .toLocaleString("id-ID", {dateStyle: "medium", timeStyle: "short"});
+
+                                        listHtml += `
+                                            <li class="mb-2">
+                                                <strong>[${log.action}]</strong> ${log.description}<br>
+                                                <small class="text-muted">
+                                                    ${createdAtDetail} | IP: ${log.ip_address ?? '-'}
+                                                </small>
+                                            </li>
+                                        `;
+                                    });
+                                } else {
+                                    listHtml += `<li class="text-muted">Tidak ada log detail.</li>`;
+                                }
+
+                                listHtml += `
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                `;
                             });
                         } else {
-                            listHtml = `<li class="text-muted">Belum ada aktivitas.</li>`;
+                            listHtml = `<p class="text-muted">Belum ada aktivitas.</p>`;
                         }
 
-                        $("#activity-list").html(listHtml);
+                        $("#activity-accordion").html(listHtml);
 
-                        // pagination links
-                        let paginationHtml = "";
+                        // --- Pagination ---
+                        let paginationHtml = '';
                         $.each(logs.links, function(index, link) {
+                            let label = link.label;
+
+                            // Ganti label khusus
+                            if (label === 'pagination.next') {
+                                label = '<i class="fa fa-angle-right" aria-hidden="true"></i>';
+                            } else if (label === 'pagination.previous') {
+                                label = '<i class="fa fa-angle-left" aria-hidden="true"></i>';
+                            }
+
                             if (link.url === null) {
                                 paginationHtml += `
-                            <li class="page-item ${link.active ? 'active' : 'disabled'}">
-                                <span class="page-link">${link.label}</span>
-                            </li>`;
+                                    <li class="page-item ${link.active ? 'active' : 'disabled'}">
+                                        <span class="page-link">${label}</span>
+                                    </li>`;
                             } else {
                                 paginationHtml += `
-                            <li class="page-item ${link.active ? 'active' : ''}">
-                                <a class="page-link activity-page-link" href="#" data-page="${link.url.split('page=')[1]}">${link.label}</a>
-                            </li>`;
+                                    <li class="page-item ${link.active ? 'active' : ''}">
+                                        <a class="page-link activity-page-link" href="#" data-page="${link.url.split('page=')[1]}">
+                                            ${label}
+                                        </a>
+                                    </li>`;
                             }
                         });
-
                         $("#activity-pagination").html(paginationHtml);
                     }
                 }
@@ -436,6 +509,27 @@
                             <span class="info-box-text title_change_signature" id="title_change_signature" title="Ubah data tanda tangan"><small>Ubah data tanda tangan</small></span>
                         `)
                     }
+                }
+            })
+        })
+
+        $(document).on('click', '#detail_company_contact', function(e) {
+            e.preventDefault()
+            let id = $(this).data('partner_id')
+            $.ajax({
+                header: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route('fetch-partner-contact') }}',
+                method: 'GET',
+                data: {
+                    id: id
+                },
+                async: true,
+                success: function(res) {
+                    console.log(res);
+                    let list_contact = res.data
+
                 }
             })
         })

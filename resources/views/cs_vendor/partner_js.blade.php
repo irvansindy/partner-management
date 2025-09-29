@@ -1,8 +1,16 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     $('#company_type').select2({
         width: '100%'
     })
     
+    $('#established_year, #total_employee').on('input', function () {
+        // hapus semua karakter non-digit
+        this.value = this.value.replace(/\D/g, '');
+    });
+
+
     $(document).ready(function() {
         var currentYear = new Date().getFullYear();
         $("#year-current").text(currentYear);
@@ -323,6 +331,52 @@
             } else {
                 $('#field_form_create_business_other').empty()
             }
+        })
+
+        $(document).on('click', '#add_contact', function(e) {
+            e.preventDefault()
+            $('.dynamic_contact').append(`
+                <div class="array_dynamic_contact">
+                    <div class="row mt-4">
+                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                            <label for="contact_department_0">@lang('messages.Department') *</label>
+                            <input type="text" name="contact_department[]" id="contact_department_0" class="form-control">
+                            <span class="text-danger mt-2" id="message_contact_department" role="alert"></span>
+                        </div>
+                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                            <label for="contact_position_0">@lang('messages.Position') *</label>
+                            <input type="text" name="contact_position[]" id="contact_position_0" class="form-control">
+                            <span class="text-danger mt-2" id="message_contact_position" role="alert"></span>
+                        </div>
+                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                            <label for="contact_name_0">@lang('messages.Name') *</label>
+                            <input type="text" name="contact_name[]" id="contact_name_0" class="form-control">
+                            <span class="text-danger mt-2" id="message_contact_name" role="alert"></span>
+                        </div>
+                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                            <label for="contact_email_0">@lang('messages.Email') *</label>
+                            <input type="text" name="contact_email[]" id="contact_email_0" class="form-control">
+                            <span class="text-danger mt-2" id="message_contact_email" role="alert"></span>
+                        </div>
+                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                            <label for="contact_telephone_0">@lang('messages.Telephone') *</label>
+                            <input type="text" name="contact_telephone[]" id="contact_telephone_0" class="form-control">
+                            <span class="text-danger mt-2" id="message_contact_telephone" role="alert"></span>
+                        </div>
+                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                            <div class="input-group d-flex justify-content-end mb-4 mt-4">
+                                <button class="btn btn-danger delete_contact"><i class="fa fa-minus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `)
+            })
+            
+
+        $(document).on('click', '.delete_contact', function(e) {
+            e.preventDefault()
+            $(this).closest('.array_dynamic_contact').remove()
         })
 
         $(document).on('click', '#add_dynamic_address', function(e) {
@@ -804,7 +858,14 @@
                         close: true,
                         autoremove: true,
                     });
-                    window.location.href = "{{ route('user-attachment') }}";
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Data berhasil disubmit, silahkan kirim attachment via email ke: pralonpartner@gmail.com atau klik link di bawah ini!',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        footer: `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=pralonpartner@gmail.com&su=Feedback&body=Halo%20admin" target="_blank" rel="noopener noreferrer">Kirim email ke admin</a>`
+                    })
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
@@ -838,9 +899,14 @@
                     });
                 },
                 complete: function() {
-                    if (isSuccess) {
-                        window.location.href = "{{ route('user-attachment') }}";
-                    }
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Data berhasil disubmit, silahkan klik link di bawah untuk kirim attachment.',
+                        icon: 'info',
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        footer: `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=pralonpartner@gmail.com&su=Feedback&body=Halo%20admin" target="_blank" rel="noopener noreferrer">Kirim email ke admin</a>`
+                    })
                 }
             })
         })

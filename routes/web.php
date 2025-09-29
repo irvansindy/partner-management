@@ -47,6 +47,7 @@ Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
     Route::get('/detail-partner', [PartnerController::class,'detailPartner'])->name('detail-partner');
     Route::get('/fetch-partner-by-user', [PartnerController::class,'fetchCompanyPartnerById'])->name('fetch-partner-by-user');
+    Route::get('/fetch-partner-contact', [PartnerController::class,'fetchContactById'])->name('fetch-partner-contact');
     Route::get('/fetch-partner-address', [PartnerController::class,'fetchAddressById'])->name('fetch-partner-address');
     Route::get('/fetch-partner-bank', [PartnerController::class,'fetchBankById'])->name('fetch-partner-bank');
     Route::get('/fetch-partner-tax', [PartnerController::class,'fetchTaxById'])->name('fetch-partner-tax');
@@ -131,6 +132,7 @@ Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(fun
     Route::get('fetch-recent-customer', [DashboardController::class, 'fetchRecentCustomer'])->name('fetch-recent-customer');
     Route::get('fetch-recent-vendor', [DashboardController::class, 'fetchRecentVendor'])->name('fetch-recent-vendor');
     Route::get('fetch-recent-approvals', [DashboardController::class, 'fetchRecentApprovals'])->name('fetch-recent-approvals');
+    Route::get('fetch-map-point', [DashboardController::class, 'mapPoint'])->name('fetch-map-point');
 
     Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
     Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');

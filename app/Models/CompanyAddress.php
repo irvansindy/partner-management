@@ -29,6 +29,8 @@ class CompanyAddress extends Model
         'zip_code',
         'telephone',
         'fax',
+        'latitude',
+        'longitude'
     ];
 
     public function company()
