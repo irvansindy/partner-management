@@ -19,7 +19,6 @@ class CreateCompanyInformationsTable extends Migration
             $table->string('name')->nullable();
             $table->string('group_name')->nullable();
             $table->string('established_year')->nullable();
-            // $table->string('established_year')->nullable();
             $table->integer('total_employee')->nullable();
             $table->string('liable_person_and_position')->nullable();
             $table->string('owner_name')->nullable();

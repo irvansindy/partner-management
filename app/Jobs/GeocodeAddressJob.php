@@ -32,6 +32,7 @@ class GeocodeAddressJob implements ShouldQueue
     public function handle(GeocodingService $geocoder)
     {
         $address = CompanyAddress::find($this->addressId);
+        // dd($address);
         if (! $address) return;
         // Jika sudah ada lat/lng, skip
         if ($address->latitude && $address->longitude) return;

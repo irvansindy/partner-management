@@ -3,12 +3,38 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <section class="content-header">
-        <h1>
-            Dashboard
-            <small style="font-size: 14px">PM</small>
-        </h1>
+    <section class="content-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="m-0">
+                Dashboard
+                <small style="font-size: 14px">PM</small>
+            </h1>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-filter"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+                <div class="px-2 py-1">
+                    <div class="form-group">
+                        <label for="start_date">From</label>
+                        <input type="date" class="form-control" name="start_date" id="start_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">To</label>
+                        <input type="date" class="form-control" name="end_date" id="end_date">
+                    </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="px-2 py-2">
+                    <button type="button" class="btn btn-primary float-right">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </section>
+
 @stop
 
 @section('content')
@@ -60,11 +86,11 @@
             <!-- /.col -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-yellow"><i class="fa fa-american-sign-language-interpreting"></i></span>
+                    <span class="info-box-icon bg-yellow"><i class="fa fa-clock"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">@lang('messages.New Member')</span>
-                        <span class="info-box-number" id="text-total-user"></span>
+                        <span class="info-box-text">@lang('messages.Pending Approval')</span>
+                        <span class="info-box-number" id="pending-approval"></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
@@ -134,12 +160,13 @@
                 <!-- Pie Chart -->
                 <x-adminlte-card title="Diagram Partner" theme="info" theme-mode="outline" collapsible maximizable>
                     <div class="chart-responsive">
-                        <canvas id="pieChart"></canvas>
+                        <canvas id="pieChartUser"></canvas>
                     </div>
                 </x-adminlte-card>
+
                 <!-- End Pie Chart -->
 
-                @can('viewApproval', \App\Models\CompanyInformation::class)
+                {{-- @can('viewApproval', \App\Models\CompanyInformation::class)
                     <!-- Last Approval -->
                     <x-adminlte-card title="Approvals" theme="info" theme-mode="outline" collapsible maximizable>
                         <ul class="products-list product-list-in-box" id="list_recent_approvals">
@@ -147,12 +174,19 @@
                         </ul>
                     </x-adminlte-card>
                     <!-- End Last Approval -->
-                @endcan
+                @endcan --}}
             </section>
         </div>
         <!-- End Partner Table -->
-        
-        
+
+        <x-adminlte-card title="Diagram Partner Location" theme="info" theme-mode="outline" collapsible maximizable>
+            <div class="chart-responsive">
+                <div style="height: 400px;">
+                    <canvas id="chartPartnerLocation"></canvas>
+                </div>
+            </div>
+        </x-adminlte-card>
+
         <!-- Start Map -->
         <x-adminlte-card title="Map Vendor and Customer" theme="info" theme-mode="outline" maximizable>
             <div class="chart-responsive">
@@ -160,6 +194,24 @@
             </div>
         </x-adminlte-card>
         <!-- End Map -->
+
+        <!-- Modal Detail Kota -->
+        <div class="modal fade" id="regencyModal" tabindex="-1" role="dialog" aria-labelledby="regencyModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="regencyModalLabel">Detail Kota/Kabupaten</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <canvas id="regencyChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @stop
 
@@ -177,19 +229,27 @@
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 32px !important;
         }
-        
+
+        #regencyModal .modal-dialog {
+            max-width: 800px;
+        }
+        #regencyChart {
+            width: 100%;
+            height: 400px;
+        }
     </style>
     <!-- data table -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- leaflet -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.css" />
 
 @stop
-@section('plugins.Chartjs', true)
+{{-- @section('plugins.Chartjs', true) --}}
 @section('js')
     <!-- jQuery sudah otomatis dari AdminLTE -->
     <!-- DataTables & Select2 -->
@@ -197,12 +257,35 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- Chartjs -->
+    {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-    
+
     <!-- Leaflet + AwesomeMarkers -->
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.awesome-markers/2.0.4/leaflet.awesome-markers.js"></script>
 
     @include('admin.dashboard_js')
-@stop
+    <script>
+        $('#check-map-point').click(() => {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route('forward-map') }}',
+                type: 'POST',
+                data: {
+                    address: 'Jalan Merdeka No.1, Surabaya, Jawa Timur, Indonesia',
+                    country_code: 'id'
+                },
+                async: true,
+                success: function(res) {
+                    console.log(res);
+                },
+                error: function(err) {
+                    console.log(err);
 
+                }
+            })
+        })
+    </script>
+@stop

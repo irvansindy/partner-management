@@ -1,5 +1,12 @@
 <script>
     $(document).ready(function() {
+        if (typeof $.fn.modal === 'undefined') {
+            console.error('Bootstrap modal is not loaded!');
+            // Load Bootstrap JS jika belum ada
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js';
+            document.head.appendChild(script);
+        }
         fetchMenu()
 
         function fetchMenu() {
@@ -55,8 +62,8 @@
                 success: function(res) {
                     const parent_menu = res.data
                     $('#parent_menu').empty();
-                    $('[name="menu_type"]').on('change', function () {
-                        if ($('[name="menu_type"]:checked').val() === 'children') { 
+                    $('[name="menu_type"]').on('change', function() {
+                        if ($('[name="menu_type"]:checked').val() === 'children') {
                             $('#parent_menu').empty();
                             $('#parent_menu').html(`
                                 <label for="parent_id">Permission</label>
@@ -101,8 +108,13 @@
                 data: form_data,
                 contentType: false,
                 processData: false,
-                success: function(res){
+                success: function(res) {
                     $('#formCreateMenu').modal('hide')
+                    // tunggu transisi selesai (Bootstrap 4 = 300ms)
+                    setTimeout(function() {
+                        $('.modal-backdrop').remove()
+                        $('body').removeClass('modal-open').css('padding-right', '')
+                    }, 400)
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -135,7 +147,7 @@
         $(document).on('click', '.detail_menu, .detail_submenu', function(e) {
             e.preventDefault()
             let detail_id = $(this).data('detail_id')
-            
+
             // ✅ Cek class mana yang diklik
             if ($(this).hasClass('detail_menu')) {
                 $('#formCreateMenuLabel').html('Data Menu')
@@ -162,8 +174,9 @@
                     $('[name="menu_name"]').val(menu.name_text)
                     $('[name="menu_url"]').val(menu.url_name)
                     $('[name="menu_icon"]').val(menu.icon)
-                    $('[name="menu_type"]').filter('[value="' + menu_type + '"]').prop('checked', true);
-                    
+                    $('[name="menu_type"]').filter('[value="' + menu_type + '"]').prop(
+                        'checked', true);
+
                     // const roleIds = selectedRoles.map(role => role.id);
                     $('[name="roles[]"]').val(roles.map(role => role.id)).trigger('change')
 
@@ -172,8 +185,8 @@
                         placeholder: 'Select One',
                     })
                 },
-                error : function(xhr) {
-                    
+                error: function(xhr) {
+
                     $(document).Toasts('create', {
                         title: 'Error!',
                         class: 'bg-error',

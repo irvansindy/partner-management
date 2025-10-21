@@ -35,19 +35,19 @@
     <div class="wrapper">
 
         {{-- Preloader Animation (fullscreen mode) --}}
-        @if($preloaderHelper->isPreloaderEnabled())
+        @if ($preloaderHelper->isPreloaderEnabled())
             @include('adminlte::partials.common.preloader')
         @endif
 
         {{-- Top Navbar --}}
-        @if($layoutHelper->isLayoutTopnavEnabled())
+        @if ($layoutHelper->isLayoutTopnavEnabled())
             @include('adminlte::partials.navbar.navbar-layout-topnav')
         @else
             @include('adminlte::partials.navbar.navbar')
         @endif
 
         {{-- Left Main Sidebar --}}
-        @if(!$layoutHelper->isLayoutTopnavEnabled())
+        @if (!$layoutHelper->isLayoutTopnavEnabled())
             @include('adminlte::partials.sidebar.left-sidebar')
         @endif
 
@@ -64,13 +64,13 @@
         @endif
 
         {{-- Right Control Sidebar --}}
-        @if(config('adminlte.right_sidebar'))
+        @if (config('adminlte.right_sidebar'))
             @include('adminlte::partials.sidebar.right-sidebar')
         @endif
     </div>
     <div class="dropdown show floating-locale-btn">
-        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
             {{ strtoupper(app()->getLocale()) }}
             <i class="fa fas-language"></i>
         </a>
@@ -83,6 +83,7 @@
 @stop
 
 @section('adminlte_js')
+    {{-- <script src="{{ asset('vendor/jquery/jquery.js') }}"></script> --}}
     @stack('js')
     @yield('js')
 @stop

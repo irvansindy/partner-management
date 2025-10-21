@@ -12,11 +12,11 @@ tanggal 11 september 2024
 3. register password harus menggunakan unique karakter, uppercase, lowercase, number. (combine)
 4. notifikasi email saat register, dan pengajuan data cs atau vendor
 5. halaman awal ketika user sudah login atau register :
-    tampilan muncul card 
-    ada 4 card di bagian atas : nama perusahaan, group, status, type, 
+    tampilan muncul card
+    ada 4 card di bagian atas : nama perusahaan, group, status, type,
     bagian bawah :
-    log register pm 
-    detail 
+    log register pm
+    detail
     upload supporting document
 6. upload file supporting document dipisah setelah user mendaftarkan diri sebagai cs/vendor.
 7. remember me delete
@@ -31,11 +31,11 @@ PASS USER : #PartneR10424
 # catatan standarisasi
 1. format tanggal
 2. nomor document untuk record data.
-3. 
+3.
 
 
 # Catatan meeting dengan bu vena 31-10-2024
-1. Penambahan term and condition pada saat awal registrasi vendor 
+1. Penambahan term and condition pada saat awal registrasi vendor
 2. penambahan field form detail jenis usaha
 3. fitur atau module untuk purchasing membuat iklan terkait kebutuhan barang atau jasa sehingga vendor yang sudah terdaftar bisa mengajukan proposal ke iklan tersebut.
 4. fitur chat dari vendor ke admin.
@@ -72,16 +72,16 @@ Dua kondisi pada sisi Vendor:
 
   2. Pada sisi Customer :
 
-Role Case Vendor : 
+Role Case Vendor :
   - Vendor
   - Customer
   - Buyer (PPIC) : Siti Choirunissa, Rida Wanti, Siti Imas masitoh, Lia Marliani.
   - Approval 1 (PPIC) : Fransisco Gultom
-  - Approval 2 (PPIC) : Tryvena Puspayanti 
+  - Approval 2 (PPIC) : Tryvena Puspayanti
   - Legal (Legal) : Mario Gumpar (sebagai pihak yang koreksi ketika sudah full approval dari PPIC)
 start form Buyer - Approval 2, apabila reject maka drop data yang sudah disubmit oleh vendor.
 
-Role Case Customer : 
+Role Case Customer :
   Role Case Sales Project :
     - Customer
     - Sales Admin : Arum, Desi cikol, deby, zahra
@@ -129,10 +129,10 @@ Penyediaan export excel untuk data master vendor dan customer, dan juga untuk da
 20 Juni 2025
 Stagging approval :
   1. Sales Retail dan Sales Project, saat melakukan pengajuan data customer, maka akan ada 2 tahap approval, yaitu :
-     - Approval 1 : Admin Sales (Sales Admin) 
+     - Approval 1 : Admin Sales (Sales Admin)
      - Approval 2 : Sales Manager
-    Contoh : 
-    - Sales Retail 1 : 
+    Contoh :
+    - Sales Retail 1 :
       - Approval 1 : Admin Sales Retail 1 (Stephanie, Maria Dwi, Franita tania, Aulia nurmala)
       - Approval 2 : Anen
     - Sales Retail 2 :
@@ -143,10 +143,10 @@ Stagging approval :
      - Approval 1 : Admin Purchasing (PPIC)
      - Approval 2 : Purchasing Manager
   Contoh :
-      - Purchasing : 
+      - Purchasing :
         - Approval 1 : Admin Purchasing (PPIC) (Siti Choirunissa, Rida Wanti, Siti Imas masitoh, Lia Marliani)
         - Approval 2 : Tryvena Puspayanti/Fransisco Gultom
-        - Approval 3 : Djoko Widjaja 
+        - Approval 3 : Djoko Widjaja
 
 
 =========================================================================================================================================================================
@@ -160,7 +160,7 @@ Company Group - treatmentnya disamakan dengan nama Company jika tidak memiliki G
 
 Liable Person - job position dijadikan field terpisah (master data job position tidak diperlukan, hanya diketik manual)
 
-Sertifikasi - sertifikasi lainnya ditambahkan field terpisah 
+Sertifikasi - sertifikasi lainnya ditambahkan field terpisah
 
 ----> Tiap field buat placeholder untuk contoh
 
@@ -171,7 +171,7 @@ Stempel - TTD: hold dlu (di-nonaktifkan dulu, tgg bahasan dengan Sales)
 
 
 Alamat:
-1. Alamat NPWP 
+1. Alamat NPWP
 2. Alamat lainnya; checkbox (bisa >1, opsional)
 
 --> Alamat jalan dimulai dengan Jl. (atau St.)
@@ -190,4 +190,10 @@ Catatan:
 1. Tablist Form untuk kontak dipisah menjadi seperti alamat atau bank atau pajak.
 2. Pada Dashboard, buat tampilan untuk pin point dari tiap vendor (referensi alamat).
 3. Hapus Stagging Approval, sekarang cukup 1 kali approve saja.
-4. 
+
+
+===========================================================
+
+8 Oktober 2025
+1. Penambahan field di form master information:
+   - upload file/foto terkait calon customer/vendor (misal: foto kantor, foto toko, foto pabrik, dsb)

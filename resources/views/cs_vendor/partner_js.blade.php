@@ -4,12 +4,98 @@
     $('#company_type').select2({
         width: '100%'
     })
-    
-    $('#established_year, #total_employee').on('input', function () {
+    $('#term_of_payment').select2({
+        width: '100%'
+    })
+
+    $('#established_year, #total_employee').on('input', function() {
         // hapus semua karakter non-digit
         this.value = this.value.replace(/\D/g, '');
     });
+    fetchProvinces()
 
+    function fetchProvinces() {
+        $.ajax({
+            url: "{{ route('fetch-provinces') }}",
+            dataType: 'json',
+            success: function(data) {
+                var $provinceSelect = $('#select_option_province_0');
+                $provinceSelect.empty(); // Clear previous options
+                $provinceSelect.append('<option></option>'); // Add placeholder option
+                data.forEach(function(province) {
+                    $provinceSelect.append(new Option(province.name, province.id));
+                });
+                $provinceSelect.prop('disabled', false); // Enable the province select
+                $provinceSelect.select2({
+                    placeholder: 'Select Province',
+                    width: '100%'
+                });
+                var $provinceSelect2 = $('#select_option_province_1');
+                $provinceSelect2.empty(); // Clear previous options
+                $provinceSelect2.append('<option></option>'); // Add placeholder option
+                data.forEach(function(province) {
+                    $provinceSelect2.append(new Option(province.name, province.id));
+                });
+                $provinceSelect2.prop('disabled', false); // Enable the province select
+                $provinceSelect2.select2({
+                    placeholder: 'Select Province',
+                    width: '100%'
+                });
+            }
+        });
+        $('#select_option_regency_0').prop('disabled', true); // Enable the regency select
+        $('#select_option_regency_1').prop('disabled', true); // Enable the regency select
+    }
+
+    $('#select_option_province_0').on('change', function() {
+        var provinceId = $(this).val();
+        // Fetch regencies based on selected province
+        $.ajax({
+            url: "{{ route('fetch-regencies') }}", // Replace with your API endpoint to fetch regencies
+            data: {
+                province_id: provinceId
+            },
+            dataType: 'json',
+            success: function(data) {
+                var $regencySelect = $('#select_option_regency_0');
+                $regencySelect.empty(); // Clear previous options
+                $regencySelect.append('<option></option>'); // Add placeholder option
+                data.forEach(function(regency) {
+                    $regencySelect.append(new Option(regency.name, regency.id));
+                });
+                $regencySelect.prop('disabled', false); // Enable the regency select
+                $regencySelect.select2({
+                    placeholder: 'Select Regency',
+                    width: '100%'
+                });
+            }
+        });
+    });
+
+    $('#select_option_province_1').on('change', function() {
+        var provinceId = $(this).val();
+        // Fetch regencies based on selected province
+        $.ajax({
+            url: "{{ route('fetch-regencies') }}", // Replace with your API endpoint to fetch regencies
+            data: {
+                province_id: provinceId
+            },
+            dataType: 'json',
+            success: function(data) {
+                var $regencySelect = $('#select_option_regency_1');
+                $regencySelect.empty(); // Clear previous options
+                $regencySelect.append('<option></option>'); // Add placeholder option
+                data.forEach(function(regency) {
+                    $regencySelect.append(new Option(regency.name, regency.id));
+                });
+                $regencySelect.prop('disabled', false); // Enable the regency select
+                $regencySelect.select2({
+                    placeholder: 'Select Regency',
+                    width: '100%'
+                });
+            }
+        });
+    });
 
     $(document).ready(function() {
         var currentYear = new Date().getFullYear();
@@ -17,250 +103,182 @@
         $("#year_prev_1, #bs_year_minus_1, #fr_year_minus_1").text(currentYear - 1);
         $("#year_prev_2, #bs_year_minus_2, #fr_year_minus_2").text(currentYear - 2);
 
+        $("#input-multiple-file").fileinput({
+            uploadUrl: false,
+            showUpload: false,
+            showRemove: true,
+            showCancel: false,
+            showClose: false,
+            required: false,
+            validateInitialCount: true,
+            overwriteInitial: false,
+            initialPreviewAsData: true,
+            dropZoneEnabled: true,
+            allowedFileExtensions: ["jpg", "png", "jpeg", "webp", "pdf"],
+            ajaxSettings: {
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                processData: false,
+                contentType: false,
+                method: 'POST',
+                enctype: 'multipart/form-data',
+            },
+            fileActionSettings: {
+                showDrag: true,      // Display the drag handle
+                // showZoom: true,
+                showUpload: false,   // Tambahkan ini juga di file action settings
+                showRemove: true
+            },
+            // Jika masih muncul, paksa hide dengan CSS
+            layoutTemplates: {
+                actionUpload: ''  // Kosongkan template upload button
+            }
+        });
+
+        // Paksa hide upload button
+        $('.fileinput-upload, .fileinput-upload-button, .kv-file-upload').hide();
+
         let aYearAgo = currentYear - 1;
         let twoYearAgo = currentYear - 2;
 
         function updateFieldIdsFinance(prefix) {
-            $('input[id^="' + prefix +'"]').each(function(index) {
+            $('input[id^="' + prefix + '"]').each(function(index) {
                 $(this).attr('id', prefix + [aYearAgo, twoYearAgo][index]);
                 $(this).attr('name', prefix + [aYearAgo, twoYearAgo][index]);
             });
         }
-        
-        $('#company_type').change(function() {
-            let value = $(this).val()
-            switch (value) {
-                case 'vendor':
-                    $('.dynamic-form-income-statement').empty()
-                    $('#switch-customer').prop('checked', false);
-                    $('.switch-customer').hide();
-                    break;
-                case 'customer':
-                    $('.dynamic-form-income-statement').empty()
-                    $('#switch-customer').prop('checked', false);
-                    $('.switch-customer').show();
-                    break;
-                default:
-                    $('.dynamic-form-income-statement').empty()
-                    $('#switch-customer').prop('checked', false);
-                    $('.switch-customer').hide();
-                    break;
+
+        // Handler untuk select yang sudah ada (index 0)
+        $('#liable_position_0').on('change', function() {
+            toggleOtherPosition(0);
+        });
+        // Fungsi untuk show/hide input "Other Position"
+        function toggleOtherPosition(index) {
+            let selectedValue = $('#liable_position_' + index).val();
+            if (selectedValue === 'Other') {
+                $('#other_position_container_' + index).show();
+                $('#other_position_' + index).prop('required', true);
+            } else {
+                $('#other_position_container_' + index).hide();
+                $('#other_position_' + index).prop('required', false);
+                $('#other_position_' + index).val('');
             }
-            // $('.switch-customer').show();
-        })
-    
-        $('#switch-customer').on('change', function () {
-            $('.dynamic-form-income-statement').empty()
-            if ($(this).is(':checked')) {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: '{{ route('fetch-income-balance') }}',
-                    type: 'GET',
-                    dataType: 'json',
-                    async: true,
-                    success: function(res) {
-                        $('.dynamic-form-income-statement').empty();
-                        $('.dynamic-form-income-statement').html(`
-                            <div class="card card-info">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        INCOME STATEMENT, BALANCE SHEET, FINANCIAL RATIO
-                                    </h3>
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="card py-2" id="table_income_statement">
-                                        <strong class="mx-2">
-                                            <h4>INCOME STATEMENT</h4>
-                                        </strong>
-                                        <table class="table table-bordered my-2">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>(in IDR)</th>
-                                                    <th class="year_prev_1"></th>
-                                                    <th class="year_prev_2"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="table_income_statement_body">
-                                                
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    <div class="card py-2" id="table_balance_sheet">
-                                        <strong class="mx-2">
-                                            <h4>BALANCE SHEET</h4>
-                                        </strong>
-                                        <table class="table table-bordered my-2">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>(in IDR)</th>
-                                                    <th class="bs_year_minus_1"></th>
-                                                    <th class="bs_year_minus_2"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="table_balance_sheet_body">
-                                                <tr>
-                                                    <td><strong>Revenue</strong></td>
-                                                    <td>
-                                                        <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control currency_data" name="revenue_" id="revenue_" value="">
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    
-                                    <div id="total_financial_ratio">
-                                        
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="d-flex justify-content-end" id="action_button_confirm_currency">
-                                        <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
-                                    </div>
-                                </div>
+        }
+
+
+        $(document).on('click', '#add_liable_person', function() {
+            let index = $('input[name="liable_person[]"]').length;
+            let newField = `
+                <div class="array_dynamic_liable_person">
+                    <div class="row mb-4" id="liable_person_group_${index}">
+                        <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
+                            <label for="liable_person_${index}">@lang('messages.Liable Person')</label>
+                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" placeholder="@lang('messages.Placeholder Liable Person')">
+                            <span class="text-danger message-danger" id="message_liable_person_${index}" role="alert"></span>
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
+                            <label for="liable_position_${index}">@lang('messages.Liable Position')</label>
+                            <select name="liable_position[]" id="liable_position_${index}" class="form-control liable-position-select">
+                                <option value="">-- @lang('messages.Placeholder Position') --</option>
+                                <option value="Owner">@lang('messages.Owner')</option>
+                                <option value="Board of Directors">@lang('messages.Board of Directors')</option>
+                                <option value="Shareholders">@lang('messages.Shareholders')</option>
+                                <option value="Finance Department">@lang('messages.Finance Department')</option>
+                                <option value="Purchase/Procure Department">@lang('messages.Purchase/Procure Department')</option>
+                                <option value="Sales Department">@lang('messages.Sales Department')</option>
+                                <option value="Other">@lang('messages.Other')</option>
+                            </select>
+                            <span class="text-danger message-danger" id="message_liable_position_${index}" role="alert"></span>
+                            <div class="mt-2" id="other_position_container_${index}" style="display: none;">
+                                <input type="text" name="other_position[]" id="other_position_${index}" class="form-control" placeholder="@lang('messages.Specify Position')">
+                                <span class="text-danger message-danger" id="message_other_position_${index}" role="alert"></span>
                             </div>
-                        `);
-                        
-                        $("#year-current").text(currentYear);
-                        $(".year_prev_1, .bs_year_minus_1, .fr_year_minus_1").text(currentYear - 1);
-                        $(".year_prev_2, .bs_year_minus_2, .fr_year_minus_2").text(currentYear - 2);
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
+                            <label for="nik_${index}">NIK</label>
+                            <input type="text" name="nik[]" id="nik_${index}" class="form-control" placeholder="@lang('messages.Placeholder NIK')">
+                            <span class="text-danger message-danger" id="message_nik_${index}" role="alert"></span>
+                        </div>
+                    </div>
+                    <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
+                        <button type="button" class="btn btn-danger remove_liable_person" id="remove_liable_person_${index}">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            $('.dynamic_liable_person').append(newField);
+            $('#liable_position_' + index).select2({
+                width: '100%'
+            });
+        });
 
-                        $('#table_income_statement_body').empty()
-                        $('#table_balance_sheet_body').empty()
-                        $('#total_financial_ratio').hide()
+        // Remove liable person
+        $(document).on('click', '.remove_liable_person', function() {
+            $(this).closest('.array_dynamic_liable_person').remove();
+        });
 
-                        let income_statement_data = res.data.income_statement
-                        let balance_sheet_data = res.data.balance_sheet
+        // Handler untuk semua select (termasuk yang dinamis)
+        $(document).on('change', '.liable-position-select', function() {
+            let id = $(this).attr('id');
+            let index = id.replace('liable_position_', '');
+            toggleOtherPosition(index);
+        });
 
-                        income_statement_data.forEach(data => {
-                            let id_1 = data.id+'_'+aYearAgo
-                            let id_2 = data.id+'_'+twoYearAgo
-                            let name_1 = data.name+'_'+aYearAgo
-                            let name_2 = data.name+'_'+twoYearAgo
-                            const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                            $('#table_income_statement_body').append(`
-                                <tr>
-                                    <td><strong>${fieldLabel}</strong></td>
-                                    <td>
-                                        <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
-                                    </td>
-                                </tr>
-                            `)
-                        })
+        $(document).on('click', '#add_survey_data', function() {
+            let index = $('input[name="product_survey[]"]').length;
+            let newField = `
+                <div class="array_dynamic_survey">
+                    <div class="row mt-4">
+                        <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
+                            <label for="product_survey_${index}">@lang('messages.Product')</label>
+                            <input type="text" name="product_survey[]" id="product_survey_${index}" class="form-control" placeholder="@lang('messages.Placeholder Survey Product')">
+                            <span class="text-danger mt-2" id="message_product_survey_${index}" role="alert"></span>
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
+                            <label for="merk_survey_${index}">@lang('messages.Merk')</label>
+                            <input type="text" name="merk_survey[]" id="merk_survey_${index}" class="form-control" placeholder="@lang('messages.Placeholder Survey Merk')">
+                            <span class="text-danger mt-2" id="message_merk_survey_${index}" role="alert"></span>
+                        </div>
+                        <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
+                            <label for="distributor_survey_${index}">@lang('messages.Distributor')</label>
+                            <input type="text" name="distributor_survey[]" id="distributor_survey_${index}" class="form-control" placeholder="@lang('messages.Placeholder Survey Distributor')">
+                            <span class="text-danger mt-2" id="message_distributor_survey_${index}" role="alert"></span>
+                        </div>
 
-                        balance_sheet_data.forEach(data => {
-                            let id_1 = data.id+'_'+aYearAgo
-                            let id_2 = data.id+'_'+twoYearAgo
-                            let name_1 = data.name+'_'+aYearAgo
-                            let name_2 = data.name+'_'+twoYearAgo
-                            const fieldLabel = data.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                            $('#table_balance_sheet_body').append(`
-                                <tr>
-                                    <td><strong>${fieldLabel}</strong></td>
-                                    <td>
-                                        <input type="text" class="form-control currency_data" name="${name_1}" id="${name_1}" value="">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control currency_data" name="${name_2}" id="${name_2}" value="">
-                                    </td>
-                                </tr>
-                            `)
-                        })
-                        $('.currency_data').on('input', function() {
-                            let value = $(this).val().replace(/\D/g, '');
-                            $(this).val(value.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                        })
-                    }
-                });
+                        <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
+                            <div class="input-group d-flex justify-content-end mb-4 mt-4">
+                                <button type="button" class="btn btn-danger remove_survey_data" id="remove_survey_data_${index}">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            $('.dynamic_product_survey').append(newField);
+        });
+
+        $(document).on('click', '.remove_survey_data', function() {
+            $(this).closest('.array_dynamic_survey').remove();
+        });
+
+        $(document).on('change', '#term_of_payment', function() {
+            let selectedValue = $('#term_of_payment').val();
+            if (selectedValue == 'Other') {
+                $('#other_term_of_payment_container').empty();
+                $('#other_term_of_payment_container').append(`
+                    <input type="text" name="other_term_of_payment" id="other_term_of_payment" class="form-control" placeholder="@lang('messages.Placeholder TOP Other')">
+                    <span class="text-danger message-danger" id="message_other_term_of_payment" role="alert"></span>
+                `);
+                $('#other_term_of_payment').prop('required', true);
+            } else {
+                $('#other_term_of_payment_container').empty();
+                $('#other_term_of_payment').prop('required', false);
+                $('#other_term_of_payment').val('');
             }
-            
-        })
-        
-        function fetchDataPartner() {
-            $('.data-partner').empty()
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{ route('fetch-partner') }}",
-                method: 'GET',
-                async: true,
-                success: function(res) {
-                    // console.log(res);
-                    if (res.data != null) {
-                    }
-                }
-            })
-        }
-
-        fetchDocSupport()
-
-        function fetchDocSupport() {
-            $.ajax({
-                url: '{{ route('fetch-doctype') }}',
-                type: 'GET',
-                dataType: 'json',
-                async: true,
-                success: function(res) {
-                    $('#field_form_create_business_other').empty()
-                    $('#data_doc_type_pt').empty()
-                    $('#data_doc_type_cv').empty()
-                    $('#data_doc_type_ud_or_pd').empty()
-                    $('#data_doc_type_perorangan').empty()
-
-                    $.each(res.data, function(i, data) {
-                        $('#data_doc_type_pt').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_pt'}" id="${'doc_name_'+data.name_id_class+'_pt'}" class="form-control ${'doc_name_'+data.name_id_class+'_pt'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_pt'}" id="${data.name_id_class+'_pt'}" class="form-control ${data.name_id_class+'_pt'}" />
-                            </td>
-                        </tr>`)
-
-                        $('#data_doc_type_cv').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_cv'}" id="${'doc_name_'+data.name_id_class+'_cv'}" class="form-control ${'doc_name_'+data.name_id_class+'_cv'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_cv'}" id="${data.name_id_class+'_cv'}" class="form-control ${data.name_id_class+'_cv'}" />
-                            </td>
-                        </tr>`)
-
-                        $('#data_doc_type_ud_or_pd').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" id="${'doc_name_'+data.name_id_class+'_ud_or_pd'}" class="form-control ${'doc_name_'+data.name_id_class+'_ud_or_pd'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_ud_or_pd'}" id="${data.name_id_class+'_ud_or_pd'}" class="form-control ${data.name_id_class+'_ud_or_pd'}" />
-                            </td>
-                        </tr>`)
-
-                        $('#data_doc_type_perorangan').append(`
-                        <tr>
-                            <td>${data.name}</td>
-                            <td>
-                                <input type="hidden" name="${'doc_name_'+data.name_id_class+'_perorangan'}" id="${'doc_name_'+data.name_id_class+'_perorangan'}" class="form-control ${'doc_name_'+data.name_id_class+'_perorangan'}" value="${data.name}" />
-                                <input type="file" name="${data.name_id_class+'_perorangan'}" id="${data.name_id_class+'_perorangan'}" class="form-control ${data.name_id_class+'_perorangan'}" />
-                            </td>
-                        </tr>`)
-                    })
-                }
-            })
-        }
+        });
 
         $(document).on('click', '#create_partner', function(e) {
             e.preventDefault()
@@ -339,28 +357,28 @@
                 <div class="array_dynamic_contact">
                     <div class="row mt-4">
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_department_0">@lang('messages.Department') *</label>
-                            <input type="text" name="contact_department[]" id="contact_department_0" class="form-control">
+                            <label for="contact_department_0">@lang('messages.Department')</label>
+                            <input type="text" name="contact_department[]" id="contact_department_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')">
                             <span class="text-danger mt-2" id="message_contact_department" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_position_0">@lang('messages.Position') *</label>
-                            <input type="text" name="contact_position[]" id="contact_position_0" class="form-control">
+                            <label for="contact_position_0">@lang('messages.Position')</label>
+                            <input type="text" name="contact_position[]" id="contact_position_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')">
                             <span class="text-danger mt-2" id="message_contact_position" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_name_0">@lang('messages.Name') *</label>
-                            <input type="text" name="contact_name[]" id="contact_name_0" class="form-control">
+                            <label for="contact_name_0">@lang('messages.Name')</label>
+                            <input type="text" name="contact_name[]" id="contact_name_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')">
                             <span class="text-danger mt-2" id="message_contact_name" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_email_0">@lang('messages.Email') *</label>
-                            <input type="text" name="contact_email[]" id="contact_email_0" class="form-control">
+                            <label for="contact_email_0">@lang('messages.Email')</label>
+                            <input type="text" name="contact_email[]" id="contact_email_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')">
                             <span class="text-danger mt-2" id="message_contact_email" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_telephone_0">@lang('messages.Telephone') *</label>
-                            <input type="text" name="contact_telephone[]" id="contact_telephone_0" class="form-control">
+                            <label for="contact_telephone_0">@lang('messages.Telephone')</label>
+                            <input type="text" name="contact_telephone[]" id="contact_telephone_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Phone')">
                             <span class="text-danger mt-2" id="message_contact_telephone" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
@@ -371,101 +389,190 @@
                     </div>
                 </div>
                 `)
-            })
-            
+        })
 
         $(document).on('click', '.delete_contact', function(e) {
             e.preventDefault()
             $(this).closest('.array_dynamic_contact').remove()
         })
 
-        $(document).on('click', '#add_dynamic_address', function(e) {
-            e.preventDefault()
-            let message_address = document.querySelectorAll('.message_address');
-            let message_city = document.querySelectorAll('.message_city');
-            let message_country = document.querySelectorAll('.message_country');
-            let message_province = document.querySelectorAll('.message_province');
-            let message_zip_code = document.querySelectorAll('.message_zip_code');
-            let message_telephone = document.querySelectorAll('.message_telephone');
-            let message_fax = document.querySelectorAll('.message_fax');
+        // ============================================
+// PROVINCE & REGENCY FUNCTIONS
+// ============================================
 
-            $('.dynamic_company_address').append(`
-                <div class="input-group mb-4 array_company_address">
-                    <fieldset class="border px-2 mb-4">
-                    <legend class="float-none w-auto text-bold">Data Alamat</legend>
-                    <div class="row">
-                        <div class="input-group mb-4">
-                            <div class="col-md-3">
-                                <label>Alamat Perusahaan (sesuai dengan NPWP) *</label>
-                            </div>
-                            <div class="col-md-9">
-                                <input type="text" name="address[]" id="address" class="form-control">
-                                <span class="text-danger message-danger mt-2 message_address" id="message_address_0" role="alert"></span>
-                            </div>
+// Fungsi untuk load provinces ke select tertentu
+function loadProvincesToSelect(selectId) {
+    $.ajax({
+        url: "{{ route('fetch-provinces') }}",
+        dataType: 'json',
+        success: function(data) {
+            var $provinceSelect = $('#' + selectId);
+            $provinceSelect.empty();
+            $provinceSelect.append('<option></option>');
+            data.forEach(function(province) {
+                $provinceSelect.append(new Option(province.name, province.id));
+            });
+            $provinceSelect.prop('disabled', false);
+            $provinceSelect.select2({
+                placeholder: 'Select Province',
+                width: '100%'
+            });
+        }
+    });
+}
+
+// Fungsi untuk load regencies berdasarkan province
+function loadRegenciesToSelect(provinceId, regencySelectId) {
+    $.ajax({
+        url: "{{ route('fetch-regencies') }}",
+        data: {
+            province_id: provinceId
+        },
+        dataType: 'json',
+        success: function(data) {
+            var $regencySelect = $('#' + regencySelectId);
+            $regencySelect.empty();
+            $regencySelect.append('<option></option>');
+            data.forEach(function(regency) {
+                $regencySelect.append(new Option(regency.name, regency.id));
+            });
+            $regencySelect.prop('disabled', false);
+            $regencySelect.select2({
+                placeholder: 'Select Regency',
+                width: '100%'
+            });
+        }
+    });
+}
+
+// ============================================
+// INITIALIZE EXISTING ADDRESS FORMS
+// ============================================
+
+$(document).ready(function() {
+    // Load provinces untuk address 0 dan 1
+    loadProvincesToSelect('select_option_province_0');
+    loadProvincesToSelect('select_option_province_1');
+
+    // Disable regency selects initially
+    $('#select_option_regency_0').prop('disabled', true);
+    $('#select_option_regency_1').prop('disabled', true);
+});
+
+// ============================================
+// EVENT HANDLER UNTUK PROVINCE CHANGE (DELEGATED)
+// ============================================
+
+// Gunakan delegated event untuk handle semua province select (existing & dynamic)
+$(document).on('change', '[id^="select_option_province_"]', function() {
+    var provinceId = $(this).val();
+    var index = $(this).attr('id').replace('select_option_province_', '');
+    var regencySelectId = 'select_option_regency_' + index;
+
+    if (provinceId) {
+        loadRegenciesToSelect(provinceId, regencySelectId);
+    } else {
+        $('#' + regencySelectId).empty().append('<option></option>').prop('disabled', true);
+    }
+});
+
+// ============================================
+// ADD DYNAMIC ADDRESS
+// ============================================
+
+$(document).on('click', '#add_dynamic_address', function(e) {
+    e.preventDefault();
+
+    // Hitung index berdasarkan jumlah fieldset yang ada
+    let index = $('.company_address_additional fieldset').length;
+
+    $('.dynamic_company_address').append(`
+        <div class="array_company_address">
+            <fieldset class="border px-2 mb-4">
+                <legend class="float-none w-auto text-bold">@lang('messages.Address Data')</legend>
+                <div class="row">
+                    <div class="input-group mb-4">
+                        <div class="col-md-3">
+                            <label>@lang('messages.Company Address (Other)')</label>
                         </div>
-                    
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label for="city">Kota *</label>
-                                <input type="text" name="city[]" id="city" class="form-control">
-                                <span class="text-danger message-danger mt-2 message_city" id="message_city_0" role="alert"></span>
-                            </div>
-                    
-                            <div class="col-md-6">
-                                <label for="country">Negara *</label>
-                                <input type="text" name="country[]" id="country" class="form-control">
-                                <span class="text-danger message-danger mt-2 message_country" id="message_country_0" role="alert"></span>
-                            </div>
-                        </div>
-                    
-                        <div class="row mb-4">
-                            <div class="col-md-6">>
-                                <label for="province">Provinsi *</label>
-                                <input type="text" name="province[]" id="province" class="form-control">
-                                <span class="text-danger message-danger mt-2 message_province" id="message_province_0" role="alert"></span>
-                            </div>
-                    
-                            <div class="col-md-6">
-                                <label for="zip_code">Kode Pos *</label>
-                                <input type="text" name="zip_code[]" id="zip_code" class="form-control">
-                                <span class="text-danger message-danger mt-2 message_zip_code" id="message_zip_code_0" role="alert"></span>
-                            </div>
-                        </div>
-                    
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label for="telephone">Telephone *</label>
-                                <p class="fs-6 text-muted mb-2">+ [Country-Area Code] [No.]</p>
-                                <input type="number" name="telephone[]" id="telephone" class="form-control">
-                                <span class="text-danger message-danger mt-2 message_telephone" id="message_telephone_0" role="alert"></span>
-                            </div>
-                    
-                            <div class="col-md-6">
-                                <label for="fax">Fax *</label>
-                                <p class="fs-6 text-muted mb-2">+ [Country-Area Code] [No.]</p>
-                                <input type="number" name="fax[]" id="fax" class="form-control">
-                                <span class="text-danger message-danger mt-2 message_fax" id="message_fax_0" role="alert"></span>
-                            </div>
+                        <div class="col-md-9">
+                            <input type="text" name="address[]" id="address_${index}" class="form-control">
+                            <span class="text-danger mt-2 message_address" id="message_address_${index}" role="alert"></span>
                         </div>
                     </div>
-                </fieldset>
-                </div>
-            `)
-            updateFieldIds()
-            
-        })
 
-        $(document).on('click', '#delete_dynamic_address', function(e) {
-            if ($('.array_company_address').length != 0) {
-                $(this).closest('.array_company_address').remove();
-                updateFieldIds();
-            } else {
-                alert("You must have at least one address!");
-            }
-        })
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="country_${index}">@lang('messages.Country')</label>
+                            <input type="text" name="country[]" id="country_${index}" class="form-control" value="Indonesia" readonly>
+                            <span class="text-danger mt-2 message_country" id="message_country_${index}" role="alert"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="province_${index}">@lang('messages.Province')</label>
+                            <select name="province[]" id="select_option_province_${index}" class="form-control"></select>
+                            <span class="text-danger mt-2 message_province" id="message_province_${index}" role="alert"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="city_${index}">@lang('messages.City')</label>
+                            <select name="city[]" id="select_option_regency_${index}" class="form-control"></select>
+                            <span class="text-danger mt-2 message_city" id="message_city_${index}" role="alert"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="zip_code_${index}">@lang('messages.Postal Code')</label>
+                            <input type="text" name="zip_code[]" id="zip_code_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')">
+                            <span class="text-danger mt-2 message_zip_code" id="message_zip_code_${index}" role="alert"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="telephone_${index}">@lang('messages.Telephone')</label>
+                            <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
+                            <input type="number" name="telephone[]" id="telephone_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')">
+                            <span class="text-danger mt-2 message_telephone" id="message_telephone_${index}" role="alert"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fax_${index}">@lang('messages.Fax')</label>
+                            <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
+                            <input type="number" name="fax[]" id="fax_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')">
+                            <span class="text-danger mt-2 message_fax" id="message_fax_${index}" role="alert"></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="input-group d-flex justify-content-end mr-4 mb-4">
+                <button type="button" class="btn btn-danger delete_dynamic_address">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+    `);
+
+    // Load provinces untuk select yang baru ditambahkan
+    loadProvincesToSelect('select_option_province_' + index);
+
+    // Disable regency select initially
+    $('#select_option_regency_' + index).prop('disabled', true).select2({
+        placeholder: 'Select Regency',
+        width: '100%'
+    });
+});
+
+// ============================================
+// DELETE DYNAMIC ADDRESS
+// ============================================
+
+$(document).on('click', '.delete_dynamic_address', function(e) {
+    e.preventDefault();
+    $(this).closest('.array_company_address').remove();
+});
 
         function updateFieldIds() {
-            $('.array_company_address').each(function (index) {
+            $('.array_company_address').each(function(index) {
                 // Update IDs for input elements
                 $(this).find('input[name="address[]"]').attr('id', 'address_' + (index + 1));
                 $(this).find('input[name="city[]"]').attr('id', 'city_' + (index + 1));
@@ -474,7 +581,7 @@
                 $(this).find('input[name="zip_code[]"]').attr('id', 'zip_code_' + (index + 1));
                 $(this).find('input[name="telephone[]"]').attr('id', 'telephone_' + (index + 1));
                 $(this).find('input[name="fax[]"]').attr('id', 'fax_' + (index + 1));
-                
+
                 // Update IDs for span elements
                 $(this).find('.message_address').attr('id', 'message_address_' + (index + 1));
                 $(this).find('.message_city').attr('id', 'message_city_' + (index + 1));
@@ -493,49 +600,31 @@
                     <fieldset class="border px-2 mb-4">
                         <legend class="float-none w-auto text-bold">Data Bank</legend>
                         <div class="row mt-4">
-                            <div class="col-md-6 mb-3">
-                                <label for="bank_name">Nama Bank *</label>
-                                <input type="text" name="bank_name[]" id="bank_name" class="form-control">
-                                <span class="text-danger message-danger mt-2" id="message_bank_name" role="alert"></span>
+                            <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
+                                <label for="bank_name_0">@lang('messages.Bank Name')</label>
+                                <input type="text" name="bank_name[]" id="bank_name_0" class="form-control">
+                                <span class="text-danger mt-2" id="message_bank_name" role="alert"></span>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="branch">Cabang *</label>
-                                <input type="text" name="branch[]" id="branch" class="form-control">
-                                <span class="text-danger message-danger mt-2" id="message_branch" role="alert"></span>
+                            <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
+                                <label for="account_name_0">@lang('messages.Account Name')</label>
+                                <input type="text" name="account_name[]" id="account_name_0" class="form-control">
+                                <span class="text-danger mt-2" id="message_account_name" role="alert"></span>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="account_name">Nama Akun *</label>
-                                <input type="text" name="account_name[]" class="form-control">
-                                <span class="text-danger message-danger mt-2" id="message_account_name" role="alert"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="city_or_country">Kota/Negara *</label>
-                                <input type="text" name="city_or_country[]" class="form-control">
-                                <span class="text-danger message-danger mt-2" id="message_city_or_country" role="alert"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="account_number">Nomor Akun *</label>
-                                <input type="number" name="account_number[]" class="form-control">
-                                <span class="text-danger message-danger mt-2" id="message_account_number" role="alert"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="currency">Mata Uang *</label>
-                                <input type="text" name="currency[]" class="form-control">
-                                <span class="text-danger message-danger mt-2" id="message_currency" role="alert"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="swift_code">Swift Code (Optional)</label>
-                                <input type="text" name="swift_code[]" class="form-control">
-                                <span class="text-danger message-danger mt-2" id="message_swift_code" role="alert"></span>
+                            <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
+                                <label for="account_number_0">@lang('messages.Account Number')</label>
+                                <input type="number" name="account_number[]" id="account_number_0" class="form-control">
+                                <span class="text-danger mt-2" id="message_account_number" role="alert"></span>
                             </div>
                         </div>
                     </fieldset>
                     <div class="input-group d-flex justify-content-end mb-4 mt-4">
-                        <button type="button" class="btn btn-danger" id="delete_bank">- Bank</button>
+                        <button type="button" class="btn btn-danger" id="delete_bank">
+                            <i class="fas fa-minus"></i>
+                        </button>
                     </div>
                 </div>
             `)
-            
+
         })
 
         $(document).on('click', '#delete_bank', function(e) {
@@ -647,14 +736,14 @@
             e.preventDefault()
             let currency_data = document.querySelectorAll(".currency_data");
             let all_filled = true
-            
+
             // Cek apakah ada input yang kosong.
             currency_data.forEach(input => {
                 if (input.value.trim() == "") {
                     all_filled = false;
                 }
             });
-            
+
             if (!all_filled) {
                 $(document).Toasts('create', {
                     title: 'Error',
@@ -700,7 +789,7 @@
                 //         interest_expense: $('#interest_expense_').val(),
                 //         acc_receivables: $('#acc_receivables_').val()
                 //     },
-                    
+
                 // })
 
                 $('#total_financial_ratio').empty()
@@ -776,44 +865,52 @@
 
                 for (let index = 0; index < year_data.length; index++) {
                     let year = year_data[index]
-                    let revenue = parseFloat(document.getElementById("revenue_"+year).value)
-                    let netProfit = parseFloat(document.getElementById("net_profit_"+year).value)
-                    let currentAsset = parseFloat(document.getElementById("current_asset_"+year).value)
-                    let totalAsset = parseFloat(document.getElementById("total_asset_"+year).value)
-                    let currentLiabilities = parseFloat(document.getElementById("current_liabilities_"+year).value)
-                    let ebit = parseFloat(document.getElementById("ebit_"+year).value)
-                    let depreciationExprense = parseFloat(document.getElementById("depreciation_expense_"+year).value)
-                    let totalLiabilities = parseFloat(document.getElementById("total_current_liabilities_"+year).value)
-                    let interestExprense = parseFloat(document.getElementById("interest_expense_"+year).value)
-                    let accountReceivable = parseFloat(document.getElementById("acc_receivables_"+year).value)
-                    
-                    let workingCapitalRatio =+ (currentAsset / currentLiabilities) * 100;
-                    let cashFlowCoverageRatio =+ ((ebit + depreciationExprense) / totalLiabilities) * 100;
-                    let timeInterestEarnedRatio =+ (ebit / interestExprense) * 100;
-                    let debtToAssetRatio =+ (totalLiabilities / totalAsset) * 100;
-                    let accountReceivableTurnOver =+ (revenue / ((accountReceivable + accountReceivable) / 2)) * 100;
-                    let netProfitMargin =+ (revenue / netProfit) * 100;
+                    let revenue = parseFloat(document.getElementById("revenue_" + year).value)
+                    let netProfit = parseFloat(document.getElementById("net_profit_" + year).value)
+                    let currentAsset = parseFloat(document.getElementById("current_asset_" + year)
+                        .value)
+                    let totalAsset = parseFloat(document.getElementById("total_asset_" + year).value)
+                    let currentLiabilities = parseFloat(document.getElementById("current_liabilities_" +
+                        year).value)
+                    let ebit = parseFloat(document.getElementById("ebit_" + year).value)
+                    let depreciationExprense = parseFloat(document.getElementById(
+                        "depreciation_expense_" + year).value)
+                    let totalLiabilities = parseFloat(document.getElementById(
+                        "total_current_liabilities_" + year).value)
+                    let interestExprense = parseFloat(document.getElementById("interest_expense_" +
+                        year).value)
+                    let accountReceivable = parseFloat(document.getElementById("acc_receivables_" +
+                        year).value)
+
+                    let workingCapitalRatio = +(currentAsset / currentLiabilities) * 100;
+                    let cashFlowCoverageRatio = +((ebit + depreciationExprense) / totalLiabilities) *
+                        100;
+                    let timeInterestEarnedRatio = +(ebit / interestExprense) * 100;
+                    let debtToAssetRatio = +(totalLiabilities / totalAsset) * 100;
+                    let accountReceivableTurnOver = +(revenue / ((accountReceivable +
+                        accountReceivable) / 2)) * 100;
+                    let netProfitMargin = +(revenue / netProfit) * 100;
 
                     // Tampilkan hasil di field wc_ratio_
-                    $('#wc_ratio_'+year).val(workingCapitalRatio.toFixed(2))
-                    $('#cf_coverage_'+year).val(cashFlowCoverageRatio.toFixed(2))
-                    $('#tie_ratio_'+year).val(timeInterestEarnedRatio.toFixed(2))
-                    $('#debt_asset_'+year).val(debtToAssetRatio.toFixed(2))
-                    $('#account_receivable_turn_over_'+year).val(accountReceivableTurnOver.toFixed(2))
-                    $('#net_profit_margin_'+year).val(netProfitMargin.toFixed(2))
+                    $('#wc_ratio_' + year).val(workingCapitalRatio.toFixed(2))
+                    $('#cf_coverage_' + year).val(cashFlowCoverageRatio.toFixed(2))
+                    $('#tie_ratio_' + year).val(timeInterestEarnedRatio.toFixed(2))
+                    $('#debt_asset_' + year).val(debtToAssetRatio.toFixed(2))
+                    $('#account_receivable_turn_over_' + year).val(accountReceivableTurnOver.toFixed(2))
+                    $('#net_profit_margin_' + year).val(netProfitMargin.toFixed(2))
                 }
-                
+
                 $('#action_button_confirm_currency').empty()
                 $('#action_button_confirm_currency').html(`
                     <button type="button" class="btn btn-danger" id="reset_currency">Reset</button>
                 `)
             }
         })
-        
+
         $(document).on('click', '#reset_currency', function(e) {
             e.preventDefault()
             let currency_data = document.querySelectorAll(".currency_data");
-            
+
             // Cek apakah ada input yang kosong
             currency_data.forEach(input => {
                 input.readOnly = false;
@@ -871,7 +968,8 @@
                     $('#modalLoading').modal('hide')
                     let response_error = JSON.parse(xhr.responseText)
 
-                    if (response_error.meta.code == 500 || response_error.meta.code == 400) {
+                    if (response_error.meta.code == 500 || response_error.meta.code ==
+                        400) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
@@ -899,17 +997,22 @@
                     });
                 },
                 complete: function() {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Data berhasil disubmit, silahkan klik link di bawah untuk kirim attachment.',
-                        icon: 'info',
-                        showConfirmButton: false,
-                        showCloseButton: true,
-                        footer: `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=pralonpartner@gmail.com&su=Feedback&body=Halo%20admin" target="_blank" rel="noopener noreferrer">Kirim email ke admin</a>`
-                    })
+                    setTimeout(function() {
+                        $('#modalLoading').modal({
+                            show: false
+                        });
+                    }, 5000)
+                    // Swal.fire({
+                    //     title: 'Success!',
+                    //     text: 'Data berhasil disubmit, silahkan klik link di bawah untuk kirim attachment.',
+                    //     icon: 'info',
+                    //     showConfirmButton: false,
+                    //     showCloseButton: true,
+                    //     footer: `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=pralonpartner@gmail.com&su=Feedback&body=Halo%20admin" target="_blank" rel="noopener noreferrer">Kirim email ke admin</a>`
+                    // })
                 }
             })
         })
-    
+
     })
 </script>

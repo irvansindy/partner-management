@@ -61,6 +61,11 @@ class CompanyInformation extends Model
     {
         return $this->hasMany(CompanyAddress::class, 'company_id', 'id');
     }
+    public function AddressBaseOnMap()
+    {
+        return $this->hasOne(CompanyAddress::class, 'company_id', 'id')->oldest();
+    }
+
     public function bank()
     {
         return $this->hasMany(CompanyBank::class, 'company_id', 'id');

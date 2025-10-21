@@ -37,4 +37,12 @@ class CompanyAddress extends Model
     {
         return $this->belongsTo(CompanyInformation::class, 'company_id', 'id');
     }
+    public function province()
+    {
+        return $this->belongsTo(Provinces::class, 'province', 'id');
+    }
+    public function provincebaseOnMap()
+    {
+        return $this->hasOne(Provinces::class, 'province', 'id')->oldest();
+    }
 }

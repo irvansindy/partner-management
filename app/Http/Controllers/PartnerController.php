@@ -9,14 +9,17 @@ use App\Models\CompanyAddress;
 use App\Models\CompanyBank;
 use App\Models\CompanyTax;
 use App\Models\CompanyContact;
-use App\Models\UserValueIncomeStatement;
-use App\Models\UserBalanceSheet;
-use App\Models\UserFinancialRatio;
+use App\Models\CompanyAttachment;
+use App\Models\CompanyLiablePerson;
+use App\Models\SalesSurvey;
+use App\Models\ProductCustomer;
 use App\Models\MasterIncomeStatement;
 use App\Models\MasterBalanceSheet;
 use App\Models\CompanySupportingDocument;
 use App\Models\MasterActivityLog;
 use App\Models\ActivityLogs;
+use App\Models\Provinces;
+use App\Models\Regencies;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -84,15 +87,15 @@ class PartnerController extends Controller
                 $doc_pt = CompanySupportingDocument::where('company_id', $company_profile->id)
                 ->where('company_doc_type', 'pt')
                 ->get();
-                
+
                 $doc_cv = CompanySupportingDocument::where('company_id', $company_profile->id)
                 ->where('company_doc_type', 'cv')
                 ->get();
-                
+
                 $doc_ud_or_pd = CompanySupportingDocument::where('company_id', $company_profile->id)
                 ->where('company_doc_type', 'ud_or_pd')
                 ->get();
-                
+
                 $doc_perorangan = CompanySupportingDocument::where('company_id', $company_profile->id)
                 ->where('company_doc_type', 'perorangan')
                 ->get();
@@ -108,7 +111,7 @@ class PartnerController extends Controller
                 $query->where('id', auth()->user()->id);
             })
             ->paginate(10);
-            
+
             $data = [
                 $company_profile,
                 $doc_type,
@@ -230,334 +233,340 @@ class PartnerController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }
     }
-    public function store(Request $request)
-    {
-        try {
-            DB::beginTransaction();
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         // dd($request->all());
+    //         DB::beginTransaction();
 
-            if (auth()->user()->roles->pluck('name')[0] == 'user') {
-                $this->checkIfUserAlreadyRegistered();
-            }
+    //         if (auth()->user()->roles->pluck('name')[0] == 'user') {
+    //             $this->checkIfUserAlreadyRegistered();
+    //         }
 
-            $validator = $this->validateRequest($request);
-            if ($validator->fails()) {
-                throw new ValidationException($validator);
-            }
+    //         $validator = $this->validateRequest($request);
+    //         if ($validator->fails()) {
+    //             throw new ValidationException($validator);
+    //         }
 
-            $files = $this->handleFileUploads($request);
+    //         $files = $this->handleFileUploads($request);
 
-            $companyData = $this->prepareCompanyData($request, $files);
-            $partner = CompanyInformation::create($companyData);
+    //         $companyData = $this->prepareCompanyData($request, $files);
+    //         $partner = CompanyInformation::create($companyData);
 
-            $this->storeContact($request, $partner->id);
-            $this->storeCompanyAddresses($request, $partner->id);
-            $this->storeCompanyBanks($request, $partner->id);
-            $this->storeCompanyTax($request, $partner->id);
+    //         $this->storeContact($request, $partner->id);
+    //         $this->storeCompanyAddresses($request, $partner->id);
+    //         $this->storeCompanyBanks($request, $partner->id);
+    //         // $this->storeCompanyTax($request, $partner->id);
 
-            if ($request->company_type === 'customer') {
-                $this->storeCustomerFinancialData($request, $partner->id);
-            }
+    //         if ($request->company_type === 'customer') {
+    //             $this->storeCustomerFinancialData($request, $partner->id);
+    //         }
 
-            DB::commit();
-            return FormatResponseJson::success('success', 'partner profile created successfully');
-        } catch (ValidationException $e) {
-            DB::rollback();
-            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
-        }
-    }
-    private function checkIfUserAlreadyRegistered()
-    {
-        $existing = CompanyInformation::where('user_id', auth()->id())->first();
-        if ($existing) {
-            throw new \Exception('Anda sudah mendaftar.', 400);
-            // return FormatResponseJson::error(null, 'Anda sudah mendaftar.', 400);
-        }
-    }
-    private function validateRequest($request)
-    {
-        $validator = Validator::make($request->all(), [
-            'company_name' => 'required|string',
-            'company_group_name' => 'required|string',
-            'company_type' => 'required|string',
-            'established_year' => 'required|integer',
-            'total_employee' => 'required|string',
-            'liable_person_and_position' => 'required|string',
-            'owner_name' => 'required|string',
-            'board_of_directors' => 'required|string',
-            'major_shareholders' => 'required|string',
-            'business_classification' => 'required|string',
-            'business_classification_detail' => 'required|string',
-            'website_address' => 'required|string',
-            'system_management' => 'required|string',
-            'contact_person' => 'required|string',
-            'communication_language' => 'required|string',
-            'email_address' => 'required|email',
-            // 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
-            // 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
-            'contact_department.0' => 'required|string',
-            'contact_position.0' => 'required|string',
-            'contact_name.0' => 'required|string',
-            'contact_email.0' => 'required|string',
-            'contact_telephone.0' => 'required|string',
-            'address.0' => 'required|string',
-            'city.0' => 'required|string',
-            'country.0' => 'required|string',
-            'province.0' => 'required|string',
-            'zip_code.0' => 'required|integer',
-            'telephone.0' => 'required|string',
-            'fax.0' => 'required|string',
-        ], [
-            'company_name.required' => 'The company name field is required.',
-            'company_group_name.required' => 'The company group name field is required.',
-            'company_type.required' => 'The company type field is required.',
-            'established_year.required' => 'The established year field is required.',
-            'total_employee.required' => 'The total employee field is required.',
-            'liable_person_and_position.required' => 'The liable person and position field is required.',
-            'owner_name.required' => 'The owner name field is required.',
-            'board_of_directors.required' => 'The board of directors field is required.',
-            'major_shareholders.required' => 'The major shareholders field is required.',
-            'business_classification.required' => 'The business classification field is required.',
-            'business_classification_detail.required' => 'The business classification detail field is required.',
-            'website_address.required' => 'The website address field is required.',
-            'system_management.required' => 'The system management field is required.',
-            'contact_person.required' => 'The contact person field is required.',
-            'communication_language.required' => 'The communication language field is required.',
-            'email_address.required' => 'The email address field is required.',
-            'stamp_file.required' => 'The stamp file field is required.',
-            'signature_file.required' => 'The signature file field is required.',
-            'address.0.required' => 'The address field is required',
-            'city.0.required' => 'The city field is required.',
-            'country.0.required' => 'The country field is required.',
-            'province.0.required' => 'The province field is required.',
-            'zip_code.0.required' => 'The zip_code field is required.',
-            'fax.0.required' => 'The fax field is required.',
-            'zip_code.0.integer' => 'The zip_code must be an integer.',
-            'telephone.0.required' => 'The telephone field is required.',
-        ]);
+    //         DB::commit();
+    //         return FormatResponseJson::success('success', 'partner profile created successfully');
+    //     } catch (ValidationException $e) {
+    //         DB::rollback();
+    //         return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         return FormatResponseJson::error(null, $e->getMessage(), 500);
+    //     }
+    // }
+    // private function checkIfUserAlreadyRegistered()
+    // {
+    //     $existing = CompanyInformation::where('user_id', auth()->id())->first();
+    //     if ($existing) {
+    //         throw new \Exception('Anda sudah mendaftar.', 400);
+    //         // return FormatResponseJson::error(null, 'Anda sudah mendaftar.', 400);
+    //     }
+    // }
+    // private function validateRequest($request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'company_name' => 'required|string',
+    //         'company_group_name' => 'required|string',
+    //         'company_type' => 'required|string',
+    //         'established_year' => 'nullable|integer',
+    //         // 'total_employee' => 'required|string',
+    //         // 'liable_person_and_position' => 'required|string',
+    //         // 'liable_position' => 'required|string',
+    //         'owner_name' => 'required|string',
+    //         'board_of_directors' => 'nullable|string',
+    //         'major_shareholders' => 'nullable|string',
+    //         'business_classification' => 'required|string',
+    //         'business_classification_detail' => 'required|string',
+    //         'website_address' => 'nullable|string',
+    //         'system_management' => 'nullable|string',
+    //         // 'contact_person' => 'required|string',
+    //         'communication_language' => 'required|string',
+    //         'email_address' => 'nullable|email',
+    //         'term_of_payment' => 'nullable|string',
+    //         // 'stamp_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+    //         // 'signature_file' => 'required|image|max:10000|mimes:jpg,jpeg,png',
+    //         'contact_department.0' => 'required|string',
+    //         'contact_position.0' => 'required|string',
+    //         'contact_name.0' => 'required|string',
+    //         'contact_email.0' => 'required|string',
+    //         'contact_telephone.0' => 'required|string',
+    //         'address.0' => 'required|string',
+    //         'city.0' => 'required|string',
+    //         'country.0' => 'required|string',
+    //         'province.0' => 'required|string',
+    //         'zip_code.0' => 'required|integer',
+    //         'telephone.0' => 'required|string',
+    //         'fax.0' => 'required|string',
+    //     ], [
+    //         'company_name.required' => 'The company name field is required.',
+    //         'company_group_name.required' => 'The company group name field is required.',
+    //         'company_type.required' => 'The company type field is required.',
+    //         'established_year.required' => 'The established year field is required.',
+    //         'total_employee.required' => 'The total employee field is required.',
+    //         'liable_person_and_position.required' => 'The liable person and position field is required.',
+    //         'owner_name.required' => 'The owner name field is required.',
+    //         'board_of_directors.required' => 'The board of directors field is required.',
+    //         'major_shareholders.required' => 'The major shareholders field is required.',
+    //         'business_classification.required' => 'The business classification field is required.',
+    //         'business_classification_detail.required' => 'The business classification detail field is required.',
+    //         'website_address.required' => 'The website address field is required.',
+    //         'system_management.required' => 'The system management field is required.',
+    //         'contact_person.required' => 'The contact person field is required.',
+    //         'communication_language.required' => 'The communication language field is required.',
+    //         'email_address.required' => 'The email address field is required.',
+    //         'stamp_file.required' => 'The stamp file field is required.',
+    //         'signature_file.required' => 'The signature file field is required.',
+    //         'address.0.required' => 'The address field is required',
+    //         'city.0.required' => 'The city field is required.',
+    //         'country.0.required' => 'The country field is required.',
+    //         'province.0.required' => 'The province field is required.',
+    //         'zip_code.0.required' => 'The zip_code field is required.',
+    //         'fax.0.required' => 'The fax field is required.',
+    //         'zip_code.0.integer' => 'The zip_code must be an integer.',
+    //         'telephone.0.required' => 'The telephone field is required.',
+    //     ]);
 
-        if ($request->business_classification === 'Other' && empty($request->business_classification_other_detail)) {
-            $validator->after(function ($validator) {
-                $validator->errors()->add('business_classification_other_detail', 'Business classification/Jenis usaha tidak boleh kosong!');
-            });
-        }
+    //     if ($request->business_classification === 'Other' && empty($request->business_classification_other_detail)) {
+    //         $validator->after(function ($validator) {
+    //             $validator->errors()->add('business_classification_other_detail', 'Business classification/Jenis usaha tidak boleh kosong!');
+    //         });
+    //     }
 
-        return $validator;
-    }
-    private function handleFileUploads($request)
-    {
-        $files = ['signature_file' => null, 'stamp_file' => null];
+    //     return $validator;
+    // }
+    // private function handleFileUploads($request)
+    // {
+    //     $files = ['signature_file' => null, 'stamp_file' => null];
 
-        if ($request->hasFile('signature_file')) {
-            $signature = $request->file('signature_file');
-            $name = Str::slug($request->company_name.' signature').'.'.$signature->getClientOriginalExtension();
-            $signature->move(public_path('storage/uploads/signature'), $name);
-            $files['signature_file'] = $name;
-        }
+    //     if ($request->hasFile('signature_file')) {
+    //         $signature = $request->file('signature_file');
+    //         $name = Str::slug($request->company_name.' signature').'.'.$signature->getClientOriginalExtension();
+    //         $signature->move(public_path('storage/uploads/signature'), $name);
+    //         $files['signature_file'] = $name;
+    //     }
 
-        if ($request->hasFile('stamp_file')) {
-            $stamp = $request->file('stamp_file');
-            $name = Str::slug($request->company_name.' stamp').'.'.$stamp->getClientOriginalExtension();
-            $stamp->move(public_path('storage/uploads/stamp'), $name);
-            $files['stamp_file'] = $name;
-        }
+    //     if ($request->hasFile('stamp_file')) {
+    //         $stamp = $request->file('stamp_file');
+    //         $name = Str::slug($request->company_name.' stamp').'.'.$stamp->getClientOriginalExtension();
+    //         $stamp->move(public_path('storage/uploads/stamp'), $name);
+    //         $files['stamp_file'] = $name;
+    //     }
 
-        return $files;
-    }
-    private function prepareCompanyData($request, $files)
-    {
-        return [
-            'user_id' => auth()->id(),
-            'name' => $request->company_name,
-            'group_name' => $request->company_group_name,
-            'type' => $request->company_type,
-            'established_year' => $request->established_year,
-            'total_employee' => $request->total_employee,
-            'liable_person_and_position' => $request->liable_person_and_position,
-            'liable_position' => $request->liable_person_and_position,
-            'owner_name' => $request->owner_name,
-            'board_of_directors' => $request->board_of_directors,
-            'major_shareholders' => $request->major_shareholders,
-            'business_classification' => $request->business_classification,
-            'business_classification_detail' => $request->business_classification_detail,
-            'other_business' => $request->business_classification_other_detail,
-            'website_address' => $request->website_address,
-            'system_management' => $request->system_management,
-            'contact_person' => $request->contact_person,
-            'communication_language' => $request->communication_language,
-            'email_address' => $request->email_address,
-            'signature' => $files['signature_file'],
-            'stamp' => $files['stamp_file'],
-            'status' => auth()->user()->roles->pluck('name')[0] == 'user' ? 'checking' : 'approved',
-            'location_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
-            'department_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
-        ];
-    }
-    private function storeContact($request, $companyId)
-    {
-        $contacts = [];
-        foreach ($request->contact_department ?? [] as $i => $contact) {
-            if(!empty($contact)) {
-                $contacts[] = [
-                    'company_informations_id' => $companyId,
-                    'name' => $request->contact_name[$i],
-                    'department' => $contact,
-                    'position' => $request->contact_position[$i],
-                    'email' => $request->contact_email[$i],
-                    'telephone' => $request->contact_telephone[$i],
-                ];
-            }
-        }
-        if(!empty($contacts)) {
-            $contact = CompanyContact::insertWithLog($contacts);
-        }
-    }
-    private function storeCompanyAddresses($request, $companyId)
-    {
-        $addresses = [];
-        foreach ($request->address as $i => $addr) {
-            if (!empty($addr)) {
-                $addresses[] = [
-                    'company_id' => $companyId,
-                    'address' => $addr,
-                    'city' => $request->city[$i],
-                    'country' => $request->country[$i],
-                    'province' => $request->province[$i],
-                    'zip_code' => $request->zip_code[$i],
-                    'telephone' => $request->telephone[$i],
-                    'fax' => $request->fax[$i],
-                    'created_at' => now()->format('Y-m-d H:i:s'),
-                ];
-            }
-        }
+    //     return $files;
+    // }
+    // private function prepareCompanyData($request, $files)
+    // {
+    //     return [
+    //         'user_id' => auth()->id(),
+    //         'name' => $request->company_name,
+    //         'group_name' => $request->company_group_name,
+    //         'type' => $request->company_type,
+    //         'established_year' => $request->established_year,
+    //         'total_employee' => $request->total_employee,
+    //         'liable_person_and_position' => $request->liable_person_and_position,
+    //         'liable_position' => $request->liable_person_and_position,
+    //         'owner_name' => $request->owner_name,
+    //         'board_of_directors' => $request->board_of_directors,
+    //         'major_shareholders' => $request->major_shareholders,
+    //         'business_classification' => $request->business_classification,
+    //         'business_classification_detail' => $request->business_classification_detail,
+    //         'other_business' => $request->business_classification_other_detail,
+    //         'website_address' => $request->website_address,
+    //         'system_management' => $request->system_management,
+    //         'contact_person' => $request->contact_person,
+    //         'communication_language' => $request->communication_language,
+    //         'email_address' => $request->email_address,
+    //         'signature' => $files['signature_file'],
+    //         'stamp' => $files['stamp_file'],
+    //         'status' => auth()->user()->roles->pluck('name')[0] == 'user' ? 'checking' : 'approved',
+    //         'location_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
+    //         'department_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
+    //     ];
+    // }
+    // private function storeContact($request, $companyId)
+    // {
+    //     $contacts = [];
+    //     foreach ($request->contact_department ?? [] as $i => $contact) {
+    //         if(!empty($contact)) {
+    //             $contacts[] = [
+    //                 'company_informations_id' => $companyId,
+    //                 'name' => $request->contact_name[$i],
+    //                 'department' => $contact,
+    //                 'position' => $request->contact_position[$i],
+    //                 'email' => $request->contact_email[$i],
+    //                 'telephone' => $request->contact_telephone[$i],
+    //             ];
+    //         }
+    //     }
+    //     if(!empty($contacts)) {
+    //         $contact = CompanyContact::insertWithLog($contacts);
+    //     }
+    // }
+    // private function storeCompanyAddresses($request, $companyId)
+    // {
+    //     $addresses = [];
+    //     foreach ($request->address as $i => $addr) {
+    //         if (!empty($addr)) {
+    //             $addresses[] = [
+    //                 'company_id' => $companyId,
+    //                 'address' => $addr,
+    //                 'city' => $request->city[$i],
+    //                 'country' => $request->country[$i],
+    //                 'province' => $request->province[$i],
+    //                 'zip_code' => $request->zip_code[$i],
+    //                 'telephone' => $request->telephone[$i],
+    //                 'fax' => $request->fax[$i],
+    //                 'latitude' => $request->latitude,
+    //                 'longitude' => $request->longitude,
+    //                 'created_at' => now()->format('Y-m-d H:i:s'),
+    //             ];
+    //         }
+    //     }
 
-        if (!empty($addresses)) {
-            CompanyAddress::insertWithLog($addresses);
-            // Ambil id alamat yang baru saja ditambahkan
-            // Misal pakai created_at untuk mem-filter
-            $ids = CompanyAddress::where('company_id', $companyId)
-                ->latest('id')
-                ->take(count($addresses))
-                ->pluck('id');
+    //     if (!empty($addresses)) {
+    //         CompanyAddress::insertWithLog($addresses);
+    //         // Ambil id alamat yang baru saja ditambahkan
+    //         // Misal pakai created_at untuk mem-filter
+    //         $ids = CompanyAddress::where('company_id', $companyId)
+    //             ->latest('id')
+    //             ->take(count($addresses))
+    //             ->pluck('id');
 
-            foreach ($ids as $id) {
-                GeocodeAddressJob::dispatch($id);
-            }
-        }
-    }
-    private function storeCompanyBanks($request, $companyId)
-    {
-        $banks = [];
-        foreach ($request->bank_name ?? [] as $i => $name) {
-            if (!empty($name)) {
-                $banks[] = [
-                    'company_id' => $companyId,
-                    'name' => $name,
-                    'branch' => $request->branch[$i],
-                    'account_name' => $request->account_name[$i],
-                    'city_or_country' => $request->city_or_country[$i],
-                    'account_number' => $request->account_number[$i],
-                    'currency' => $request->currency[$i],
-                    'swift_code' => $request->swift_code[$i],
-                ];
-            }
-        }
+    //         foreach ($ids as $id) {
+    //             GeocodeAddressJob::dispatch($id);
+    //         }
+    //     }
+    // }
+    // private function storeCompanyBanks($request, $companyId)
+    // {
+    //     $banks = [];
+    //     foreach ($request->bank_name ?? [] as $i => $name) {
+    //         if (!empty($name)) {
+    //             $banks[] = [
+    //                 'company_id' => $companyId,
+    //                 'name' => $name,
+    //                 'branch' => $request->branch[$i],
+    //                 'account_name' => $request->account_name[$i],
+    //                 'city_or_country' => $request->city_or_country[$i],
+    //                 'account_number' => $request->account_number[$i],
+    //                 'currency' => $request->currency[$i],
+    //                 'swift_code' => $request->swift_code[$i],
+    //             ];
+    //         }
+    //     }
 
-        if (!empty($banks)) {
-            CompanyBank::insertWithLog($banks);
-        }
-    }
-    private function storeCompanyTax($request, $companyId)
-    {
-        if ($request->register_number_as_in_tax_invoice !== null) {
-            CompanyTax::create([
-                'company_id' => $companyId,
-                'register_number_as_in_tax_invoice' => $request->register_number_as_in_tax_invoice,
-                'trc_number' => $request->trc_number,
-                'register_number_related_branch' => $request->register_number_related_branch,
-                'valid_until' => $request->valid_until,
-                'taxable_entrepreneur_number' => $request->taxable_entrepreneur_number,
-                'tax_invoice_serial_number' => $request->tax_invoice_serial_number,
-            ]);
-        }
-    }
-    private function storeCustomerFinancialData($request, $companyId)
-    {
-        $aYearAgo = date('Y', strtotime('-1 year'));
-        $twoYearAgo = date('Y', strtotime('-2 year'));
-        $years = [$aYearAgo, $twoYearAgo];
+    //     if (!empty($banks)) {
+    //         CompanyBank::insertWithLog($banks);
+    //     }
+    // }
+    // private function storeCompanyTax($request, $companyId)
+    // {
+    //     if ($request->register_number_as_in_tax_invoice !== null) {
+    //         CompanyTax::create([
+    //             'company_id' => $companyId,
+    //             'register_number_as_in_tax_invoice' => $request->register_number_as_in_tax_invoice,
+    //             'trc_number' => $request->trc_number,
+    //             'register_number_related_branch' => $request->register_number_related_branch,
+    //             'valid_until' => $request->valid_until,
+    //             'taxable_entrepreneur_number' => $request->taxable_entrepreneur_number,
+    //             'tax_invoice_serial_number' => $request->tax_invoice_serial_number,
+    //         ]);
+    //     }
+    // }
+    // private function storeCustomerFinancialData($request, $companyId)
+    // {
+    //     $aYearAgo = date('Y', strtotime('-1 year'));
+    //     $twoYearAgo = date('Y', strtotime('-2 year'));
+    //     $years = [$aYearAgo, $twoYearAgo];
 
-        $incomeStatements = MasterIncomeStatement::orderBy('id')->get();
-        $balanceSheets = MasterBalanceSheet::orderBy('id')->get();
+    //     $incomeStatements = MasterIncomeStatement::orderBy('id')->get();
+    //     $balanceSheets = MasterBalanceSheet::orderBy('id')->get();
 
-        $incomeData = [];
-        foreach ($incomeStatements as $item) {
-            foreach ($years as $year) {
-                $key = Str::slug($item->name, '_') . '_' . $year;
-                $value = str_replace(',', '', $request->input($key, 0));
-                $incomeData[] = [
-                    'company_information_id' => $companyId,
-                    'master_income_statement_id' => $item->id,
-                    'value' => $value,
-                    'year' => $year,
-                    'created_at' => now(),
-                    'updated_at' => null,
-                ];
-            }
-        }
-        if (!empty($incomeData)) {
-            UserValueIncomeStatement::insertWithLog($incomeData);
-        }
+    //     $incomeData = [];
+    //     foreach ($incomeStatements as $item) {
+    //         foreach ($years as $year) {
+    //             $key = Str::slug($item->name, '_') . '_' . $year;
+    //             $value = str_replace(',', '', $request->input($key, 0));
+    //             $incomeData[] = [
+    //                 'company_information_id' => $companyId,
+    //                 'master_income_statement_id' => $item->id,
+    //                 'value' => $value,
+    //                 'year' => $year,
+    //                 'created_at' => now(),
+    //                 'updated_at' => null,
+    //             ];
+    //         }
+    //     }
+    //     if (!empty($incomeData)) {
+    //         UserValueIncomeStatement::insertWithLog($incomeData);
+    //     }
 
-        $balanceData = [];
-        foreach ($balanceSheets as $item) {
-            foreach ($years as $year) {
-                $key = Str::slug($item->name, '_') . '_' . $year;
-                $value = str_replace(',', '', $request->input($key, 0));
-                $balanceData[] = [
-                    'company_information_id' => $companyId,
-                    'master_balance_sheets_id' => $item->id,
-                    'value' => $value,
-                    'year' => $year,
-                    'created_at' => now(),
-                    'updated_at' => null,
-                ];
-            }
-        }
-        if (!empty($balanceData)) {
-            UserBalanceSheet::insertWithLog($balanceData);
-        }
+    //     $balanceData = [];
+    //     foreach ($balanceSheets as $item) {
+    //         foreach ($years as $year) {
+    //             $key = Str::slug($item->name, '_') . '_' . $year;
+    //             $value = str_replace(',', '', $request->input($key, 0));
+    //             $balanceData[] = [
+    //                 'company_information_id' => $companyId,
+    //                 'master_balance_sheets_id' => $item->id,
+    //                 'value' => $value,
+    //                 'year' => $year,
+    //                 'created_at' => now(),
+    //                 'updated_at' => null,
+    //             ];
+    //         }
+    //     }
+    //     if (!empty($balanceData)) {
+    //         UserBalanceSheet::insertWithLog($balanceData);
+    //     }
 
-        $ratios = ['wc_ratio', 'cf_coverage', 'tie_ratio', 'debt_asset', 'account_receivable_turn_over', 'net_profit_margin'];
-        $ratioData = [];
-        foreach ($ratios as $ratio) {
-            foreach ($years as $year) {
-                $key = $ratio . '_' . $year;
-                $value = str_replace(',', '', $request->input($key, 0));
-                if ($value !== null && $value !== '') {
-                    $ratioData[] = [
-                        'company_information_id' => $companyId,
-                        'value' => $value,
-                        'year' => $year,
-                        'created_at' => now(),
-                        'updated_at' => null,
-                    ];
-                }
-            }
-        }
+    //     $ratios = ['wc_ratio', 'cf_coverage', 'tie_ratio', 'debt_asset', 'account_receivable_turn_over', 'net_profit_margin'];
+    //     $ratioData = [];
+    //     foreach ($ratios as $ratio) {
+    //         foreach ($years as $year) {
+    //             $key = $ratio . '_' . $year;
+    //             $value = str_replace(',', '', $request->input($key, 0));
+    //             if ($value !== null && $value !== '') {
+    //                 $ratioData[] = [
+    //                     'company_information_id' => $companyId,
+    //                     'value' => $value,
+    //                     'year' => $year,
+    //                     'created_at' => now(),
+    //                     'updated_at' => null,
+    //                 ];
+    //             }
+    //         }
+    //     }
 
-        if (!empty($ratioData)) {
-            UserFinancialRatio::insertWithLog($ratioData);
-        }
-    }
+    //     if (!empty($ratioData)) {
+    //         UserFinancialRatio::insertWithLog($ratioData);
+    //     }
+    // }
+
     public function update(Request $request)
     {
         try {
             DB::beginTransaction();
             $existing_data = CompanyInformation::where('id', $request->detail_id)->first();
-            
+
             // Dynamic validation rules
             $rules = [
                 'detail_company_name' => 'required|string',
@@ -584,7 +593,7 @@ class PartnerController extends Controller
                 'detail_telephone.*' => 'required|string',
                 'detail_fax.*' => 'required|string',
             ];
-            
+
             // Only require stamp and signature if they are not already set
             if ($existing_data->stamp == null) {
                 if($request->detail_stamp_file == null) {
@@ -704,8 +713,8 @@ class PartnerController extends Controller
                 $data_address = [];
                 $list_address_data = [];
                 $existing_address = CompanyAddress::where('company_id', $existing_data->id)->delete();
-                
-                for ($i=0; $i < count($request->detail_address); $i++) { 
+
+                for ($i=0; $i < count($request->detail_address); $i++) {
                     # code...
                     $list_address_data = [
                         'company_id' => $existing_data->id,
@@ -728,7 +737,7 @@ class PartnerController extends Controller
                 $data_bank = [];
                 $list_bank_data = [];
                 $existing_bank = CompanyBank::where('company_id', $existing_data->id)->delete();
-                
+
                 for ($i= 0; $i < count($request->detail_bank_name); $i++) {
                     $list_bank_data = [
                         'company_id' => $existing_data->id,
@@ -784,12 +793,12 @@ class PartnerController extends Controller
                 'supporting_document_business_type.*.required' => 'The supporting document business type field is required',
                 'file_supporting_document.*.required' => 'The file supporting document field is required',
             ]);
-            
+
             // throw validation error
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
-            
+
             // check file uploaded
             if($request->file('file_supporting_document') != null) {
                 for ($i = 0; $i < count($request->file_supporting_document); $i++) {
@@ -799,15 +808,15 @@ class PartnerController extends Controller
                     $file = $request->file('file_supporting_document')[$i];
                     $file_name = $result_docx_name.'_'.$request->supporting_document_business_type[$i].'.'.$file->getClientOriginalExtension();
                     $path = public_path('storage/uploads/'.$request->supporting_document_business_type[$i].'/');
-                    
+
                     // set name
                     $company_doc_type = $request->supporting_document_business_type[$i];
                     $document_type_name = $result_docx_name.'_'.$company_doc_type;
 
                     // checking all document
                     $existing_docx = CompanySupportingDocument::where([
-                        'company_id' => $request->supporting_document_partner_id, 
-                        'document_type_name' => $document_type_name, 
+                        'company_id' => $request->supporting_document_partner_id,
+                        'document_type_name' => $document_type_name,
                     ])->first();
 
                     if ($existing_docx) {
@@ -843,7 +852,7 @@ class PartnerController extends Controller
     {
         try {
             $existing_docx = CompanySupportingDocument::where([
-                'company_id' => $request->supporting_document_partner_id, 
+                'company_id' => $request->supporting_document_partner_id,
             ])->first();
         } catch (ValidationException $e) {
             // DB::rollback();
@@ -856,10 +865,10 @@ class PartnerController extends Controller
     public function updateAttachmentById(Request $request)
     {
         try {
-            
+
             DB::beginTransaction();
             $existing_partner = CompanyInformation::find($request->update_supporting_document_partner_id)->first('status');
-            
+
             $existing_docx = CompanySupportingDocument::where([
                 'id' => $request->update_supporting_document_id,
                 'company_id' => $request->update_supporting_document_partner_id,
@@ -896,6 +905,535 @@ class PartnerController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+    public function fetchProvinces(Request $request)
+    {
+        try {
+            $provinces = Provinces::all();
+            return response()->json($provinces);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch provinces'], 500);
+        }
+    }
+    public function fetchRegencies(Request $request)
+    {
+        try {
+            $regencies = Regencies::where('province_id', $request->province_id)->get();
+            return response()->json($regencies);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch regencies'], 500);
+        }
+    }
+
+    // new function/method for validation and store data
+    public function store(Request $request)
+    {
+        try {
+            // dd($request->all());
+            DB::beginTransaction();
+
+            if (auth()->user()->roles->pluck('name')[0] == 'user') {
+                $this->checkIfUserAlreadyRegistered();
+            }
+
+            $validator = $this->validateRequest($request);
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+
+            // Handle multiple file attachments upload
+            $attachmentFiles = $this->handleMultipleFileUploads($request);
+
+            $companyData = $this->prepareCompanyData($request);
+            $partner = CompanyInformation::create($companyData);
+            $this->storeLiablePerson($request, $partner->id);
+            $this->storeContact($request, $partner->id);
+            $this->storeCompanyAddresses($request, $partner->id);
+            $this->storeCompanyBanks($request, $partner->id);
+
+            // store survey and product customer
+            if ($request->company_type == 'customer' && $request->has('product_survey')) {
+                $this->storeProductSurvey($request, $partner->id);
+            }
+
+            // Store file attachments
+            if (!empty($attachmentFiles)) {
+                $this->storeCompanyAttachments($request, $partner->id, $attachmentFiles);
+            }
+
+            // if ($request->company_type === 'customer') {
+            //     $this->storeCustomerFinancialData($request, $partner->id);
+            // }
+
+            DB::commit();
+
+            $fileCount = count($attachmentFiles);
+            return FormatResponseJson::success(
+                'success',
+                "Partner profile created successfully with {$fileCount} file attachment(s)"
+            );
+
+        } catch (ValidationException $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+
+    private function checkIfUserAlreadyRegistered()
+    {
+        $existing = CompanyInformation::where('user_id', auth()->id())->first();
+        if ($existing) {
+            throw new \Exception('Anda sudah mendaftar.', 400);
+        }
+    }
+
+    private function validateRequest($request)
+    {
+        // ENGLISH VERSION
+        $messagesEN = [
+            // Company Info
+            'company_type.required' => 'Company type is required.',
+            'company_name.required' => 'Company name is required.',
+            'established_year.integer' => 'Established year must be a number.',
+            'total_employee.integer' => 'Total employee must be a number.',
+
+            // Liable Person
+            'liable_person.0.required' => 'Liable person is required.',
+            'liable_position.0.required' => 'Liable position is required.',
+            'nik.0.required' => 'NIK is required.',
+
+            // Owner & Business
+            'owner_name.required' => 'Owner name is required.',
+            'business_classification.required' => 'Business classification is required.',
+            'register_number_as_in_tax_invoice.required' => 'Tax invoice register number is required.',
+            'email_address.email' => 'Email address format is invalid.',
+            'credit_limit.integer' => 'Credit limit must be a number.',
+
+            // Contact
+            'contact_department.0.required' => 'Contact department is required.',
+            'contact_position.0.required' => 'Contact position is required.',
+            'contact_name.0.required' => 'Contact name is required.',
+            'contact_email.0.required' => 'Contact email is required.',
+            'contact_telephone.0.required' => 'Contact telephone is required.',
+
+            // Address 1 (NPWP)
+            'address.0.required' => 'Company address (according to NPWP) is required.',
+            'city.0.required' => 'City is required.',
+            'country.0.required' => 'Country is required.',
+            'province.0.required' => 'Province is required.',
+            'zip_code.0.required' => 'Postal code is required.',
+            'zip_code.0.integer' => 'Postal code must be a number.',
+            'telephone.0.required' => 'Telephone is required.',
+
+            // Address 2 (Other)
+            'address.1.required' => 'Company address (other) is required.',
+            'city.1.required' => 'City is required.',
+            'country.1.required' => 'Country is required.',
+            'province.1.required' => 'Province is required.',
+            'zip_code.1.required' => 'Postal code is required.',
+            'zip_code.1.integer' => 'Postal code must be a number.',
+            'telephone.1.required' => 'Telephone is required.',
+
+            // Bank
+            'bank_name.0.required' => 'Bank name is required.',
+            'account_name.0.required' => 'Account name is required.',
+            'account_number.0.required' => 'Account number is required.',
+
+            // Survey
+            'survey_pick_up.integer' => 'Pick up quantity must be a number.',
+            'survey_truck.integer' => 'Truck quantity must be a number.',
+
+            // File Attachments
+            'input-multiple-file.array' => 'File attachments must be an array.',
+            'input-multiple-file.*.file' => 'Each attachment must be a valid file.',
+            'input-multiple-file.*.mimes' => 'File must be: jpg, jpeg, png, pdf, doc, docx, or webp.',
+            'input-multiple-file.*.max' => 'File size must not exceed 5MB.',
+        ];
+
+        // INDONESIAN VERSION
+        $messagesID = [
+            // Company Info
+            'company_type.required' => 'Tipe perusahaan wajib diisi.',
+            'company_name.required' => 'Nama perusahaan wajib diisi.',
+            'established_year.integer' => 'Tahun berdiri harus berupa angka.',
+            'total_employee.integer' => 'Total karyawan harus berupa angka.',
+
+            // Liable Person
+            'liable_person.0.required' => 'Nama penanggung jawab wajib diisi.',
+            'liable_position.0.required' => 'Posisi penanggung jawab wajib diisi.',
+            'nik.0.required' => 'NIK wajib diisi.',
+
+            // Owner & Business
+            'owner_name.required' => 'Nama pemilik wajib diisi.',
+            'business_classification.required' => 'Klasifikasi bisnis wajib diisi.',
+            'register_number_as_in_tax_invoice.required' => 'Nomor registrasi sesuai faktur pajak wajib diisi.',
+            'email_address.email' => 'Format alamat email tidak valid.',
+            'credit_limit.integer' => 'Limit kredit harus berupa angka.',
+
+            // Contact
+            'contact_department.0.required' => 'Departemen kontak wajib diisi.',
+            'contact_position.0.required' => 'Posisi kontak wajib diisi.',
+            'contact_name.0.required' => 'Nama kontak wajib diisi.',
+            'contact_email.0.required' => 'Email kontak wajib diisi.',
+            'contact_telephone.0.required' => 'Telepon kontak wajib diisi.',
+
+            // Address 1 (NPWP)
+            'address.0.required' => 'Alamat perusahaan (sesuai NPWP) wajib diisi.',
+            'city.0.required' => 'Kota wajib diisi.',
+            'country.0.required' => 'Negara wajib diisi.',
+            'province.0.required' => 'Provinsi wajib diisi.',
+            'zip_code.0.required' => 'Kode pos wajib diisi.',
+            'zip_code.0.integer' => 'Kode pos harus berupa angka.',
+            'telephone.0.required' => 'Telepon wajib diisi.',
+
+            // Address 2 (Other)
+            'address.1.required' => 'Alamat perusahaan (lainnya) wajib diisi.',
+            'city.1.required' => 'Kota wajib diisi.',
+            'country.1.required' => 'Negara wajib diisi.',
+            'province.1.required' => 'Provinsi wajib diisi.',
+            'zip_code.1.required' => 'Kode pos wajib diisi.',
+            'zip_code.1.integer' => 'Kode pos harus berupa angka.',
+            'telephone.1.required' => 'Telepon wajib diisi.',
+
+            // Bank
+            'bank_name.0.required' => 'Nama bank wajib diisi.',
+            'account_name.0.required' => 'Nama akun wajib diisi.',
+            'account_number.0.required' => 'Nomor rekening wajib diisi.',
+
+            // Survey
+            'survey_pick_up.integer' => 'Jumlah pick up harus berupa angka.',
+            'survey_truck.integer' => 'Jumlah truck harus berupa angka.',
+
+            // File Attachments
+            'input-multiple-file.array' => 'Lampiran file harus berupa array.',
+            'input-multiple-file.*.file' => 'Setiap lampiran harus berupa file yang valid.',
+            'input-multiple-file.*.mimes' => 'File harus berformat: jpg, jpeg, png, pdf, doc, docx, atau webp.',
+            'input-multiple-file.*.max' => 'Ukuran file tidak boleh melebihi 5MB.',
+        ];
+
+        // USAGE - Gunakan salah satu sesuai bahasa yang diinginkan
+        $messages = app()->getLocale() == 'id' ? $messagesID : $messagesEN;
+        $validator = Validator::make($request->all(), [
+            'company_type' => 'required|string',
+            'company_name' => 'required|string',
+            'company_group_name' => 'nullable|string',
+            'established_year' => 'nullable|integer',
+            'total_employee' => 'nullable|integer',
+            'liable_person.0' => 'required|string',
+            'liable_position.0' => 'required|string',
+            'other_position.0' => 'nullable|string',
+            'nik.0' => 'required|string',
+            'owner_name' => 'nullable|string',
+            'business_classification' => 'required|string',
+            'business_classification_detail' => 'nullable|string',
+            'register_number_as_in_tax_invoice' => 'required|string',
+            'website_address' => 'nullable|string',
+            'system_management' => 'nullable|string',
+            'email_address' => 'nullable|email',
+            'credit_limit' => 'nullable|integer',
+            'term_of_payment' => 'nullable|string',
+
+            // Validasi contact
+            'contact_department.0' => 'required|string',
+            'contact_position.0' => 'required|string',
+            'contact_name.0' => 'required|string',
+            'contact_email.0' => 'required|string',
+            'contact_telephone.0' => 'required|string',
+
+            // Validasi address
+            'address.0' => 'required|string',
+            'city.0' => 'required|string',
+            'country.0' => 'required|string',
+            'province.0' => 'required|string',
+            'zip_code.0' => 'required|integer',
+            'telephone.0' => 'required|string',
+            'fax.0' => 'nullable|string',
+            'address.1' => 'required|string',
+            'city.1' => 'required|string',
+            'country.1' => 'required|string',
+            'province.1' => 'required|string',
+            'zip_code.1' => 'required|integer',
+            'telephone.1' => 'required|string',
+            'fax.1' => 'nullable|string',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+
+            // Validasi bank
+            'bank_name.0' => 'required|string',
+            'account_name.0' => 'required|string',
+            'account_number.0' => 'required|string',
+
+            // survey for customer
+            'survey_ownership_status' => 'nullable|string',
+            'survey_pick_up' => 'nullable|integer',
+            'survey_truck' => 'nullable|integer',
+
+            'product_survey.*' => 'nullable|string',
+            'merk_survey.*' => 'nullable|string',
+            'distributor_survey.*' => 'nullable|string',
+
+            // Validasi file attachments
+            'input-multiple-file' => 'nullable|array',
+            'input-multiple-file.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx,webp|max:5120'
+        ], $messages);
+
+        $locale = app()->getLocale();
+
+        if ($request->has('liable_position.0') && $request->liable_position[0] === 'Other' && empty($request->other_position[0])) {
+            $validator->after(function ($validator) use ($locale) {
+                $errorMessage = $locale === 'id'
+            ? 'Posisi penanggung jawab wajib diisi ketika memilih "Lainnya".'
+            : 'Liable position is required when selecting "Other".';
+                $validator->errors()->add('other_position.0', $errorMessage);
+            });
+        }
+
+        if ($request->business_classification === 'Other' && empty($request->business_classification_other_detail)) {
+            $validator->after(function ($validator) use ($locale) {
+                $errorMessage = $locale === 'id'
+            ? 'Detail klasifikasi bisnis wajib diisi ketika memilih "Lainnya".'
+            : 'Business classification detail is required when selecting "Other".';
+                $validator->errors()->add('business_classification_other_detail', $errorMessage);
+            });
+        }
+
+        if ($request->term_of_payment == 'Other' && empty($request->other_term_of_payment)) {
+            // dd($request->other_term_of_payment);
+            $validator->after(function ($validator) use ($locale) {
+                $errorMessage = $locale === 'id'
+            ? 'Detail term of payment wajib diisi ketika memilih "Lainnya".'
+            : 'Term of payment detail is required when selecting "Other".';
+                $validator->errors()->add('other_term_of_payment', $errorMessage);
+            });
+        }
+
+        return $validator;
+    }
+
+    /**
+     * Handle multiple file attachments upload
+     */
+    private function handleMultipleFileUploads($request)
+    {
+        $uploadedFiles = [];
+
+        if ($request->hasFile('input-multiple-file')) {
+            $files = $request->file('input-multiple-file');
+
+            foreach ($files as $index => $file) {
+                $originalName = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension();
+                $fileSize = $file->getSize();
+
+                // Generate unique filename
+                $filename = time() . '_' . $index . '_' . Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $extension;
+
+                // Move file to public storage
+                $file->move(public_path('storage/uploads/partner_documents'), $filename);
+
+                $uploadedFiles[] = [
+                    'original_name' => $originalName,
+                    'stored_name' => $filename,
+                    'file_path' => 'uploads/partner_documents/' . $filename,
+                    'file_size' => $fileSize,
+                    'file_type' => $extension,
+                    'sort_order' => $index
+                ];
+            }
+        }
+
+        return $uploadedFiles;
+    }
+
+    private function prepareCompanyData($request)
+    {
+        return [
+            'user_id' => auth()->id(),
+            'name' => $request->company_name,
+            'group_name' => $request->company_group_name,
+            'type' => $request->company_type,
+            'established_year' => $request->established_year,
+            'total_employee' => $request->total_employee,
+            // 'liable_person_and_position' => $request->liable_person_and_position,
+            // 'liable_position' => $request->liable_person_and_position,
+            'owner_name' => $request->owner_name,
+            'npwp' => $request->register_number_as_in_tax_invoice,
+            // 'board_of_directors' => $request->board_of_directors,
+            // 'major_shareholders' => $request->major_shareholders,
+            'business_classification' => $request->business_classification,
+            'business_classification_detail' => $request->business_classification_detail,
+            'other_business' => $request->business_classification_other_detail,
+            'website_address' => $request->website_address,
+            'system_management' => $request->system_management,
+            // 'contact_person' => $request->contact_person,
+            // 'communication_language' => $request->communication_language,
+            'email_address' => $request->email_address,
+            'term_of_payment' => $request->term_of_payment,
+            'credit_limit' => $request->credit_limit,
+            // 'signature' => $files['signature_file'],
+            // 'stamp' => $files['stamp_file'],
+            'status' => auth()->user()->roles->pluck('name')[0] == 'user' ? 'checking' : 'approved',
+            'location_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
+            'department_id' => auth()->user()->roles->pluck('name')[0] == 'user' ? null : auth()->user()->office_id,
+        ];
+    }
+
+    private function storeLiablePerson($request, $companyId)
+    {
+        $liablePersons = [];
+        foreach ($request->liable_person ?? [] as $i => $name) {
+            if (!empty($name)) {
+                $request->liable_position[$i] == 'Other' && !empty($request->liable_position_other[$i]) ? $namePosition = $request->liable_position_other[$i] : $namePosition = $request->liable_position[$i];
+                $liablePersons[] = [
+                    'company_id' => $companyId,
+                    'name' => $name,
+                    'nik' => $request->nik[$i] ?? null,
+                    'position' => $namePosition ?? null
+                ];
+            }
+        }
+        if (!empty($liablePersons)) {
+            CompanyLiablePerson::insertWithLog($liablePersons);
+        }
+    }
+
+    private function storeContact($request, $companyId)
+    {
+        $contacts = [];
+        foreach ($request->contact_department ?? [] as $i => $contact) {
+            if(!empty($contact)) {
+                $contacts[] = [
+                    'company_informations_id' => $companyId,
+                    'name' => $request->contact_name[$i],
+                    'department' => $contact,
+                    'position' => $request->contact_position[$i],
+                    'email' => $request->contact_email[$i],
+                    'telephone' => $request->contact_telephone[$i],
+                ];
+            }
+        }
+        if(!empty($contacts)) {
+            CompanyContact::insertWithLog($contacts);
+        }
+    }
+
+    private function storeCompanyAddresses($request, $companyId)
+    {
+        $addresses = [];
+        foreach ($request->address as $i => $addr) {
+            if (!empty($addr)) {
+                $addresses[] = [
+                    'company_id' => $companyId,
+                    'address' => $addr,
+                    'city' => $request->city[$i],
+                    'country' => $request->country[$i],
+                    'province' => $request->province[$i],
+                    'zip_code' => $request->zip_code[$i],
+                    'telephone' => $request->telephone[$i],
+                    'fax' => $request->fax[$i],
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude,
+                    'created_at' => now()->format('Y-m-d H:i:s'),
+                ];
+            }
+        }
+
+        if (!empty($addresses)) {
+            CompanyAddress::insertWithLog($addresses);
+
+            // Ambil id alamat yang baru saja ditambahkan
+            $ids = CompanyAddress::where('company_id', $companyId)
+                ->latest('id')
+                ->take(count($addresses))
+                ->pluck('id');
+
+            foreach ($ids as $id) {
+                GeocodeAddressJob::dispatch($id);
+            }
+        }
+    }
+
+    private function storeCompanyBanks($request, $companyId)
+    {
+        $banks = [];
+        foreach ($request->bank_name ?? [] as $i => $name) {
+            if (!empty($name)) {
+                $banks[] = [
+                    'company_id' => $companyId,
+                    'name' => $name,
+                    // 'branch' => $request->branch[$i] ?? null,
+                    'account_name' => $request->account_name[$i],
+                    // 'city_or_country' => $request->city_or_country[$i] ?? null,
+                    'account_number' => $request->account_number[$i],
+                    // 'currency' => $request->currency[$i] ?? null,
+                    // 'swift_code' => $request->swift_code[$i] ?? null,
+                ];
+            }
+        }
+
+        if (!empty($banks)) {
+            CompanyBank::insertWithLog($banks);
+        }
+    }
+
+    private function storeProductSurvey($request, $companyId)
+    {
+        SalesSurvey::create([
+            'company_id' => $companyId,
+            'ownership_status' => $request->survey_ownership_status,
+            'rental_year' => $request->rental_year ?? null,
+            'pick_up' => $request->survey_pick_up,
+            'truck' => $request->survey_truck,
+        ]);
+        $surveys = [];
+        foreach ($request->product_survey ?? [] as $i => $product) {
+            if (!empty($product)) {
+                $surveys[] = [
+                    'company_id' => $companyId,
+                    'name' => $product,
+                    'merk' => $request->merk_survey[$i] ?? null,
+                    'distributor' => $request->distributor_survey[$i] ?? null,
+                ];
+            }
+        }
+
+        if (!empty($surveys)) {
+            ProductCustomer::insertWithLog($surveys);
+        }
+    }
+
+    /**
+     * Store company file attachments
+     */
+    private function storeCompanyAttachments($request, $companyId, $attachmentFiles)
+    {
+        $attachments = [];
+
+        foreach ($attachmentFiles as $file) {
+            $attachments[] = [
+                'company_id' => $companyId,
+                'filename' => $file['original_name'],
+                // 'stored_filename' => $file['stored_name'],
+                'filepath' => $file['file_path'],
+                'filesize' => $file['file_size'],
+                'filetype' => $file['file_type'],
+                'sort_order' => $file['sort_order'],
+                'created_at' => now()->format('Y-m-d H:i:s'),
+                'updated_at' => now()->format('Y-m-d H:i:s'),
+            ];
+        }
+
+        if (!empty($attachments)) {
+            // Pastikan ada method insertWithLog atau gunakan insert biasa
+            if (method_exists(CompanyAttachment::class, 'insertWithLog')) {
+                CompanyAttachment::insertWithLog($attachments);
+            } else {
+                CompanyAttachment::insert($attachments);
+            }
         }
     }
 }
