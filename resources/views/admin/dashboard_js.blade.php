@@ -41,14 +41,13 @@
                     const isAllZero = totalData === 0;
 
                     // Jika semua 0, gunakan data dummy untuk tampilan
-                    const chartData = isAllZero ?
-                        [1, 1, 1] // Data dummy agar chart tetap tampil
+                    const chartData = isAllZero ? [1, 1, 1] // Data dummy agar chart tetap tampil
                         :
                         [customerData, vendorData, partnerData];
 
                     // Warna background - jika semua 0, pakai warna abu-abu
-                    const chartColors = isAllZero ?
-                        ['#e0e0e0', '#e0e0e0', '#e0e0e0'] // Abu-abu untuk empty state
+                    const chartColors = isAllZero ? ['#e0e0e0', '#e0e0e0',
+                        '#e0e0e0'] // Abu-abu untuk empty state
                         :
                         ['#17a2b8', '#ffc107', '#28a745'];
 
@@ -291,7 +290,7 @@
                                             .join('<br>');
                                     } else {
                                         approvalText = approval
-                                        .approval; // fallback jika bukan array
+                                            .approval; // fallback jika bukan array
                                     }
 
                                     const companyName = approval.company.name;
@@ -418,17 +417,12 @@
                 });
             }
 
-            // Urutkan provinsi biar rapi
             provinces.sort();
 
             // Isi data sesuai provinsi
             provinces.forEach(prov => {
-                vendorData.push(
-                    response.vendor?.find(item => item.province === prov)?.total || 0
-                );
-                customerData.push(
-                    response.customer?.find(item => item.province === prov)?.total || 0
-                );
+                vendorData.push(response.vendor?.find(item => item.province === prov)?.total || 0);
+                customerData.push(response.customer?.find(item => item.province === prov)?.total || 0);
             });
 
             // Kalau data kosong, tampilkan teks "No data available"
@@ -443,16 +437,16 @@
                 return;
             }
 
-            // Tentukan dataset sesuai role & department
             const datasets = [];
 
             if (hasVendor) {
                 datasets.push({
                     label: 'Vendor',
                     data: vendorData,
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 6
                 });
             }
 
@@ -460,9 +454,10 @@
                 datasets.push({
                     label: 'Customer',
                     data: customerData,
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
                     borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 6
                 });
             }
 
@@ -470,7 +465,8 @@
             window.ChartLocationInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: provinces,
+                    labels: provinces.map(p => p.length > 15 ? p.slice(0, 15) + '…' :
+                    p), // singkatin nama panjang
                     datasets: datasets
                 },
                 options: {
@@ -479,6 +475,12 @@
                     interaction: {
                         intersect: false,
                         mode: 'index'
+                    },
+                    layout: {
+                        padding: {
+                            top: 30,
+                            bottom: 30
+                        }
                     },
                     onClick: (evt, elements, chart) => {
                         if (elements.length > 0) {
@@ -496,13 +498,22 @@
                             title: {
                                 display: true,
                                 text: 'Total'
+                            },
+                            grid: {
+                                color: '#e5e5e5'
                             }
                         },
                         x: {
                             ticks: {
                                 autoSkip: false,
                                 maxRotation: 45,
-                                minRotation: 45
+                                minRotation: 45,
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
@@ -512,30 +523,44 @@
                         },
                         title: {
                             display: true,
-                            text:
-                                hasVendor && hasCustomer
-                                    ? 'Total Vendor & Customer per Provinsi'
-                                    : hasVendor
-                                        ? 'Total Vendor per Provinsi'
-                                        : 'Total Customer per Provinsi'
+                            text: hasVendor && hasCustomer ?
+                                'Total Vendor & Customer per Provinsi' :
+                                hasVendor ?
+                                'Total Vendor per Provinsi' :
+                                'Total Customer per Provinsi'
                         },
                         tooltip: {
                             enabled: true
+                        },
+                        datalabels: {
+                            color: '#000',
+                            anchor: 'end',
+                            align: 'end',
+                            font: {
+                                weight: 'bold'
+                            },
+                            formatter: function(value) {
+                                return value > 0 ? value : '';
+                            }
                         }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
         }
+
 
         function loadRegencyChart(provinceName) {
             $('#regencyModalLabel').text('Distribusi Kota/Kabupaten di ' + provinceName);
             $('#regencyModal').modal('show');
 
             $.ajax({
-                url: '{{ route("fetch-regency-summary") }}',
-                data: { province: provinceName },
+                url: '{{ route('fetch-regency-summary') }}',
+                data: {
+                    province: provinceName
+                },
                 method: 'GET',
-                success: function (res) {
+                success: function(res) {
                     const hasVendor = res.data.vendor && res.data.vendor.length > 0;
                     const hasCustomer = res.data.customer && res.data.customer.length > 0;
 
@@ -546,6 +571,9 @@
                             ...(hasCustomer ? res.data.customer.map(c => c.city) : [])
                         ])
                     ];
+
+                    // Urutkan biar rapi
+                    allCities.sort();
 
                     // Mapping data vendor & customer sesuai urutan kota
                     const vendorTotals = allCities.map(city => {
@@ -567,23 +595,24 @@
                     window.regencyChart = new Chart(ctx2, {
                         type: 'bar',
                         data: {
-                            labels: allCities,
+                            labels: allCities.map(c => c.length > 15 ? c.slice(0, 15) +
+                                '…' : c), // potong nama panjang
                             datasets: [
                                 ...(hasVendor ? [{
                                     label: 'Vendor',
                                     data: vendorTotals,
-                                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
                                     borderColor: 'rgba(54, 162, 235, 1)',
                                     borderWidth: 1,
-                                    borderRadius: 5,
+                                    borderRadius: 6
                                 }] : []),
                                 ...(hasCustomer ? [{
                                     label: 'Customer',
                                     data: customerTotals,
-                                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
                                     borderColor: 'rgba(255, 99, 132, 1)',
                                     borderWidth: 1,
-                                    borderRadius: 5,
+                                    borderRadius: 6
                                 }] : [])
                             ]
                         },
@@ -591,14 +620,22 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             layout: {
-                                padding: { top: 20, bottom: 10, left: 10, right: 10 }
+                                padding: {
+                                    top: 30,
+                                    bottom: 40,
+                                    left: 10,
+                                    right: 10
+                                }
                             },
                             scales: {
                                 x: {
                                     ticks: {
+                                        autoSkip: false,
                                         maxRotation: 45,
-                                        minRotation: 0,
-                                        font: { size: 11 }
+                                        minRotation: 30,
+                                        font: {
+                                            size: 11
+                                        }
                                     },
                                     grid: {
                                         display: false
@@ -608,12 +645,18 @@
                                     beginAtZero: true,
                                     ticks: {
                                         stepSize: 1,
-                                        font: { size: 11 }
+                                        font: {
+                                            size: 11
+                                        },
+                                        precision: 0
                                     },
                                     title: {
                                         display: true,
                                         text: 'Total',
-                                        font: { size: 12, weight: 'bold' }
+                                        font: {
+                                            size: 12,
+                                            weight: 'bold'
+                                        }
                                     },
                                     grid: {
                                         color: 'rgba(200,200,200,0.2)'
@@ -627,40 +670,64 @@
                                         usePointStyle: true,
                                         pointStyle: 'rectRounded',
                                         boxWidth: 10,
-                                        font: { size: 12 }
+                                        font: {
+                                            size: 12
+                                        }
                                     }
                                 },
                                 title: {
                                     display: true,
-                                    text: hasVendor && hasCustomer
-                                        ? `Total Vendor & Customer per Kota di ${provinceName}`
-                                        : hasVendor
-                                            ? `Total Vendor per Kota di ${provinceName}`
-                                            : `Total Customer per Kota di ${provinceName}`,
-                                    font: { size: 14, weight: 'bold' },
-                                    padding: { bottom: 20 }
+                                    text: hasVendor && hasCustomer ?
+                                        `Total Vendor & Customer per Kota/Kabupaten di ${provinceName}` :
+                                        hasVendor ?
+                                        `Total Vendor per Kota/Kabupaten di ${provinceName}` :
+                                        `Total Customer per Kota/Kabupaten di ${provinceName}`,
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    },
+                                    padding: {
+                                        bottom: 30
+                                    }
                                 },
                                 tooltip: {
                                     backgroundColor: 'rgba(0,0,0,0.8)',
-                                    titleFont: { size: 13, weight: 'bold' },
-                                    bodyFont: { size: 12 },
+                                    titleFont: {
+                                        size: 13,
+                                        weight: 'bold'
+                                    },
+                                    bodyFont: {
+                                        size: 12
+                                    },
                                     padding: 10,
                                     callbacks: {
-                                        label: function (context) {
+                                        label: function(context) {
                                             return `${context.dataset.label}: ${context.parsed.y}`;
                                         }
                                     }
+                                },
+                                datalabels: {
+                                    color: '#000',
+                                    anchor: 'end',
+                                    align: 'end',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 11
+                                    },
+                                    formatter: function(value) {
+                                        return value > 0 ? value : '';
+                                    }
                                 }
                             }
-                        }
+                        },
+                        plugins: [ChartDataLabels]
                     });
                 },
-                error: function (xhr) {
+                error: function(xhr) {
                     console.error('Error fetching regency data:', xhr);
                 }
             });
         }
-
 
         function stringToColor(str) {
             let hash = 0;
