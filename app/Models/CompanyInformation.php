@@ -76,6 +76,26 @@ class CompanyInformation extends Model
     }
     public function attachment()
     {
-        return $this->hasMany(CompanySupportingDocument::class, 'company_id', 'id');
+        return $this->hasMany(CompanyAttachment::class, 'company_id', 'id');
     }
+    public function salesSurvey()
+    {
+        return $this->hasOne(SalesSurvey::class, 'company_id');
+    }
+
+    public function productCustomers()
+    {
+        return $this->hasMany(ProductCustomer::class, 'company_id');
+    }
+    // Tambahkan di bagian relasi
+    public function formLink()
+    {
+        return $this->belongsTo(FormLink::class, 'form_link_id');
+    }
+
+    public function liablePeople()
+    {
+        return $this->hasMany(CompanyLiablePerson::class, 'company_id');
+    }
+
 }

@@ -197,3 +197,4 @@ Catatan:
 8 Oktober 2025
 1. Penambahan field di form master information:
    - upload file/foto terkait calon customer/vendor (misal: foto kantor, foto toko, foto pabrik, dsb)
+   

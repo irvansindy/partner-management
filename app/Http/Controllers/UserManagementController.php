@@ -191,11 +191,11 @@ class UserManagementController extends Controller
             DB::commit();
 
             return FormatResponseJson::success($user->load('roles', 'office', 'division', 'dept', 'jobTitle', 'parent'), 'User updated successfully');
-        } 
+        }
         catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
-        } 
+        }
         catch (\Exception $e) {
             DB::rollback();
             return FormatResponseJson::error(null, $e->getMessage(), 400);

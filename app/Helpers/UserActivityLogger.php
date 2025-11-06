@@ -16,7 +16,7 @@ class UserActivityLogger {
     {
         if (!static::$currentMaster) {
             static::$currentMaster = MasterActivityLog::create([
-                'user_id' => Auth::id(),
+                'user_id' => Auth::id() ? : 0,
                 'action'  => [], // awalnya kosong
             ]);
         }

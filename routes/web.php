@@ -18,6 +18,8 @@ use App\Http\Controllers\TenderForVendorController;
 use App\Http\Controllers\API\Admin\APIWhiteListManageController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\GeocodeController;
+use App\Http\Controllers\Admin\FormLinkController;
+use App\Http\Controllers\PublicFormController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,6 +40,31 @@ Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementC
 Route::get('map-geocoder', [GeocodeController::class,'index'])->name('map-geocoder');
 Route::post('forward-map', [GeocodeController::class,'forward'])->name('forward-map');
 
+// ========================================
+// PUBLIC ROUTES - Form Submission
+// ========================================
+Route::prefix('f')->name('public.form.')->group(function () {
+    Route::get('/{token}', [PublicFormController::class, 'show'])->name('show');
+    Route::post('/{token}', [PublicFormController::class, 'submit'])->name('submit');
+});
+
+Route::get('/form/success', [PublicFormController::class, 'success'])->name('public.form.success');
+Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');
+Route::get('/fetch-regencies', [PartnerController::class,'fetchRegencies'])->name('fetch-regencies');
+// ========================================
+// ADMIN ROUTES - Form Management
+// ========================================
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Form Links Management
+    Route::resource('form-links', FormLinkController::class);
+    Route::post('form-links/{formLink}/toggle-status', [FormLinkController::class, 'toggleStatus'])
+        ->name('form-links.toggle-status');
+    Route::get('form-links/{formLink}/submissions', [FormLinkController::class, 'submissions'])
+        ->name('form-links.submissions');
+    Route::get('form-links/{formLink}/submissions/{companyId}', [FormLinkController::class, 'submissionDetail'])
+        ->name('form-links.submission-detail');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
 });
@@ -48,9 +75,6 @@ Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::get('/user-attachment', [PartnerController::class,'viewAttachment'])->name('user-attachment');
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
-
-    Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');
-    Route::get('/fetch-regencies', [PartnerController::class,'fetchRegencies'])->name('fetch-regencies');
 
 
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
@@ -137,6 +161,7 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(function () {
+    Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
     Route::get('fetch-data-count', [DashboardController::class, 'fetchDataCount'])->name('fetch-data-count');
     Route::get('fetch-recent-customer', [DashboardController::class, 'fetchRecentCustomer'])->name('fetch-recent-customer');
     Route::get('fetch-recent-vendor', [DashboardController::class, 'fetchRecentVendor'])->name('fetch-recent-vendor');
@@ -164,8 +189,14 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('/system/clear-optimize', [SuperAdminController::class, 'clearOptimize'])->name('system.clear-optimize');
 });
 
-Auth::routes();
+// Auth::routes();
 
-Auth::routes(['verify' => true]);
+Auth::routes([
+    'login'=> 'true',
+    'register' => false,
+    'confirm' => false,
+    'reset' => false,
+    'verify' => true,
+]);
 
 // Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');

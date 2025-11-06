@@ -43,35 +43,35 @@
                                     <span class="text-danger mt-2 message_address" id="message_address_0" role="alert"></span>
                                 </div>
                             </div>
-                        
+
                             <div class="row mb-4">
                                 <div class="col-md-6">
                                     <label for="city">Kota *</label>
                                     <input type="text" name="city[]" id="city" class="form-control">
                                     <span class="text-danger mt-2 message_city" id="message_city_0" role="alert"></span>
                                 </div>
-                        
+
                                 <div class="col-md-6">
                                     <label for="country">Negara *</label>
                                     <input type="text" name="country[]" id="country" class="form-control">
                                     <span class="text-danger mt-2 message_country" id="message_country_0" role="alert"></span>
                                 </div>
                             </div>
-                        
+
                             <div class="row mb-4">
                                 <div class="col-md-6">>
                                     <label for="province">Provinsi *</label>
                                     <input type="text" name="province[]" id="province" class="form-control">
                                     <span class="text-danger mt-2 message_province" id="message_province_0" role="alert"></span>
                                 </div>
-                        
+
                                 <div class="col-md-6">
                                     <label for="zip_code">Kode Pos *</label>
                                     <input type="text" name="zip_code[]" id="zip_code" class="form-control">
                                     <span class="text-danger mt-2 message_zip_code" id="message_zip_code_0" role="alert"></span>
                                 </div>
                             </div>
-                        
+
                             <div class="row mb-4">
                                 <div class="col-md-6">
                                     <label for="telephone">Telephone *</label>
@@ -79,7 +79,7 @@
                                     <input type="number" name="telephone[]" id="telephone" class="form-control">
                                     <span class="text-danger mt-2 message_telephone" id="message_telephone_0" role="alert"></span>
                                 </div>
-                        
+
                                 <div class="col-md-6">
                                     <label for="fax">Fax *</label>
                                     <p class="fs-6 text-muted mb-2">+ [Country-Area Code] [No.]</p>
@@ -95,7 +95,7 @@
                 </div>
             `)
             updateFieldIds()
-            
+
         })
 
         $(document).on('click', '#delete_dynamic_address', function(e) {
@@ -109,7 +109,7 @@
 
         function updateFieldIds() {
             $('.array_company_address').each(function (index) {
-                let realIndex = index + 2; 
+                let realIndex = index + 2;
                 // Update IDs for input elements
                 $(this).find('input[name="address[]"]').attr('id', 'address_' + realIndex);
                 $(this).find('input[name="city[]"]').attr('id', 'city_' + realIndex);
@@ -227,11 +227,11 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="table_income_statement_body">
-                                                
+
                                             </tbody>
                                         </table>
                                     </div>
-                                    
+
                                     <div class="card py-2" id="table_balance_sheet">
                                         <strong class="mx-2">
                                             <h4>BALANCE SHEET</h4>
@@ -257,9 +257,9 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    
+
                                     <div id="total_financial_ratio">
-                                        
+
                                     </div>
                                 </div>
                                 <div class="card-footer">
@@ -269,7 +269,7 @@
                                 </div>
                             </div>
                         `);
-                        
+
                         $("#year-current").text(currentYear);
                         $(".year_prev_1, .bs_year_minus_1, .fr_year_minus_1").text(currentYear - 1);
                         $(".year_prev_2, .bs_year_minus_2, .fr_year_minus_2").text(currentYear - 2);
@@ -325,21 +325,21 @@
                     }
                 });
             }
-            
+
         })
 
         $(document).on('click', '#confirm_currency', function(e) {
             e.preventDefault()
             let currency_data = document.querySelectorAll(".currency_data");
             let all_filled = true
-            
+
             // Cek apakah ada input yang kosong.
             currency_data.forEach(input => {
                 if (input.value.trim() == "") {
                     all_filled = false;
                 }
             });
-            
+
             if (!all_filled) {
                 $(document).Toasts('create', {
                     title: 'Error',
@@ -449,7 +449,7 @@
                     let totalLiabilities = parseFloat(document.getElementById("total_current_liabilities_"+year).value)
                     let interestExprense = parseFloat(document.getElementById("interest_expense_"+year).value)
                     let accountReceivable = parseFloat(document.getElementById("acc_receivables_"+year).value)
-                    
+
                     let workingCapitalRatio =+ (currentAsset / currentLiabilities) * 100;
                     let cashFlowCoverageRatio =+ ((ebit + depreciationExprense) / totalLiabilities) * 100;
                     let timeInterestEarnedRatio =+ (ebit / interestExprense) * 100;
@@ -465,7 +465,7 @@
                     $('#account_receivable_turn_over_'+year).val(accountReceivableTurnOver.toFixed(2))
                     $('#net_profit_margin_'+year).val(netProfitMargin.toFixed(2))
                 }
-                
+
                 $('#action_button_confirm_currency').empty()
                 $('#action_button_confirm_currency').html(`
                     <button type="button" class="btn btn-danger" id="reset_currency">Reset</button>
@@ -476,7 +476,7 @@
         $(document).on('click', '#reset_currency', function(e) {
             e.preventDefault()
             let currency_data = document.querySelectorAll(".currency_data");
-            
+
             // Cek apakah ada input yang kosong
             currency_data.forEach(input => {
                 input.readOnly = false;
@@ -487,7 +487,7 @@
                 <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
             `)
         })
-    
+
         $(document).on('click', '.detail_partner', function(e) {
             e.preventDefault()
             let partner_id = $(this).data('partner_id')
@@ -1262,7 +1262,7 @@
                     let list_doc_cv = res.data['cv']
                     let list_doc_ud_or_pd = res.data['ud_or_pd']
                     let list_doc_perorangan = res.data['perorangan']
-                    
+
                     $('#data_doc_type_pt').empty()
                     $.each(list_doc_pt, function(i, data) {
                         $('#data_doc_type_pt').append(`
@@ -1275,8 +1275,8 @@
                             </td>
                         </tr>`
                         )
-                    })  
-                    
+                    })
+
                     $('#data_doc_type_cv').empty()
                     $.each(list_doc_cv, function(i, data) {
                         $('#data_doc_type_cv').append(`
@@ -1290,7 +1290,7 @@
                         </tr>`
                         )
                     })
-                    
+
                     $('#data_doc_type_ud_or_pd').empty()
                     $.each(list_doc_ud_or_pd, function(i, data) {
                         $('#data_doc_type_ud_or_pd').append(`
@@ -1304,7 +1304,7 @@
                         </tr>`
                         )
                     })
-                    
+
                     $('#data_doc_type_perorangan').empty()
                     $.each(list_doc_perorangan, function(i, data) {
                         $('#data_doc_type_perorangan').append(`
@@ -1341,11 +1341,10 @@
                 async: true,
             })
         })
-    
+
         $(document).on('click', '#btn_create_partner', function(e) {
             e.preventDefault()
             let data_form_company = new FormData($('#form_create_company_partner')[0])
-            alert('Data has been submitted successfully!')
             $.ajax({
                 url: '{{ route('submit-partner') }}',
                 method: 'POST',
@@ -1376,7 +1375,6 @@
                         close: true,
                         autoremove: true,
                     });
-                    // window.location.href = "{{ route('user-attachment') }}";
                     $('#ModalCreatePartner').modal('hide')
                 },
                 error: function(xhr) {

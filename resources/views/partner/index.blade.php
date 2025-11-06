@@ -16,41 +16,58 @@
                             <p>Partner list</p>
                         </div>
                         @if (auth()->user()->roles->pluck('name')[0] == 'super-admin' || auth()->user()->roles->pluck('name')[0] == 'admin')
-                            <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                                <a href="{{ route('export-excel') }}" class="btn btn-outline-success mx-1" target="_blank"><i class="fas fa-fw fa-file-excel"></i></a>
-                                <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger mx-1" target="_blank"><i class="fas fa-fw fa-file-pdf"></i></a>
+                            <div class="p-2 flex-fill bd-highlight d-flex justify-content-end"
+                                style="float: right !important;">
+                                <a href="{{ route('export-excel') }}" class="btn btn-outline-success mx-1" target="_blank"><i
+                                        class="fas fa-fw fa-file-excel"></i></a>
+                                <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger mx-1" target="_blank"><i
+                                        class="fas fa-fw fa-file-pdf"></i></a>
                             </div>
                         @elseif (auth()->user()->roles->pluck('name')[0] == 'super-user')
-                            <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                                <a href="{{ route('export-excel') }}" class="btn btn-outline-success mx-1" target="_blank"><i class="fas fa-fw fa-file-excel"></i></a>
-                                <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger mx-1" target="_blank"><i class="fas fa-fw fa-file-pdf"></i></a>
-                                <button class="btn btn-outline-secondary mx-1" id="btn_form_create_partner" data-toggle="modal" data-target="#ModalCreatePartner"><i class="fas fa-fw fa-plus"></i></button>
+                            <div class="p-2 flex-fill bd-highlight d-flex justify-content-end"
+                                style="float: right !important;">
+                                <a href="{{ route('export-excel') }}" class="btn btn-outline-success mx-1" target="_blank">
+                                    <i class="fas fa-fw fa-file-excel"></i>
+                                </a>
+                                <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger mx-1" target="_blank">
+                                    <i class="fas fa-fw fa-file-pdf"></i>
+                                </a>
+                                <a href="{{ route('create-partner') }}" class="btn btn-outline-secondary mx-1"
+                                    target="_blank">
+                                    <i class="fas fa-fw fa-plus"></i>
+                                </a>
+                                {{-- <button class="btn btn-outline-secondary mx-1" id="btn_form_create_partner"
+                                    data-toggle="modal" data-target="#ModalCreatePartner"><i class="fas fa-fw fa-plus"></i></button> --}}
                             </div>
                         @endif
-                        
+
                     </div>
                     <div class="card-body px-0 pt-2 pb-2">
                         <div class="table-responsive p-0 px-md-2">
-                            <table class="table table-hover align-items-center mb-0 data_tables" id="partner_table" style="width: 100%">
+                            <table class="table table-hover align-items-center mb-0 data_tables" id="partner_table"
+                                style="width: 100%">
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             No
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Company Name
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Group Name
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Status
                                         </th>
                                         <th class="text-secondary opacity-7">#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -58,7 +75,6 @@
                 </div>
             </div>
         </div>
-        @include('partner.create_partner')
         @include('partner.detail_partner')
     </div>
 @stop
@@ -74,12 +90,15 @@
         .select2-container--default .select2-selection--single {
             background-color: #f8fafc !important;
         }
+
         .select2-container .select2-selection--single {
             height: 38px !important;
         }
+
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 36px !important;
         }
+
         .toasts-top-right {
             z-index: 9999 !important;
         }
@@ -93,4 +112,5 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- @include('users.user_js') --}}
     @include('partner.partner_management_js')
+
 @stop

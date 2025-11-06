@@ -11,17 +11,19 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <form action="" method="" id="form_create_company_partner">
-                        {{-- company information master --}}
                         @include('cs_vendor.form.master_information')
-                        {{-- end master --}}
-                        {{-- dynamic form income statement --}}
-                        <div class="dynamic-form-income-statement"></div>
-                        {{-- company bank --}}
+
+                        @include('cs_vendor.form.contact')
+
+                        @include('cs_vendor.form.address')
+
                         @include('cs_vendor.form.bank')
-                        {{-- end company bank --}}
-                        {{-- company tax --}}
-                        @include('cs_vendor.form.tax')
-                        {{-- end company tax --}}
+
+                        @include('cs_vendor.form.survey')
+
+                        {{-- @include('cs_vendor.form.tax') --}}
+
+                        @include('cs_vendor.form.file_upload')
                     </form>
                 </div>
             </div>

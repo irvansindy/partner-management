@@ -4,11 +4,11 @@
             @lang('messages.File Attachment')
 
         </h3>
-        <div class="card-tools">
+        {{-- <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fas fa-minus"></i>
             </button>
-        </div>
+        </div> --}}
     </div>
     <div class="card-body">
         <div class="row px-2 py-2" style="line-height: 1">

@@ -45,7 +45,7 @@ class PartnerManagementController extends Controller
             // Tentukan apakah user boleh lihat customer dan/atau vendor
             $canSeeCustomer = in_array($departmentName, ['Sales Retail 1', 'Sales Retail 2', 'Sales Project']);
             $canSeeVendor = in_array($departmentName, ['Purchasing']);
-
+            // dd($role);
             // Filter berdasarkan role
             $query_company->where(function ($query) use ($user, $role) {
                 if ($role == 'super-user') {
@@ -63,11 +63,11 @@ class PartnerManagementController extends Controller
                         ->where('department_id', $user->department_id);
                 } elseif ($role == 'super-admin') {
                     $query->whereIn('status', ['checking', 'checking 2', 'approved', 'reject']);
-                } else {
-                    $query->whereRaw('1 = 0');
                 }
+                // else {
+                //     $query->whereRaw('1 = 0');
+                // }
             });
-
             // Filter tambahan berdasarkan hak akses type
             if ($role !== 'super-admin') {
                 $query_company->where(function ($query) use ($canSeeCustomer, $canSeeVendor) {
@@ -93,7 +93,7 @@ class PartnerManagementController extends Controller
     {
         try {
             // fetch partner detail
-            $partner_detail = CompanyInformation::with(['user', 'address', 'bank', 'tax', 'attachment'])
+            $partner_detail = CompanyInformation::with(['user', 'address', 'bank', 'contact', 'AddressBaseOnMap', 'attachment'])
             ->find($request->partner_id);
 
             $is_approved = false;
@@ -130,7 +130,7 @@ class PartnerManagementController extends Controller
                         $is_approved = $existing_stagging_approval_detail != null;
                     break;
                 }
-            } 
+            }
 
             $data = [
                 $partner_detail,
@@ -158,14 +158,14 @@ class PartnerManagementController extends Controller
                                         <td style="padding-left:10px;">
                                         <span style="font-size: 6px; font-weight: bold;margin-top:-10px"> '.$imageLogo.'</span>
                                         <br>
-                                        <span style="font-size:8px;">Synergy Building #08-08</span> 
+                                        <span style="font-size:8px;">Synergy Building #08-08</span>
                                         <br>
                                         <span style="font-size:8px;">Jl. Jalur Sutera Barat 17 Alam Sutera, Serpong Tangerang 15143 - Indonesia</span>
                                         <br>
                                         <span style="font-size:8px;">Tangerang 15143 - Indonesia +62 21 304 38808</span>
                                     </td>
                                         </tr>
-                                        
+
                                     </table>
                                 ';
         $footer             = '<hr>
@@ -182,7 +182,7 @@ class PartnerManagementController extends Controller
             $mpdf->SetHTMLHeader($header);
             $mpdf->SetHTMLFooter($footer);
             $mpdf->AddPage(
-                'L', // L - landscape, P - portrait 
+                'L', // L - landscape, P - portrait
                 '',
                 '',
                 '',
