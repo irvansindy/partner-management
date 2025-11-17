@@ -3,15 +3,11 @@
         <h3 class="card-title">
             @lang('messages.Company Information')
         </h3>
-        {{-- <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
-            </button>
-        </div> --}}
     </div>
     <div class="card-body">
         <div class="container-fluid">
             <p class="mb-3 text-danger">@lang('messages.Mandatory')</p>
+
             <!-- Company Type -->
             @if (!isset($formLink))
                 <div class="row mb-4">

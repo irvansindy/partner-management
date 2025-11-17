@@ -12,10 +12,20 @@ class FormLinkController extends Controller
 {
     public function index()
     {
-        $formLinks = FormLink::withCount('companies')
-            ->latest()
-            ->paginate(20);
+        $user_role = Auth::user()->roles[0]->name;
+        $formLinks = FormLink::query();
+        // $formLinks = FormLink::withCount(['companies', 'creator.dept']);
+        switch ($user_role) {
+            case 'super-admin':
+                $formLinks = $formLinks->latest()->paginate(20);
+                break;
+            case 'admin':
 
+            default:
+                # code...
+                break;
+        }
+        dd($formLinks);
         return view('admin.form_links.index', compact('formLinks'));
     }
 
