@@ -227,7 +227,7 @@ class PublicFormController extends Controller
             'business_classification' => 'required|string|max:255',
             'business_classification_detail' => 'nullable|string',
             'register_number_as_in_tax_invoice' => 'required|string|max:255',
-            'website_address' => 'nullable|url|max:255',
+            'website_address' => 'nullable|max:255',
             'system_management' => 'nullable|string|max:255',
             'email_address' => 'nullable|email|max:255',
             'credit_limit' => 'nullable|numeric|min:0',
