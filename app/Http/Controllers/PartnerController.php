@@ -669,7 +669,7 @@ class PartnerController extends Controller
             // Company Info
             'company_type.required' => 'Company type is required.',
             'company_name.required' => 'Company name is required.',
-            'established_year.integer' => 'Established year must be a number.',
+            // 'established_year.integer' => 'Established year must be a number.',
             'total_employee.integer' => 'Total employee must be a number.',
 
             // Liable Person
@@ -730,7 +730,7 @@ class PartnerController extends Controller
             // Company Info
             'company_type.required' => 'Tipe perusahaan wajib diisi.',
             'company_name.required' => 'Nama perusahaan wajib diisi.',
-            'established_year.integer' => 'Tahun berdiri harus berupa angka.',
+            // 'established_year.integer' => 'Tahun berdiri harus berupa angka.',
             'total_employee.integer' => 'Total karyawan harus berupa angka.',
 
             // Liable Person
@@ -792,7 +792,7 @@ class PartnerController extends Controller
             'company_type' => 'required|string',
             'company_name' => 'required|string',
             'company_group_name' => 'nullable|string',
-            'established_year' => 'nullable|integer',
+            'established_year' => 'nullable',
             'total_employee' => 'nullable|integer',
             'liable_person.0' => 'required|string',
             'liable_position.0' => 'required|string',
