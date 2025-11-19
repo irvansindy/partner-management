@@ -25,7 +25,6 @@ class FormLinkController extends Controller
                 # code...
                 break;
         }
-        dd($formLinks);
         return view('admin.form_links.index', compact('formLinks'));
     }
 
