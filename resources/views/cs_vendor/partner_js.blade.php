@@ -125,14 +125,14 @@
                 enctype: 'multipart/form-data',
             },
             fileActionSettings: {
-                showDrag: true,      // Display the drag handle
+                showDrag: true, // Display the drag handle
                 // showZoom: true,
-                showUpload: false,   // Tambahkan ini juga di file action settings
+                showUpload: false, // Tambahkan ini juga di file action settings
                 showRemove: true
             },
             // Jika masih muncul, paksa hide dengan CSS
             layoutTemplates: {
-                actionUpload: ''  // Kosongkan template upload button
+                actionUpload: '' // Kosongkan template upload button
             }
         });
 
@@ -397,96 +397,96 @@
         })
 
         // ============================================
-// PROVINCE & REGENCY FUNCTIONS
-// ============================================
+        // PROVINCE & REGENCY FUNCTIONS
+        // ============================================
 
-// Fungsi untuk load provinces ke select tertentu
-function loadProvincesToSelect(selectId) {
-    $.ajax({
-        url: "{{ route('fetch-provinces') }}",
-        dataType: 'json',
-        success: function(data) {
-            var $provinceSelect = $('#' + selectId);
-            $provinceSelect.empty();
-            $provinceSelect.append('<option></option>');
-            data.forEach(function(province) {
-                $provinceSelect.append(new Option(province.name, province.id));
-            });
-            $provinceSelect.prop('disabled', false);
-            $provinceSelect.select2({
-                placeholder: 'Select Province',
-                width: '100%'
-            });
-        }
-    });
-}
-
-// Fungsi untuk load regencies berdasarkan province
-function loadRegenciesToSelect(provinceId, regencySelectId) {
-    $.ajax({
-        url: "{{ route('fetch-regencies') }}",
-        data: {
-            province_id: provinceId
-        },
-        dataType: 'json',
-        success: function(data) {
-            var $regencySelect = $('#' + regencySelectId);
-            $regencySelect.empty();
-            $regencySelect.append('<option></option>');
-            data.forEach(function(regency) {
-                $regencySelect.append(new Option(regency.name, regency.id));
-            });
-            $regencySelect.prop('disabled', false);
-            $regencySelect.select2({
-                placeholder: 'Select Regency',
-                width: '100%'
+        // Fungsi untuk load provinces ke select tertentu
+        function loadProvincesToSelect(selectId) {
+            $.ajax({
+                url: "{{ route('fetch-provinces') }}",
+                dataType: 'json',
+                success: function(data) {
+                    var $provinceSelect = $('#' + selectId);
+                    $provinceSelect.empty();
+                    $provinceSelect.append('<option></option>');
+                    data.forEach(function(province) {
+                        $provinceSelect.append(new Option(province.name, province.id));
+                    });
+                    $provinceSelect.prop('disabled', false);
+                    $provinceSelect.select2({
+                        placeholder: 'Select Province',
+                        width: '100%'
+                    });
+                }
             });
         }
-    });
-}
 
-// ============================================
-// INITIALIZE EXISTING ADDRESS FORMS
-// ============================================
+        // Fungsi untuk load regencies berdasarkan province
+        function loadRegenciesToSelect(provinceId, regencySelectId) {
+            $.ajax({
+                url: "{{ route('fetch-regencies') }}",
+                data: {
+                    province_id: provinceId
+                },
+                dataType: 'json',
+                success: function(data) {
+                    var $regencySelect = $('#' + regencySelectId);
+                    $regencySelect.empty();
+                    $regencySelect.append('<option></option>');
+                    data.forEach(function(regency) {
+                        $regencySelect.append(new Option(regency.name, regency.id));
+                    });
+                    $regencySelect.prop('disabled', false);
+                    $regencySelect.select2({
+                        placeholder: 'Select Regency',
+                        width: '100%'
+                    });
+                }
+            });
+        }
 
-$(document).ready(function() {
-    // Load provinces untuk address 0 dan 1
-    loadProvincesToSelect('select_option_province_0');
-    loadProvincesToSelect('select_option_province_1');
+        // ============================================
+        // INITIALIZE EXISTING ADDRESS FORMS
+        // ============================================
 
-    // Disable regency selects initially
-    $('#select_option_regency_0').prop('disabled', true);
-    $('#select_option_regency_1').prop('disabled', true);
-});
+        $(document).ready(function() {
+            // Load provinces untuk address 0 dan 1
+            loadProvincesToSelect('select_option_province_0');
+            loadProvincesToSelect('select_option_province_1');
 
-// ============================================
-// EVENT HANDLER UNTUK PROVINCE CHANGE (DELEGATED)
-// ============================================
+            // Disable regency selects initially
+            $('#select_option_regency_0').prop('disabled', true);
+            $('#select_option_regency_1').prop('disabled', true);
+        });
 
-// Gunakan delegated event untuk handle semua province select (existing & dynamic)
-$(document).on('change', '[id^="select_option_province_"]', function() {
-    var provinceId = $(this).val();
-    var index = $(this).attr('id').replace('select_option_province_', '');
-    var regencySelectId = 'select_option_regency_' + index;
+        // ============================================
+        // EVENT HANDLER UNTUK PROVINCE CHANGE (DELEGATED)
+        // ============================================
 
-    if (provinceId) {
-        loadRegenciesToSelect(provinceId, regencySelectId);
-    } else {
-        $('#' + regencySelectId).empty().append('<option></option>').prop('disabled', true);
-    }
-});
+        // Gunakan delegated event untuk handle semua province select (existing & dynamic)
+        $(document).on('change', '[id^="select_option_province_"]', function() {
+            var provinceId = $(this).val();
+            var index = $(this).attr('id').replace('select_option_province_', '');
+            var regencySelectId = 'select_option_regency_' + index;
 
-// ============================================
-// ADD DYNAMIC ADDRESS
-// ============================================
+            if (provinceId) {
+                loadRegenciesToSelect(provinceId, regencySelectId);
+            } else {
+                $('#' + regencySelectId).empty().append('<option></option>').prop('disabled', true);
+            }
+        });
 
-$(document).on('click', '#add_dynamic_address', function(e) {
-    e.preventDefault();
+        // ============================================
+        // ADD DYNAMIC ADDRESS
+        // ============================================
 
-    // Hitung index berdasarkan jumlah fieldset yang ada
-    let index = $('.company_address_additional fieldset').length;
+        $(document).on('click', '#add_dynamic_address', function(e) {
+            e.preventDefault();
 
-    $('.dynamic_company_address').append(`
+            // Hitung index berdasarkan jumlah fieldset yang ada
+            let index = $('.company_address_additional fieldset').length;
+
+            $('.dynamic_company_address').append(`
         <div class="array_company_address">
             <fieldset class="border px-2 mb-4">
                 <legend class="float-none w-auto text-bold">@lang('messages.Address Data')</legend>
@@ -552,24 +552,24 @@ $(document).on('click', '#add_dynamic_address', function(e) {
         </div>
     `);
 
-    // Load provinces untuk select yang baru ditambahkan
-    loadProvincesToSelect('select_option_province_' + index);
+            // Load provinces untuk select yang baru ditambahkan
+            loadProvincesToSelect('select_option_province_' + index);
 
-    // Disable regency select initially
-    $('#select_option_regency_' + index).prop('disabled', true).select2({
-        placeholder: 'Select Regency',
-        width: '100%'
-    });
-});
+            // Disable regency select initially
+            $('#select_option_regency_' + index).prop('disabled', true).select2({
+                placeholder: 'Select Regency',
+                width: '100%'
+            });
+        });
 
-// ============================================
-// DELETE DYNAMIC ADDRESS
-// ============================================
+        // ============================================
+        // DELETE DYNAMIC ADDRESS
+        // ============================================
 
-$(document).on('click', '.delete_dynamic_address', function(e) {
-    e.preventDefault();
-    $(this).closest('.array_company_address').remove();
-});
+        $(document).on('click', '.delete_dynamic_address', function(e) {
+            e.preventDefault();
+            $(this).closest('.array_company_address').remove();
+        });
 
         function updateFieldIds() {
             $('.array_company_address').each(function(index) {
@@ -1015,7 +1015,6 @@ $(document).on('click', '.delete_dynamic_address', function(e) {
         // })
         $('#btn_submit_data_company').on('click', function(e) {
             e.preventDefault();
-
             // Clear previous error messages
             $('.text-danger').text('');
             $('.is-invalid').removeClass('is-invalid');
@@ -1066,19 +1065,34 @@ $(document).on('click', '.delete_dynamic_address', function(e) {
                 error: function(xhr) {
                     Swal.close();
 
+                    // Clear old errors
+                    $('.is-invalid').removeClass('is-invalid');
+                    $('[id^="message_"]').text('');
+
                     if (xhr.status === 422) {
                         // Validation errors
                         var errors = xhr.responseJSON.errors;
                         var errorMessage = '<ul style="text-align: left;">';
 
                         $.each(errors, function(key, value) {
-                            // Show error message on field
-                            var fieldId = key.replace(/\./g, '_');
-                            $('#message_' + fieldId).text(value[0]);
-                            $('#' + fieldId).addClass('is-invalid');
+                            var fieldId = key.replace(/\./g,
+                            '_'); // convert "field.0" → "field_0"
+                            var message = value[0] ?? 'Invalid input';
 
-                            // Add to error list
-                            errorMessage += '<li>' + value[0] + '</li>';
+                            // Show error on HTML field
+                            var messageContainer = $('#message_' + fieldId);
+                            var inputField = $('#' + fieldId);
+
+                            if (inputField.length > 0) {
+                                inputField.addClass('is-invalid');
+                            }
+
+                            if (messageContainer.length > 0) {
+                                messageContainer.text(message);
+                            }
+
+                            // Add to Swal
+                            errorMessage += '<li>' + message + '</li>';
                         });
 
                         errorMessage += '</ul>';
@@ -1086,11 +1100,12 @@ $(document).on('click', '.delete_dynamic_address', function(e) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Validation Error',
-                            html: errorMessage,
+                            html: 'Masih ada data yang kosong, silahkan cek kembali.',
                             confirmButtonText: 'OK'
                         });
                     } else {
                         var errorMessage = 'An error occurred';
+
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMessage = xhr.responseJSON.message;
                         }
@@ -1102,6 +1117,8 @@ $(document).on('click', '.delete_dynamic_address', function(e) {
                         });
                     }
                 }
+
+
             });
         });
     })
