@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\FormatResponseJson;
 
 class PublicFormController extends Controller
 {
@@ -38,10 +39,11 @@ class PublicFormController extends Controller
         $formLink = FormLink::where('token', $token)->firstOrFail();
 
         if (!$formLink->canAcceptSubmission()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Form sudah tidak dapat menerima submission.'
-            ], 403);
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'Form sudah tidak dapat menerima submission.'
+            // ], 403);
+            return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
         }
 
         // Validasi data
@@ -183,11 +185,12 @@ class PublicFormController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data berhasil dikirim! Terima kasih.',
-                'redirect_url' => route('public.form.success')
-            ]);
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Data berhasil dikirim! Terima kasih.',
+            //     'redirect_url' => route('public.form.success')
+            // ]);
+            return FormatResponseJson::success(true, 'Data berhasil dikirim! Terima kasih.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -196,10 +199,11 @@ class PublicFormController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()
-            ], 500);
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()
+            // ], 500);
+            return FormatResponseJson::error(false,$e->getMessage(), 500);
         }
     }
 
