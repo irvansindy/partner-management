@@ -215,7 +215,7 @@ class PublicFormController extends Controller
             'company_type' => 'required|in:vendor,customer',
             'company_name' => 'required|string|max:255',
             'company_group_name' => 'nullable|string|max:255',
-            'established_year' => 'nullable|min:1900|max:' . date('Y'),
+            'established_year' => 'nullable',
             'total_employee' => 'nullable|integer|min:1',
 
             // Liable Persons
