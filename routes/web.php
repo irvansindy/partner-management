@@ -20,6 +20,7 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\Admin\FormLinkController;
 use App\Http\Controllers\PublicFormController;
+use App\Http\Controllers\CompanyImportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -63,10 +64,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->name('form-links.submissions');
     Route::get('form-links/{formLink}/submissions/{companyId}', [FormLinkController::class, 'submissionDetail'])
         ->name('form-links.submission-detail');
+
+    Route::get('company/import', [CompanyImportController::class, 'showForm'])
+        ->name('company.import.form');
+
+    Route::post('company/import/preview', [CompanyImportController::class, 'preview'])
+        ->name('company.import.preview');
+
+    Route::post('company/import/confirm', [CompanyImportController::class, 'importConfirm'])
+        ->name('company.import.confirm');
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
+    Route::get('/dashboard', action: [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
 });
 Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');

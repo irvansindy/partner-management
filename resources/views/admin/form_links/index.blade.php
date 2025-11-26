@@ -8,6 +8,7 @@
 
 @section('content')
     <div class="container-fluid">
+        @if (\Auth::user()->roles[0]->name == 'admin' || \Auth::user()->roles[0]->name == 'super-user')
         <div class="row mb-3">
             <div class="col-12">
                 <a href="{{ route('admin.form-links.create') }}" class="btn btn-primary">
@@ -15,6 +16,7 @@
                 </a>
             </div>
         </div>
+        @endif
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">

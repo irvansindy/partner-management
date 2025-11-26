@@ -1035,7 +1035,7 @@
 
             // Submit via AJAX
             $.ajax({
-                url: formAction,
+                url: '{{ route('submit-partner') }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -1076,7 +1076,7 @@
 
                         $.each(errors, function(key, value) {
                             var fieldId = key.replace(/\./g,
-                            '_'); // convert "field.0" → "field_0"
+                                '_'); // convert "field.0" → "field_0"
                             var message = value[0] ?? 'Invalid input';
 
                             // Show error on HTML field

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\FormLink;
 use App\Models\CompanyInformation;
 use Illuminate\Http\Request;
@@ -12,29 +13,56 @@ class FormLinkController extends Controller
 {
     public function index()
     {
-        $user_role = Auth::user()->roles[0]->name;
+        $user = Auth::user();
+        $role = $user->roles[0]->name;
+        $dept_id = $user->dept->id;
+        $office_id = $user->office->id;
+        // dd([
+        //     $role, 'dept' => $dept_id, '' => $office_id
+        // ]);
         $formLinks = FormLink::query();
         // $formLinks = FormLink::withCount(['companies', 'creator.dept']);
-        switch ($user_role) {
+        switch ($role) {
             case 'super-admin':
                 $formLinks = $formLinks->latest()->paginate(20);
                 break;
             case 'admin':
-
-            default:
-                # code...
-                break;
+            // admin hanya boleh lihat data sesuai department dia
+            $formLinks = $formLinks
+                ->where('department_id', $dept_id)
+                ->where('office_id', $office_id)
+                ->latest()
+                ->paginate(20);
+            break;
+            case 'super-user':
+            // admin hanya boleh lihat data sesuai department dia
+            $formLinks = $formLinks
+                ->where('department_id', $dept_id)
+                ->where('office_id', $office_id)
+                ->latest()
+                ->paginate(20);
+            break;
         }
         return view('admin.form_links.index', compact('formLinks'));
     }
 
     public function create()
     {
-        return view('admin.form_links.create');
+        $pic = User::whereHas('roles', function ($query) {
+            $query->where('name', 'admin');
+        })->get(['id', 'users.name']);
+
+        return view('admin.form_links.create', compact('pic'));
     }
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+        $id = $user->id;
+        $role = $user->roles[0]->name;
+        $dept_id = $user->dept->id;
+        $office_id = $user->office->id;
+
         $validated = $request->validate([
             'form_type' => 'required|in:vendor,customer',
             'title' => 'required|string|max:255',
@@ -42,6 +70,9 @@ class FormLinkController extends Controller
             'expires_at' => 'nullable|date|after:now',
             'max_submissions' => 'nullable|integer|min:1',
         ]);
+
+        $validated['department_id'] = $dept_id;
+        $validated['office_id'] = $office_id;
 
         $validated['created_by'] = Auth::id();
 

@@ -32,6 +32,21 @@
                                 @enderror
                             </div>
 
+                            {{-- kondisi super-admin yang membuat --}}
+                            @if (auth()->user()->roles[0]->name == 'super-admin')
+                            <div class="form-group">
+                                <label for="user_form">For User</label>
+                                <select class="form-control" name="user_form" id="user_form">
+                                    @forelse ($pic as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @empty
+                                        <option value="">Tidak ada PIC</option>
+                                    @endforelse
+                                </select>
+                            </div>
+
+                            @endif
+
                             <div class="form-group">
                                 <label for="title">Title <span class="text-danger">*</span></label>
                                 <input type="text" name="title" id="title"
