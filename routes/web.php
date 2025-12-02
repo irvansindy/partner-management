@@ -21,6 +21,7 @@ use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\Admin\FormLinkController;
 use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\CompanyImportController;
+use App\Http\Controllers\CompanyExportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -65,6 +66,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('form-links/{formLink}/submissions/{companyId}', [FormLinkController::class, 'submissionDetail'])
         ->name('form-links.submission-detail');
 
+    // ========================================
+    // IMPORT ROUTES (CompanyImportController)
+    // ========================================
     Route::get('company/import', [CompanyImportController::class, 'showForm'])
         ->name('company.import.form');
 
@@ -73,6 +77,20 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::post('company/import/confirm', [CompanyImportController::class, 'importConfirm'])
         ->name('company.import.confirm');
+
+    // ========================================
+    // EXPORT ROUTES (CompanyExportController)
+    // ========================================
+    Route::prefix('company/export')->name('company.export.')->group(function () {
+        Route::get('/', [CompanyExportController::class, 'showForm'])
+            ->name('form');
+        Route::post('custom', [CompanyExportController::class, 'exportCustom'])
+            ->name('custom');
+        Route::get('all', [CompanyExportController::class, 'exportAll'])
+            ->name('all');
+        Route::get('template', [CompanyExportController::class, 'downloadTemplate'])
+            ->name('template');
+    });
 });
 
 Route::middleware(['auth'])->group(function () {
