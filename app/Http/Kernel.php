@@ -74,6 +74,8 @@ class Kernel extends HttpKernel
         'check.company.info' => \App\Http\Middleware\CheckCompanyInformation::class,
         'api.ip_whitelist' => \App\Http\Middleware\IpWhitelistMiddleware::class,
         'docs' => \Dedoc\Scramble\Http\Middleware\PrepareDocs::class,
-        'sanitize.input' => \App\Http\Middleware\SanitizeInputMiddleware::class
+        'sanitize.input' => \App\Http\Middleware\SanitizeInputMiddleware::class,
+        'public_form' => \App\Http\Middleware\PublicFormProtection::class,
+
     ];
 }

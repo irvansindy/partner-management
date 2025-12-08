@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\CompanyInformation;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -53,11 +54,28 @@ class CompanyCustomExport implements FromCollection, WithHeadings, WithMapping, 
         ];
     }
 
+    /**
+     * Ambil data dengan filter user
+     */
     public function collection()
     {
-        return CompanyInformation::with(['contact', 'address', 'bank', 'liablePeople'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $user = Auth::user();
+
+        // Query dasar dengan relasi
+        $query = CompanyInformation::with(['contact', 'address', 'bank', 'liablePeople']);
+
+        // ✅ FILTER BERDASARKAN USER
+        // Filter by location_id (office_id)
+        if ($user->location_id) {
+            $query->where('location_id', $user->location_id);
+        }
+
+        // Filter by department_id
+        if ($user->department_id) {
+            $query->where('department_id', $user->department_id);
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
     }
 
     public function map($company): array

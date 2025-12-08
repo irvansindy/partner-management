@@ -49,6 +49,7 @@ Route::prefix('f')->name('public.form.')->group(function () {
     Route::get('/{token}', [PublicFormController::class, 'show'])->name('show');
     Route::post('/{token}', [PublicFormController::class, 'submit'])->name('submit');
 });
+Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner')->middleware('public_form');
 
 Route::get('/form/success', [PublicFormController::class, 'success'])->name('public.form.success');
 Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');
@@ -114,7 +115,7 @@ Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::get('/fetch-partner-tax', [PartnerController::class,'fetchTaxById'])->name('fetch-partner-tax');
 
     Route::post('/result-financial-ratio', [PartnerController::class,'resultFinancialRatio'])->name('result-financial-ratio');
-    Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
+    Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner')->middleware('public_form');
     Route::post('/update-partner', [PartnerController::class,'update'])->name('update-partner');
     Route::post('store-attachment', [PartnerController::class,'storeAttachment'])->name('store-attachment');
     Route::post('update-attachment', [PartnerController::class,'updateAttachmentById'])->name('update-attachment');
@@ -203,7 +204,7 @@ Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(fun
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
     Route::get('/fetch-partner-detail', [PartnerManagementController::class,'detailPartner'])->name('fetch-partner-detail');
     Route::get('/fetch-vendor-for-tender', [PartnerManagementController::class,'fetchVendorForTender'])->name('fetch-vendor-for-tender');
-    Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner');
+    Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner')->middleware('public_form');
     Route::post('approval-partner', [PartnerManagementController::class,'approvalPartner'])->name('approval-partner');
 });
 

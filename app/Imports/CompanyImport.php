@@ -160,7 +160,7 @@ class CompanyImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                         'email_address'   => $row['email_address'] ?? null,
                         'term_of_payment' => $row['term_of_payment'] ?? null,
                         'credit_limit'    => $row['credit_limit'] ?? null,
-                        'location_id'     => $user->location_id ?? null,
+                        'location_id'     => $user->office_id ?? null,
                         'department_id'   => $user->department_id ?? null,
                     ];
 

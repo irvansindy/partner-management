@@ -8,6 +8,7 @@ use App\Exports\CompanyTemplateExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyExportController extends Controller
 {
@@ -33,10 +34,13 @@ class CompanyExportController extends Controller
         ]);
 
         try {
+            $user = Auth::user();
             $selectedFields = $request->input('fields');
             $filename = 'company_export_custom_' . date('Y-m-d_His') . '.xlsx';
 
-            Log::info("Custom export with fields: " . implode(', ', $selectedFields));
+            Log::info("Custom export by user: {$user->name} (ID: {$user->id})");
+            Log::info("Filter: location_id={$user->location_id}, department_id={$user->department_id}");
+            Log::info("Fields: " . implode(', ', $selectedFields));
 
             return Excel::download(
                 new CompanyCustomExport($selectedFields),
@@ -57,9 +61,11 @@ class CompanyExportController extends Controller
     public function exportAll()
     {
         try {
+            $user = Auth::user();
             $filename = 'company_data_all_' . date('Y-m-d_His') . '.xlsx';
 
-            Log::info("Exporting all companies to: $filename");
+            Log::info("Export all by user: {$user->name} (ID: {$user->id})");
+            Log::info("Filter: location_id={$user->location_id}, department_id={$user->department_id}");
 
             return Excel::download(new CompanyExport, $filename);
 

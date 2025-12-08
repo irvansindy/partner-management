@@ -30,6 +30,7 @@
                         @if (isset($formLink))
                             <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
                         @endif
+                        <input type="hidden" id="public_key" value="{{ env('PUBLIC_FORM_SECRET') }}">
 
                         @include('cs_vendor.form.master_information')
 

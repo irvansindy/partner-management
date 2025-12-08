@@ -1038,6 +1038,9 @@
                 url: '{{ route('submit-partner') }}',
                 type: 'POST',
                 data: formData,
+                headers: {
+                    "X-APP-KEY": $('#public_key').val()
+                },
                 processData: false,
                 contentType: false,
                 success: function(response) {
