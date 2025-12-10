@@ -922,207 +922,221 @@
             `)
         })
 
-        // $(document).on('click', '#btn_submit_data_company', function(e) {
-        //     e.preventDefault()
-        //     let data_form_company = new FormData($('#form_company')[0])
+        // $('#btn_submit_data_company').on('click', function(e) {
+        //     e.preventDefault();
+        //     // Clear previous error messages
+        //     $('.text-danger').text('');
+        //     $('.is-invalid').removeClass('is-invalid');
+
+        //     // Show loading
+        //     Swal.fire({
+        //         title: 'Processing...',
+        //         text: 'Please wait while we submit your data',
+        //         allowOutsideClick: false,
+        //         didOpen: () => {
+        //             Swal.showLoading();
+        //         }
+        //     });
+
+        //     // Get form data
+        //     var formData = new FormData($('#form_company')[0]);
+        //     var formAction = $('#form_company').attr('action');
+
+        //     // Submit via AJAX
         //     $.ajax({
         //         url: '{{ route('submit-partner') }}',
-        //         method: 'POST',
+        //         type: 'POST',
+        //         data: formData,
+        //         headers: {
+        //             "X-APP-KEY": $('#public_key').val()
+        //         },
         //         processData: false,
         //         contentType: false,
-        //         cache: false,
-        //         headers: {
-        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //         },
-        //         data: data_form_company,
-        //         enctype: 'multipart/form-data',
-        //         beforeSend: function() {
-        //             setTimeout(function() {
-        //                 $('#modalLoading').modal({
-        //                     show: false
+        //         success: function(response) {
+        //             Swal.close();
+
+        //             if (response.success) {
+        //                 Swal.fire({
+        //                     icon: 'success',
+        //                     title: 'Success!',
+        //                     text: response.message,
+        //                     confirmButtonText: 'OK'
+        //                 }).then((result) => {
+        //                     if (response.redirect_url) {
+        //                         window.location.href = response.redirect_url;
+        //                     }
         //                 });
-        //             }, 5000)
-        //         },
-
-        //         success: function(res) {
-        //             $(document).Toasts('create', {
-        //                 title: 'Success',
-        //                 class: 'bg-success',
-        //                 body: res.meta.message,
-        //                 delay: 5000,
-        //                 autohide: true,
-        //                 fade: true,
-        //                 close: true,
-        //                 autoremove: true,
-        //             });
-        //             Swal.fire({
-        //                 title: 'Success!',
-        //                 text: 'Data berhasil disubmit, silahkan kirim attachment via email ke: pralonpartner@gmail.com atau klik link di bawah ini!',
-        //                 icon: 'info',
-        //                 showConfirmButton: false,
-        //                 showCloseButton: true,
-        //                 footer: `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=pralonpartner@gmail.com&su=Feedback&body=Halo%20admin" target="_blank" rel="noopener noreferrer">Kirim email ke admin</a>`
-        //             })
-        //         },
-        //         error: function(xhr) {
-        //             $('#modalLoading').modal('hide')
-        //             let response_error = JSON.parse(xhr.responseText)
-
-        //             if (response_error.meta.code == 500 || response_error.meta.code ==
-        //                 400) {
-        //                 $(document).Toasts('create', {
-        //                     title: 'Error',
-        //                     class: 'bg-danger',
-        //                     body: response_error.meta.message,
-        //                     delay: 10000,
-        //                     autohide: true,
-        //                     fade: true,
-        //                     close: true,
-        //                     autoremove: true,
+        //             } else {
+        //                 Swal.fire({
+        //                     icon: 'error',
+        //                     title: 'Error!',
+        //                     text: response.message || 'Something went wrong'
         //                 });
         //             }
-        //             $('.message-danger').text('')
-        //             $.each(response_error.meta.message.errors, function(i, value) {
-        //                 $('#message_' + i.replace('.', '_')).text(value)
-        //             })
-        //             $(document).Toasts('create', {
-        //                 title: 'Error',
-        //                 class: 'bg-danger',
-        //                 body: 'Harap isi data yang masih kosong',
-        //                 delay: 10000,
-        //                 autohide: true,
-        //                 fade: true,
-        //                 close: true,
-        //                 autoremove: true,
-        //             });
         //         },
-        //         complete: function() {
-        //             setTimeout(function() {
-        //                 $('#modalLoading').modal({
-        //                     show: false
+        //         error: function(xhr) {
+        //             Swal.close();
+
+        //             // Clear old errors
+        //             $('.is-invalid').removeClass('is-invalid');
+        //             $('[id^="message_"]').text('');
+
+        //             if (xhr.status === 422) {
+        //                 // Validation errors
+        //                 var errors = xhr.responseJSON.errors;
+        //                 var errorMessage = '<ul style="text-align: left;">';
+
+        //                 $.each(errors, function(key, value) {
+        //                     var fieldId = key.replace(/\./g,
+        //                         '_'); // convert "field.0" → "field_0"
+        //                     var message = value[0] ?? 'Invalid input';
+
+        //                     // Show error on HTML field
+        //                     var messageContainer = $('#message_' + fieldId);
+        //                     var inputField = $('#' + fieldId);
+
+        //                     if (inputField.length > 0) {
+        //                         inputField.addClass('is-invalid');
+        //                     }
+
+        //                     if (messageContainer.length > 0) {
+        //                         messageContainer.text(message);
+        //                     }
+
+        //                     // Add to Swal
+        //                     errorMessage += '<li>' + message + '</li>';
         //                 });
-        //             }, 5000)
-        //             // Swal.fire({
-        //             //     title: 'Success!',
-        //             //     text: 'Data berhasil disubmit, silahkan klik link di bawah untuk kirim attachment.',
-        //             //     icon: 'info',
-        //             //     showConfirmButton: false,
-        //             //     showCloseButton: true,
-        //             //     footer: `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=pralonpartner@gmail.com&su=Feedback&body=Halo%20admin" target="_blank" rel="noopener noreferrer">Kirim email ke admin</a>`
-        //             // })
+
+        //                 errorMessage += '</ul>';
+
+        //                 Swal.fire({
+        //                     icon: 'error',
+        //                     title: 'Validation Error',
+        //                     html: 'Masih ada data yang kosong, silahkan cek kembali.',
+        //                     confirmButtonText: 'OK'
+        //                 });
+        //             } else {
+        //                 var errorMessage = 'An error occurred';
+
+        //                 if (xhr.responseJSON && xhr.responseJSON.message) {
+        //                     errorMessage = xhr.responseJSON.message;
+        //                 }
+
+        //                 Swal.fire({
+        //                     icon: 'error',
+        //                     title: 'Error!',
+        //                     text: errorMessage
+        //                 });
+        //             }
         //         }
-        //     })
-        // })
+
+
+        //     });
+        // });
+
         $('#btn_submit_data_company').on('click', function(e) {
-            e.preventDefault();
-            // Clear previous error messages
-            $('.text-danger').text('');
+    e.preventDefault();
+
+    // Clear previous errors
+    $('.text-danger').text('');
+    $('.is-invalid').removeClass('is-invalid');
+
+    Swal.fire({
+        title: 'Processing...',
+        text: 'Please wait while we submit your data',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    var formData = new FormData($('#form_company')[0]);
+    var formAction = $('#form_company').attr('action');
+
+    // Ambil storage key unik dari form
+    const STORAGE_KEY = $('#form_company').data('storage-key');
+
+    $.ajax({
+        url: formAction,
+        type: 'POST',
+        data: formData,
+        headers: {
+            "X-APP-KEY": $('#public_key').val()
+        },
+        processData: false,
+        contentType: false,
+
+        success: function(response) {
+            Swal.close();
+
+            if (response.success) {
+
+                // ================================
+                // 🔥 CLEAR LOCALSTORAGE DI SINI 🔥
+                // ================================
+                if (STORAGE_KEY) {
+                    localStorage.removeItem(STORAGE_KEY);
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: response.message,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    if (response.redirect_url) {
+                        window.location.href = response.redirect_url;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: response.message || 'Something went wrong'
+                });
+            }
+        },
+
+        error: function(xhr) {
+            Swal.close();
             $('.is-invalid').removeClass('is-invalid');
+            $('[id^="message_"]').text('');
 
-            // Show loading
+            if (xhr.status === 422) {
+                var errors = xhr.responseJSON.errors;
+
+                $.each(errors, function(key, value) {
+                    var fieldId = key.replace(/\./g, '_');
+                    var message = value[0];
+
+                    var inputField = $('#' + fieldId);
+                    var messageContainer = $('#message_' + fieldId);
+
+                    if (inputField.length) inputField.addClass('is-invalid');
+                    if (messageContainer.length) messageContainer.text(message);
+                });
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: 'Masih ada data yang kosong, silahkan cek kembali.',
+                });
+
+                return;
+            }
+
+            var errorMessage = 'An error occurred';
+
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+
             Swal.fire({
-                title: 'Processing...',
-                text: 'Please wait while we submit your data',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                icon: 'error',
+                title: 'Error!',
+                text: errorMessage
             });
+        }
+    });
+});
 
-            // Get form data
-            var formData = new FormData($('#form_company')[0]);
-            var formAction = $('#form_company').attr('action');
-
-            // Submit via AJAX
-            $.ajax({
-                url: '{{ route('submit-partner') }}',
-                type: 'POST',
-                data: formData,
-                headers: {
-                    "X-APP-KEY": $('#public_key').val()
-                },
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    Swal.close();
-
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: response.message,
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (response.redirect_url) {
-                                window.location.href = response.redirect_url;
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: response.message || 'Something went wrong'
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    Swal.close();
-
-                    // Clear old errors
-                    $('.is-invalid').removeClass('is-invalid');
-                    $('[id^="message_"]').text('');
-
-                    if (xhr.status === 422) {
-                        // Validation errors
-                        var errors = xhr.responseJSON.errors;
-                        var errorMessage = '<ul style="text-align: left;">';
-
-                        $.each(errors, function(key, value) {
-                            var fieldId = key.replace(/\./g,
-                                '_'); // convert "field.0" → "field_0"
-                            var message = value[0] ?? 'Invalid input';
-
-                            // Show error on HTML field
-                            var messageContainer = $('#message_' + fieldId);
-                            var inputField = $('#' + fieldId);
-
-                            if (inputField.length > 0) {
-                                inputField.addClass('is-invalid');
-                            }
-
-                            if (messageContainer.length > 0) {
-                                messageContainer.text(message);
-                            }
-
-                            // Add to Swal
-                            errorMessage += '<li>' + message + '</li>';
-                        });
-
-                        errorMessage += '</ul>';
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validation Error',
-                            html: 'Masih ada data yang kosong, silahkan cek kembali.',
-                            confirmButtonText: 'OK'
-                        });
-                    } else {
-                        var errorMessage = 'An error occurred';
-
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        }
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: errorMessage
-                        });
-                    }
-                }
-
-
-            });
-        });
     })
 </script>

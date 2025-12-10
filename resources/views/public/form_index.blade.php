@@ -28,7 +28,9 @@
                         @csrf
 
                         @if (isset($formLink))
+                        <!-- field hidden untuk dikirim ke backend -->
                             <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
+
                         @endif
                         <input type="hidden" id="public_key" value="{{ env('PUBLIC_FORM_SECRET') }}">
 
@@ -59,5 +61,75 @@
 @stop
 
 @section('js')
+    <script>
+        // Ambil token form dari Laravel
+        const formToken = "{{ $formLink->token ?? '' }}";
+
+        // Buat session unik per tab (agar tab 1 & tab 2 tidak konflik)
+        let sessionId = sessionStorage.getItem("form_session_id");
+
+        if (!sessionId) {
+            sessionId = Math.random().toString(36).substring(2, 15);
+            sessionStorage.setItem("form_session_id", sessionId);
+        }
+
+        // STORAGE KEY unik per user, per tab, per form
+        const STORAGE_KEY = "partner_form_" + formToken + "_" + sessionId;
+
+        // =========================================================
+        // 1) AUTO SAVE (setiap input berubah)
+        // =========================================================
+        function autoSaveForm() {
+            let formData = {};
+
+            $('#form_company')
+                .find('input, textarea, select')
+                .each(function() {
+
+                    if (this.type === "file") return;
+
+                    // FIX: jangan simpan company_type
+                    if (this.name === "company_type") return;
+
+                    formData[this.name] = $(this).val();
+                });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        }
+
+
+        $(document).on('input change', '#form_company input, #form_company textarea, #form_company select', function() {
+            autoSaveForm();
+        });
+
+        // =========================================================
+        // 2) LOAD DATA KETIKA HALAMAN DIBUKA
+        // =========================================================
+        function loadSavedForm() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+
+            const data = JSON.parse(saved);
+
+            $('#form_company')
+                .find('input, textarea, select')
+                .each(function() {
+
+                    if (this.type === "file") return;
+
+                    // FIX: jangan timpa company_type
+                    if (this.name === "company_type") return;
+
+                    if (data[this.name] !== undefined) {
+                        $(this).val(data[this.name]);
+                    }
+                });
+        }
+
+
+        $(document).ready(function() {
+            loadSavedForm();
+        });
+    </script>
     @include('cs_vendor.partner_js')
 @stop

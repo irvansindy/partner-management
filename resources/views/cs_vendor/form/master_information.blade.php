@@ -26,7 +26,12 @@
                 <div class="row mb-4">
                     <label class="col-md-3">@lang('messages.Company Type')</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}" disabled>
+                        {{-- <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}" disabled> --}}
+                        <!-- field untuk ditampilkan di UI -->
+                            <input type="text"
+                                class="form-control"
+                                value="{{ ucfirst($formLink->form_type) }}" placeholder="{{ ucfirst($formLink->form_type) }}"
+                                readonly>
                         <small class="text-muted">This form is for {{ ucfirst($formLink->form_type) }}
                             registration</small>
                     </div>
