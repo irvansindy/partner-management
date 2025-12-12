@@ -23,8 +23,11 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($formLink) ? route('public.form.submit', $formLink->token) : '' }}" method="POST"
-                        id="form_company" enctype="multipart/form-data">
+
+                    <form
+                        action="{{ isset($formLink) ? route('public.form.submit', $formLink->token) : route('submit-partner') }}"
+                        method="POST" id="form_company" enctype="multipart/form-data"
+                        data-storage-key="partner_form_{{ $formLink->token ?? 'default' }}">
                         @csrf
 
                         @if (isset($formLink))

@@ -36,6 +36,11 @@ use App\Http\Controllers\CompanyExportController;
 Route::get('/', function () {
     return view('welcome');
 })->name('/');
+Route::get('/refresh-csrf', function () {
+    return response()->json([
+        'token' => csrf_token()
+    ]);
+})->name('refresh-csrf');
 Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement-wo-auth');
 

@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{-- Tambahkan di bagian HEAD layout --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    {{-- Setup AJAX global dengan CSRF --}}
+    <script>
+        // Set CSRF token untuk semua AJAX request
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     <title>@yield('title', 'Form Registration')</title>
 
     <!-- Bootstrap CSS -->

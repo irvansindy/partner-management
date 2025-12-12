@@ -922,221 +922,226 @@
             `)
         })
 
-        // $('#btn_submit_data_company').on('click', function(e) {
-        //     e.preventDefault();
-        //     // Clear previous error messages
-        //     $('.text-danger').text('');
-        //     $('.is-invalid').removeClass('is-invalid');
+        // ============================================
+        // AUTO REFRESH CSRF TOKEN SETIAP 30 MENIT
+        // ============================================
+        function refreshCsrfToken() {
+            $.ajax({
+                url: '/refresh-csrf', // Buat route ini di Laravel
+                type: 'GET',
+                success: function(response) {
+                    if (response.token) {
+                        // Update meta tag
+                        $('meta[name="csrf-token"]').attr('content', response.token);
 
-        //     // Show loading
-        //     Swal.fire({
-        //         title: 'Processing...',
-        //         text: 'Please wait while we submit your data',
-        //         allowOutsideClick: false,
-        //         didOpen: () => {
-        //             Swal.showLoading();
-        //         }
-        //     });
+                        // Update form input
+                        $('input[name="_token"]').val(response.token);
 
-        //     // Get form data
-        //     var formData = new FormData($('#form_company')[0]);
-        //     var formAction = $('#form_company').attr('action');
-
-        //     // Submit via AJAX
-        //     $.ajax({
-        //         url: '{{ route('submit-partner') }}',
-        //         type: 'POST',
-        //         data: formData,
-        //         headers: {
-        //             "X-APP-KEY": $('#public_key').val()
-        //         },
-        //         processData: false,
-        //         contentType: false,
-        //         success: function(response) {
-        //             Swal.close();
-
-        //             if (response.success) {
-        //                 Swal.fire({
-        //                     icon: 'success',
-        //                     title: 'Success!',
-        //                     text: response.message,
-        //                     confirmButtonText: 'OK'
-        //                 }).then((result) => {
-        //                     if (response.redirect_url) {
-        //                         window.location.href = response.redirect_url;
-        //                     }
-        //                 });
-        //             } else {
-        //                 Swal.fire({
-        //                     icon: 'error',
-        //                     title: 'Error!',
-        //                     text: response.message || 'Something went wrong'
-        //                 });
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             Swal.close();
-
-        //             // Clear old errors
-        //             $('.is-invalid').removeClass('is-invalid');
-        //             $('[id^="message_"]').text('');
-
-        //             if (xhr.status === 422) {
-        //                 // Validation errors
-        //                 var errors = xhr.responseJSON.errors;
-        //                 var errorMessage = '<ul style="text-align: left;">';
-
-        //                 $.each(errors, function(key, value) {
-        //                     var fieldId = key.replace(/\./g,
-        //                         '_'); // convert "field.0" → "field_0"
-        //                     var message = value[0] ?? 'Invalid input';
-
-        //                     // Show error on HTML field
-        //                     var messageContainer = $('#message_' + fieldId);
-        //                     var inputField = $('#' + fieldId);
-
-        //                     if (inputField.length > 0) {
-        //                         inputField.addClass('is-invalid');
-        //                     }
-
-        //                     if (messageContainer.length > 0) {
-        //                         messageContainer.text(message);
-        //                     }
-
-        //                     // Add to Swal
-        //                     errorMessage += '<li>' + message + '</li>';
-        //                 });
-
-        //                 errorMessage += '</ul>';
-
-        //                 Swal.fire({
-        //                     icon: 'error',
-        //                     title: 'Validation Error',
-        //                     html: 'Masih ada data yang kosong, silahkan cek kembali.',
-        //                     confirmButtonText: 'OK'
-        //                 });
-        //             } else {
-        //                 var errorMessage = 'An error occurred';
-
-        //                 if (xhr.responseJSON && xhr.responseJSON.message) {
-        //                     errorMessage = xhr.responseJSON.message;
-        //                 }
-
-        //                 Swal.fire({
-        //                     icon: 'error',
-        //                     title: 'Error!',
-        //                     text: errorMessage
-        //                 });
-        //             }
-        //         }
-
-
-        //     });
-        // });
-
-        $('#btn_submit_data_company').on('click', function(e) {
-    e.preventDefault();
-
-    // Clear previous errors
-    $('.text-danger').text('');
-    $('.is-invalid').removeClass('is-invalid');
-
-    Swal.fire({
-        title: 'Processing...',
-        text: 'Please wait while we submit your data',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-    });
-
-    var formData = new FormData($('#form_company')[0]);
-    var formAction = $('#form_company').attr('action');
-
-    // Ambil storage key unik dari form
-    const STORAGE_KEY = $('#form_company').data('storage-key');
-
-    $.ajax({
-        url: formAction,
-        type: 'POST',
-        data: formData,
-        headers: {
-            "X-APP-KEY": $('#public_key').val()
-        },
-        processData: false,
-        contentType: false,
-
-        success: function(response) {
-            Swal.close();
-
-            if (response.success) {
-
-                // ================================
-                // 🔥 CLEAR LOCALSTORAGE DI SINI 🔥
-                // ================================
-                if (STORAGE_KEY) {
-                    localStorage.removeItem(STORAGE_KEY);
-                }
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    if (response.redirect_url) {
-                        window.location.href = response.redirect_url;
+                        console.log('✅ CSRF token refreshed:', response.token);
                     }
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: response.message || 'Something went wrong'
-                });
-            }
-        },
+                },
+                error: function() {
+                    console.warn('⚠️ Failed to refresh CSRF token');
+                }
+            });
+        }
 
-        error: function(xhr) {
-            Swal.close();
+        // Refresh token setiap 30 menit (1800000 ms)
+        setInterval(refreshCsrfToken, 1800000);
+
+        // Refresh saat halaman di-focus kembali (user kembali ke tab)
+        $(window).on('focus', function() {
+            refreshCsrfToken();
+        });
+
+        // ============================================
+        // ENHANCED SUBMIT HANDLER
+        // ============================================
+        $('#btn_submit_data_company').on('click', function(e) {
+            e.preventDefault();
+
+            // Clear previous errors
+            $('.text-danger').text('');
             $('.is-invalid').removeClass('is-invalid');
-            $('[id^="message_"]').text('');
 
-            if (xhr.status === 422) {
-                var errors = xhr.responseJSON.errors;
+            // Ambil CSRF token terbaru
+            var csrfToken = $('meta[name="csrf-token"]').attr('content') ||
+                $('input[name="_token"]').val();
 
-                $.each(errors, function(key, value) {
-                    var fieldId = key.replace(/\./g, '_');
-                    var message = value[0];
-
-                    var inputField = $('#' + fieldId);
-                    var messageContainer = $('#message_' + fieldId);
-
-                    if (inputField.length) inputField.addClass('is-invalid');
-                    if (messageContainer.length) messageContainer.text(message);
-                });
-
+            if (!csrfToken) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Validation Error',
-                    html: 'Masih ada data yang kosong, silahkan cek kembali.',
+                    title: 'Session Error',
+                    text: 'CSRF token not found. Please refresh the page.',
+                    confirmButtonText: 'Refresh Page'
+                }).then(() => {
+                    window.location.reload();
                 });
-
                 return;
             }
 
-            var errorMessage = 'An error occurred';
-
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMessage = xhr.responseJSON.message;
-            }
-
             Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: errorMessage
+                title: 'Processing...',
+                text: 'Please wait while we submit your data',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
             });
-        }
-    });
-});
+
+            // Get form data
+            var formData = new FormData($('#form_company')[0]);
+
+            // Force update CSRF token di FormData
+            formData.set('_token', csrfToken);
+
+            var formAction = $('#form_company').attr('action');
+
+            console.log('📤 Submitting to:', formAction);
+            console.log('🔑 CSRF Token:', csrfToken);
+
+            $.ajax({
+                url: formAction,
+                type: 'POST',
+                data: formData,
+                headers: {
+                    "X-APP-KEY": $('#public_key').val(),
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                processData: false,
+                contentType: false,
+                cache: false,
+
+                success: function(response) {
+                    Swal.close();
+
+                    if (response.success) {
+                        // Clear localStorage setelah sukses
+                        if (typeof clearSavedForm === 'function') {
+                            clearSavedForm();
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message || 'Data berhasil disimpan',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            if (response.redirect_url) {
+                                window.location.href = response.redirect_url;
+                            } else {
+                                window.location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: response.message || 'Something went wrong'
+                        });
+                    }
+                },
+
+                error: function(xhr) {
+                    Swal.close();
+
+                    console.error('❌ Submit Error:', xhr.status, xhr.statusText);
+                    console.error('Response:', xhr.responseJSON);
+
+                    $('.is-invalid').removeClass('is-invalid');
+                    $('[id^="message_"]').text('');
+
+                    // Handle 419 - CSRF Token Mismatch
+                    if (xhr.status === 419) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Session Expired',
+                            html: 'Your session has expired.<br>The page will refresh to restore your session.',
+                            confirmButtonText: 'Refresh Page',
+                            allowOutsideClick: false
+                        }).then(() => {
+                            // Simpan current scroll position
+                            sessionStorage.setItem('scrollPosition', window
+                            .scrollY);
+                            window.location.reload();
+                        });
+                        return;
+                    }
+
+                    // Handle 422 - Validation Error
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON?.errors || {};
+                        var errorCount = Object.keys(errors).length;
+
+                        $.each(errors, function(key, value) {
+                            var fieldId = key.replace(/\./g, '_');
+                            var message = value[0];
+
+                            var inputField = $('#' + fieldId);
+                            var messageContainer = $('#message_' + fieldId);
+
+                            if (inputField.length) {
+                                inputField.addClass('is-invalid');
+                            }
+                            if (messageContainer.length) {
+                                messageContainer.text(message);
+                            }
+                        });
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Error',
+                            html: `Found ${errorCount} validation error(s). Please check your input.`,
+                        });
+
+                        // Scroll ke error pertama
+                        var firstError = $('.is-invalid').first();
+                        if (firstError.length) {
+                            $('html, body').animate({
+                                scrollTop: firstError.offset().top - 150
+                            }, 500);
+                        }
+
+                        return;
+                    }
+
+                    // Handle 500 - Server Error
+                    if (xhr.status === 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Server Error',
+                            text: 'An internal server error occurred. Please contact administrator.',
+                        });
+                        return;
+                    }
+
+                    // Generic error
+                    var errorMessage = 'An error occurred';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.statusText) {
+                        errorMessage = xhr.statusText;
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: errorMessage
+                    });
+                }
+            });
+        });
+
+        // ============================================
+        // RESTORE SCROLL POSITION AFTER REFRESH
+        // ============================================
+        $(document).ready(function() {
+            var scrollPosition = sessionStorage.getItem('scrollPosition');
+            if (scrollPosition) {
+                window.scrollTo(0, parseInt(scrollPosition));
+                sessionStorage.removeItem('scrollPosition');
+            }
+        });
 
     })
 </script>
