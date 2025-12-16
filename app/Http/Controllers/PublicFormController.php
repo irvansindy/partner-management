@@ -30,20 +30,14 @@ class PublicFormController extends Controller
             ]);
         }
 
-        // Gunakan view public, bukan cs_vendor.index
         return view('public.form_index', compact('formLink'));
     }
 
     public function submit(Request $request, $token)
     {
-        // dd($token);
         $formLink = FormLink::where('token', $token)->firstOrFail();
 
         if (!$formLink->canAcceptSubmission()) {
-            // return response()->json([
-            //     'success' => false,
-            //     'message' => 'Form sudah tidak dapat menerima submission.'
-            // ], 403);
             return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
         }
 
@@ -67,7 +61,6 @@ class PublicFormController extends Controller
                 'system_management' => $validated['system_management'] ?? null,
                 'email_address' => $validated['email_address'] ?? null,
                 'npwp' => $validated['register_number_as_in_tax_invoice'] ?? null,
-                // register_number_as_in_tax_invoice
                 'credit_limit' => $validated['credit_limit'] ?? null,
                 'term_of_payment' => $validated['term_of_payment'] ?? null,
                 'status' => 'checking',
@@ -135,8 +128,20 @@ class PublicFormController extends Controller
                 }
             }
 
-            // 6. Simpan Survey Data (khusus customer)
-            if ($formLink->form_type === 'customer') {
+            // ============================================
+            // 6. Simpan Survey Data (Conditional)
+            // ============================================
+            // ✅ HANYA simpan jika:
+            // 1. Company type adalah 'customer'
+            // 2. DAN minimal ada salah satu field survey yang diisi
+
+            $hasSurveyData = !empty($request->input('survey_ownership_status')) ||
+                            !empty($request->input('survey_pick_up')) ||
+                            !empty($request->input('survey_truck')) ||
+                            !empty($request->input('product_survey'));
+
+            if ($validated['company_type'] === 'customer' && $hasSurveyData) {
+                // Simpan SalesSurvey
                 SalesSurvey::create([
                     'company_id' => $company->id,
                     'ownership_status' => $validated['survey_ownership_status'] ?? null,
@@ -158,6 +163,10 @@ class PublicFormController extends Controller
                         }
                     }
                 }
+
+                Log::info('Survey data saved for company: ' . $company->id);
+            } else {
+                Log::info('Survey data skipped - Type: ' . $validated['company_type'] . ', Has data: ' . ($hasSurveyData ? 'Yes' : 'No'));
             }
 
             // 7. Handle File Uploads
@@ -186,25 +195,17 @@ class PublicFormController extends Controller
 
             DB::commit();
 
-            // return response()->json([
-            //     'success' => true,
-            //     'message' => 'Data berhasil dikirim! Terima kasih.',
-            //     'redirect_url' => route('public.form.success')
-            // ]);
             return FormatResponseJson::success(true, 'Data berhasil dikirim! Terima kasih.');
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             Log::error('Form submission error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->except(['input-multiple-file', '_token'])
             ]);
 
-            // return response()->json([
-            //     'success' => false,
-            //     'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()
-            // ], 500);
-            return FormatResponseJson::error(false,$e->getMessage(), 500);
+            return FormatResponseJson::error(false, $e->getMessage(), 500);
         }
     }
 
@@ -265,7 +266,10 @@ class PublicFormController extends Controller
             'input-multiple-file.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
 
-        // Survey only for customer
+        // ============================================
+        // ✅ Survey validation - SEMUA NULLABLE
+        // Karena user bisa hide survey form
+        // ============================================
         if ($formType === 'customer') {
             $rules = array_merge($rules, [
                 'survey_ownership_status' => 'nullable|in:own,rented',
@@ -278,13 +282,7 @@ class PublicFormController extends Controller
             ]);
         }
 
-        /**
-         * ============================
-         *     CUSTOM ERROR MESSAGES
-         * ============================
-         */
         $messages = [
-
             // ========================= MASTER INFORMATION =========================
             'company_type.required' => 'Jenis perusahaan wajib diisi. | Company type is required.',
             'company_type.in' => 'Jenis perusahaan harus vendor atau customer. | Company type must be vendor or customer.',

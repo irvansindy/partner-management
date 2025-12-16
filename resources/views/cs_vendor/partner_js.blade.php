@@ -1014,8 +1014,7 @@
                 success: function(response) {
                     Swal.close();
 
-                    if (response.success) {
-                        // Clear localStorage setelah sukses
+                    if (response.meta.status == 'success') {
                         if (typeof clearSavedForm === 'function') {
                             clearSavedForm();
                         }
@@ -1032,6 +1031,7 @@
                                 window.location.reload();
                             }
                         });
+                        // Clear localStorage setelah sukses
                     } else {
                         Swal.fire({
                             icon: 'error',
