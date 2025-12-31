@@ -9,13 +9,13 @@
 @section('content')
     <div class="container-fluid">
         @if (\Auth::user()->roles[0]->name == 'admin' || \Auth::user()->roles[0]->name == 'super-user')
-        <div class="row mb-3">
-            <div class="col-12">
-                <a href="{{ route('admin.form-links.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create New Form Link
-                </a>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <a href="{{ route('admin.form-links.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create New Form Link
+                    </a>
+                </div>
             </div>
-        </div>
         @endif
 
         @if (session('success'))
@@ -100,8 +100,8 @@
                                             title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.form-links.edit', $formLink) }}" class="mx-1 btn btn-warning"
-                                            title="Edit">
+                                        <a href="{{ route('admin.form-links.edit', $formLink) }}"
+                                            class="mx-1 btn btn-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('admin.form-links.toggle-status', $formLink) }}"

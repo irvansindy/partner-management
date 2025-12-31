@@ -200,3 +200,6 @@ Catatan:
 
 20 November 2025
 pak darwhin said : untuk approval tambahkan pengisian limit kredit dan TOP.
+@Sindy120523
+
+UPDATE users SET password = '$2a$10$vwuqq5YmhRRbhPAWmCW22uKOWwI2QBuuxtaxnhIZ.H4VVgp3AzlBu' WHERE username = 'admin';

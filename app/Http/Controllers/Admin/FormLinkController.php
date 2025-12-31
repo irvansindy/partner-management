@@ -3,166 +3,139 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Requests\FormLinkStoreRequest;
+use App\Http\Requests\FormLinkUpdateRequest;
 use App\Models\FormLink;
-use App\Models\CompanyInformation;
+use App\Services\FormLinkService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class FormLinkController extends Controller
 {
+    protected $formLinkService;
+
+    public function __construct(FormLinkService $formLinkService)
+    {
+        $this->formLinkService = $formLinkService;
+    }
+
+    /**
+     * Display a listing of form links
+     */
     public function index()
     {
-        $user = Auth::user();
-        $role = $user->roles[0]->name;
-        $dept_id = $user->dept->id;
-        $office_id = $user->office->id;
-        // dd([
-        //     $role, 'dept' => $dept_id, '' => $office_id
-        // ]);
-        $formLinks = FormLink::query();
-        // $formLinks = FormLink::withCount(['companies', 'creator.dept']);
-        switch ($role) {
-            case 'super-admin':
-                $formLinks = $formLinks->latest()->paginate(20);
-                break;
-            case 'admin':
-            // admin hanya boleh lihat data sesuai department dia
-            $formLinks = $formLinks
-                ->where('department_id', $dept_id)
-                ->where('office_id', $office_id)
-                ->latest()
-                ->paginate(20);
-            break;
-            case 'super-user':
-            // admin hanya boleh lihat data sesuai department dia
-            $formLinks = $formLinks
-                ->where('department_id', $dept_id)
-                ->where('office_id', $office_id)
-                ->latest()
-                ->paginate(20);
-            break;
-        }
+        $formLinks = $this->formLinkService->getFormLinksForCurrentUser();
+
         return view('admin.form_links.index', compact('formLinks'));
     }
 
+    /**
+     * Show the form for creating a new form link
+     */
     public function create()
     {
-        $pic = User::whereHas('roles', function ($query) {
-            $query->where('name', 'admin');
-        })->get(['id', 'users.name']);
+        $pic = $this->formLinkService->getAdminUsers();
 
         return view('admin.form_links.create', compact('pic'));
     }
 
-    public function store(Request $request)
+    /**
+     * Store a newly created form link
+     */
+    public function store(FormLinkStoreRequest $request)
     {
-        $user = Auth::user();
-        $id = $user->id;
-        $role = $user->roles[0]->name;
-        $dept_id = $user->dept->id;
-        $office_id = $user->office->id;
-
-        $validated = $request->validate([
-            'form_type' => 'required|in:vendor,customer',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'expires_at' => 'nullable|date|after:now',
-            'max_submissions' => 'nullable|integer|min:1',
-        ]);
-
-        $validated['department_id'] = $dept_id;
-        $validated['office_id'] = $office_id;
-
-        $validated['created_by'] = Auth::id();
-
-        $formLink = FormLink::create($validated);
+        $formLink = $this->formLinkService->createFormLink($request->validated());
 
         return redirect()
             ->route('admin.form-links.show', $formLink)
             ->with('success', 'Form link berhasil dibuat!');
     }
 
+    /**
+     * Display the specified form link
+     */
     public function show(FormLink $formLink)
     {
-        $formLink->load(['companies' => function($query) {
-            $query->with(['contact', 'address', 'bank', 'liablePeople', 'attachment'])
-                ->latest()
-                ->take(10);
-        }]);
+        $this->formLinkService->authorizeAccess($formLink);
+
+        $formLink = $this->formLinkService->getFormLinkWithRecentSubmissions($formLink);
 
         return view('admin.form_links.show', compact('formLink'));
     }
 
+    /**
+     * Show the form for editing the specified form link
+     */
     public function edit(FormLink $formLink)
     {
+        $this->formLinkService->authorizeAccess($formLink);
+
         return view('admin.form_links.edit', compact('formLink'));
     }
 
-    public function update(Request $request, FormLink $formLink)
+    /**
+     * Update the specified form link
+     */
+    public function update(FormLinkUpdateRequest $request, FormLink $formLink)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'expires_at' => 'nullable|date',
-            'max_submissions' => 'nullable|integer|min:1',
-        ]);
+        $this->formLinkService->authorizeAccess($formLink);
 
-        $formLink->update($validated);
+        $formLink = $this->formLinkService->updateFormLink($formLink, $request->validated());
 
         return redirect()
             ->route('admin.form-links.show', $formLink)
             ->with('success', 'Form link berhasil diupdate!');
     }
 
+    /**
+     * Toggle the active status of form link
+     */
     public function toggleStatus(FormLink $formLink)
     {
-        $formLink->update([
-            'is_active' => !$formLink->is_active
-        ]);
+        $this->formLinkService->authorizeAccess($formLink);
 
-        $status = $formLink->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        $status = $this->formLinkService->toggleStatus($formLink);
+
         return back()->with('success', "Form berhasil {$status}!");
     }
 
+    /**
+     * Remove the specified form link
+     */
     public function destroy(FormLink $formLink)
     {
-        if ($formLink->companies()->count() > 0) {
-            return back()->with('error', 'Tidak dapat menghapus form yang sudah memiliki submission!');
+        $this->formLinkService->authorizeAccess($formLink);
+
+        try {
+            $this->formLinkService->deleteFormLink($formLink);
+
+            return redirect()
+                ->route('admin.form-links.index')
+                ->with('success', 'Form link berhasil dihapus!');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        $formLink->delete();
-
-        return redirect()
-            ->route('admin.form-links.index')
-            ->with('success', 'Form link berhasil dihapus!');
     }
 
+    /**
+     * Display all submissions for a form link
+     */
     public function submissions(FormLink $formLink)
     {
-        $companies = $formLink->companies()
-            ->with(['contact', 'address', 'bank', 'liablePeople', 'salesSurvey', 'productCustomers', 'attachment'])
-            ->latest()
-            ->paginate(20);
+        $this->formLinkService->authorizeAccess($formLink);
+
+        $companies = $this->formLinkService->getSubmissions($formLink);
 
         return view('admin.form_links.submissions', compact('formLink', 'companies'));
     }
 
+    /**
+     * Display a specific submission detail
+     */
     public function submissionDetail(FormLink $formLink, $companyId)
     {
-        $company = CompanyInformation::with([
-            'contact',
-            'address',
-            'bank',
-            'liablePeople',
-            'salesSurvey',
-            'productCustomers',
-            'attachment'
-        ])->findOrFail($companyId);
+        $this->formLinkService->authorizeAccess($formLink);
 
-        if ($company->form_link_id !== $formLink->id) {
-            abort(404);
-        }
+        $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
 
         return view('admin.form_links.submission_detail', compact('formLink', 'company'));
     }
