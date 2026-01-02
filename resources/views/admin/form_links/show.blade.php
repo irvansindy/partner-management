@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="container-fluid">
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -38,7 +38,7 @@
                             <tr>
                                 <th>Status</th>
                                 <td>
-                                    @if($formLink->is_active && !$formLink->isExpired())
+                                    @if ($formLink->is_active && !$formLink->isExpired())
                                         <span class="badge badge-success">Active</span>
                                     @elseif($formLink->isExpired())
                                         <span class="badge badge-warning">Expired</span>
@@ -55,7 +55,7 @@
                                 <th>Submissions</th>
                                 <td>
                                     <strong>{{ $formLink->submission_count }}</strong>
-                                    @if($formLink->max_submissions)
+                                    @if ($formLink->max_submissions)
                                         / {{ $formLink->max_submissions }}
                                     @endif
                                 </td>
@@ -63,7 +63,7 @@
                             <tr>
                                 <th>Expires At</th>
                                 <td>
-                                    @if($formLink->expires_at)
+                                    @if ($formLink->expires_at)
                                         {{ $formLink->expires_at->format('d M Y H:i') }}
                                     @else
                                         <span class="text-muted">No expiration</span>
@@ -88,12 +88,10 @@
                         <div class="form-group">
                             <label>Share this link with recipients:</label>
                             <div class="input-group">
-                                <input type="text" class="form-control"
-                                       value="{{ $formLink->getPublicUrl() }}"
-                                       id="public-link" readonly>
+                                <input type="text" class="form-control" value="{{ $formLink->getPublicUrl() }}"
+                                    id="public-link" readonly>
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button"
-                                            onclick="copyPublicLink()">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="copyPublicLink()">
                                         <i class="fas fa-copy"></i> Copy
                                     </button>
                                 </div>
@@ -122,7 +120,8 @@
                         </a>
                         <form action="{{ route('admin.form-links.toggle-status', $formLink) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-{{ $formLink->is_active ? 'secondary' : 'success' }} btn-block">
+                            <button type="submit"
+                                class="btn btn-{{ $formLink->is_active ? 'secondary' : 'success' }} btn-block">
                                 <i class="fas fa-{{ $formLink->is_active ? 'toggle-off' : 'toggle-on' }}"></i>
                                 {{ $formLink->is_active ? 'Deactivate' : 'Activate' }} Form
                             </button>
@@ -157,7 +156,8 @@
                                     <tr>
                                         <td>{{ $company->name }}</td>
                                         <td>
-                                            <span class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">
+                                            <span
+                                                class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">
                                                 {{ ucfirst($company->type) }}
                                             </span>
                                         </td>
@@ -165,7 +165,7 @@
                                         <td>{{ $company->created_at->format('d M Y H:i') }}</td>
                                         <td>
                                             <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}"
-                                               class="btn btn-sm btn-info">
+                                                class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i> View
                                             </a>
                                         </td>
@@ -185,34 +185,35 @@
 @stop
 
 @section('css')
-<style>
-    #qrcode {
-        display: inline-block;
-        padding: 10px;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-</style>
+    <style>
+        #qrcode {
+            display: inline-block;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
 @stop
 
 @section('js')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-function copyPublicLink() {
-    var copyText = document.getElementById("public-link");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    document.execCommand("copy");
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> --}}
+    <script src="{{ asset('js/cdn/qrcode.js') }}"></script>
+    <script>
+        function copyPublicLink() {
+            var copyText = document.getElementById("public-link");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
 
-    toastr.success('Link copied to clipboard!');
-}
+            toastr.success('Link copied to clipboard!');
+        }
 
-// Generate QR Code
-new QRCode(document.getElementById("qrcode"), {
-    text: "{{ $formLink->getPublicUrl() }}",
-    width: 200,
-    height: 200
-});
-</script>
+        // Generate QR Code
+        new QRCode(document.getElementById("qrcode"), {
+            text: "{{ $formLink->getPublicUrl() }}",
+            width: 200,
+            height: 200
+        });
+    </script>
 @stop

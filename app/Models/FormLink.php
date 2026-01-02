@@ -10,6 +10,8 @@ class FormLink extends Model
     use HasFactory;
     protected $fillable = [
         'token',
+        'department_id',
+        'office_id',
         'form_type',
         'title',
         'description',
