@@ -10,5 +10,5 @@ class ApiWhitelist extends Model
     use HasFactory;
     protected $table = 'api_whitelists';
 
-    protected $filable = ['ip_address', 'description'];
+    protected $fillable = ['ip_address', 'description'];
 }

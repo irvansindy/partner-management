@@ -19,11 +19,11 @@
                     "defaultContent": "<i>Not set</i>"
                 },
                 {
-                    "data": "master_offices.name",
+                    "data": "office",
                     "defaultContent": "<i>Not set</i>"
                 },
                 {
-                    "data": "master_departments.name",
+                    "data": "department",
                     "defaultContent": "<i>Not set</i>"
                 },
                 {
@@ -33,6 +33,8 @@
                     "render": function(item) {
                         return '<button type="button" data-master_approval_id="' + item.id +
                             '" data-master_approval_name="' + item.name +
+                            '" data-office_id="' + item.office_id +
+                            '" data-department_id="' + item.department_id +
                             '" class="btn btn-outline-info btn-sm mt-2 detail_approval_detail" data-toggle="modal" data-target="#addViewApprovalDetail">Stagging</button>'
                     }
                 },
@@ -78,6 +80,8 @@
             data_approval_count = 0
             let master_approval_id = $(this).data('master_approval_id')
             let master_approval_name = $(this).data('master_approval_name')
+            let office_id = $(this).data('office_id')
+            let department_id = $(this).data('department_id')
 
             $('#data_approval_detail')[0].reset()
             $('.dynamic_approval').empty()
@@ -93,25 +97,37 @@
                 url: "{{ route('fetch-user-approval') }}",
                 method: 'GET',
                 data: {
-                    master_approval_id: master_approval_id
+                    master_approval_id: master_approval_id,
+                    office_id: office_id,
+                    department_id: department_id
                 },
                 dataType: 'json',
                 async: true,
                 success: function(res) {
                     const users = res.data.users;
-                    const existingApprovals = res.data.existing_approval;
+                    const existingApprovals = res.data.existing_approvers;
+                    // console.log(existingApprovals.length);
 
+                    $('#add_stagging').attr('data-approval_id', master_approval_id);
+                    $('#add_stagging').attr('data-department_id', department_id);
+                    $('#add_stagging').attr('data-office_id', office_id);
                     // --- Handle first (index 0) ---
-                    $('#stagging_approval_name_0').empty().append('<option value="">Select One</option>');
-                    if (existingApprovals.length > 0) {
+                    $('#stagging_approval_name_0').empty().append(
+                        '<option value="">Select One</option>');
+                    if (existingApprovals.length != 0) {
                         users.forEach(user => {
-                            const selected = user.id === existingApprovals[0].user_id ? 'selected' : '';
-                            $('#stagging_approval_name_0').append(`<option value="${user.id}" ${selected}>${user.name}</option>`);
+                            const selected = user.id === existingApprovals[0]
+                                .user_id ? 'selected' : '';
+                            $('#stagging_approval_name_0').append(
+                                `<option value="${user.id}" ${selected}>${user.name}</option>`
+                                );
                         });
                     } else {
                         // jika tidak ada existing_approval, isi tetap dengan list user
                         users.forEach(user => {
-                            $('#stagging_approval_name_0').append(`<option value="${user.id}">${user.name}</option>`);
+                            $('#stagging_approval_name_0').append(
+                                `<option value="${user.id}">${user.name}</option>`
+                                );
                         });
                     }
 
@@ -121,8 +137,10 @@
                         let selectOptions = `<option value="">Select One</option>`;
 
                         users.forEach(user => {
-                            const selected = user.id === approval.user_id ? 'selected' : '';
-                            selectOptions += `<option value="${user.id}" ${selected}>${user.name}</option>`;
+                            const selected = user.id === approval.user_id ?
+                                'selected' : '';
+                            selectOptions +=
+                                `<option value="${user.id}" ${selected}>${user.name}</option>`;
                         });
 
                         $('.dynamic_approval').append(`
@@ -154,7 +172,9 @@
             data_approval_count++;
 
             let id_select = `stagging_approval_name_${data_approval_count}`;
-
+            let approval_id = $(this).data('approval_id');
+            let department_id = $(this).data('department_id');
+            let office_id = $(this).data('office_id');
             // Append elemen baru dengan ID yang sudah disiapkan
             $('.dynamic_approval').append(`
                 <div class="row array_dynamic_approval mb-2">
@@ -178,12 +198,19 @@
                 },
                 url: "{{ route('fetch-user-approval') }}",
                 method: 'GET',
+                data: {
+                    master_approval_id: approval_id,
+                    office_id: office_id,
+                    department_id: department_id
+                },
                 async: true,
                 success: function(res) {
                     const $select = $(`#${id_select}`);
-                    $select.empty().append(`<option value="">Select User Approval</option>`);
+                    $select.empty().append(
+                    `<option value="">Select User Approval</option>`);
                     res.data.users.forEach(user => {
-                        $select.append(`<option value="${user.id}">${user.name}</option>`);
+                        $select.append(
+                            `<option value="${user.id}">${user.name}</option>`);
                     });
 
                     // Baru jalankan select2 SETELAH isi option

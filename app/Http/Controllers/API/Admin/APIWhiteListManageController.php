@@ -26,8 +26,9 @@ class APIWhiteListManageController extends Controller
     }
     public function createOrUpdate(Request $request)
     {
+        DB::beginTransaction();
+
         try {
-            DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'ip_address' => 'required|ip',
                 'description' => 'required|string|max:255',
@@ -42,21 +43,31 @@ class APIWhiteListManageController extends Controller
                 throw new ValidationException($validator);
             }
 
-            $data = ApiWhitelist::updateOrCreate(
-                ['id' => $request->id],
-                [
+            if ($request->filled('id_ip_address')) {
+                // UPDATE
+                $data = ApiWhitelist::where('id', $request->id_ip_address)->firstOrFail();
+                $data->update([
                     'ip_address' => $request->ip_address,
                     'description' => $request->description,
-                ]
-            );
+                ]);
+            } else {
+                // CREATE
+                $data = ApiWhitelist::create([
+                    'ip_address' => $request->ip_address,
+                    'description' => $request->description,
+                ]);
+            }
+
             DB::commit();
-            return formatResponseJson::success($data, 'IP address created/updated successfully');
+            return FormatResponseJson::success($data, 'IP address created/updated successfully');
+
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             DB::rollback();
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            return FormatResponseJson::error(null, $e->getMessage(), 500);
         }
     }
+
 }

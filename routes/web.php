@@ -168,7 +168,7 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     Route::get('fetch-approval', [ApprovalSettingController::class,'fetchApproval'])->name('fetch-approval');
     Route::get('fetch-user-approval', [ApprovalSettingController::class,'fetchUserApproval'])->name('fetch-user-approval');
     Route::get('fetch-office-department', [ApprovalSettingController::class,'fetchOfficeAndDepartment'])->name('fetch-office-department');
-    Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalMaster'])->name('store-approval-master');
+    Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalTemplate'])->name('store-approval-master');
     Route::post('submit-approval-detail', [ApprovalSettingController::class,'submitApprovalDetail'])->name('submit-approval-detail');
 
     Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');

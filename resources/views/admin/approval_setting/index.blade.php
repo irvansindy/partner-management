@@ -16,31 +16,36 @@
                             <p>Approval List</p>
                         </div>
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                            <button type="button" class="btn bg-gradient-primary" id="for_create_approval" data-toggle="modal" data-target="#formCreateApproval">+ Approval</button>
+                            <button type="button" class="btn bg-gradient-primary" id="for_create_approval"
+                                data-toggle="modal" data-target="#formCreateApproval">+ Approval</button>
                         </div>
                     </div>
                     <div class="card-body px-0 pt-2 pb-2">
                         <div class="table-responsive p-0 px-md-2">
-                            <table class="table table-hover align-items-center mb-0 data_tables" id="approval_table" style="width: 100%">
+                            <table class="table table-hover align-items-center mb-0 data_tables" id="approval_table"
+                                style="width: 100%">
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             No
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Approval Name
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Lokasi
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Department
                                         </th>
                                         <th class="text-secondary opacity-7">#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -64,12 +69,15 @@
         .select2-container--default .select2-selection--single {
             background-color: #f8fafc !important;
         }
+
         .select2-container .select2-selection--single {
             height: 38px !important;
         }
+
         .select2-container--default .select2-selection--single .select2-selection__arrow {
             height: 36px !important;
         }
+
         .toasts-top-right {
             z-index: 9999 !important;
         }

@@ -13,8 +13,10 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="ip_address">IP Address</label>
-                        <input type="hidden" class="form-control" id="id_ip_address" placeholder="IP Address" name="id_ip_address">
-                        <input type="text" class="form-control" id="ip_address" placeholder="IP Address" name="ip_address">
+                        <input type="hidden" class="form-control" id="id_ip_address" placeholder="IP Address"
+                            name="id_ip_address">
+                        <input type="text" class="form-control" id="ip_address" placeholder="IP Address"
+                            name="ip_address">
                         <span class="text-danger" id="message_ip_address"></span>
                     </div>
                     <div class="form-group">
@@ -24,7 +26,7 @@
                     </div>
                 </div>
                 <div class="modal-footer" id="button-ip_address">
-                    
+
                 </div>
             </form>
         </div>

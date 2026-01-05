@@ -16,30 +16,34 @@
                             <p>List IP Address</p>
                         </div>
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                            <button type="button" class="btn bg-gradient-primary" id="for_create_ip_address" data-toggle="modal" data-target="#formIpAddress">
+                            <button type="button" class="btn bg-gradient-primary" id="for_create_ip_address"
+                                data-toggle="modal" data-target="#formIpAddress">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
                     </div>
                     <div class="card-body px-0 pt-2 pb-2">
                         <div class="table-responsive p-0 px-md-2">
-                            <table class="table table-hover align-items-center mb-0 data_tables" id="ip_address_table" style="width: 100%">
+                            <table class="table table-hover align-items-center mb-0 data_tables" id="ip_address_table"
+                                style="width: 100%">
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             No
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             IP Address
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Description
                                         </th>
                                         <th class="text-secondary opacity-7">#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>

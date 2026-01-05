@@ -13,21 +13,24 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="hidden" class="form-control" name="master_approval_id" id="master_approval_id" readonly="true">
-                                <input type="text" class="form-control" name="master_approval_name" id="master_approval_name" readonly="true">
+                                <input type="hidden" class="form-control" name="master_approval_id"
+                                    id="master_approval_id" readonly="true">
+                                <input type="text" class="form-control" name="master_approval_name"
+                                    id="master_approval_name" readonly="true">
                             </div>
                         </div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-10">
                             <div class="form-group">
-                                <select class="form-control option_approval_detail" name="stagging_approval_name[]" id="stagging_approval_name_0" style="width: 100%">
+                                <select class="form-control option_approval_detail" name="stagging_approval_name[]"
+                                    id="stagging_approval_name_0" style="width: 100%">
                                     <option value="">Select One</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-auto">
-                            <button type="button" class="btn btn-outline-primary float-right" id="add_stagging">
+                            <button type="button" class="btn btn-outline-primary float-right" id="add_stagging" data-approval_id="" data-department_id="" data-office_id="">
                                 <i class="fas fa-fw fa-plus"></i>
                             </button>
                         </div>
@@ -36,7 +39,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="create_approval_detail_data" data-master_approval_stagging="">Save</button>
+                    <button type="button" class="btn btn-primary" id="create_approval_detail_data"
+                        data-master_approval_stagging="">Save</button>
                 </div>
             </form>
         </div>

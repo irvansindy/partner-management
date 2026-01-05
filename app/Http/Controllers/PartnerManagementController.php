@@ -356,7 +356,7 @@ class PartnerManagementController extends Controller
         }
     }
 
-    public function approvalPartner(Request $request)
+    public function approvalPartnerOld2(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -448,7 +448,8 @@ class PartnerManagementController extends Controller
                             'status'        => 1, // Progress
                             'step_ordering' => $nextStep->step_ordering,
                         ]);
-                        $partner->update(['status' => 'checking ' . $nextStep->step_ordering]);
+                        // $partner->update(['status' => 'checking ' . $nextStep->step_ordering]);
+                        $partner->update(['status' => 'checking 2']); // Tetap "checking 2"
                     } else {
                         $approvalMaster->update(['status' => 2]); // Fully approved
                         $partner->update(['status' => 'approved']);
@@ -476,7 +477,194 @@ class PartnerManagementController extends Controller
             return FormatResponseJson::error(null, $e->getMessage(), 400);
         }
     }
+    public function approvalPartner(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
+            $status = $request->status;
+            $user = auth()->user();
+            $partner = CompanyInformation::findOrFail($request->partner_id);
+
+            // Validasi status yang diizinkan
+            if (!in_array($status, ['approved', 'reject'])) {
+                return FormatResponseJson::error(null, 'Status tidak valid', 400);
+            }
+
+            // Cari ApprovalMaster yang sedang berjalan
+            $approvalMaster = ApprovalMaster::where('company_information_id', $partner->id)
+                ->whereIn('status', [0, 1]) // 0=pending, 1=progress
+                ->first();
+
+            if ($status === 'approved') {
+
+                // ========== FIRST APPROVAL ==========
+                if (!$approvalMaster) {
+
+                    // 1. Validasi template approval tersedia
+                    $template = MasterApprovalModel::where([
+                        'location_id'   => $user->office_id,
+                        'department_id' => $user->department_id,
+                        'status'        => 1, // Active template
+                    ])->first();
+
+                    if (!$template) {
+                        return FormatResponseJson::error(null, 'Template approval tidak ditemukan untuk office dan department Anda. Hubungi ICT.', 404);
+                    }
+
+                    // 2. Ambil detail approver dari template
+                    $templateDetails = DetailApprovalModel::where('approval_id', $template->id)
+                        ->where('status', 0) // Active approvers only
+                        ->orderBy('step_ordering')
+                        ->get();
+
+                    if ($templateDetails->isEmpty()) {
+                        return FormatResponseJson::error(null, 'Tidak ada approver yang dikonfigurasi dalam template. Hubungi ICT.', 404);
+                    }
+
+                    // 3. Buat ApprovalMaster baru
+                    $approvalMaster = ApprovalMaster::create([
+                        'company_information_id' => $partner->id,
+                        'user_id'                => $user->id,
+                        'location_id'            => $user->office_id,
+                        'department_id'          => $user->department_id,
+                        'step_ordering'          => 1, // Current step
+                        'status'                 => 1, // In progress
+                    ]);
+
+                    // 4. Insert Step 1: Admin/User pertama (auto approved)
+                    ApprovalDetails::create([
+                        'approval_id'   => $approvalMaster->id,
+                        'user_id'       => $user->id,
+                        'step_ordering' => 1,
+                        'status'        => 2, // Approved
+                    ]);
+
+                    // 5. Insert Step 2+: Copy dari template
+                    $stepCounter = 2;
+                    foreach ($templateDetails as $detail) {
+                        ApprovalDetails::create([
+                            'approval_id'   => $approvalMaster->id,
+                            'user_id'       => $detail->user_id,
+                            'step_ordering' => $stepCounter,
+                            'status'        => ($stepCounter === 2) ? 1 : 0, // Step 2 = waiting, sisanya pending
+                        ]);
+                        $stepCounter++;
+                    }
+
+                    // 6. Update partner status
+                    $partner->update([
+                        'status'        => 'checking 2',
+                        'location_id'   => $user->office_id,
+                        'department_id' => $user->department_id,
+                    ]);
+
+                    // 7. Update approval master ke step 2
+                    $approvalMaster->update(['step_ordering' => 2]);
+
+                }
+                // ========== NEXT APPROVAL ==========
+                else {
+
+                    // 1. Cari approval detail user ini
+                    $approvalDetail = ApprovalDetails::where([
+                        'approval_id' => $approvalMaster->id,
+                        'user_id'     => $user->id,
+                    ])->first();
+
+                    // 2. Validasi user adalah approver
+                    if (!$approvalDetail) {
+                        return FormatResponseJson::error(null, 'Anda tidak terdaftar sebagai approver untuk partner ini.', 403);
+                    }
+
+                    // 3. Validasi belum approve sebelumnya
+                    if ($approvalDetail->status === 2) {
+                        return FormatResponseJson::error(null, 'Anda sudah melakukan approval sebelumnya.', 403);
+                    }
+
+                    // 4. Validasi giliran approve
+                    if ($approvalDetail->status !== 1) {
+                        return FormatResponseJson::error(null, 'Approval belum sampai ke giliran Anda. Harap tunggu approver sebelumnya.', 403);
+                    }
+
+                    // 5. Update status detail menjadi approved
+                    $approvalDetail->update(['status' => 2]);
+
+                    // 6. Cari step berikutnya
+                    $nextStep = ApprovalDetails::where('approval_id', $approvalMaster->id)
+                        ->where('step_ordering', '>', $approvalDetail->step_ordering)
+                        ->orderBy('step_ordering')
+                        ->first();
+
+                    // 7. Proses next step atau final approval
+                    if ($nextStep) {
+                        // Masih ada step berikutnya
+                        $nextStep->update(['status' => 1]); // Set waiting
+
+                        $approvalMaster->update([
+                            'step_ordering' => $nextStep->step_ordering,
+                            'status'        => 1, // Still in progress
+                        ]);
+
+                        $partner->update(['status' => 'checking 2']); // Tetap checking 2
+
+                    } else {
+                        // Semua step selesai - FINAL APPROVAL
+                        $approvalMaster->update(['status' => 2]); // Fully approved
+                        $partner->update(['status' => 'approved']);
+                    }
+                }
+
+            }
+            // ========== REJECT ==========
+            elseif ($status === 'reject') {
+
+                // 1. Update status partner
+                $partner->update(['status' => 'reject']);
+
+                // 2. Update approval master & details
+                if ($approvalMaster) {
+                    $approvalMaster->update(['status' => 3]); // Rejected
+
+                    ApprovalDetails::where('approval_id', $approvalMaster->id)
+                        ->update(['status' => 3]); // Mark all as rejected
+                }
+
+                // 3. Optional: Soft delete atau hard delete data terkait
+                // Rekomendasi: Gunakan soft delete agar ada audit trail
+
+                // Jika memang harus hard delete:
+                CompanyAddress::where('company_id', $partner->id)->delete();
+                CompanyBank::where('company_id', $partner->id)->delete();
+                CompanyTax::where('company_id', $partner->id)->delete();
+                CompanySupportingDocument::where('company_id', $partner->id)->delete();
+
+                // Soft delete partner (tambahkan deleted_at di migration)
+                // $partner->delete();
+
+                // Atau hard delete
+                $partner->delete();
+            }
+
+            DB::commit();
+
+            $message = $status === 'approved'
+                ? 'Partner berhasil diapprove'
+                : 'Partner berhasil direject dan data telah dihapus';
+
+            return FormatResponseJson::success(null, $message);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Approval Partner Error: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'partner_id' => $request->partner_id ?? null,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return FormatResponseJson::error(null, 'Terjadi kesalahan: ' . $e->getMessage(), 500);
+        }
+    }
     public function getMenusWithSubmenus()
     {
         // Ambil user yang sedang login
