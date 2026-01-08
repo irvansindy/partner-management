@@ -130,12 +130,22 @@ class FormLinkController extends Controller
 
     /**
      * Display a specific submission detail
+     * ✅ UPDATED: Load approval process
      */
     public function submissionDetail(FormLink $formLink, $companyId)
     {
         $this->formLinkService->authorizeAccess($formLink);
 
+        // Get company with approval process loaded
         $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
+
+        // Load approval process with all relations
+        $company->load([
+            'approvalProcess.steps.approver',
+            'approvalProcess.initiator',
+            'approvalProcess.department',
+            'approvalProcess.office'
+        ]);
 
         return view('admin.form_links.submission_detail', compact('formLink', 'company'));
     }

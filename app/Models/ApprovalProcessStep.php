@@ -12,7 +12,7 @@ class ApprovalProcessStep extends Model
     protected $table = 'approval_process_steps';
 
     protected $fillable = [
-        'approval_process_id',
+        'approval_id',
         'user_id',
         'step_ordering',
         'status',
@@ -38,7 +38,7 @@ class ApprovalProcessStep extends Model
 
     public function process()
     {
-        return $this->belongsTo(ApprovalProcess::class, 'approval_process_id', 'id');
+        return $this->belongsTo(ApprovalProcess::class, 'approval_id', 'id');
     }
 
     public function approver()

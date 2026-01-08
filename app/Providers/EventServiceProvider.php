@@ -8,6 +8,10 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use App\Models\Menu;
+
+// ✅ Import Observer
+use App\Models\CompanyInformation;
+use App\Observers\CompanyInformationObserver;
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -34,33 +38,33 @@ class EventServiceProvider extends ServiceProvider
                 ->where('type', 1)
                 ->orderBy('order')
                 ->get();
-    
+
             $user = auth()->user();
-    
+
             // Ambil semua permission dari role-role yang dimiliki user
             $rolePermissions = $user->roles
                 ->flatMap(function ($role) {
                     return $role->permissions->pluck('name');
                 })
                 ->unique();
-    
+
             foreach ($menus as $menu) {
                 // Cek permission menu utama
                 if ($menu->can_permission && !$rolePermissions->contains($menu->can_permission)) {
                     continue;
                 }
-    
+
                 $menuItem = [
                     'text' => $menu->name_text,
                     'url'  => $menu->url_name,
                     'icon' => $menu->icon,
                 ];
-    
+
                 // Filter submenu berdasarkan permission role
                 $children = $menu->children->filter(function ($submenu) use ($rolePermissions) {
                     return !$submenu->can_permission || $rolePermissions->contains($submenu->can_permission);
                 })->sortBy('order');
-    
+
                 if ($children->isNotEmpty()) {
                     $menuItem['submenu'] = $children->map(function ($submenu) {
                         return [
@@ -70,12 +74,21 @@ class EventServiceProvider extends ServiceProvider
                         ];
                     })->toArray();
                 }
-    
+
                 $event->menu->add($menuItem);
             }
         });
 
+        // ✅ Register CompanyInformation Observer
+        CompanyInformation::observe(CompanyInformationObserver::class);
     }
-    
+
+    /**
+     * Determine if events and listeners should be automatically discovered.
+     */
+    // public function shouldDiscoverEvents(): bool
+    // {
+    //     return false;
+    // }
 
 }

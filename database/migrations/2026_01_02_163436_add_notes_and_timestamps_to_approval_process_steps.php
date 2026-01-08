@@ -25,7 +25,7 @@ return new class extends Migration
         // ✅ Tambah index menggunakan raw SQL (tidak pakai Doctrine)
         $this->addIndexIfNotExists(
             'approval_process_steps',
-            ['approval_process_id', 'status'],
+            ['approval_id', 'status'],
             'idx_approval_process_steps_process_status'
         );
 

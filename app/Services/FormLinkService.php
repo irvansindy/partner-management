@@ -6,11 +6,19 @@ use App\Models\FormLink;
 use App\Models\User;
 use App\Models\CompanyInformation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class FormLinkService
 {
+    protected $approvalService;
+
+    public function __construct(ApprovalService $approvalService)
+    {
+        $this->approvalService = $approvalService;
+    }
+
     /**
      * Get form links filtered by current user's role and permissions
      */
@@ -60,7 +68,7 @@ class FormLinkService
         $data['department_id'] = $user->dept->id;
         $data['office_id'] = $user->office->id;
         $data['created_by'] = $user->id;
-        // dd($data);
+
         return FormLink::create($data);
     }
 
@@ -112,6 +120,7 @@ class FormLinkService
 
     /**
      * Get all submissions for a form link
+     * ✅ UPDATED: Load approval process
      */
     public function getSubmissions(FormLink $formLink): LengthAwarePaginator
     {
@@ -123,7 +132,8 @@ class FormLinkService
                 'liablePeople',
                 'salesSurvey',
                 'productCustomers',
-                'attachment'
+                'attachment',
+                'approvalProcess.steps' // Load approval
             ])
             ->latest()
             ->paginate(20);
@@ -199,7 +209,36 @@ class FormLinkService
     }
 
     /**
-     * Increment submission count
+     * Increment submission count and create approval process
+     *
+     * ✅ NEW: Automatically create approval process after submission
+     */
+    public function processNewSubmission(CompanyInformation $company): void
+    {
+        try {
+            // Increment submission count
+            $formLink = FormLink::find($company->form_link_id);
+            if ($formLink) {
+                $formLink->increment('submission_count');
+            }
+
+            // Create approval process automatically
+            $approvalProcess = $this->approvalService->createApprovalFromFormLink($company);
+
+            if ($approvalProcess) {
+                Log::info("Approval process created for company ID: {$company->id}");
+            } else {
+                Log::warning("No approval template found for company ID: {$company->id}");
+            }
+
+        } catch (\Exception $e) {
+            Log::error("Failed to process submission for company ID: {$company->id}. Error: {$e->getMessage()}");
+            // Don't throw exception - submission should still be saved even if approval creation fails
+        }
+    }
+
+    /**
+     * Increment submission count (legacy method - kept for backward compatibility)
      */
     public function incrementSubmissionCount(FormLink $formLink): void
     {
@@ -220,5 +259,36 @@ class FormLinkService
             'is_expired' => $formLink->isExpired(),
             'can_accept' => $this->canAcceptSubmission($formLink),
         ];
+    }
+
+    /**
+     * ✅ NEW: Get submission with approval status
+     */
+    public function getSubmissionWithApproval(FormLink $formLink, int $companyId): array
+    {
+        $company = $this->getSubmissionDetail($formLink, $companyId);
+
+        $approvalProcess = $this->approvalService->getApprovalProcess($companyId);
+
+        return [
+            'company' => $company,
+            'approval' => $approvalProcess,
+            'has_approval' => $approvalProcess !== null,
+            'approval_status' => $approvalProcess ? $this->getApprovalStatusLabel($approvalProcess->status) : null,
+        ];
+    }
+
+    /**
+     * ✅ NEW: Get approval status label
+     */
+    private function getApprovalStatusLabel(int $status): string
+    {
+        return match($status) {
+            0 => 'Menunggu',
+            1 => 'Dalam Proses',
+            2 => 'Disetujui',
+            3 => 'Ditolak',
+            default => 'Unknown',
+        };
     }
 }

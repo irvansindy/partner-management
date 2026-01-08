@@ -19,6 +19,7 @@ use App\Http\Controllers\API\Admin\APIWhiteListManageController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\Admin\FormLinkController;
+use App\Http\Controllers\Admin\ApprovalProcessController;
 use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\CompanyImportController;
 use App\Http\Controllers\CompanyExportController;
@@ -97,6 +98,34 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('template', [CompanyExportController::class, 'downloadTemplate'])
             ->name('template');
     });
+
+    // Approval Process Routes
+    Route::prefix('approvals')->name('approvals.')->group(function () {
+        // List all approval processes
+        Route::get('/', [ApprovalProcessController::class, 'index'])
+            ->name('index');
+
+        // My pending approvals (as approver)
+        Route::get('/my/pending', [ApprovalProcessController::class, 'myApprovals'])
+            ->name('my');
+
+        // Show specific approval detail
+        Route::get('/{approval}', [ApprovalProcessController::class, 'show'])
+            ->name('show');
+
+        // Show approval action form - PENTING: Harus di atas route show
+        Route::get('/step/{step}/action', [ApprovalProcessController::class, 'showApprovalForm'])
+            ->name('step.action');
+
+        // Process approval action (approve/reject)
+        Route::post('/step/{step}/process', [ApprovalProcessController::class, 'processAction'])
+            ->name('step.process');
+
+        // View company approval history
+        Route::get('/company/{companyId}/history', [ApprovalProcessController::class, 'companyApprovalHistory'])
+            ->name('company.history');
+    });
+
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -192,6 +221,7 @@ Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
     Route::get('fetch-office-setting-by-id', [OfficeManagementController::class,'fetchOfficeById'])->name('fetch-office-setting-by-id');
     Route::post('submit-office-setting', [OfficeManagementController::class,'CreateOrUpdateOffice'])->name('submit-office-setting');
     // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
+
 });
 
 Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(function () {
