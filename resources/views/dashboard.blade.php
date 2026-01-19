@@ -233,6 +233,7 @@
         #regencyModal .modal-dialog {
             max-width: 800px;
         }
+
         #regencyChart {
             width: 100%;
             height: 400px;
@@ -258,7 +259,8 @@
 
     <!-- Chartjs -->
     {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script> --}}
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js">
+    </script>
 
     <!-- Leaflet + AwesomeMarkers -->
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
