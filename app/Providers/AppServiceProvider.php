@@ -7,9 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use App\Services\MenuService;
-use Illuminate\Support\Str;
 use Dedoc\Scramble\Scramble;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use App\Observers\GenericModelObserver;
@@ -19,7 +17,6 @@ use App\Models\CompanyBank;
 use App\Models\CompanyAddress;
 use App\Models\CompanyTax;
 use App\Models\CompanySupportingDocument;
-use App\Models\User;
 use App\Models\UserBalanceSheet;
 use App\Models\UserFinancialRatio;
 use App\Models\UserValueIncomeStatement;
@@ -34,7 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
     }
 
     /**

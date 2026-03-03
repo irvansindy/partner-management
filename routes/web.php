@@ -151,7 +151,6 @@ Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
 
-
     Route::get('/fetch-partner', [PartnerController::class,'fetchCompany'])->name('fetch-partner');
     Route::get('/detail-partner', [PartnerController::class,'detailPartner'])->name('detail-partner');
     Route::get('/fetch-partner-by-user', [PartnerController::class,'fetchCompanyPartnerById'])->name('fetch-partner-by-user');
