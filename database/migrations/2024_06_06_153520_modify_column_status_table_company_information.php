@@ -14,7 +14,8 @@ class ModifyColumnStatusTableCompanyInformation extends Migration
     public function up()
     {
         Schema::table('company_informations', function (Blueprint $table) {
-            DB::statement("ALTER TABLE company_informations MODIFY status ENUM('checking', 'checking 2', 'approved', 'reject') NOT NULL");
+            // DB::statement("ALTER TABLE company_informations MODIFY status ENUM('checking', 'checking 2', 'approved', 'reject') NOT NULL");
+            DB::statement("ALTER TABLE company_informations ADD CONSTRAINT status CHECK (status IN ('checking', 'checking 2', 'approved', 'reject'))");
         });
     }
 
@@ -26,7 +27,8 @@ class ModifyColumnStatusTableCompanyInformation extends Migration
     public function down()
     {
         Schema::table('company_informations', function (Blueprint $table) {
-            DB::statement("ALTER TABLE company_informations MODIFY status ENUM('checking', 'approved') NOT NULL");
+            // DB::statement("ALTER TABLE company_informations MODIFY status ENUM('checking', 'approved') NOT NULL");
+            DB::statement("ALTER TABLE company_informations DROP CONSTRAINT IF EXISTS status");
         });
     }
 }

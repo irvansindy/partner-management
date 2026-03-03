@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+// use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Facades\DB;
 class ChangeColumnTermOfPaymentTableCompanyInformations extends Migration
 {
     /**
@@ -13,7 +13,8 @@ class ChangeColumnTermOfPaymentTableCompanyInformations extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE company_informations MODIFY COLUMN term_of_payment varchar(255) NULL");
+        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN term_of_payment varchar(255) NULL");
+        DB::statement("ALTER TABLE company_informations ALTER COLUMN term_of_payment DROP NOT NULL");
     }
 
     /**
@@ -23,6 +24,7 @@ class ChangeColumnTermOfPaymentTableCompanyInformations extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE company_informations MODIFY COLUMN term_of_payment ENUM('30', '45', '60', '90') NULL");
+        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN term_of_payment ENUM('30', '45', '60', '90') NULL");
+        DB::statement("ALTER TABLE company_informations ALTER COLUMN term_of_payment TYPE VARCHAR(20)");
     }
 }

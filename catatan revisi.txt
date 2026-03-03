@@ -203,3 +203,5 @@ pak darwhin said : untuk approval tambahkan pengisian limit kredit dan TOP.
 @Sindy120523
 
 UPDATE users SET password = '$2a$10$vwuqq5YmhRRbhPAWmCW22uKOWwI2QBuuxtaxnhIZ.H4VVgp3AzlBu' WHERE username = 'admin';
+
+ALTER USER postgres WITH PASSWORD 'ChiquitaB3B5B6';

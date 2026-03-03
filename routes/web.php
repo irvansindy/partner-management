@@ -34,6 +34,18 @@ use App\Http\Controllers\CompanyExportController;
 |
 */
 
+use Illuminate\Support\Facades\DB;
+
+Route::get('/db-test', function () {
+    try {
+        DB::connection()->getPdo();
+        return "Koneksi database berhasil: " . DB::connection()->getDatabaseName();
+    } catch (\Exception $e) {
+        return "Koneksi database gagal. Error: " . $e->getMessage();
+    }
+});
+
+
 Route::get('/', function () {
     return view('welcome');
 })->name('/');

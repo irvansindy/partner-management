@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             OfficeSeeder::class,
             UserSeeder::class,
+            ProvincesSeeder::class,
+            RegenciesSeeder::class,
         ]);
     }
 }
