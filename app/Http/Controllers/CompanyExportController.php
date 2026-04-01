@@ -117,7 +117,12 @@ class CompanyExportController extends Controller
             Log::info("Fields: " . implode(', ', $selectedFields));
 
             // Ambil data company (sesuaikan query filter jika perlu)
-            $companies = \App\Models\CompanyInformation::all();
+            $companies = \App\Models\CompanyInformation::with([
+                'contact',
+                'address',
+                'bank',
+                'liablePeople',
+            ])->get();
 
             $imageLogo = '<img src="' . public_path('uploads/logo/logo.png') . '" width="70px" style="float: right;"/>';
 
