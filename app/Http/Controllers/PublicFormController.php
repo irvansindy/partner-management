@@ -14,7 +14,6 @@ use App\Models\CompanyAttachment;
 use App\Services\ApprovalService; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\FormatResponseJson;
 
@@ -75,6 +74,8 @@ class PublicFormController extends Controller
                 'status' => 'checking',
             ]);
 
+            Log::info('✅ Step 1 - Company created: ' . $company->id);  // ← TAMBAH INI
+
             // 2. Simpan Liable Persons
             if (!empty($validated['liable_person'])) {
                 foreach ($validated['liable_person'] as $index => $person) {
@@ -86,7 +87,7 @@ class PublicFormController extends Controller
                     ]);
                 }
             }
-
+            Log::info('✅ Step 2 - Liable persons saved');  // ← TAMBAH INI
             // 3. Simpan Contacts
             if (!empty($validated['contact_name'])) {
                 foreach ($validated['contact_name'] as $index => $name) {
@@ -100,7 +101,7 @@ class PublicFormController extends Controller
                     ]);
                 }
             }
-
+            Log::info('✅ Step 3 - Contacts saved');  // ← TAMBAH INI
             // 4. Simpan Addresses
             if (!empty($validated['address'])) {
                 foreach ($validated['address'] as $index => $address) {
@@ -124,6 +125,8 @@ class PublicFormController extends Controller
                     CompanyAddress::create($addressData);
                 }
             }
+
+            Log::info('✅ Step 4 - Addresses saved');  // ← TAMBAH INI
 
             // 5. Simpan Banks
             if (!empty($validated['bank_name'])) {
@@ -218,7 +221,9 @@ class PublicFormController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-
+            Log::error('❌ ROLLBACK: ' . $e->getMessage());
+            Log::error('❌ FILE: ' . $e->getFile() . ' LINE: ' . $e->getLine()); // ← TAMBAH INI
+            Log::error('❌ TRACE: ' . $e->getTraceAsString());
             Log::error('Form submission error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'request_data' => $request->except(['input-multiple-file', '_token'])

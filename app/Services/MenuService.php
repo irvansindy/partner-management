@@ -15,18 +15,35 @@ class MenuService
             ->get()
             ->filter(function ($menu) use ($user) {
                 return !$menu->permission_name || $user->can($menu->permission_name);
-            }); 
+            });
 
         return $this->buildMenuTree($menus);
     }
-
+    // private function buildMenuTree($menus, $parentId = null)
+    // {
+    //     return $menus->filter(function ($menu) use ($parentId) {
+    //         return $menu->parent_id == $parentId;
+    //     })->map(function ($menu) use ($menus) {
+    //         $menu->children = $this->buildMenuTree($menus, $menu->id);
+    //         return $menu;
+    //     });
+    // }
     private function buildMenuTree($menus, $parentId = null)
     {
         return $menus->filter(function ($menu) use ($parentId) {
             return $menu->parent_id == $parentId;
         })->map(function ($menu) use ($menus) {
-            $menu->children = $this->buildMenuTree($menus, $menu->id);
-            return $menu;
-        });
+
+            return [
+                'id' => $menu->id,
+                'name' => $menu->name,
+                'url' => $menu->url,
+                'icon' => $menu->icon,
+                'parent_id' => $menu->parent_id,
+                'order' => $menu->order,
+                'children' => $this->buildMenuTree($menus, $menu->id)->values()
+            ];
+
+        })->values();
     }
 }

@@ -76,5 +76,7 @@ class Kernel extends HttpKernel
         'docs' => \Dedoc\Scramble\Http\Middleware\PrepareDocs::class,
         'sanitize.input' => \App\Http\Middleware\SanitizeInputMiddleware::class,
         'public_form' => \App\Http\Middleware\PublicFormProtection::class,
+        'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+        'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
     ];
 }

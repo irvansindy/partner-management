@@ -25,9 +25,11 @@
         "spatie/laravel-permission": "^6.4",
         "tanmuhittin/laravel-google-translate": "*",
         "torann/geoip": "*",
+        "tymon/jwt-auth": "^1.0@dev",
         "wimski/laravel-nominatim": "^2.0"
     },
     "require-dev": {
+        "andyabih/laravel-to-uml": "^1.0",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",

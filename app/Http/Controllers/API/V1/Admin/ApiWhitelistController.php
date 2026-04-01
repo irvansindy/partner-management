@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Admin;
+namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ class ApiWhitelistController extends Controller
      */
     public function index()
     {
-        
+
         return FormatResponseJson::success(ApiWhitelist::all(), 'Data whitelist fetched successfully');
     }
 
@@ -45,7 +45,7 @@ class ApiWhitelistController extends Controller
             $apiWhitelist->name = $request->get('name');
             $apiWhitelist->description = $request->get('description');
             $apiWhitelist->save();
-            
+
             DB::commit();
             return FormatResponseJson::success($apiWhitelist, 'Data whitelist created successfully');
         } catch (ValidationException $e) {

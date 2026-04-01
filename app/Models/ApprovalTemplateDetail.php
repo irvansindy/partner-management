@@ -51,7 +51,6 @@ class ApprovalTemplateDetail extends Model
 
     public function scopeForTemplate($query, $templateId)
     {
-        return $query->where('approval_id', $templateId)
-                     ->orderBy('step_ordering');
+        return $query->where('approval_id', $templateId)->orderBy('step_ordering');
     }
 }

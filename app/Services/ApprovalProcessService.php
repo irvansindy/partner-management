@@ -9,7 +9,7 @@ use App\Services\ApprovalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ApprovalProcessController extends Controller
+class ApprovalProcessService extends Controller
 {
     protected $approvalService;
 

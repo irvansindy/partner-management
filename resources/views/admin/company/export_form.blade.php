@@ -357,12 +357,25 @@
                         </div>
 
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-success btn-lg" id="btnExport">
-                                <i class="fas fa-file-download"></i> Export ke Excel
-                            </button>
-                            <a href="{{ route('admin.company.import.form') }}" class="btn btn-secondary btn-lg">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </a>
+                            <div class="mt-4 d-flex gap-2">
+                                <button type="submit"
+                                        formaction="{{ route('admin.company.export.custom') }}"
+                                        class="btn btn-success btn-lg"
+                                        id="btnExportExcel">
+                                    <i class="fas fa-file-download"></i> Export ke Excel
+                                </button>
+
+                                <button type="submit"
+                                        formaction="{{ route('admin.company.export.custom.pdf') }}"
+                                        class="btn btn-danger btn-lg"
+                                        id="btnExportPdf">
+                                    <i class="fas fa-file-pdf"></i> Export ke PDF
+                                </button>
+
+                                <a href="{{ url()->previous() }}" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-arrow-left"></i> Kembali
+                                </a>
+                            </div>
                         </div>
                     </form>
                 </div>

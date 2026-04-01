@@ -95,4 +95,88 @@ class CompanyExportController extends Controller
             return back()->with('error', 'Download template gagal: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Export ke PDF dengan field yang dipilih
+     */
+    public function exportCustomPdf(Request $request)
+    {
+        $request->validate([
+            'fields' => 'required|array|min:1',
+            'fields.*' => 'string',
+        ], [
+            'fields.required' => 'Pilih minimal 1 field untuk di-export',
+            'fields.min'      => 'Pilih minimal 1 field untuk di-export',
+        ]);
+
+        try {
+            $user           = Auth::user();
+            $selectedFields = $request->input('fields');
+
+            Log::info("Custom PDF export by user: {$user->name} (ID: {$user->id})");
+            Log::info("Fields: " . implode(', ', $selectedFields));
+
+            // Ambil data company (sesuaikan query filter jika perlu)
+            $companies = \App\Models\CompanyInformation::all();
+
+            $imageLogo = '<img src="' . public_path('uploads/logo/logo.png') . '" width="70px" style="float: right;"/>';
+
+            $header = '<table width="100%">
+                            <tr>
+                                <td style="padding-left:10px;">
+                                    <span style="font-size: 6px; font-weight: bold; margin-top:-10px">' . $imageLogo . '</span>
+                                    <br>
+                                    <span style="font-size:8px;">Synergy Building #08-08</span>
+                                    <br>
+                                    <span style="font-size:8px;">Jl. Jalur Sutera Barat 17 Alam Sutera, Serpong Tangerang 15143 - Indonesia</span>
+                                    <br>
+                                    <span style="font-size:8px;">Tangerang 15143 - Indonesia +62 21 304 38808</span>
+                                </td>
+                            </tr>
+                        </table>';
+
+            $footer = '<hr>
+            <table width="100%" style="font-size: 10px;">
+                <tr>
+                    <td width="90%" align="left">
+                        <b>Disclaimer</b><br>
+                        this document is strictly private, confidential and personal to recipients and should not be
+                        copied, distributed or reproduced in whole or in part, not passed to any third party.
+                    </td>
+                    <td width="10%" style="text-align: right;">{PAGENO}</td>
+                </tr>
+            </table>';
+
+            $mpdf = new \Mpdf\Mpdf();
+            $mpdf->SetHTMLHeader($header);
+            $mpdf->SetHTMLFooter($footer);
+            $mpdf->AddPage(
+                'L',   // Landscape
+                '', '', '', '',
+                5,     // margin_left
+                5,     // margin_right
+                35,    // margin_top
+                20,    // margin_bottom
+                5,     // margin_header
+                5      // margin_footer
+            );
+
+            $html = view('admin.company.export_pdf', [
+                'companies'      => $companies,
+                'selectedFields' => $selectedFields,
+            ])->render();
+
+            $mpdf->WriteHTML($html);
+
+            ob_clean();
+            $filename = 'company_export_' . date('Y-m-d') . '.pdf';
+            $mpdf->Output($filename, 'I');
+
+        } catch (\Exception $e) {
+            Log::error('Custom PDF Export Error: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return back()->with('error', 'Export PDF gagal: ' . $e->getMessage());
+        }
+    }
 }

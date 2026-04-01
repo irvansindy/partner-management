@@ -35,8 +35,7 @@ class ApprovalProcess extends Model
 
     public function steps()
     {
-        return $this->hasMany(ApprovalProcessStep::class, 'approval_id', 'id')
-                    ->orderBy('step_ordering');
+        return $this->hasMany(ApprovalProcessStep::class, 'approval_id', 'id')->orderBy('step_ordering');
     }
 
     public function company()

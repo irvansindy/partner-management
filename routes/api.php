@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ApiPartnerController;
 use Dedoc\Scramble\Scramble;
+use App\Http\Controllers\API\V1\Client\MenuController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,4 +25,8 @@ Route::post('blacklist-partner', [ApiPartnerController::class, 'blacklistPartner
 
 Scramble::routes(function ($route) {
     return in_array($route->getActionMethod(), ['fetchPartner', 'fetchVendorForTender', 'blacklistPartner']);
+});
+
+Route::middleware('auth:api')->prefix('v1')->group(function () {
+    Route::get('/menus', [MenuController::class, 'index']);
 });

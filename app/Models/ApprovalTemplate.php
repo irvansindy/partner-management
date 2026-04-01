@@ -45,8 +45,7 @@ class ApprovalTemplate extends Model
     // ✅ PERBAIKAN: Tambahkan foreign key yang benar
     public function details()
     {
-        return $this->hasMany(ApprovalTemplateDetail::class, 'approval_id', 'id')
-                    ->orderBy('step_ordering');
+        return $this->hasMany(ApprovalTemplateDetail::class, 'approval_id', 'id')->orderBy('step_ordering');
     }
 
     // Alias untuk backward compatibility dengan nama lama
@@ -74,8 +73,7 @@ class ApprovalTemplate extends Model
 
     public function scopeForLocation($query, $locationId, $departmentId)
     {
-        return $query->where('location_id', $locationId)
-                     ->where('department_id', $departmentId);
+        return $query->where('location_id', $locationId)->where('department_id', $departmentId);
     }
 
     // ========== HELPER METHODS ==========

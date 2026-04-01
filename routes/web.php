@@ -15,7 +15,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ApprovalSettingController;
 use App\Http\Controllers\EndUserLicenseAgreementController;
 use App\Http\Controllers\TenderForVendorController;
-use App\Http\Controllers\API\Admin\APIWhiteListManageController;
+use App\Http\Controllers\API\V1\Admin\APIWhiteListManageController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\Admin\FormLinkController;
@@ -105,6 +105,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
             ->name('form');
         Route::post('custom', [CompanyExportController::class, 'exportCustom'])
             ->name('custom');
+        Route::post('custom-pdf', [CompanyExportController::class, 'exportCustomPdf'])->name('custom.pdf');
         Route::get('all', [CompanyExportController::class, 'exportAll'])
             ->name('all');
         Route::get('template', [CompanyExportController::class, 'downloadTemplate'])
@@ -166,7 +167,7 @@ Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
     Route::post('update-attachment', [PartnerController::class,'updateAttachmentById'])->name('update-attachment');
 });
 
-Route::middleware(['auth', 'role:|admin|super-admin'])->group(function () {
+Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('/user-manage', [UserManagementController::class,'index'])->name('user-manage');
     Route::get('/fetch-user', [UserManagementController::class,'fetchUser'])->name('fetch-user');
     Route::get('/fetch-role-office-dept', [UserManagementController::class,'fetchRoleOfficeDepartment'])->name('fetch-role-office-dept');
