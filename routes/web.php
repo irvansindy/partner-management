@@ -84,6 +84,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->name('form-links.submissions');
     Route::get('form-links/{formLink}/submissions/{companyId}', [FormLinkController::class, 'submissionDetail'])
         ->name('form-links.submission-detail');
+    Route::get('form-links/{formLink}/submissions/{companyId}/export-pdf', [FormLinkController::class, 'exportSubmissionPdf'])
+    ->name('form-links.submission-pdf');
 
     // ========================================
     // IMPORT ROUTES (CompanyImportController)

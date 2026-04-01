@@ -149,4 +149,38 @@ class FormLinkController extends Controller
 
         return view('admin.form_links.submission_detail', compact('formLink', 'company'));
     }
+    public function exportSubmissionPdf(FormLink $formLink, $companyId)
+    {
+        $this->formLinkService->authorizeAccess($formLink);
+
+        $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
+        $company->load(['contact', 'address', 'bank', 'liablePeople', 'attachment']);
+
+        $header = '<table width="100%"><tr><td></td></tr></table>'; // spacer, header sudah di dalam view
+
+        $footer = '<hr>
+        <table width="100%" style="font-size: 9px;">
+            <tr>
+                <td width="90%" align="left"><b>Disclaimer</b><br>
+                This document is strictly private, confidential and personal to recipients.</td>
+                <td width="10%" style="text-align:right;">{PAGENO}</td>
+            </tr>
+        </table>';
+
+        $mpdf = new \Mpdf\Mpdf([
+            'margin_left'   => 12,
+            'margin_right'  => 12,
+            'margin_top'    => 10,
+            'margin_bottom' => 20,
+            'margin_footer' => 8,
+        ]);
+        $mpdf->SetHTMLFooter($footer);
+
+        $html = view('admin.form_links.export_submission_pdf', compact('company'))->render();
+        $mpdf->WriteHTML($html);
+
+        ob_clean();
+        $filename = 'form_penyedia_' . \Str::slug($company->name) . '_' . date('Y-m-d') . '.pdf';
+        $mpdf->Output($filename, 'I');
+    }
 }

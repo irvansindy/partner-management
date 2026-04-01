@@ -13,11 +13,15 @@
                 <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Submissions
                 </a>
+                <a href="{{ route('admin.form-links.submission-pdf', [$formLink, $company->id]) }}"
+                target="_blank" class="btn btn-danger ml-2">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </a>
             </div>
         </div>
 
         {{-- ✅ APPROVAL STATUS SECTION --}}
-        @if($company->hasApproval())
+        @if ($company->hasApproval())
             @php
                 $approval = $company->approvalProcess;
                 $currentStep = $approval->getCurrentStep();
@@ -26,13 +30,14 @@
                 $totalSteps = $approval->getTotalStepsCount();
             @endphp
 
-            <div class="card card-outline {{ $approval->isApproved() ? 'card-success' : ($approval->isRejected() ? 'card-danger' : 'card-warning') }}">
+            <div
+                class="card card-outline {{ $approval->isApproved() ? 'card-success' : ($approval->isRejected() ? 'card-danger' : 'card-warning') }}">
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-check-circle"></i> Approval Status
                     </h3>
                     <div class="card-tools">
-                        @if($approval->isPending() || $approval->isInProgress())
+                        @if ($approval->isPending() || $approval->isInProgress())
                             <span class="badge badge-warning">
                                 <i class="fas fa-clock"></i> In Progress
                             </span>
@@ -56,11 +61,8 @@
                         </div>
                         <div class="progress" style="height: 25px;">
                             <div class="progress-bar {{ $approval->isApproved() ? 'bg-success' : ($approval->isRejected() ? 'bg-danger' : 'bg-warning') }}"
-                                 role="progressbar"
-                                 style="width: {{ $progress }}%"
-                                 aria-valuenow="{{ $progress }}"
-                                 aria-valuemin="0"
-                                 aria-valuemax="100">
+                                role="progressbar" style="width: {{ $progress }}%" aria-valuenow="{{ $progress }}"
+                                aria-valuemin="0" aria-valuemax="100">
                                 {{ number_format($progress, 0) }}%
                             </div>
                         </div>
@@ -69,18 +71,20 @@
                     {{-- Approval Steps Timeline --}}
                     <h5 class="mb-3">Approval Timeline</h5>
                     <div class="timeline">
-                        @foreach($approval->steps as $step)
+                        @foreach ($approval->steps as $step)
                             <div class="time-label">
-                                <span class="bg-{{ $step->isApproved() ? 'success' : ($step->isRejected() ? 'danger' : ($step->isWaiting() ? 'warning' : 'secondary')) }}">
+                                <span
+                                    class="bg-{{ $step->isApproved() ? 'success' : ($step->isRejected() ? 'danger' : ($step->isWaiting() ? 'warning' : 'secondary')) }}">
                                     Step {{ $step->step_ordering }}
                                 </span>
                             </div>
                             <div>
-                                <i class="fas fa-{{ $step->isApproved() ? 'check' : ($step->isRejected() ? 'times' : ($step->isWaiting() ? 'clock' : 'circle')) }}
+                                <i
+                                    class="fas fa-{{ $step->isApproved() ? 'check' : ($step->isRejected() ? 'times' : ($step->isWaiting() ? 'clock' : 'circle')) }}
                                    bg-{{ $step->isApproved() ? 'success' : ($step->isRejected() ? 'danger' : ($step->isWaiting() ? 'warning' : 'secondary')) }}"></i>
                                 <div class="timeline-item">
                                     <span class="time">
-                                        @if($step->isApproved() && $step->approved_at)
+                                        @if ($step->isApproved() && $step->approved_at)
                                             <i class="fas fa-clock"></i> {{ $step->approved_at->format('d M Y H:i') }}
                                         @elseif($step->isRejected() && $step->rejected_at)
                                             <i class="fas fa-clock"></i> {{ $step->rejected_at->format('d M Y H:i') }}
@@ -90,7 +94,7 @@
                                     </span>
                                     <h3 class="timeline-header">
                                         <strong>{{ $step->approver->name ?? 'Unknown' }}</strong>
-                                        @if($step->isApproved())
+                                        @if ($step->isApproved())
                                             <span class="badge badge-success">Approved</span>
                                         @elseif($step->isRejected())
                                             <span class="badge badge-danger">Rejected</span>
@@ -102,26 +106,29 @@
                                     </h3>
                                     <div class="timeline-body">
                                         <p class="mb-1">
-                                            <i class="fas fa-user"></i> <strong>Approver:</strong> {{ $step->approver->name ?? 'Unknown' }}
+                                            <i class="fas fa-user"></i> <strong>Approver:</strong>
+                                            {{ $step->approver->name ?? 'Unknown' }}
                                         </p>
                                         <p class="mb-1">
-                                            <i class="fas fa-envelope"></i> <strong>Email:</strong> {{ $step->approver->email ?? '-' }}
+                                            <i class="fas fa-envelope"></i> <strong>Email:</strong>
+                                            {{ $step->approver->email ?? '-' }}
                                         </p>
 
-                                        @if($step->notes)
+                                        @if ($step->notes)
                                             <div class="mt-2">
                                                 <strong><i class="fas fa-comment"></i> Notes:</strong>
-                                                <div class="alert alert-{{ $step->isApproved() ? 'success' : 'danger' }} mt-1">
+                                                <div
+                                                    class="alert alert-{{ $step->isApproved() ? 'success' : 'danger' }} mt-1">
                                                     {{ $step->notes }}
                                                 </div>
                                             </div>
                                         @endif
 
                                         {{-- Action Button for Current Approver --}}
-                                        @if($step->isWaiting() && auth()->id() === $step->user_id)
+                                        @if ($step->isWaiting() && auth()->id() === $step->user_id)
                                             <div class="mt-3">
                                                 <a href="{{ route('admin.approvals.step.action', $step) }}"
-                                                   class="btn btn-primary btn-sm">
+                                                    class="btn btn-primary btn-sm">
                                                     <i class="fas fa-tasks"></i> Take Action
                                                 </a>
                                             </div>
@@ -158,7 +165,7 @@
                                 <tr>
                                     <th width="40%">Current Step:</th>
                                     <td>
-                                        @if($currentStep)
+                                        @if ($currentStep)
                                             Step {{ $currentStep->step_ordering }} - {{ $currentStep->approver->name }}
                                         @else
                                             {{ $approval->isApproved() ? 'Completed' : 'N/A' }}
@@ -183,7 +190,7 @@
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i>
                 <strong>No Approval Process</strong> - This submission does not have an approval process yet.
-                @if(auth()->user()->hasRole('super-admin'))
+                @if (auth()->user()->hasRole('super-admin'))
                     This might be because there's no approval template configured for this office and department.
                 @endif
             </div>
@@ -526,112 +533,112 @@
 @stop
 
 @section('css')
-<style>
-    /* Timeline Styles */
-    .timeline {
-        position: relative;
-        margin: 0 0 30px 0;
-        padding: 0;
-        list-style: none;
-    }
+    <style>
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            margin: 0 0 30px 0;
+            padding: 0;
+            list-style: none;
+        }
 
-    .timeline:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: #ddd;
-        left: 31px;
-        margin: 0;
-        border-radius: 2px;
-    }
+        .timeline:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #ddd;
+            left: 31px;
+            margin: 0;
+            border-radius: 2px;
+        }
 
-    .timeline > div {
-        margin-bottom: 15px;
-        position: relative;
-    }
+        .timeline>div {
+            margin-bottom: 15px;
+            position: relative;
+        }
 
-    .timeline > div > .time-label > span {
-        font-weight: 600;
-        padding: 5px;
-        display: inline-block;
-        background-color: #fff;
-        border-radius: 4px;
-    }
+        .timeline>div>.time-label>span {
+            font-weight: 600;
+            padding: 5px;
+            display: inline-block;
+            background-color: #fff;
+            border-radius: 4px;
+        }
 
-    .timeline > div > .timeline-item {
-        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        border-radius: 3px;
-        margin-top: 0;
-        background: #fff;
-        color: #495057;
-        margin-left: 60px;
-        margin-right: 15px;
-        padding: 0;
-        position: relative;
-    }
+        .timeline>div>.timeline-item {
+            -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            margin-top: 0;
+            background: #fff;
+            color: #495057;
+            margin-left: 60px;
+            margin-right: 15px;
+            padding: 0;
+            position: relative;
+        }
 
-    .timeline > div > .fa,
-    .timeline > div > .fas,
-    .timeline > div > .far,
-    .timeline > div > .fab,
-    .timeline > div > .fal,
-    .timeline > div > .fad,
-    .timeline > div > .ion {
-        width: 30px;
-        height: 30px;
-        font-size: 15px;
-        line-height: 30px;
-        position: absolute;
-        color: #666;
-        background: #d2d6de;
-        border-radius: 50%;
-        text-align: center;
-        left: 18px;
-        top: 0;
-    }
+        .timeline>div>.fa,
+        .timeline>div>.fas,
+        .timeline>div>.far,
+        .timeline>div>.fab,
+        .timeline>div>.fal,
+        .timeline>div>.fad,
+        .timeline>div>.ion {
+            width: 30px;
+            height: 30px;
+            font-size: 15px;
+            line-height: 30px;
+            position: absolute;
+            color: #666;
+            background: #d2d6de;
+            border-radius: 50%;
+            text-align: center;
+            left: 18px;
+            top: 0;
+        }
 
-    .timeline > div > .timeline-item > .time {
-        color: #999;
-        float: right;
-        padding: 10px;
-        font-size: 12px;
-    }
+        .timeline>div>.timeline-item>.time {
+            color: #999;
+            float: right;
+            padding: 10px;
+            font-size: 12px;
+        }
 
-    .timeline > div > .timeline-item > .timeline-header {
-        margin: 0;
-        color: #555;
-        border-bottom: 1px solid #f4f4f4;
-        padding: 10px;
-        font-size: 16px;
-        line-height: 1.1;
-    }
+        .timeline>div>.timeline-item>.timeline-header {
+            margin: 0;
+            color: #555;
+            border-bottom: 1px solid #f4f4f4;
+            padding: 10px;
+            font-size: 16px;
+            line-height: 1.1;
+        }
 
-    .timeline > div > .timeline-item > .timeline-body {
-        padding: 10px;
-    }
+        .timeline>div>.timeline-item>.timeline-body {
+            padding: 10px;
+        }
 
-    .bg-success {
-        background-color: #28a745 !important;
-    }
+        .bg-success {
+            background-color: #28a745 !important;
+        }
 
-    .bg-danger {
-        background-color: #dc3545 !important;
-    }
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
 
-    .bg-warning {
-        background-color: #ffc107 !important;
-        color: #212529 !important;
-    }
+        .bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
 
-    .bg-secondary {
-        background-color: #6c757d !important;
-    }
+        .bg-secondary {
+            background-color: #6c757d !important;
+        }
 
-    .bg-gray {
-        background-color: #d2d6de !important;
-    }
-</style>
+        .bg-gray {
+            background-color: #d2d6de !important;
+        }
+    </style>
 @stop
