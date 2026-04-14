@@ -344,40 +344,65 @@ class DashboardController extends Controller
     {
         try {
             $vendors = $this->filterCompanyQueryByUser(
-                CompanyInformation::with('address')->where('type', 'vendor')
+                CompanyInformation::with(['address' => function($q) {
+                    $q->whereNotNull('latitude')
+                    ->whereNotNull('longitude')
+                    ->whereRaw("latitude::text != ''")
+                    ->whereRaw("longitude::text != ''");
+                }])->where('type', 'vendor')
             )->get();
 
             $customers = $this->filterCompanyQueryByUser(
-                CompanyInformation::with('address')->where('type', 'customer')
+                CompanyInformation::with(['address' => function($q) {
+                    $q->whereNotNull('latitude')
+                    ->whereNotNull('longitude')
+                    ->whereRaw("latitude::text != ''")
+                    ->whereRaw("longitude::text != ''");
+                }])->where('type', 'customer')
             )->get();
 
             $map_points = collect();
 
             foreach ($vendors as $v) {
                 foreach ($v->address as $a) {
+                    $lat = (float) $a->latitude;
+                    $lng = (float) $a->longitude;
+
+                    if ($lat === 0.0 && $lng === 0.0) continue;
+                    if ($lat < -90 || $lat > 90) continue;
+                    if ($lng < -180 || $lng > 180) continue;
+
                     $map_points->push([
-                        'type' => 'vendor',
-                        'name' => $v->name,
-                        'address' => $a->address,
-                        'latitude' => $a->latitude,
-                        'longitude' => $a->longitude,
+                        'type'      => 'vendor',
+                        'name'      => $v->name,
+                        'address'   => $a->address,
+                        'latitude'  => $lat,
+                        'longitude' => $lng,
                     ]);
                 }
             }
 
             foreach ($customers as $c) {
                 foreach ($c->address as $a) {
+                    $lat = (float) $a->latitude;
+                    $lng = (float) $a->longitude;
+
+                    if ($lat === 0.0 && $lng === 0.0) continue;
+                    if ($lat < -90 || $lat > 90) continue;
+                    if ($lng < -180 || $lng > 180) continue;
+
                     $map_points->push([
-                        'type' => 'customer',
-                        'name' => $c->name,
-                        'address' => $a->address,
-                        'latitude' => $a->latitude,
-                        'longitude' => $a->longitude,
+                        'type'      => 'customer',
+                        'name'      => $c->name,
+                        'address'   => $a->address,
+                        'latitude'  => $lat,
+                        'longitude' => $lng,
                     ]);
                 }
             }
 
             return FormatResponseJson::success($map_points, 'Map Point Fetched Successfully');
+
         } catch (\Exception $e) {
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }

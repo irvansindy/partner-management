@@ -148,8 +148,13 @@
         // 1. Inisialisasi Peta
         // =======================
         const map = L.map('map').setView([-6.2, 106.8], 6); // posisi awal: Indonesia
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        //     attribution: '&copy; OpenStreetMap contributors'
+        // }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
         }).addTo(map);
 
         // =======================
@@ -189,12 +194,28 @@
         // 3. Ambil Data via AJAX
         // =======================
         $.ajax({
-            url: '{{ route('fetch-map-point') }}', // pastikan route ini mengembalikan JSON {data: [...]}
+            url: '{{ route('fetch-map-point') }}',
             type: 'GET',
             dataType: 'json',
             success: function(points) {
                 (points.data || []).forEach(function(p) {
-                    const marker = L.marker([p.latitude, p.longitude], {
+
+                    // ✅ Tambahkan validasi ini
+                    if (!p.latitude || !p.longitude) {
+                        console.warn('Data koordinat tidak valid, dilewati:', p);
+                        return; // skip data ini
+                    }
+
+                    const lat = parseFloat(p.latitude);
+                    const lng = parseFloat(p.longitude);
+
+                    // ✅ Pastikan hasil parse bukan NaN
+                    if (isNaN(lat) || isNaN(lng)) {
+                        console.warn('Koordinat bukan angka, dilewati:', p);
+                        return;
+                    }
+
+                    const marker = L.marker([lat, lng], {
                         icon: createFaDivIcon(p.type)
                     }).addTo(map);
 
