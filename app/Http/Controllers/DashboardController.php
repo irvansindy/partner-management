@@ -11,9 +11,7 @@ use App\Models\{
     CompanyInformation,
     ApprovalMaster,
     ApprovalDetails,
-    CompanyAddress,
     Provinces,
-    Regencies
 };
 use Illuminate\Support\Str;
 class DashboardController extends Controller

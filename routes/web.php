@@ -248,7 +248,7 @@ Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(fun
     Route::get('fetch-recent-customer', [DashboardController::class, 'fetchRecentCustomer'])->name('fetch-recent-customer');
     Route::get('fetch-recent-vendor', [DashboardController::class, 'fetchRecentVendor'])->name('fetch-recent-vendor');
     Route::get('fetch-recent-approvals', [DashboardController::class, 'fetchRecentApprovals'])->name('fetch-recent-approvals');
-    Route::get('fetch-map-point', [DashboardController::class, 'mapPoint'])->name('fetch-map-point');
+    Route::get('fetch-map-point', [DashboardController::class, 'mapjPoint'])->name('fetch-map-point');
     Route::get('fetch-regency-summary', [DashboardController::class, 'fetchDataCountByRegency'])->name('fetch-regency-summary');
 
     Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');

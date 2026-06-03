@@ -28,10 +28,8 @@
                     <div class="col-md-9">
                         {{-- <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}" disabled> --}}
                         <!-- field untuk ditampilkan di UI -->
-                            <input type="text"
-                                class="form-control"
-                                value="{{ ucfirst($formLink->form_type) }}" placeholder="{{ ucfirst($formLink->form_type) }}"
-                                readonly>
+                        <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}"
+                            placeholder="{{ ucfirst($formLink->form_type) }}" readonly>
                         <small class="text-muted">This form is for {{ ucfirst($formLink->form_type) }}
                             registration</small>
                     </div>
@@ -77,7 +75,8 @@
                 <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
                     <label for="liable_position_0">@lang('messages.Liable Position') <span class="text-danger"
                             role="alert">*</span></label>
-                    <select name="liable_position[]" id="liable_position_0" class="form-control liable-position-select">
+                    <select name="liable_position[]" id="liable_position_0"
+                        class="form-control liable-position-select">
                         <option value="">-- @lang('messages.Placeholder Position') --</option>
                         <option value="Owner">@lang('messages.Owner')</option>
                         <option value="Board of Directors">@lang('messages.Board of Directors')</option>

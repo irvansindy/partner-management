@@ -34,49 +34,92 @@
                         @endif
                         <input type="hidden" id="public_key" value="{{ env('PUBLIC_FORM_SECRET') }}">
 
-                        @include('cs_vendor.form.master_information')
-                        @include('cs_vendor.form.contact')
-                        @include('cs_vendor.form.address')
-                        @include('cs_vendor.form.bank')
-
-                        {{-- Survey Toggle Switch --}}
-                        <div class="card card-outline card-info">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5 class="mb-1">
-                                            <i class="fas fa-clipboard-check"></i> @lang('messages.Survey Result')
-                                        </h5>
-                                        <small class="text-muted">
-                                            Survey data membantu kami memahami kebutuhan bisnis Anda lebih baik
-                                        </small>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch"
-                                            id="survey_form_switch"
-                                            {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="survey_form_switch">
-                                            <span id="switch_label">
-                                                {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'Hide Survey' : 'Show Survey' }}
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
+                        <div class="wizard-stepper mb-4" id="wizard_stepper">
+                            <div class="wizard-step active" data-step="1">
+                                <div class="wizard-step-number">1</div>
+                                <div class="wizard-step-text">Master Information</div>
+                            </div>
+                            <div class="wizard-step" data-step="2">
+                                <div class="wizard-step-number">2</div>
+                                <div class="wizard-step-text">Contact</div>
+                            </div>
+                            <div class="wizard-step" data-step="3">
+                                <div class="wizard-step-number">3</div>
+                                <div class="wizard-step-text">Address</div>
+                            </div>
+                            <div class="wizard-step" data-step="4">
+                                <div class="wizard-step-number">4</div>
+                                <div class="wizard-step-text">Bank</div>
+                            </div>
+                            <div class="wizard-step" data-step="5">
+                                <div class="wizard-step-number">5</div>
+                                <div class="wizard-step-text">Form Survey</div>
+                            </div>
+                            <div class="wizard-step" data-step="6">
+                                <div class="wizard-step-number">6</div>
+                                <div class="wizard-step-text">Form Upload</div>
                             </div>
                         </div>
 
-                        {{-- Survey Form Container --}}
-                        <div id="survey_form_container"
-                            style="display: {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'block' : 'none' }};">
-                            @include('cs_vendor.form.survey')
+                        <div class="step-pane" data-step="1">
+                            @include('cs_vendor.form.master_information')
+                        </div>
+                        <div class="step-pane d-none" data-step="2">
+                            @include('cs_vendor.form.contact')
+                        </div>
+                        <div class="step-pane d-none" data-step="3">
+                            @include('cs_vendor.form.address')
+                        </div>
+                        <div class="step-pane d-none" data-step="4">
+                            @include('cs_vendor.form.bank')
+                        </div>
+                        <div class="step-pane d-none" data-step="5">
+                            <div class="card card-outline card-info">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="mb-1">
+                                                <i class="fas fa-clipboard-check"></i> @lang('messages.Survey Result')
+                                            </h5>
+                                            <small class="text-muted">
+                                                Survey data membantu kami memahami kebutuhan bisnis Anda lebih baik
+                                            </small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                id="survey_form_switch"
+                                                {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="survey_form_switch">
+                                                <span id="switch_label">
+                                                    {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'Hide Survey' : 'Show Survey' }}
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="survey_form_container"
+                                style="display: {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'block' : 'none' }};">
+                                @include('cs_vendor.form.survey')
+                            </div>
+                        </div>
+                        <div class="step-pane d-none" data-step="6">
+                            @include('cs_vendor.form.file_upload')
                         </div>
 
-                        @include('cs_vendor.form.file_upload')
-
-                        <div class="d-flex justify-content-center mt-4">
-                            <button type="button" class="btn btn-primary btn-lg" id="btn_submit_data_company">
-                                <i class="fas fa-paper-plane"></i> Submit
+                        <div class="d-flex justify-content-between mt-4 align-items-center" id="wizard_actions">
+                            <button type="button" class="btn btn-secondary btn-lg d-none" id="step_prev">
+                                <i class="fas fa-chevron-left"></i> Previous
                             </button>
+                            <div>
+                                <button type="button" class="btn btn-primary btn-lg" id="step_next">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <button type="button" class="btn btn-success btn-lg d-none" id="btn_submit_data_company">
+                                    <i class="fas fa-paper-plane"></i> Submit
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -85,8 +128,128 @@
     </div>
 @stop
 
-@push('css')
+@section('css')
     <style>
+        #wizard_stepper {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem 0;
+        }
+
+        #wizard_stepper::before {
+            content: '';
+            position: absolute;
+            top: calc(1rem + 21px);
+            left: calc(0.5rem + 21px);
+            right: calc(0.5rem + 21px);
+            height: 2px;
+            background: #dee2e6;
+            z-index: 1;
+        }
+
+        .wizard-step {
+            position: relative;
+            z-index: 2;
+            flex: 1 1 0;
+            min-width: 120px;
+            max-width: 170px;
+            padding: 0.25rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            color: #6c757d;
+            transition: transform 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .wizard-step:hover {
+            transform: translateY(-2px);
+        }
+
+        .wizard-step-number {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #f1f3f5;
+            border: 2px solid #dee2e6;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: #495057;
+            transition: all 0.25s ease;
+        }
+
+        .wizard-step.active .wizard-step-number,
+        .wizard-step.completed .wizard-step-number {
+            background: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .wizard-step.active,
+        .wizard-step.completed {
+            color: #212529;
+        }
+
+        .wizard-step-text {
+            font-size: 0.9rem;
+            line-height: 1.2;
+            max-width: 120px;
+            word-break: break-word;
+        }
+
+        .step-pane {
+            display: none;
+        }
+
+        .step-pane.active {
+            display: block;
+        }
+
+        .wizard-actions button {
+            min-width: 130px;
+        }
+
+        @media (max-width: 991px) {
+            #wizard_stepper {
+                overflow-x: auto;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+
+            #wizard_stepper::before {
+                left: 2rem;
+                right: 2rem;
+            }
+
+            .wizard-step {
+                min-width: 140px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #wizard_stepper {
+                gap: 0.75rem;
+            }
+
+            .wizard-step {
+                min-width: 120px;
+            }
+
+            .wizard-step-text {
+                font-size: 0.8rem;
+            }
+        }
+
         #survey_form_container {
             transition: all 0.3s ease-in-out;
         }
@@ -111,7 +274,7 @@
             box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
         }
     </style>
-@endpush
+@endsection
 
 @section('js')
     <script>
@@ -476,6 +639,62 @@
 
             // Restore form setelah halaman dimuat
             setTimeout(restoreForm, 500);
+
+            const totalWizardSteps = 6;
+            let currentWizardStep = 1;
+
+            function showStep(step) {
+                if (step < 1) {
+                    step = 1;
+                }
+                if (step > totalWizardSteps) {
+                    step = totalWizardSteps;
+                }
+                currentWizardStep = step;
+
+                $('.step-pane').each(function() {
+                    const stepIndex = parseInt($(this).data('step'));
+                    if (stepIndex === currentWizardStep) {
+                        $(this).removeClass('d-none').addClass('active');
+                    } else {
+                        $(this).addClass('d-none').removeClass('active');
+                    }
+                });
+
+                $('.wizard-step').each(function() {
+                    const stepIndex = parseInt($(this).data('step'));
+                    $(this).removeClass('active completed');
+                    if (stepIndex < currentWizardStep) {
+                        $(this).addClass('completed');
+                    }
+                    if (stepIndex === currentWizardStep) {
+                        $(this).addClass('active');
+                    }
+                });
+
+                $('#step_prev').toggleClass('d-none', currentWizardStep === 1);
+                $('#step_next').toggleClass('d-none', currentWizardStep === totalWizardSteps);
+                $('#btn_submit_data_company').toggleClass('d-none', currentWizardStep !== totalWizardSteps);
+
+                $('html, body').animate({
+                    scrollTop: $('#form_company').offset().top - 100
+                }, 300);
+            }
+
+            $('#step_prev').on('click', function() {
+                showStep(currentWizardStep - 1);
+            });
+
+            $('#step_next').on('click', function() {
+                showStep(currentWizardStep + 1);
+            });
+
+            $('#wizard_stepper').on('click', '.wizard-step', function() {
+                const step = parseInt($(this).data('step'));
+                showStep(step);
+            });
+
+            showStep(1);
         });
     </script>
 
