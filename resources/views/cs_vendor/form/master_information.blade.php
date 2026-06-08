@@ -8,77 +8,175 @@
         <div class="container-fluid">
             <p class="mb-3 text-danger">@lang('messages.Mandatory')</p>
 
-            <!-- Company Type -->
-                @if (!isset($formLink))
-                <div class="row mb-4">
-                    <label class="col-md-3" for="company_type">@lang('messages.Company Type') <span class="text-danger"
-                            role="alert">*</span></label>
-                    <div class="col-md-9">
+            {{-- =============================================
+                 ROW 1: Jenis Perusahaan (kiri) | Nama Perusahaan (kanan)
+            ============================================= --}}
+            <div class="row mb-3">
+                <div class="col-md-6 col-sm-12">
+                    @if (!isset($formLink))
+                        <label for="company_type">@lang('messages.Company Type') <span class="text-danger">*</span></label>
                         <select name="company_type" id="company_type" class="form-control select2">
                             <option value="">@lang('messages.Select One')</option>
                             <option value="customer">@lang('messages.Customer')</option>
                             <option value="vendor">@lang('messages.Vendor')</option>
                         </select>
                         <span class="text-danger message-danger" id="message_company_type" role="alert"></span>
-                    </div>
+                    @else
+                        <label>@lang('messages.Company Type')</label>
+                        <input type="text" class="form-control"
+                            value="{{ ucfirst($formLink->form_type) }}" readonly>
+                        <small class="text-muted">This form is for {{ ucfirst($formLink->form_type) }} registration</small>
+                    @endif
                 </div>
-            @else
-                <div class="row mb-4">
-                    <label class="col-md-3">@lang('messages.Company Type')</label>
-                    <div class="col-md-9">
-                        {{-- <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}" disabled> --}}
-                        <!-- field untuk ditampilkan di UI -->
-                        <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}"
-                            placeholder="{{ ucfirst($formLink->form_type) }}" readonly>
-                        <small class="text-muted">This form is for {{ ucfirst($formLink->form_type) }}
-                            registration</small>
-                    </div>
-                </div>
-            @endif
-            <div class="row mb-4">
-                <div class="col-12">
-                    <label for="company_name">@lang('messages.Company Name') <span class="text-danger"
-                            role="alert">*</span></label>
-                </div>
-                <div class="col-md-6 col-lg-6 col-sm-12">
+                <div class="col-md-6 col-sm-12">
+                    <label for="company_name">@lang('messages.Company Name') <span class="text-danger">*</span></label>
                     <input type="text" name="company_name" id="company_name" class="form-control"
                         placeholder="@lang('messages.Placeholder Company Name')">
                     <span class="text-danger message-danger" id="message_company_name" role="alert"></span>
                 </div>
-                <div class="col-md-6 col-lg-6 col-sm-12">
+            </div>
+
+            {{-- =============================================
+                 ROW 2: Nama Grup Perusahaan (kiri) | Tahun Berdiri (kanan)
+            ============================================= --}}
+            <div class="row mb-3">
+                <div class="col-md-6 col-sm-12">
                     <label for="company_group_name">@lang('messages.Company Group Name')</label>
                     <input type="text" name="company_group_name" id="company_group_name" class="form-control"
                         placeholder="@lang('messages.Placeholder Company Group Name')">
-                    <span class="text-muted" id="message_company_group_name" role="alert">@lang('messages.Company Group Name Info')</span>
+                    <small class="text-muted">@lang('messages.Company Group Name Info')</small>
                     <span class="text-danger message-danger" id="message_company_group_name" role="alert"></span>
                 </div>
-                <div class="col-md-6 col-lg-6 col-sm-12">
+                <div class="col-md-6 col-sm-12">
                     <label for="established_year">@lang('messages.Established Year')</label>
-                    <input type="number" name="established_year" id="established_year" class="form-control" data-maxlength="4" maxlength="4"
-                        min="1900" max="2099" step="1" placeholder="@lang('messages.Placeholder Established Year')">
+                    <input type="number" name="established_year" id="established_year" class="form-control"
+                        data-maxlength="4" maxlength="4" min="1900" max="2099" step="1"
+                        placeholder="@lang('messages.Placeholder Established Year')">
                     <span class="text-danger message-danger" id="message_established_year" role="alert"></span>
                 </div>
-                <div class="col-md-6 col-lg-6 col-sm-12">
+            </div>
+
+            {{-- =============================================
+                 ROW 3: Jumlah Karyawan (kiri) | Klasifikasi Bisnis (kanan)
+            ============================================= --}}
+            <div class="row mb-3">
+                <div class="col-md-6 col-sm-12">
                     <label for="total_employee">@lang('messages.Total Employee')</label>
-                    <input type="number" name="total_employee" id="total_employee" class="form-control" min="1"
-                        max="9999" maxlength="10" placeholder="@lang('messages.Placeholder Total Employee')">
+                    <input type="number" name="total_employee" id="total_employee" class="form-control"
+                        min="1" max="9999" maxlength="10"
+                        placeholder="@lang('messages.Placeholder Total Employee')">
                     <span class="text-danger message-danger" id="message_total_employee" role="alert"></span>
                 </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2>@lang('messages.Liable Person')</h2>
+                <div class="col-md-6 col-sm-12">
+                    <label for="business_classification">@lang('messages.Business Classification') <span class="text-danger">*</span></label>
+                    <select class="form-select select2" name="business_classification" id="business_classification">
+                        <option value="">-- @lang('messages.Placeholder Business Classification') --</option>
+                        @foreach (\App\Models\MasterBusinessClassification::all() as $item)
+                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                    <div class="mt-2" id="field_form_create_business_other"></div>
+                    <span class="text-danger message-danger" id="message_business_classification" role="alert"></span>
                 </div>
-                <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                    <label for="liable_person_0">@lang('messages.Liable Person') <span class="text-danger"
-                            role="alert">*</span></label>
+            </div>
+
+            {{-- =============================================
+                 ROW 4: Detail Klasifikasi Bisnis (full width — textarea)
+            ============================================= --}}
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label for="business_classification_detail">@lang('messages.Business Classification Detail')</label>
+                    <textarea class="form-control" name="business_classification_detail"
+                        id="business_classification_detail" rows="3"
+                        placeholder="@lang('messages.Placeholder Business Classification Detail')"></textarea>
+                    <span class="text-danger message-danger" id="message_business_classification_detail" role="alert"></span>
+                </div>
+            </div>
+
+            {{-- =============================================
+                 ROW 5: No. NPWP (kiri) | Website (kanan)
+            ============================================= --}}
+            <div class="row mb-3">
+                <div class="col-md-6 col-sm-12">
+                    <label for="register_number_as_in_tax_invoice">
+                        @lang('messages.Tax Register Number (As in Tax Invoice)') <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control"
+                        id="register_number_as_in_tax_invoice"
+                        name="register_number_as_in_tax_invoice"
+                        data-maxlength="16" maxlength="16"
+                        placeholder="@lang('messages.Placeholder Tax')">
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <label for="website_address">@lang('messages.Website Address')</label>
+                    <input type="text" name="website_address" id="website_address" class="form-control"
+                        placeholder="@lang('messages.Placeholder Website')">
+                    <span class="text-danger message-danger" id="message_website_address" role="alert"></span>
+                </div>
+            </div>
+
+            {{-- =============================================
+                 ROW 6: Tipe Sertifikat (kiri) | Email (kanan)
+            ============================================= --}}
+            <div class="row mb-3">
+                <div class="col-md-6 col-sm-12">
+                    <label for="system_management">@lang('messages.Certificate Type')</label>
+                    <input type="text" name="system_management" id="system_management" class="form-control"
+                        placeholder="@lang('messages.Placeholder Certificate')">
+                    <span class="text-danger mt-2" id="message_system_management" role="alert"></span>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <label for="email_address">@lang('messages.Email Address')</label>
+                    <input type="text" name="email_address" id="email_address" class="form-control"
+                        placeholder="@lang('messages.Placeholder Email')">
+                    <span class="text-danger mt-2" id="message_email_address" role="alert"></span>
+                </div>
+            </div>
+
+            {{-- =============================================
+                 ROW 7: Credit Limit (kiri) | Term of Payment (kanan)
+                 Hanya tampil untuk @guest
+            ============================================= --}}
+            @guest
+                <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                        <label for="credit_limit">@lang('messages.Credit Limit')</label>
+                        <input type="number" name="credit_limit" id="credit_limit" class="form-control"
+                            min="0" max="9999999999" maxlength="25"
+                            placeholder="@lang('messages.Placeholder Credit Limit')">
+                        <span class="text-danger mt-2" id="message_credit_limit" role="alert"></span>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <label for="term_of_payment">@lang('messages.Term of Payment')</label>
+                        <select name="term_of_payment" id="term_of_payment" class="form-control select2">
+                            <option value="">-- @lang('messages.Placeholder TOP') --</option>
+                            <option value="cash">@lang('messages.Cash')</option>
+                            <option value="14">14 @lang('messages.Day')</option>
+                            <option value="30">30 @lang('messages.Day')</option>
+                            <option value="45">45 @lang('messages.Day')</option>
+                            <option value="60">60 @lang('messages.Day')</option>
+                            <option value="90">90 @lang('messages.Day')</option>
+                            <option value="Other">@lang('messages.Other')</option>
+                        </select>
+                        <div class="mt-2" id="other_term_of_payment_container"></div>
+                        <span class="text-danger mt-2" id="message_term_of_payment" role="alert"></span>
+                    </div>
+                </div>
+            @endguest
+
+            {{-- =============================================
+                 SECTION: Penanggung Jawab
+            ============================================= --}}
+            <h5 class="mt-3 mb-3">@lang('messages.Liable Person')</h5>
+            <div class="row mb-2">
+                <div class="col-md-4 col-sm-12">
+                    <label for="liable_person_0">@lang('messages.Liable Person') <span class="text-danger">*</span></label>
                     <input type="text" name="liable_person[]" id="liable_person_0" class="form-control"
                         placeholder="@lang('messages.Placeholder Liable Person')">
                     <span class="text-danger message-danger" id="message_liable_person" role="alert"></span>
                 </div>
-                    <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                    <label for="liable_position_0">@lang('messages.Liable Position') <span class="text-danger"
-                            role="alert">*</span></label>
+                <div class="col-md-4 col-sm-12">
+                    <label for="liable_position_0">@lang('messages.Liable Position') <span class="text-danger">*</span></label>
                     <select name="liable_position[]" id="liable_position_0"
                         class="form-control liable-position-select select2">
                         <option value="">-- @lang('messages.Placeholder Position') --</option>
@@ -97,95 +195,21 @@
                     </div>
                     <span class="text-danger message-danger" id="message_liable_position_0" role="alert"></span>
                 </div>
-                <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                    <label for="nik_0">NIK <span class="text-danger" role="alert">*</span></label>
-                    <input type="number" name="nik[]" id="nik_0" class="form-control" data-maxlength="16" maxlength="16"
+                <div class="col-md-4 col-sm-12">
+                    <label for="nik_0">NIK <span class="text-danger">*</span></label>
+                    <input type="number" name="nik[]" id="nik_0" class="form-control"
+                        data-maxlength="16" maxlength="16"
                         placeholder="@lang('messages.Placeholder NIK')">
                     <span class="text-danger message-danger" id="message_nik" role="alert"></span>
                 </div>
             </div>
-            <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
+            <div class="d-flex justify-content-end mb-3 mt-2">
                 <button type="button" class="btn btn-primary" id="add_liable_person">
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
             <div class="dynamic_liable_person"></div>
-            <div class="row mb-4">
-                <label class="col-md-3">@lang('messages.Business Classification') <span class="text-danger" role="alert">*</span></label>
-                <div class="col-md-9">
-                    <select class="form-select select2" name="business_classification" id="business_classification">
-                        <option value="">-- @lang('messages.Placeholder Business Classification') --</option>
-                        @foreach (\App\Models\MasterBusinessClassification::all() as $item)
-                            <option value="{{ $item->name }}">{{ $item->name }}</option>
-                        @endforeach
-                    </select>
-                    <div class="col-md-auto my-2" id="field_form_create_business_other"></div>
-
-                    <span class="text-danger message-danger" id="message_business_classification"
-                        role="alert"></span>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <label class="col-md-3" for="business_classification_detail">@lang('messages.Business Classification Detail')</label>
-                <div class="col-md-9">
-                    <textarea class="form-control" name="business_classification_detail" id="business_classification_detail"
-                        rows="4" placeholder="@lang('messages.Placeholder Business Classification Detail')"></textarea>
-                    <span class="text-danger message-danger" id="message_business_classification_detail"
-                        role="alert"></span>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="register_number_as_in_tax_invoice">@lang('messages.Tax Register Number (As in Tax Invoice)') <span
-                            class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="register_number_as_in_tax_invoice" data-maxlength="16" maxlength="16"
-                        name="register_number_as_in_tax_invoice" placeholder="@lang('messages.Placeholder Tax')">
-                </div>
-                <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="website_address">@lang('messages.Website Address')</label>
-                    <input type="text" name="website_address" id="website_address" class="form-control"
-                        placeholder="@lang('messages.Placeholder Website')">
-                    <span class="text-danger message-danger" id="message_website_address" role="alert"></span>
-                </div>
-                <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="system_management">@lang('messages.Certificate Type')</label>
-                    <input type="text" name="system_management" id="system_management" class="form-control"
-                        placeholder="@lang('messages.Placeholder Certificate')">
-                    <span class="text-danger mt-2" id="message_system_management" role="alert"></span>
-                </div>
-                <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="email_address">@lang('messages.Email Address')</label>
-                    <input type="text" name="email_address" id="email_address" class="form-control"
-                        placeholder="@lang('messages.Placeholder Email')">
-                    <span class="text-danger mt-2" id="message_email_address" role="alert"></span>
-                </div>
-                @guest
-                    <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                        <label for="credit_limit">@lang('messages.Credit Limit')</label>
-                        <input type="number" name="credit_limit" id="credit_limit" class="form-control" min="0"
-                            max="9999999999" maxlength="25" placeholder="@lang('messages.Placeholder Credit Limit')">
-                        <span class="text-danger mt-2" id="message_credit_limit" role="alert"></span>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                        <label for="term_of_payment">@lang('messages.Term of Payment')</label>
-                        <select name="term_of_payment" id="term_of_payment" class="form-control select2">
-                            <option value="">-- @lang('messages.Placeholder TOP') --</option>
-                            <option value="cash">@lang('messages.Cash')</option>
-                            <option value="14">14 @lang('messages.Day')</option>
-                            <option value="30">30 @lang('messages.Day')</option>
-                            <option value="45">45 @lang('messages.Day')</option>
-                            <option value="60">60 @lang('messages.Day')</option>
-                            <option value="90">90 @lang('messages.Day')</option>
-                            <option value="Other">@lang('messages.Other')</option>
-                        </select>
-                        <div class="mt-2" id="other_term_of_payment_container">
-                        </div>
-                        <span class="text-danger mt-2" id="message_term_of_payment" role="alert"></span>
-                    </div>
-                @endguest
-            </div>
 
         </div>
-
     </div>
 </div>
