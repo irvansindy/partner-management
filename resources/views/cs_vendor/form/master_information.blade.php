@@ -14,7 +14,7 @@
                     <label class="col-md-3" for="company_type">@lang('messages.Company Type') <span class="text-danger"
                             role="alert">*</span></label>
                     <div class="col-md-9">
-                        <select name="company_type" id="company_type" class="form-control">
+                        <select name="company_type" id="company_type" class="form-control" required>
                             <option value="">@lang('messages.Select One')</option>
                             <option value="customer">@lang('messages.Customer')</option>
                             <option value="vendor">@lang('messages.Vendor')</option>
@@ -40,7 +40,7 @@
                     <label for="company_name">@lang('messages.Company Name') <span class="text-danger"
                             role="alert">*</span></label>
                     <input type="text" name="company_name" id="company_name" class="form-control"
-                        placeholder="@lang('messages.Placeholder Company Name')">
+                        placeholder="@lang('messages.Placeholder Company Name')" required>
                     <span class="text-danger message-danger" id="message_company_name" role="alert"></span>
                 </div>
                 <div class="col-md-5 col-lg-6 col-sm-12">
@@ -69,14 +69,14 @@
                     <label for="liable_person_0">@lang('messages.Liable Person') <span class="text-danger"
                             role="alert">*</span></label>
                     <input type="text" name="liable_person[]" id="liable_person_0" class="form-control"
-                        placeholder="@lang('messages.Placeholder Liable Person')">
+                        placeholder="@lang('messages.Placeholder Liable Person')" required>
                     <span class="text-danger message-danger" id="message_liable_person" role="alert"></span>
                 </div>
                 <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
                     <label for="liable_position_0">@lang('messages.Liable Position') <span class="text-danger"
                             role="alert">*</span></label>
                     <select name="liable_position[]" id="liable_position_0"
-                        class="form-control liable-position-select">
+                        class="form-control liable-position-select" required>
                         <option value="">-- @lang('messages.Placeholder Position') --</option>
                         <option value="Owner">@lang('messages.Owner')</option>
                         <option value="Board of Directors">@lang('messages.Board of Directors')</option>
@@ -95,8 +95,8 @@
                 </div>
                 <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
                     <label for="nik_0">NIK <span class="text-danger" role="alert">*</span></label>
-                    <input type="text" name="nik[]" id="nik_0" class="form-control"
-                        placeholder="@lang('messages.Placeholder NIK')">
+                    <input type="number" name="nik[]" id="nik_0" class="form-control"
+                        placeholder="@lang('messages.Placeholder NIK')" data-max-digits="16" min="0" required>
                     <span class="text-danger message-danger" id="message_nik" role="alert"></span>
                 </div>
             </div>
@@ -109,7 +109,7 @@
             <div class="row mb-4">
                 <label class="col-md-3">@lang('messages.Business Classification') <span class="text-danger" role="alert">*</span></label>
                 <div class="col-md-9">
-                    <select class="form-select" name="business_classification" id="business_classification">
+                    <select class="form-select" name="business_classification" id="business_classification" required>
                         <option value="">-- @lang('messages.Placeholder Business Classification') --</option>
                         @foreach (\App\Models\MasterBusinessClassification::all() as $item)
                             <option value="{{ $item->name }}">{{ $item->name }}</option>
@@ -135,7 +135,9 @@
                     <label for="register_number_as_in_tax_invoice">@lang('messages.Tax Register Number (As in Tax Invoice)') <span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="register_number_as_in_tax_invoice"
-                        name="register_number_as_in_tax_invoice" placeholder="@lang('messages.Placeholder Tax')">
+                        name="register_number_as_in_tax_invoice" placeholder="@lang('messages.Placeholder Tax')" required>
+                    <span class="text-danger message-danger" id="message_register_number_as_in_tax_invoice"
+                        role="alert"></span>
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
                     <label for="website_address">@lang('messages.Website Address')</label>

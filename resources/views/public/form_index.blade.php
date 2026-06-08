@@ -273,6 +273,10 @@
         .form-switch .form-check-input:focus {
             box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
         }
+
+        .select2-selection.is-invalid {
+            border-color: #dc3545 !important;
+        }
     </style>
 @endsection
 
@@ -643,6 +647,150 @@
             const totalWizardSteps = 6;
             let currentWizardStep = 1;
 
+            function getFieldLabel($field) {
+                let fieldId = $field.attr('id');
+                let label = fieldId ? $('label[for="' + fieldId + '"]').first().text().trim() : '';
+
+                if (!label) {
+                    label = $field.closest('.col-md-3, .col-md-4, .col-md-6, .col-md-9, .col-md-auto, .input-group, .row')
+                        .find('label').first().text().trim();
+                }
+
+                return (label || ($field.attr('name') || 'Field')).replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+            }
+
+            function getMessageContainer($field) {
+                let fieldName = ($field.attr('name') || '').replace('[]', '');
+                let fieldId = $field.attr('id') || '';
+                let index = null;
+
+                if (fieldId.match(/_(\d+)$/)) {
+                    index = fieldId.match(/_(\d+)$/)[1];
+                }
+
+                let candidates = [];
+
+                if (fieldName === 'province') {
+                    candidates.push('#message_province_' + index);
+                } else if (fieldName === 'city') {
+                    candidates.push('#message_city_' + index);
+                } else if (fieldName) {
+                    if (index !== null) {
+                        candidates.push('#message_' + fieldName + '_' + index);
+                    }
+                    candidates.push('#message_' + fieldName);
+                }
+
+                if (fieldId) {
+                    candidates.push('#message_' + fieldId);
+                }
+
+                for (let i = 0; i < candidates.length; i++) {
+                    let $message = $(candidates[i]);
+                    if ($message.length) {
+                        return $message.first();
+                    }
+                }
+
+                return $();
+            }
+
+            function isRequiredFieldEmpty($field) {
+                if ($field.is(':disabled')) {
+                    return false;
+                }
+
+                if ($field.is(':radio')) {
+                    return $('[name="' + $field.attr('name') + '"]:checked').length === 0;
+                }
+
+                if ($field.is(':checkbox')) {
+                    return !$field.is(':checked');
+                }
+
+                return $.trim($field.val() || '') === '';
+            }
+
+            function validateStep(step) {
+                let $pane = $('.step-pane[data-step="' + step + '"]');
+                let errors = [];
+
+                $pane.find('[id^="message_"]').text('');
+                $pane.find('.is-invalid').removeClass('is-invalid');
+                $pane.find('.select2-selection.is-invalid').removeClass('is-invalid');
+
+                $pane.find('[required]').each(function() {
+                    let $field = $(this);
+                    if (!isRequiredFieldEmpty($field)) {
+                        return;
+                    }
+
+                    let label = getFieldLabel($field);
+                    let message = label + ' wajib diisi.';
+                    errors.push({
+                        field: $field,
+                        label: label,
+                        message: message
+                    });
+
+                    $field.addClass('is-invalid');
+                    if ($field.hasClass('select2-hidden-accessible')) {
+                        $field.next('.select2').find('.select2-selection').addClass('is-invalid');
+                    }
+                    getMessageContainer($field).text(message);
+                });
+
+                if (!errors.length) {
+                    return true;
+                }
+
+                let toastBody = errors.slice(0, 6).map(function(error) {
+                    return '<div><strong>' + error.label + '</strong>: ' + error.message + '</div>';
+                }).join('');
+
+                if (errors.length > 6) {
+                    toastBody += '<div>+' + (errors.length - 6) + ' error lainnya.</div>';
+                }
+
+                if (typeof showPartnerToast === 'function') {
+                    showPartnerToast('Mandatory Field', toastBody, 'danger');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Mandatory Field',
+                        html: toastBody
+                    });
+                }
+
+                let $firstError = errors[0].field;
+                let $scrollTarget = $firstError.hasClass('select2-hidden-accessible') ? $firstError.next('.select2') : $firstError;
+                if ($scrollTarget.length) {
+                    $('html, body').animate({
+                        scrollTop: $scrollTarget.offset().top - 150
+                    }, 400);
+                }
+
+                return false;
+            }
+
+            function canMoveToStep(targetStep) {
+                if (targetStep <= currentWizardStep) {
+                    return true;
+                }
+
+                for (let step = currentWizardStep; step < targetStep; step++) {
+                    if (step !== currentWizardStep) {
+                        showStep(step);
+                    }
+
+                    if (!validateStep(step)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
             function showStep(step) {
                 if (step < 1) {
                     step = 1;
@@ -686,12 +834,16 @@
             });
 
             $('#step_next').on('click', function() {
-                showStep(currentWizardStep + 1);
+                if (canMoveToStep(currentWizardStep + 1)) {
+                    showStep(currentWizardStep + 1);
+                }
             });
 
             $('#wizard_stepper').on('click', '.wizard-step', function() {
                 const step = parseInt($(this).data('step'));
-                showStep(step);
+                if (canMoveToStep(step)) {
+                    showStep(step);
+                }
             });
 
             showStep(1);

@@ -21,7 +21,7 @@
                                 <label>@lang('messages.Company Address (according to NPWP)') <span class="text-danger" role="alert">*</span></label>
                             </div>
                             <div class="col-md-9">
-                                <input type="text" name="address[]" id="address_0" class="form-control">
+                                <input type="text" name="address[]" id="address_0" class="form-control" required>
                                 <span class="text-danger mt-2 message_address" id="message_address_0"
                                     role="alert"></span>
                             </div>
@@ -32,14 +32,14 @@
                                 <label for="country_0">@lang('messages.Country') <span class="text-danger"
                                         role="alert">*</span></label>
                                 <input type="text" name="country[]" id="country_0" class="form-control"
-                                    value="Indonesia" readonly>
+                                    value="Indonesia" readonly required>
                                 <span class="text-danger mt-2 message_country" id="message_country_0"
                                     role="alert"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="province_0">@lang('messages.Province') <span class="text-danger"
+                                <label for="select_option_province_0">@lang('messages.Province') <span class="text-danger"
                                         role="alert">*</span></label>
-                                <select name="province[]" id="select_option_province_0" class="form-control"></select>
+                                <select name="province[]" id="select_option_province_0" class="form-control" required></select>
                                 <span class="text-danger mt-2 message_province" id="message_province_0"
                                     role="alert"></span>
                             </div>
@@ -47,15 +47,15 @@
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label for="city_0">@lang('messages.City') <span class="text-danger"
+                                <label for="select_option_regency_0">@lang('messages.City') <span class="text-danger"
                                         role="alert">*</span></label>
-                                <select name="city[]" id="select_option_regency_0" class="form-control"></select>
+                                <select name="city[]" id="select_option_regency_0" class="form-control" required></select>
                                 <span class="text-danger mt-2 message_city" id="message_city_0" role="alert"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="zip_code_0">@lang('messages.Postal Code') <span class="text-danger"
                                         role="alert">*</span></label>
-                                <input type="text" name="zip_code[]" id="zip_code_0" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')">
+                                <input type="number" name="zip_code[]" id="zip_code_0" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')" data-max-digits="5" min="0" required>
                                 <span class="text-danger mt-2 message_zip_code" id="message_zip_code_0"
                                     role="alert"></span>
                             </div>
@@ -65,7 +65,7 @@
                             <div class="col-md-6">
                                 <label for="telephone_0">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                                <input type="number" name="telephone[]" id="telephone_0" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')">
+                                <input type="number" name="telephone[]" id="telephone_0" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')" data-max-digits="13" min="0" required>
                                 <span class="text-danger mt-2 message_telephone" id="message_telephone_0"
                                     role="alert"></span>
                             </div>
@@ -73,7 +73,7 @@
                                 <label for="fax_0">@lang('messages.Fax') <span class="text-danger"
                                         role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                                <input type="number" name="fax[]" id="fax_0" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')">
+                                <input type="number" name="fax[]" id="fax_0" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')" data-max-digits="15" min="0" required>
                                 <span class="text-danger mt-2 message_fax" id="message_fax_0" role="alert"></span>
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" name="address[]" id="address_1" class="form-control"
-                                    placeholder="ex: Jl. HM Ashari No. 47 001/001 Cibinong">
+                                    placeholder="ex: Jl. HM Ashari No. 47 001/001 Cibinong" required>
                                 <span class="text-muted mt-2">@lang('messages.Format Address')</span>
                                 <span class="text-danger mt-2 message_address" id="message_address_1"
                                     role="alert"></span>
@@ -135,12 +135,12 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="latitude_1">Latitude  <span class="text-danger" role="alert">*</span></label>
-                                <input type="text" name="latitude" id="latitude_1" class="form-control" readonly>
+                                <input type="text" name="latitude" id="latitude_1" class="form-control" readonly required>
                             </div>
                             <div class="col-md-6">
                                 <label for="longitude_1">Longitude  <span class="text-danger" role="alert">*</span></label>
                                 <input type="text" name="longitude" id="longitude_1" class="form-control"
-                                    readonly>
+                                    readonly required>
                             </div>
                         </div>
 
@@ -148,14 +148,14 @@
                             <div class="col-md-6">
                                 <label for="country_1">@lang('messages.Country') <span class="text-danger" role="alert">*</span></label>
                                 <input type="text" name="country[]" id="country_1" class="form-control"
-                                    value="Indonesia" readonly>
+                                    value="Indonesia" readonly required>
                                 <span class="text-danger mt-2 message_country" id="message_country_1"
                                     role="alert"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="province_1">@lang('messages.Province') <span class="text-danger" role="alert">*</span></label>
+                                <label for="select_option_province_1">@lang('messages.Province') <span class="text-danger" role="alert">*</span></label>
                                 <select name="province[]" id="select_option_province_1"
-                                    class="form-control"></select>
+                                    class="form-control" required></select>
                                 <span class="text-danger mt-2 message_province" id="message_province_1"
                                     role="alert"></span>
                             </div>
@@ -163,14 +163,14 @@
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label for="city_1">@lang('messages.City') <span class="text-danger" role="alert">*</span></label>
-                                <select name="city[]" id="select_option_regency_1" class="form-control"></select>
+                                <label for="select_option_regency_1">@lang('messages.City') <span class="text-danger" role="alert">*</span></label>
+                                <select name="city[]" id="select_option_regency_1" class="form-control" required></select>
                                 <span class="text-danger mt-2 message_city" id="message_city_1"
                                     role="alert"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="zip_code_1">@lang('messages.Postal Code') <span class="text-danger" role="alert">*</span></label>
-                                <input type="text" name="zip_code[]" id="zip_code_1" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')">
+                                <input type="number" name="zip_code[]" id="zip_code_1" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')" data-max-digits="5" min="0" required>
                                 <span class="text-danger mt-2 message_zip_code" id="message_zip_code_1"
                                     role="alert"></span>
                             </div>
@@ -180,14 +180,14 @@
                             <div class="col-md-6">
                                 <label for="telephone_1">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                                <input type="number" name="telephone[]" id="telephone_1" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')">
+                                <input type="number" name="telephone[]" id="telephone_1" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')" data-max-digits="13" min="0" required>
                                 <span class="text-danger mt-2 message_telephone" id="message_telephone_1"
                                     role="alert"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="fax_1">@lang('messages.Fax') <span class="text-danger" role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                                <input type="number" name="fax[]" id="fax_1" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')">
+                                <input type="number" name="fax[]" id="fax_1" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')" data-max-digits="15" min="0" required>
                                 <span class="text-danger mt-2 message_fax" id="message_fax_1" role="alert"></span>
                             </div>
                         </div>

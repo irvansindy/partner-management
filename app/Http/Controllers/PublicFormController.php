@@ -251,7 +251,7 @@ class PublicFormController extends Controller
             // Liable Persons
             'liable_person.*' => 'required|string|max:255',
             'liable_position.*' => 'required|string|max:255',
-            'nik.*' => 'required|string|max:16',
+            'nik.*' => 'required|digits_between:1,16',
 
             // Business
             'business_classification' => 'required|string|max:255',
@@ -268,23 +268,23 @@ class PublicFormController extends Controller
             'contact_position.*' => 'required|string|max:255',
             'contact_name.*' => 'required|string|max:255',
             'contact_email.*' => 'required|email|max:255',
-            'contact_telephone.*' => 'required|string|max:20',
+            'contact_telephone.*' => 'required|digits_between:1,13',
 
             // Addresses
             'address.*' => 'required|string',
             'country.*' => 'required|string|max:100',
             'province.*' => 'required|string|max:100',
             'city.*' => 'required|string|max:100',
-            'zip_code.*' => 'required|string|max:10',
-            'telephone.*' => 'required|string|max:20',
-            'fax.*' => 'required|string|max:20',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'zip_code.*' => 'required|digits:5',
+            'telephone.*' => 'required|digits_between:1,13',
+            'fax.*' => 'required|digits_between:1,15',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
 
             // Banks
             'bank_name.*' => 'required|string|max:255',
             'account_name.*' => 'required|string|max:255',
-            'account_number.*' => 'required|string|max:50',
+            'account_number.*' => 'required|digits_between:1,16',
 
             // Files
             'input-multiple-file.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',

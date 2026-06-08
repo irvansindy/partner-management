@@ -7,12 +7,151 @@
     $('#term_of_payment').select2({
         width: '100%'
     })
+    $('#business_classification, .liable-position-select, select[name="province[]"], select[name="city[]"], #select_searched_address_1').select2({
+        width: '100%'
+    })
 
-    $('#established_year, #total_employee').on('input', function() {
+    $(document).on('input', '#established_year, #total_employee, [data-max-digits]', function() {
         // hapus semua karakter non-digit
-        this.value = this.value.replace(/\D/g, '');
+        let maxDigits = $(this).data('max-digits');
+        let value = this.value.replace(/\D/g, '');
+        if (maxDigits) {
+            value = value.substring(0, parseInt(maxDigits, 10));
+        }
+        this.value = value;
     });
     fetchProvinces()
+
+    function showPartnerToast(title, body, type = 'danger') {
+        if ($.fn.Toasts) {
+            $(document).Toasts('create', {
+                title: title,
+                class: 'bg-' + type,
+                body: body,
+                delay: 10000,
+                autohide: true,
+                fade: true,
+                close: true,
+                autoremove: true,
+            });
+            return;
+        }
+
+        let toastId = 'partner_toast_' + Date.now();
+        let toastClass = type === 'danger' ? 'bg-danger text-white' : 'bg-' + type + ' text-white';
+
+        if (!$('#partner_toast_container').length) {
+            $('body').append('<div id="partner_toast_container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;"></div>');
+        }
+
+        $('#partner_toast_container').append(`
+            <div id="${toastId}" class="toast ${toastClass}" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">${escapeHtml(title)}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">${body}</div>
+            </div>
+        `);
+
+        let toastElement = document.getElementById(toastId);
+        let toast = bootstrap.Toast.getOrCreateInstance(toastElement, {
+            delay: 10000,
+            autohide: true
+        });
+        toast.show();
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            $(this).remove();
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function getValidationField(key) {
+        let parts = key.split('.');
+        let fieldName = parts[0];
+        let index = parts.length > 1 && /^\d+$/.test(parts[1]) ? parseInt(parts[1], 10) : null;
+        let $input = $();
+        let $message = $();
+
+        if (index !== null) {
+            $input = $('#' + fieldName + '_' + index);
+            if (!$input.length) {
+                $input = $('[name="' + fieldName + '[]"]').eq(index);
+            }
+
+            $message = $('#message_' + fieldName + '_' + index);
+            if (!$message.length && index === 0) {
+                $message = $('#message_' + fieldName);
+            }
+        } else {
+            $input = $('#' + fieldName + ', [name="' + fieldName + '"]').first();
+            $message = $('#message_' + fieldName);
+        }
+
+        return {
+            input: $input,
+            message: $message,
+            fieldName: fieldName,
+            index: index
+        };
+    }
+
+    function getValidationLabel($input, fieldName, index) {
+        let label = '';
+
+        if ($input.length) {
+            let inputId = $input.attr('id');
+            if (inputId) {
+                label = $('label[for="' + inputId + '"]').first().text().trim();
+            }
+
+            if (!label) {
+                label = $input.closest('.col-md-3, .col-md-4, .col-md-6, .col-md-9, .col-md-auto, .input-group, .row')
+                    .find('label').first().text().trim();
+            }
+
+            let stepTitle = $input.closest('.step-pane').find('.card-title').first().text().trim();
+            if (stepTitle) {
+                label = stepTitle + (label ? ' - ' + label : '');
+            }
+        }
+
+        if (!label) {
+            label = fieldName.replace(/_/g, ' ');
+        }
+
+        label = label.replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+
+        if (index !== null) {
+            label += ' #' + (index + 1);
+        }
+
+        return label;
+    }
+
+    function showValidationToasts(errors) {
+        let items = [];
+        $.each(errors, function(key, value) {
+            let field = getValidationField(key);
+            let message = Array.isArray(value) ? value[0] : value;
+            items.push('<div><strong>' + escapeHtml(getValidationLabel(field.input, field.fieldName, field.index)) + '</strong>: ' + escapeHtml(message) + '</div>');
+        });
+
+        let body = items.slice(0, 6).join('');
+        if (items.length > 6) {
+            body += '<div>+' + (items.length - 6) + ' error lainnya.</div>';
+        }
+
+        showPartnerToast('Validation Error', body, 'danger');
+    }
 
     function fetchProvinces() {
         $.ajax({
@@ -173,13 +312,13 @@
                 <div class="array_dynamic_liable_person">
                     <div class="row mb-4" id="liable_person_group_${index}">
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                            <label for="liable_person_${index}">@lang('messages.Liable Person')</label>
-                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" placeholder="@lang('messages.Placeholder Liable Person')">
+                            <label for="liable_person_${index}">@lang('messages.Liable Person') <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" placeholder="@lang('messages.Placeholder Liable Person')" required>
                             <span class="text-danger message-danger" id="message_liable_person_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                            <label for="liable_position_${index}">@lang('messages.Liable Position')</label>
-                            <select name="liable_position[]" id="liable_position_${index}" class="form-control liable-position-select">
+                            <label for="liable_position_${index}">@lang('messages.Liable Position') <span class="text-danger" role="alert">*</span></label>
+                            <select name="liable_position[]" id="liable_position_${index}" class="form-control liable-position-select" required>
                                 <option value="">-- @lang('messages.Placeholder Position') --</option>
                                 <option value="Owner">@lang('messages.Owner')</option>
                                 <option value="Board of Directors">@lang('messages.Board of Directors')</option>
@@ -196,8 +335,8 @@
                             </div>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                            <label for="nik_${index}">NIK</label>
-                            <input type="text" name="nik[]" id="nik_${index}" class="form-control" placeholder="@lang('messages.Placeholder NIK')">
+                            <label for="nik_${index}">NIK <span class="text-danger" role="alert">*</span></label>
+                            <input type="number" name="nik[]" id="nik_${index}" class="form-control" placeholder="@lang('messages.Placeholder NIK')" data-max-digits="16" min="0" required>
                             <span class="text-danger message-danger" id="message_nik_${index}" role="alert"></span>
                         </div>
                     </div>
@@ -353,33 +492,34 @@
 
         $(document).on('click', '#add_contact', function(e) {
             e.preventDefault()
+            let index = $('input[name="contact_name[]"]').length;
             $('.dynamic_contact').append(`
                 <div class="array_dynamic_contact">
                     <div class="row mt-4">
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_department_0">@lang('messages.Department')</label>
-                            <input type="text" name="contact_department[]" id="contact_department_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')">
-                            <span class="text-danger mt-2" id="message_contact_department" role="alert"></span>
+                            <label for="contact_department_${index}">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')" required>
+                            <span class="text-danger mt-2" id="message_contact_department_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_position_0">@lang('messages.Position')</label>
-                            <input type="text" name="contact_position[]" id="contact_position_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')">
-                            <span class="text-danger mt-2" id="message_contact_position" role="alert"></span>
+                            <label for="contact_position_${index}">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')" required>
+                            <span class="text-danger mt-2" id="message_contact_position_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_name_0">@lang('messages.Name')</label>
-                            <input type="text" name="contact_name[]" id="contact_name_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')">
-                            <span class="text-danger mt-2" id="message_contact_name" role="alert"></span>
+                            <label for="contact_name_${index}">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')" required>
+                            <span class="text-danger mt-2" id="message_contact_name_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_email_0">@lang('messages.Email')</label>
-                            <input type="text" name="contact_email[]" id="contact_email_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')">
-                            <span class="text-danger mt-2" id="message_contact_email" role="alert"></span>
+                            <label for="contact_email_${index}">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="contact_email[]" id="contact_email_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
+                            <span class="text-danger mt-2" id="message_contact_email_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <label for="contact_telephone_0">@lang('messages.Telephone')</label>
-                            <input type="text" name="contact_telephone[]" id="contact_telephone_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Phone')">
-                            <span class="text-danger mt-2" id="message_contact_telephone" role="alert"></span>
+                            <label for="contact_telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
+                            <input type="number" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Phone')" data-max-digits="13" min="0" required>
+                            <span class="text-danger mt-2" id="message_contact_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
                             <div class="input-group d-flex justify-content-end mb-4 mt-4">
@@ -493,51 +633,51 @@
                 <div class="row">
                     <div class="input-group mb-4">
                         <div class="col-md-3">
-                            <label>@lang('messages.Company Address (Other)')</label>
+                            <label>@lang('messages.Company Address (Other)') <span class="text-danger" role="alert">*</span></label>
                         </div>
                         <div class="col-md-9">
-                            <input type="text" name="address[]" id="address_${index}" class="form-control">
+                            <input type="text" name="address[]" id="address_${index}" class="form-control" required>
                             <span class="text-danger mt-2 message_address" id="message_address_${index}" role="alert"></span>
                         </div>
                     </div>
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label for="country_${index}">@lang('messages.Country')</label>
-                            <input type="text" name="country[]" id="country_${index}" class="form-control" value="Indonesia" readonly>
+                            <label for="country_${index}">@lang('messages.Country') <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="country[]" id="country_${index}" class="form-control" value="Indonesia" readonly required>
                             <span class="text-danger mt-2 message_country" id="message_country_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
-                            <label for="province_${index}">@lang('messages.Province')</label>
-                            <select name="province[]" id="select_option_province_${index}" class="form-control"></select>
+                            <label for="select_option_province_${index}">@lang('messages.Province') <span class="text-danger" role="alert">*</span></label>
+                            <select name="province[]" id="select_option_province_${index}" class="form-control" required></select>
                             <span class="text-danger mt-2 message_province" id="message_province_${index}" role="alert"></span>
                         </div>
                     </div>
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label for="city_${index}">@lang('messages.City')</label>
-                            <select name="city[]" id="select_option_regency_${index}" class="form-control"></select>
+                            <label for="select_option_regency_${index}">@lang('messages.City') <span class="text-danger" role="alert">*</span></label>
+                            <select name="city[]" id="select_option_regency_${index}" class="form-control" required></select>
                             <span class="text-danger mt-2 message_city" id="message_city_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
-                            <label for="zip_code_${index}">@lang('messages.Postal Code')</label>
-                            <input type="text" name="zip_code[]" id="zip_code_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')">
+                            <label for="zip_code_${index}">@lang('messages.Postal Code') <span class="text-danger" role="alert">*</span></label>
+                            <input type="number" name="zip_code[]" id="zip_code_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')" data-max-digits="5" min="0" required>
                             <span class="text-danger mt-2 message_zip_code" id="message_zip_code_${index}" role="alert"></span>
                         </div>
                     </div>
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label for="telephone_${index}">@lang('messages.Telephone')</label>
+                            <label for="telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                             <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                            <input type="number" name="telephone[]" id="telephone_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')">
+                            <input type="number" name="telephone[]" id="telephone_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')" data-max-digits="13" min="0" required>
                             <span class="text-danger mt-2 message_telephone" id="message_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
-                            <label for="fax_${index}">@lang('messages.Fax')</label>
+                            <label for="fax_${index}">@lang('messages.Fax') <span class="text-danger" role="alert">*</span></label>
                             <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                            <input type="number" name="fax[]" id="fax_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')">
+                            <input type="number" name="fax[]" id="fax_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')" data-max-digits="15" min="0" required>
                             <span class="text-danger mt-2 message_fax" id="message_fax_${index}" role="alert"></span>
                         </div>
                     </div>
@@ -595,30 +735,31 @@
 
         $(document).on('click', '#add_bank', function(e) {
             e.preventDefault()
+            let index = $('input[name="bank_name[]"]').length;
             $('.dynamic_bank').append(`
                 <div class="array_dymanic_bank">
                     <fieldset class="border px-2 mb-4">
                         <legend class="float-none w-auto text-bold">Data Bank</legend>
                         <div class="row mt-4">
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                                <label for="bank_name_0">@lang('messages.Bank Name')</label>
-                                <input type="text" name="bank_name[]" id="bank_name_0" class="form-control">
-                                <span class="text-danger mt-2" id="message_bank_name" role="alert"></span>
+                                <label for="bank_name_${index}">@lang('messages.Bank Name') <span class="text-danger" role="alert">*</span></label>
+                                <input type="text" name="bank_name[]" id="bank_name_${index}" class="form-control" required>
+                                <span class="text-danger mt-2" id="message_bank_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                                <label for="account_name_0">@lang('messages.Account Name')</label>
-                                <input type="text" name="account_name[]" id="account_name_0" class="form-control">
-                                <span class="text-danger mt-2" id="message_account_name" role="alert"></span>
+                                <label for="account_name_${index}">@lang('messages.Account Name') <span class="text-danger" role="alert">*</span></label>
+                                <input type="text" name="account_name[]" id="account_name_${index}" class="form-control" required>
+                                <span class="text-danger mt-2" id="message_account_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                                <label for="account_number_0">@lang('messages.Account Number')</label>
-                                <input type="number" name="account_number[]" id="account_number_0" class="form-control">
-                                <span class="text-danger mt-2" id="message_account_number" role="alert"></span>
+                                <label for="account_number_${index}">@lang('messages.Account Number') <span class="text-danger" role="alert">*</span></label>
+                                <input type="number" name="account_number[]" id="account_number_${index}" class="form-control" data-max-digits="16" min="0" required>
+                                <span class="text-danger mt-2" id="message_account_number_${index}" role="alert"></span>
                             </div>
                         </div>
                     </fieldset>
                     <div class="input-group d-flex justify-content-end mb-4 mt-4">
-                        <button type="button" class="btn btn-danger" id="delete_bank">
+                        <button type="button" class="btn btn-danger delete_bank">
                             <i class="fas fa-minus"></i>
                         </button>
                     </div>
@@ -627,7 +768,7 @@
 
         })
 
-        $(document).on('click', '#delete_bank', function(e) {
+        $(document).on('click', '.delete_bank, #delete_bank', function(e) {
             e.preventDefault()
             $(this).closest('.array_dymanic_bank').remove()
         })
@@ -961,8 +1102,9 @@
             e.preventDefault();
 
             // Clear previous errors
-            $('.text-danger').text('');
+            $('[id^="message_"]').text('');
             $('.is-invalid').removeClass('is-invalid');
+            $('.select2-selection.is-invalid').removeClass('is-invalid');
 
             // Ambil CSRF token terbaru
             var csrfToken = $('meta[name="csrf-token"]').attr('content') ||
@@ -1048,6 +1190,7 @@
                     console.error('Response:', xhr.responseJSON);
 
                     $('.is-invalid').removeClass('is-invalid');
+                    $('.select2-selection.is-invalid').removeClass('is-invalid');
                     $('[id^="message_"]').text('');
 
                     // Handle 419 - CSRF Token Mismatch
@@ -1071,21 +1214,30 @@
                     if (xhr.status === 422) {
                         var errors = xhr.responseJSON?.errors || {};
                         var errorCount = Object.keys(errors).length;
+                        var firstErrorField = null;
 
                         $.each(errors, function(key, value) {
-                            var fieldId = key.replace(/\./g, '_');
-                            var message = value[0];
+                            var field = getValidationField(key);
+                            var message = Array.isArray(value) ? value[0] : value;
+                            var inputField = field.input;
+                            var messageContainer = field.message;
 
-                            var inputField = $('#' + fieldId);
-                            var messageContainer = $('#message_' + fieldId);
+                            if (!firstErrorField && inputField.length) {
+                                firstErrorField = inputField;
+                            }
 
                             if (inputField.length) {
                                 inputField.addClass('is-invalid');
+                                if (inputField.hasClass('select2-hidden-accessible')) {
+                                    inputField.next('.select2').find('.select2-selection').addClass('is-invalid');
+                                }
                             }
                             if (messageContainer.length) {
                                 messageContainer.text(message);
                             }
                         });
+
+                        showValidationToasts(errors);
 
                         Swal.fire({
                             icon: 'error',
@@ -1093,8 +1245,13 @@
                             html: `Found ${errorCount} validation error(s). Please check your input.`,
                         });
 
+                        if (firstErrorField && firstErrorField.closest('.step-pane').length) {
+                            var errorStep = firstErrorField.closest('.step-pane').data('step');
+                            $('#wizard_stepper .wizard-step[data-step="' + errorStep + '"]').trigger('click');
+                        }
+
                         // Scroll ke error pertama
-                        var firstError = $('.is-invalid').first();
+                        var firstError = firstErrorField || $('.is-invalid').first();
                         if (firstError.length) {
                             $('html, body').animate({
                                 scrollTop: firstError.offset().top - 150
