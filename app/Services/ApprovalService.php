@@ -21,40 +21,37 @@ class ApprovalService
      */
     public function createApprovalFromFormLink(CompanyInformation $company): ?ApprovalProcess
     {
-        try {
-            DB::beginTransaction();
+        // Get form link
+        $formLink = FormLink::find($company->form_link_id);
 
-            // Get form link
-            $formLink = FormLink::find($company->form_link_id);
+        if (!$formLink) {
+            Log::warning("Form link not found for company ID: {$company->id}");
+            return null;
+        }
 
-            if (!$formLink) {
-                Log::warning("Form link not found for company ID: {$company->id}");
-                return null;
-            }
+        // Find matching approval template
+        $template = ApprovalTemplate::where('location_id', $formLink->office_id)
+            ->where('department_id', $formLink->department_id)
+            ->where('status', 1) // Active template
+            ->first();
 
-            // Find matching approval template
-            $template = ApprovalTemplate::where('location_id', $formLink->office_id)
-                ->where('department_id', $formLink->department_id)
-                ->where('status', 1) // Active template
-                ->first();
+        if (!$template) {
+            Log::warning("No active approval template found for Office ID: {$formLink->office_id}, Department ID: {$formLink->department_id}");
+            return null;
+        }
 
-            if (!$template) {
-                Log::warning("No active approval template found for Office ID: {$formLink->office_id}, Department ID: {$formLink->department_id}");
-                return null;
-            }
+        // Get template details (approvers)
+        $templateDetails = $template->details()
+            ->where('status', 0) // Active approvers
+            ->orderBy('step_ordering')
+            ->get();
 
-            // Get template details (approvers)
-            $templateDetails = $template->details()
-                ->where('status', 0) // Active approvers
-                ->orderBy('step_ordering')
-                ->get();
+        if ($templateDetails->isEmpty()) {
+            Log::warning("No approvers found in template ID: {$template->id}");
+            return null;
+        }
 
-            if ($templateDetails->isEmpty()) {
-                Log::warning("No approvers found in template ID: {$template->id}");
-                return null;
-            }
-
-            // Create approval process
+        return DB::transaction(function () use ($company, $formLink, $templateDetails) {
             $approvalProcess = ApprovalProcess::create([
                 'company_information_id' => $company->id,
                 'user_id' => $company->user_id, // Initiator (form submitter)
@@ -84,17 +81,10 @@ class ApprovalService
                 'status' => ApprovalProcess::STATUS_IN_PROGRESS
             ]);
 
-            DB::commit();
-
             Log::info("Approval process created successfully for company ID: {$company->id}, Process ID: {$approvalProcess->id}");
 
             return $approvalProcess->fresh(['steps']);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Failed to create approval process for company ID: {$company->id}. Error: {$e->getMessage()}");
-            throw $e;
-        }
+        });
     }
 
     /**

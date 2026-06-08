@@ -8,6 +8,7 @@
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="" id="form_create_new_menu">
+                <input type="hidden" name="menu_id" id="menu_id" value="">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="menu_name">Name</label>
@@ -36,7 +37,7 @@
                         </div>
                     </div>
                     <div class="form-group" id="parent_menu">
-                        
+
                     </div>
                     <div class="form-group" id="roles_menu">
                         <label for="roles">Roles</label>

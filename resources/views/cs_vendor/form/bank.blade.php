@@ -26,7 +26,7 @@
                     </div>
                     <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
                         <label for="account_number_0">@lang('messages.Account Number') <span class="text-danger" role="alert">*</span></label>
-                        <input type="number" name="account_number[]" id="account_number_0" class="form-control">
+                        <input type="number" name="account_number[]" id="account_number_0" class="form-control" data-maxlength="16" maxlength="16">
                         <span class="text-danger mt-2" id="message_account_number" role="alert"></span>
                     </div>
                 </div>

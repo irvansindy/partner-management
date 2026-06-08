@@ -6,68 +6,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submission Successful</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #f5f6fb;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
 
         .card {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: none;
+            border-radius: 24px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(38, 78, 121, 0.12);
         }
 
-        .success-icon {
-            width: 100px;
-            height: 100px;
+        .card-body {
+            padding: 3rem;
+        }
+
+        .status-circle {
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
-            background: #28a745;
+            background: #ffffff;
+            border: 2px solid #28a745;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto;
-            animation: scaleIn 0.5s ease-out;
+            margin: 0 auto 1.5rem;
         }
 
-        @keyframes scaleIn {
-            0% {
-                transform: scale(0);
-            }
+        .status-circle i {
+            color: #28a745;
+            font-size: 2rem;
+        }
 
-            100% {
-                transform: scale(1);
-            }
+        h2 {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #1f2a37;
+        }
+
+        .text-muted {
+            color: #6c7a89 !important;
+            line-height: 1.75;
+        }
+
+        .btn-primary {
+            background-color: #1b4b7b;
+            border-color: #1b4b7b;
+            padding: 0.85rem 1.6rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #163f68;
+            border-color: #163f68;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body text-center p-5">
-                        <div class="success-icon mb-4">
-                            <i class="fas fa-check text-white" style="font-size: 50px;"></i>
-                        </div>
-                        <h2 class="mb-3">Submission Successful!</h2>
-                        <p class="text-muted mb-4">
-                            Thank you for submitting your information. We have received your data and will review it
-                            shortly.
-                        </p>
-                        <p class="text-muted">
-                            <small>You will be contacted if additional information is needed.</small>
-                        </p>
-                        <a href="/" class="btn btn-primary mt-3">
-                            <i class="fas fa-home"></i> Go to Homepage
-                        </a>
-                    </div>
-                </div>
+    <div class="card">
+        <div class="card-body text-center">
+            <div class="status-circle">
+                <span style="font-size: 2rem; color: #28a745;">✓</span>
             </div>
+            <h2>Berhasil</h2>
+            <p class="text-muted mb-4">
+                Tanggapan Anda telah berhasil dicatat. Tim kami akan meninjaunya dan menghubungi Anda jika diperlukan tindak lanjut.
+            </p>
+            <a href="/" class="btn btn-primary">Back to Homepage</a>
         </div>
     </div>
 </body>

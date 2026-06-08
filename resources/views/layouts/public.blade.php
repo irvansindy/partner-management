@@ -6,19 +6,11 @@
     {{-- Tambahkan di bagian HEAD layout --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Setup AJAX global dengan CSRF --}}
-    <script>
-        // Set CSRF token untuk semua AJAX request
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-    </script>
+    {{-- NOTE: CSRF AJAX setup moved below jQuery include to avoid reference errors. --}}
     <title>@yield('title', 'Form Registration')</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS (4.6 to match AdminLTE/Bootstrap 4 used elsewhere) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Select2 -->
@@ -83,8 +75,16 @@
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Setup CSRF for AJAX (after jQuery loaded) -->
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    <!-- Bootstrap 4.6 Bundle (matches AdminLTE v3) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- File Input -->

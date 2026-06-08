@@ -99,13 +99,7 @@
     </style>
 @stop
 @push('js')
-    <!-- jQuery -->
-    <script src="{{ asset('vendor/jquery/jquery.js') }}"></script>
-
-    <!-- Bootstrap 4 -->
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-    <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
+    <!-- Optional per-page scripts (jQuery/Bootstrap/AdminLTE are provided by the layout) -->
 @endpush
 @section('js')
     {{-- JANGAN load jQuery lagi! AdminLTE sudah include jQuery --}}

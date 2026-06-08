@@ -20,12 +20,12 @@ class CompanyPolicy
     }
     public function viewCustomer(User $user): bool
     {
-        return $user->hasRole('super-admin') || ($user->hasAnyRole(['admin', 'super-user']) && in_array($user->dept->name, ['Sales Project', 'Sales Retail 1', 'Sales Retail 2']));
+        return $user->hasRole('super-admin') || ($user->hasAnyRole(['admin', 'super-user']) && in_array($user->dept?->name, ['Sales Project', 'Sales Retail 1', 'Sales Retail 2']));
     }
     public function viewVendor(User $user): bool
     {
         return $user->hasRole('super-admin') ||
-            ($user->hasAnyRole(['admin', 'super-user']) && $user->dept->name === 'Purchasing');
+            ($user->hasAnyRole(['admin', 'super-user']) && $user->dept?->name === 'Purchasing');
     }
     public function viewApproval(User $user): bool
     {

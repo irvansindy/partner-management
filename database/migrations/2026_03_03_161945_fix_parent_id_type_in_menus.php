@@ -1,30 +1,23 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-// use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+
 class FixParentIdTypeInMenus extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        DB::statement('
-            ALTER TABLE menus
-            ALTER COLUMN parent_id TYPE BIGINT
-            USING NULLIF(parent_id, \'\')::bigint
-        ');
+        // Set empty string ke NULL dulu sebelum ganti tipe kolom
+        // (pengganti NULLIF(parent_id, '')::bigint di PostgreSQL)
+        DB::statement("UPDATE menus SET parent_id = NULL WHERE parent_id = ''");
+
+        // Ganti tipe kolom ke BIGINT — MySQL syntax
+        DB::statement("ALTER TABLE menus MODIFY COLUMN parent_id BIGINT NULL");
     }
 
     public function down()
     {
-        DB::statement('
-            ALTER TABLE menus
-            ALTER COLUMN parent_id TYPE VARCHAR(255)
-        ');
+        // Kembalikan ke VARCHAR — MySQL syntax
+        DB::statement("ALTER TABLE menus MODIFY COLUMN parent_id VARCHAR(255) NULL");
     }
 }

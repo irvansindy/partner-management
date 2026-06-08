@@ -18,8 +18,8 @@ class ModifyAndAddSomeColumnTableCompanyInformations extends Migration
         });
 
         // Ubah kolom type menggunakan raw SQL
-        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN type ENUM('vendor', 'customer') NOT NULL");
-        DB::statement("ALTER TABLE company_informations ALTER COLUMN type TYPE VARCHAR(20)");
+        DB::statement("ALTER TABLE company_informations MODIFY COLUMN type ENUM('vendor', 'customer') NOT NULL");
+        // DB::statement("ALTER TABLE company_informations ALTER COLUMN type TYPE VARCHAR(20)");
 
         // Schema::table('company_informations', function (Blueprint $table) {
         //     $table->enum('term_of_payment', ['30', '45', '60', '90'])->after('email_address')->nullable();
@@ -47,8 +47,8 @@ class ModifyAndAddSomeColumnTableCompanyInformations extends Migration
         });
 
         // Kembalikan kolom type ke nilai semula
-        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN type ENUM('customer', 'vendor', 'customer dan vendor') NOT NULL");
-        DB::statement("ALTER TABLE company_informations ALTER COLUMN type TYPE VARCHAR(50)");
+        DB::statement("ALTER TABLE company_informations MODIFY COLUMN type ENUM('customer', 'vendor', 'customer dan vendor') NOT NULL");
+        // DB::statement("ALTER TABLE company_informations ALTER COLUMN type TYPE VARCHAR(50)");
 
         Schema::table('company_informations', function (Blueprint $table) {
             $table->string('liable_person_and_position')->nullable();

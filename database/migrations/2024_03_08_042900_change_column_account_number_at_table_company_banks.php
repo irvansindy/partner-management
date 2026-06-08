@@ -14,8 +14,8 @@ class ChangeColumnAccountNumberAtTableCompanyBanks extends Migration
     public function up()
     {
         Schema::table('company_banks', function (Blueprint $table) {
-            // DB::statement("ALTER TABLE {$table->getTable()} MODIFY `account_number` varchar(50)");
-            DB::statement("ALTER TABLE company_banks ALTER COLUMN account_number TYPE VARCHAR(50)");
+            DB::statement("ALTER TABLE {$table->getTable()} MODIFY `account_number` varchar(50)");
+            // DB::statement("ALTER TABLE company_banks ALTER COLUMN account_number TYPE VARCHAR(50)");
         });
     }
 
@@ -27,8 +27,8 @@ class ChangeColumnAccountNumberAtTableCompanyBanks extends Migration
     public function down()
     {
         Schema::table('company_banks', function (Blueprint $table) {
-            // DB::statement("ALTER TABLE {$table->getTable()} MODIFY `account_number` integer(11)");
-            DB::statement("ALTER TABLE company_banks ALTER COLUMN account_number TYPE INTEGER USING account_number::integer");
+            DB::statement("ALTER TABLE {$table->getTable()} MODIFY `account_number` integer(11)");
+            // DB::statement("ALTER TABLE company_banks ALTER COLUMN account_number TYPE INTEGER USING account_number::integer");
         });
     }
 }

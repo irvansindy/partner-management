@@ -27,7 +27,14 @@
                         action="{{ isset($formLink) ? route('public.form.submit', $formLink->token) : route('submit-partner') }}"
                         method="POST" id="form_company" enctype="multipart/form-data"
                         data-storage-key="partner_form_{{ $formLink->token ?? 'default' }}">
+                        <div id="form_loading_overlay" class="d-none">
+                            <div class="loading-box text-center p-4 rounded shadow">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <div class="mt-3 fw-bold">Mohon tunggu, sedang mengirim data...</div>
+                            </div>
+                        </div>
                         @csrf
+                        <input type="hidden" name="submission_uuid" value="{{ \Illuminate\Support\Str::uuid() }}">
 
                         @if (isset($formLink))
                             <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
@@ -56,7 +63,7 @@
                                 <div class="wizard-step-text">Form Survey</div>
                             </div>
                             <div class="wizard-step" data-step="6">
-                                <div class="wizard-step-number">6</div>
+                                <div class="wizard-step-number">{{ $formLink->form_type === 'vendor' ? 5 : 6 }}</div>
                                 <div class="wizard-step-text">Form Upload</div>
                             </div>
                         </div>
@@ -135,29 +142,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem 0;
+            gap: 0.85rem;
+            margin-bottom: 1.75rem;
+            padding: 1.1rem 1rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 1.5rem;
+            box-shadow: 0 18px 32px rgba(15, 40, 74, 0.06);
         }
 
         #wizard_stepper::before {
             content: '';
             position: absolute;
-            top: calc(1rem + 21px);
-            left: calc(0.5rem + 21px);
-            right: calc(0.5rem + 21px);
+            top: 32px;
+            left: 1.25rem;
+            right: 1.25rem;
             height: 2px;
-            background: #dee2e6;
+            background: #e9ecef;
             z-index: 1;
         }
 
         .wizard-step {
             position: relative;
             z-index: 2;
-            flex: 1 1 0;
-            min-width: 120px;
-            max-width: 170px;
-            padding: 0.25rem 0.5rem;
+            flex: 0 0 auto;
+            min-width: 150px;
+            max-width: 210px;
+            padding: 0.95rem 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -165,93 +179,318 @@
             text-align: center;
             cursor: pointer;
             color: #6c757d;
-            transition: transform 0.2s ease, color 0.2s ease;
-            white-space: nowrap;
+            background: #f6f8fc;
+            border: 1px solid transparent;
+            border-radius: 1.25rem;
+            transition: all 0.25s ease;
+            white-space: normal;
         }
 
         .wizard-step:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+            border-color: #d8e2ef;
+            background: #eef4ff;
         }
 
         .wizard-step-number {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background: #f1f3f5;
-            border: 2px solid #dee2e6;
-            margin-bottom: 0.5rem;
+            background: #ffffff;
+            border: 2px solid #ced4da;
+            margin-bottom: 0.55rem;
             font-weight: 700;
             color: #495057;
             transition: all 0.25s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
         }
 
         .wizard-step.active .wizard-step-number,
         .wizard-step.completed .wizard-step-number {
-            background: #007bff;
+            background: #0d6efd;
             color: #fff;
-            border-color: #007bff;
+            border-color: #0d6efd;
+            box-shadow: 0 10px 20px rgba(13, 110, 253, 0.18);
         }
 
         .wizard-step.active,
         .wizard-step.completed {
-            color: #212529;
+            color: #1b1f23;
+            background: #e7f1ff;
+            border-color: #cce0ff;
         }
 
         .wizard-step-text {
-            font-size: 0.9rem;
-            line-height: 1.2;
-            max-width: 120px;
+            font-size: 0.88rem;
+            line-height: 1.3;
+            max-width: 170px;
             word-break: break-word;
+            color: inherit;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .step-pane {
             display: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
 
         .step-pane.active {
             display: block;
+            opacity: 1;
         }
 
-        .wizard-actions button {
-            min-width: 130px;
+        .step-pane > .card {
+            border: 1px solid #e7eaf3;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(15, 40, 74, 0.04);
+            background: #ffffff;
+        }
+
+        .step-pane .card-body {
+            padding: 1.75rem 1.5rem 1.25rem;
+        }
+
+        .step-pane .form-group label,
+        .step-pane label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .step-pane .form-control,
+        .step-pane select,
+        .step-pane textarea,
+        .step-pane .form-select {
+            width: 100%;
+            border-radius: 0.75rem;
+            padding: 0.95rem 1rem;
+            border: 1px solid #d8e2ef;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            box-sizing: border-box;
+            min-height: 3.3rem;
+            background: #fff;
+            background-clip: padding-box;
+        }
+
+        .step-pane fieldset {
+            border: 1px solid rgba(13, 110, 253, 0.15);
+            background: rgba(13, 110, 253, 0.03);
+            border-radius: 1rem;
+            padding: 1.25rem 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-pane legend {
+            color: #0d6efd;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 0 0.75rem;
+            width: auto;
+        }
+
+        .step-pane .form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #6c757d 50%),
+                linear-gradient(135deg, #6c757d 50%, transparent 50%);
+            background-position: calc(100% - 1rem) center, calc(100% - 0.6rem) center;
+            background-size: 8px 8px, 8px 8px;
+            background-repeat: no-repeat;
+        }
+
+        .step-pane .form-select option {
+            padding: 0.6rem 1rem;
+        }
+
+        .step-pane .form-control:focus,
+        .step-pane select:focus,
+        .step-pane textarea:focus,
+        .step-pane .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.18rem rgba(13, 110, 253, 0.15);
+        }
+
+        .step-pane .form-text,
+        .step-pane .text-muted {
+            color: #6c757d;
+        }
+
+        .step-pane .form-row,
+        .step-pane .row {
+            gap: 1rem;
+        }
+
+        .step-pane .row > [class^="col-"] {
+            margin-bottom: 1rem;
+        }
+
+        #wizard_actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        #wizard_actions > div,
+        #wizard_actions > button {
+            flex: 1 1 auto;
+        }
+
+        #wizard_actions button {
+            min-width: 140px;
+        }
+
+        #wizard_actions .btn {
+            width: 100%;
+            border-radius: 0.85rem;
+            padding: 0.95rem 1.25rem;
+        }
+
+        .card-header h3 {
+            font-size: 1.32rem;
+            letter-spacing: -0.01em;
+        }
+
+        .card-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card {
+            border-radius: 1.25rem;
+        }
+
+        .card .card-header {
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+
+        .alert-info {
+            border-radius: 0.85rem;
+            background: #eef7ff;
+            border-color: #d2e5ff;
+            color: #084298;
         }
 
         @media (max-width: 991px) {
             #wizard_stepper {
-                overflow-x: auto;
-                padding-left: 0.5rem;
-                padding-right: 0.5rem;
-            }
-
-            #wizard_stepper::before {
-                left: 2rem;
-                right: 2rem;
+                padding-left: 0.85rem;
+                padding-right: 0.85rem;
             }
 
             .wizard-step {
-                min-width: 140px;
+                min-width: 150px;
+                max-width: 180px;
+            }
+
+            .wizard-step-text {
+                font-size: 0.84rem;
+            }
+
+            .step-pane .form-control,
+            .step-pane select,
+            .step-pane textarea {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #wizard_actions {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            #wizard_actions > div,
+            #wizard_actions > button {
+                width: 100%;
+            }
+
+            #wizard_actions .btn {
+                width: 100%;
             }
         }
 
         @media (max-width: 576px) {
             #wizard_stepper {
-                gap: 0.75rem;
+                gap: 0.55rem;
             }
 
             .wizard-step {
-                min-width: 120px;
+                min-width: 140px;
+                max-width: 155px;
+                padding: 0.75rem 0.85rem;
+            }
+
+            .wizard-step-number {
+                width: 34px;
+                height: 34px;
+                margin-bottom: 0.35rem;
             }
 
             .wizard-step-text {
-                font-size: 0.8rem;
+                font-size: 0.76rem;
+                max-width: 140px;
+            }
+
+            #wizard_actions {
+                margin-top: 1rem;
             }
         }
 
         #survey_form_container {
             transition: all 0.3s ease-in-out;
+        }
+
+        #form_company {
+            position: relative;
+            background: #f8fbff;
+            padding: 1.25rem;
+            border-radius: 1.25rem;
+        }
+
+        #form_loading_overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.92);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #form_loading_overlay.active {
+            display: flex;
+        }
+
+        .loading-box {
+            min-width: 280px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        .error-message {
+            display: block;
+            margin-top: 0.35rem;
+            color: #dc3545;
+            font-size: 0.875rem;
+        }
+
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+
+        .is-invalid:focus {
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
 
         .form-check-input:checked {
@@ -280,6 +519,305 @@
     <script>
         const formToken = "{{ $formLink->token ?? '' }}";
         const STORAGE_KEY = "partner_form_" + formToken;
+        const unsafePattern = /<[^>]*>|javascript:|data:text|<script/i;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const urlPattern = /^(https?:\/\/)?(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})(:\d+)?(\/\S*)?$/;
+        const digitsPattern = /^[0-9+\- ]+$/;
+
+        function showLoadingOverlay(show) {
+            const $overlay = $('#form_loading_overlay');
+            if (show) {
+                $overlay.addClass('active');
+            } else {
+                $overlay.removeClass('active');
+            }
+        }
+
+        function clearValidationErrors(scope) {
+            const $scope = scope ? $(scope) : $('#form_company');
+            $scope.find('.is-invalid').removeClass('is-invalid');
+            $scope.find('.message-danger').each(function() {
+                $(this).text('');
+            });
+            $scope.find('.error-message').remove();
+        }
+
+        function getErrorMessageElement($field) {
+            const $container = $field.closest('.col-md-4, .col-md-6, .col-md-9, .input-group, .form-group, fieldset, .row');
+            let $message = $container.find('.message-danger').first();
+            if ($message.length === 0) {
+                $message = $('<span class="text-danger error-message"></span>');
+                $field.after($message);
+            }
+            return $message;
+        }
+
+        function showFieldError($field, message) {
+            $field.addClass('is-invalid');
+            const $messageEl = getErrorMessageElement($field);
+            $messageEl.text(message);
+        }
+
+        function isUnsafeValue(value) {
+            return unsafePattern.test(String(value || ''));
+        }
+
+        function validateField($field, isRequired = false) {
+            if (!$field.is(':visible') || $field.is(':disabled')) {
+                return true;
+            }
+
+            const name = $field.attr('name') || '';
+            const type = $field.attr('type') || $field.prop('tagName').toLowerCase();
+            let value = $field.val();
+
+            if (type === 'checkbox') {
+                value = $field.is(':checked') ? 'checked' : '';
+            }
+            if (type === 'radio') {
+                if (!$field.is(':checked')) {
+                    return true;
+                }
+            }
+
+            const normalizedValue = String(value || '').trim();
+
+            if (isRequired && normalizedValue === '') {
+                showFieldError($field, 'Field ini wajib diisi.');
+                return false;
+            }
+
+            if (normalizedValue === '') {
+                return true;
+            }
+
+            if (isUnsafeValue(normalizedValue)) {
+                showFieldError($field, 'Format tidak valid atau berpotensi berbahaya.');
+                return false;
+            }
+
+            if (/email/i.test(name) && !emailPattern.test(normalizedValue)) {
+                showFieldError($field, 'Alamat email tidak valid.');
+                return false;
+            }
+
+            if (/(website|url)/i.test(name) && !urlPattern.test(normalizedValue)) {
+                showFieldError($field, 'Alamat website tidak valid.');
+                return false;
+            }
+
+            if (/nik/i.test(name) && !/^\d{6,20}$/.test(normalizedValue)) {
+                showFieldError($field, 'NIK harus berupa 6-20 digit angka.');
+                return false;
+            }
+
+            if (/(telephone|fax|zip_code|account_number)/i.test(name) && !digitsPattern.test(normalizedValue)) {
+                showFieldError($field, 'Hanya boleh berisi angka, spasi, +, dan -');
+                return false;
+            }
+
+            if (normalizedValue.length > 255 && /(company_name|company_group_name|liable_person|contact_name|business_classification|address|bank_name|account_name|survey_pick_up|survey_truck|product_survey|merk_survey|distributor_survey)/i.test(name)) {
+                showFieldError($field, 'Panjang maksimal 255 karakter.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateGroupRequired($panel, groupName, message) {
+            const $fields = $panel.find(`[name="${groupName}"]`);
+            if ($fields.length === 0) {
+                return true;
+            }
+            if ($fields.filter(':checked').length === 0) {
+                showFieldError($fields.first(), message);
+                return false;
+            }
+            return true;
+        }
+
+        function validateRequiredGroupArray($panel, fieldName) {
+            let isValid = true;
+            $panel.find(`[name="${fieldName}[]"]`).each(function() {
+                if (!validateField($(this), true)) {
+                    isValid = false;
+                }
+            });
+            return isValid;
+        }
+
+        function validateFileInput() {
+            const $fileInput = $('#input-multiple-file');
+            if ($fileInput.length === 0) {
+                return true;
+            }
+            const files = $fileInput[0].files;
+            const allowedExtensions = /\.(jpg|jpeg|png|pdf)$/i;
+            let isValid = true;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (!allowedExtensions.test(file.name)) {
+                    showFieldError($fileInput, 'Hanya file JPG, JPEG, PNG, atau PDF yang diizinkan.');
+                    isValid = false;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    showFieldError($fileInput, 'Ukuran file maksimal 5MB per file.');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function validateStep(step) {
+            const $panel = $(`.step-pane[data-step="${step}"]`);
+            clearValidationErrors($panel);
+            let isValid = true;
+
+            if (step === 1) {
+                if (!formToken) {
+                    $panel.find('#company_type').each(function() {
+                        if (!validateField($(this), true)) {
+                            isValid = false;
+                        }
+                    });
+                }
+                $panel.find('#company_name').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="liable_person[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="liable_position[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="nik[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('#business_classification').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('#register_number_as_in_tax_invoice').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('#website_address').each(function() {
+                    if (!validateField($(this), false)) isValid = false;
+                });
+                $panel.find('#email_address').each(function() {
+                    if (!validateField($(this), false)) isValid = false;
+                });
+                $panel.find('#term_of_payment').each(function() {
+                    if (!validateField($(this), false)) isValid = false;
+                });
+                $panel.find('#other_term_of_payment').each(function() {
+                    if (!validateField($(this), false)) isValid = false;
+                });
+                $panel.find('[name="other_position[]"]').each(function() {
+                    if (!validateField($(this), false)) isValid = false;
+                });
+            }
+
+            if (step === 2) {
+                $panel.find('[name="contact_department[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="contact_position[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="contact_name[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="contact_email[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="contact_telephone[]"]')[0] && $panel.find('[name="contact_telephone[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+            }
+
+            if (step === 3) {
+                $panel.find('[name="address[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="country[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="province[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="city[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="zip_code[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="telephone[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="fax[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('#latitude_1, #longitude_1').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+            }
+
+            if (step === 4) {
+                $panel.find('[name="bank_name[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="account_name[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+                $panel.find('[name="account_number[]"]').each(function() {
+                    if (!validateField($(this), true)) isValid = false;
+                });
+            }
+
+            if (step === 5) {
+                if ($('#survey_form_switch').is(':checked')) {
+                    if (!validateGroupRequired($panel, 'survey_ownership_status', 'Pilih status kepemilikan.')) {
+                        isValid = false;
+                    }
+                    $panel.find('#survey_pick_up').each(function() {
+                        if (!validateField($(this), false)) isValid = false;
+                    });
+                    $panel.find('#survey_truck').each(function() {
+                        if (!validateField($(this), false)) isValid = false;
+                    });
+                    $panel.find('[name="product_survey[]"]').each(function() {
+                        if (!validateField($(this), false)) isValid = false;
+                    });
+                    $panel.find('[name="merk_survey[]"]').each(function() {
+                        if (!validateField($(this), false)) isValid = false;
+                    });
+                    $panel.find('[name="distributor_survey[]"]').each(function() {
+                        if (!validateField($(this), false)) isValid = false;
+                    });
+                }
+            }
+
+            if (step === 6) {
+                if (!validateFileInput()) {
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function validateAllSteps() {
+            let isValid = true;
+            for (let step of getVisibleWizardSteps()) {
+                if (!validateStep(step)) {
+                    isValid = false;
+                    showStep(step);
+                    break;
+                }
+            }
+            return isValid;
+        }
 
         /* Escape untuk name selector dengan bracket */
         function escapeName(name) {
@@ -486,10 +1024,80 @@
             const surveyFormHTML = $('#survey_form_container').html();
             let isSurveyVisible = $('#survey_form_switch').is(':checked');
 
+            window.isVendorCompany = function() {
+                const $companyTypeSelect = $('[name="company_type"]');
+                let companyType = null;
+
+                if ($companyTypeSelect.length) {
+                    companyType = $companyTypeSelect.val();
+                }
+
+                if (!companyType) {
+                    const $companyTypeHidden = $('input[name="company_type"]');
+                    if ($companyTypeHidden.length) {
+                        companyType = $companyTypeHidden.val();
+                    }
+                }
+
+                return String(companyType || '').toLowerCase() === 'vendor';
+            };
+
+            window.getVisibleWizardSteps = function() {
+                return isVendorCompany() ? [1, 2, 3, 4, 6] : [1, 2, 3, 4, 5, 6];
+            };
+
+            window.getNextWizardStep = function(step) {
+                const steps = getVisibleWizardSteps();
+                const idx = steps.indexOf(step);
+                if (idx === -1 || idx === steps.length - 1) {
+                    return steps[steps.length - 1];
+                }
+                return steps[idx + 1];
+            };
+
+            window.getPreviousWizardStep = function(step) {
+                const steps = getVisibleWizardSteps();
+                const idx = steps.indexOf(step);
+                if (idx <= 0) {
+                    return steps[0];
+                }
+                return steps[idx - 1];
+            };
+
+            function updateSurveyStepVisibility() {
+                const shouldHideSurveyStep = isVendorCompany();
+                const $surveyStep = $('.wizard-step[data-step="5"]');
+                const $surveyPane = $('.step-pane[data-step="5"]');
+
+                if (shouldHideSurveyStep) {
+                    $surveyStep.addClass('d-none');
+                    $surveyPane.addClass('d-none');
+                    $('#survey_form_switch').prop('checked', false);
+                    $('#survey_form_container').empty().hide();
+                    $('#switch_label').text('Show Survey');
+                } else {
+                    $surveyStep.removeClass('d-none');
+                    if ($('#survey_form_switch').is(':checked') && $('#survey_form_container').is(':empty')) {
+                        $('#survey_form_container').html(surveyFormHTML).show();
+                        restoreSurveyData();
+                    }
+                }
+            }
+
+            updateSurveyStepVisibility();
+
             // Jika awal tidak checked, langsung hapus form
             if (!isSurveyVisible) {
                 $('#survey_form_container').empty();
             }
+
+            // Tangani perubahan tipe perusahaan
+            $(document).on('change', '[name="company_type"]', function() {
+                updateSurveyStepVisibility();
+                if (currentWizardStep === 5 && isVendorCompany()) {
+                    showStep(getNextWizardStep(currentWizardStep));
+                }
+            });
 
             // Handler untuk switch button
             $('#survey_form_switch').on('change', function() {
@@ -640,15 +1248,18 @@
             // Restore form setelah halaman dimuat
             setTimeout(restoreForm, 500);
 
-            const totalWizardSteps = 6;
             let currentWizardStep = 1;
 
             function showStep(step) {
-                if (step < 1) {
-                    step = 1;
+                const visibleSteps = getVisibleWizardSteps();
+                if (!visibleSteps.includes(step)) {
+                    step = visibleSteps[0];
                 }
-                if (step > totalWizardSteps) {
-                    step = totalWizardSteps;
+                if (step < visibleSteps[0]) {
+                    step = visibleSteps[0];
+                }
+                if (step > visibleSteps[visibleSteps.length - 1]) {
+                    step = visibleSteps[visibleSteps.length - 1];
                 }
                 currentWizardStep = step;
 
@@ -663,7 +1274,11 @@
 
                 $('.wizard-step').each(function() {
                     const stepIndex = parseInt($(this).data('step'));
-                    $(this).removeClass('active completed');
+                    if (stepIndex === 5 && isVendorCompany()) {
+                        $(this).addClass('d-none');
+                        return;
+                    }
+                    $(this).removeClass('active completed d-none');
                     if (stepIndex < currentWizardStep) {
                         $(this).addClass('completed');
                     }
@@ -672,9 +1287,9 @@
                     }
                 });
 
-                $('#step_prev').toggleClass('d-none', currentWizardStep === 1);
-                $('#step_next').toggleClass('d-none', currentWizardStep === totalWizardSteps);
-                $('#btn_submit_data_company').toggleClass('d-none', currentWizardStep !== totalWizardSteps);
+                $('#step_prev').toggleClass('d-none', currentWizardStep === getVisibleWizardSteps()[0]);
+                $('#step_next').toggleClass('d-none', currentWizardStep === getVisibleWizardSteps()[getVisibleWizardSteps().length - 1]);
+                $('#btn_submit_data_company').toggleClass('d-none', currentWizardStep !== getVisibleWizardSteps()[getVisibleWizardSteps().length - 1]);
 
                 $('html, body').animate({
                     scrollTop: $('#form_company').offset().top - 100
@@ -682,16 +1297,76 @@
             }
 
             $('#step_prev').on('click', function() {
-                showStep(currentWizardStep - 1);
+                showStep(getPreviousWizardStep(currentWizardStep));
             });
 
             $('#step_next').on('click', function() {
-                showStep(currentWizardStep + 1);
+                if (!validateStep(currentWizardStep)) {
+                    return;
+                }
+                showStep(getNextWizardStep(currentWizardStep));
+            });
+
+            $('#btn_submit_data_company').on('click', function() {
+                if (!validateStep(currentWizardStep)) {
+                    return;
+                }
+                if (!validateAllSteps()) {
+                    return;
+                }
+                showLoadingOverlay(true);
+                $(this).prop('disabled', true);
+                $('#step_next').prop('disabled', true);
+                $('#form_company')[0].submit();
             });
 
             $('#wizard_stepper').on('click', '.wizard-step', function() {
                 const step = parseInt($(this).data('step'));
+                if (step === 5 && isVendorCompany()) {
+                    return;
+                }
+                if (step > currentWizardStep && !validateStep(currentWizardStep)) {
+                    return;
+                }
                 showStep(step);
+            });
+
+            // Initialize select2 on dropdowns and enforce maxlength on numeric inputs
+            if (typeof $.fn.select2 !== 'undefined') {
+                $('.select2').each(function() {
+                    if (!$(this).hasClass('select2-hidden-accessible')) {
+                        try {
+                            $(this).select2({ width: '100%' });
+                        } catch (e) {
+                            console.warn('select2 init error', e);
+                        }
+                    }
+                });
+            }
+
+            // Enforce maxlength for numeric inputs (type=number) since maxlength isn't enforced by browsers
+            $(document).on('input', 'input[type="number"][data-maxlength]', function() {
+                const max = parseInt($(this).attr('data-maxlength') || 0, 10);
+                if (!max) return;
+                let v = String($(this).val() || '');
+                if (v.length > max) {
+                    $(this).val(v.substr(0, max));
+                }
+            });
+
+            // Re-init select2 for dynamically added rows
+            $(document).on('click', '#add_dynamic_address, #add_bank, #add_liable_person, #add_contact, #add_survey_data, .btn-add-row', function() {
+                setTimeout(function() {
+                    if (typeof $.fn.select2 !== 'undefined') {
+                        $('.select2').each(function() {
+                            if (!$(this).hasClass('select2-hidden-accessible')) {
+                                try {
+                                    $(this).select2({ width: '100%' });
+                                } catch (e) {}
+                            }
+                        });
+                    }
+                }, 80);
             });
 
             showStep(1);

@@ -210,6 +210,8 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('fetch-children-menu', [MenuController::class,'fetchChildrenMenu'])->name('fetch-children-menu');
     Route::get('/fetch-permission-view', [RoleAndPermissionController::class,'fetchPermissionView'])->name('fetch-permission-view');
     Route::post('store-menu', [MenuController::class,'storeMenu'])->name('store-menu');
+    Route::post('update-menu', [MenuController::class,'updateMenu'])->name('update-menu');
+    Route::post('delete-menu', [MenuController::class,'deleteMenu'])->name('delete-menu');
 
     Route::get('approval-setting', [ApprovalSettingController::class,'index'])->name('approval-setting');
     Route::get('fetch-approval', [ApprovalSettingController::class,'fetchApproval'])->name('fetch-approval');
