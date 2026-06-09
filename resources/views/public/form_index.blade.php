@@ -277,6 +277,180 @@
         .select2-selection.is-invalid {
             border-color: #dc3545 !important;
         }
+
+        #form_company {
+            --partner-border: #d9e1ea;
+            --partner-muted: #667085;
+        }
+
+        #form_company .card {
+            border: 1px solid var(--partner-border);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        #form_company .card-header {
+            border-bottom-color: var(--partner-border);
+        }
+
+        #form_company .card-title,
+        #form_company h2,
+        #form_company h3 {
+            line-height: 1.25;
+        }
+
+        #form_company .partner-form-section {
+            line-height: 1.35;
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
+        }
+
+        #form_company .partner-fieldset,
+        #form_company fieldset.border {
+            width: 100%;
+            min-width: 0;
+            border: 1px solid var(--partner-border) !important;
+            border-radius: 8px;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem;
+            background: #fff;
+        }
+
+        #form_company legend {
+            margin: 0;
+            padding: 0 0.5rem;
+            font-size: 1rem;
+            line-height: 1.25;
+        }
+
+        #form_company label {
+            display: block;
+            margin-bottom: 0.45rem;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        #form_company .form-control,
+        #form_company .form-select,
+        #form_company .select2-container--default .select2-selection--single {
+            min-height: 42px;
+            border-radius: 6px;
+        }
+
+        #form_company .select2-container {
+            width: 100% !important;
+            max-width: 100%;
+        }
+
+        #form_company .select2-container--default .select2-selection--single {
+            display: flex;
+            align-items: center;
+            border-color: #ced4da;
+        }
+
+        #form_company .select2-container--default .select2-selection--single .select2-selection__rendered {
+            width: 100%;
+            padding-left: 0.75rem;
+            padding-right: 2rem;
+            line-height: 40px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #form_company .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px;
+        }
+
+        #form_company .text-muted,
+        #form_company small {
+            color: var(--partner-muted) !important;
+            line-height: 1.35;
+        }
+
+        #form_company .partner-map {
+            width: 100%;
+            min-height: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
+        }
+
+        #form_company .input-group {
+            flex-wrap: nowrap;
+        }
+
+        #form_company .btn {
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        #wizard_actions {
+            gap: 1rem;
+        }
+
+        #wizard_actions > div {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        @media (max-width: 991px) {
+            .card-body {
+                padding: 1rem;
+            }
+
+            #form_company .partner-fieldset,
+            #form_company fieldset.border {
+                padding: 1rem !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #form_company .card-header h3 {
+                font-size: 1.35rem;
+            }
+
+            #form_company .card-title {
+                font-size: 1.1rem;
+            }
+
+            #form_company h2 {
+                font-size: 1.25rem;
+            }
+
+            #form_company .partner-fieldset,
+            #form_company fieldset.border {
+                padding: 0.85rem !important;
+            }
+
+            #form_company .input-group {
+                flex-wrap: wrap;
+            }
+
+            #form_company .input-group > .form-control,
+            #form_company .input-group > .btn {
+                min-width: 0;
+            }
+
+            #form_company .input-group > .btn {
+                flex: 0 0 auto;
+            }
+
+            #wizard_actions {
+                align-items: stretch !important;
+                flex-direction: column;
+            }
+
+            #wizard_actions .btn {
+                width: 100%;
+            }
+
+            #wizard_actions > div {
+                width: 100%;
+                flex-direction: column;
+            }
+        }
     </style>
 @endsection
 

@@ -496,33 +496,33 @@
             $('.dynamic_contact').append(`
                 <div class="array_dynamic_contact">
                     <div class="row mt-4">
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_department_${index}">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')" required>
                             <span class="text-danger mt-2" id="message_contact_department_${index}" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_position_${index}">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')" required>
                             <span class="text-danger mt-2" id="message_contact_position_${index}" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_name_${index}">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')" required>
                             <span class="text-danger mt-2" id="message_contact_name_${index}" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_email_${index}">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_email[]" id="contact_email_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
                             <span class="text-danger mt-2" id="message_contact_email_${index}" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                             <input type="number" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Phone')" data-max-digits="13" min="0" required>
                             <span class="text-danger mt-2" id="message_contact_telephone_${index}" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <div class="input-group d-flex justify-content-end mb-4 mt-4">
+                        <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
+                            <div class="d-flex justify-content-end mb-1">
                                 <button class="btn btn-danger delete_contact"><i class="fa fa-minus"></i></button>
                             </div>
                         </div>
@@ -628,17 +628,13 @@
 
             $('.dynamic_company_address').append(`
         <div class="array_company_address">
-            <fieldset class="border px-2 mb-4">
+            <fieldset class="partner-fieldset mb-4">
                 <legend class="float-none w-auto text-bold">@lang('messages.Address Data')</legend>
                 <div class="row">
-                    <div class="input-group mb-4">
-                        <div class="col-md-3">
-                            <label>@lang('messages.Company Address (Other)') <span class="text-danger" role="alert">*</span></label>
-                        </div>
-                        <div class="col-md-9">
-                            <input type="text" name="address[]" id="address_${index}" class="form-control" required>
-                            <span class="text-danger mt-2 message_address" id="message_address_${index}" role="alert"></span>
-                        </div>
+                    <div class="col-12 mb-4">
+                        <label for="address_${index}">@lang('messages.Company Address (Other)') <span class="text-danger" role="alert">*</span></label>
+                        <input type="text" name="address[]" id="address_${index}" class="form-control" required>
+                        <span class="text-danger mt-2 message_address" id="message_address_${index}" role="alert"></span>
                     </div>
 
                     <div class="row mb-4">
@@ -684,7 +680,7 @@
                 </div>
             </fieldset>
 
-            <div class="input-group d-flex justify-content-end mr-4 mb-4">
+            <div class="d-flex justify-content-end mb-4">
                 <button type="button" class="btn btn-danger delete_dynamic_address">
                     <i class="fas fa-minus"></i>
                 </button>
@@ -738,7 +734,7 @@
             let index = $('input[name="bank_name[]"]').length;
             $('.dynamic_bank').append(`
                 <div class="array_dymanic_bank">
-                    <fieldset class="border px-2 mb-4">
+                    <fieldset class="partner-fieldset mb-4">
                         <legend class="float-none w-auto text-bold">Data Bank</legend>
                         <div class="row mt-4">
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
@@ -758,7 +754,7 @@
                             </div>
                         </div>
                     </fieldset>
-                    <div class="input-group d-flex justify-content-end mb-4 mt-4">
+                    <div class="d-flex justify-content-end mb-4 mt-4">
                         <button type="button" class="btn btn-danger delete_bank">
                             <i class="fas fa-minus"></i>
                         </button>

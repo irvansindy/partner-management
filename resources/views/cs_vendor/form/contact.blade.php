@@ -10,38 +10,38 @@
         </div> --}}
     </div>
     <div class="card-body">
-        <div class="row px-2 py-2" style="line-height: 1">
+        <div class="row partner-form-section">
             <div class="company_contact_additional" id="company_contact_additional">
-                <fieldset class="border px-2 mb-4">
+                <fieldset class="partner-fieldset mb-4">
                     <legend class="float-none w-auto text-bold">@lang('messages.Contact Person')</legend>
                     <div class="row mt-4">
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_department_0">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_department[]" id="contact_department_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')" required>
                             <span class="text-danger mt-2" id="message_contact_department" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_position_0">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_position[]" id="contact_position_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')" required>
                             <span class="text-danger mt-2" id="message_contact_position" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_name_0">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_name[]" id="contact_name_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')" required>
                             <span class="text-danger mt-2" id="message_contact_name" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_email_0">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_email[]" id="contact_email_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
                             <span class="text-danger mt-2" id="message_contact_email" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
+                        <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_telephone_0">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                             <input type="number" name="contact_telephone[]" id="contact_telephone_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Phone')" data-max-digits="13" min="0" required>
                             <span class="text-danger mt-2" id="message_contact_telephone" role="alert"></span>
                         </div>
-                        <div class="col-md-auto col-lg-auto col-sm-12 mb-3">
-                            <div class="input-group d-flex justify-content-end mb-4 mt-4">
+                        <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
+                            <div class="d-flex justify-content-end mb-1">
                                 <button class="btn btn-primary" id="add_contact"><i class="fa fa-plus"></i></button>
                             </div>
                         </div>
