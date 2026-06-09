@@ -52,14 +52,25 @@
                 </div>
                 <div class="col-md-6 col-sm-12">
                     <label for="established_year">@lang('messages.Established Year')</label>
-                    <input type="number" name="established_year" id="established_year" class="form-control"
-                        min="1900" max="2099" data-maxLength="4" maxLength="4" step="1" placeholder="@lang('messages.Placeholder Established Year')">
+                    <input type="text"
+                        name="established_year"
+                        id="established_year"
+                        class="form-control"
+                        maxlength="4"
+                        placeholder="@lang('messages.Placeholder Established Year')"
+                        oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
                     <span class="text-danger message-danger" id="message_established_year" role="alert"></span>
                 </div>
+
                 <div class="col-md-6 col-sm-12">
                     <label for="total_employee">@lang('messages.Total Employee')</label>
-                    <input type="number" name="total_employee" id="total_employee" class="form-control" min="1"
-                        max="9999" data-maxLength="4" maxLength="4" placeholder="@lang('messages.Placeholder Total Employee')">
+                    <input type="text"
+                        name="total_employee"
+                        id="total_employee"
+                        class="form-control"
+                        maxlength="4"
+                        placeholder="@lang('messages.Placeholder Total Employee')"
+                        oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
                     <span class="text-danger message-danger" id="message_total_employee" role="alert"></span>
                 </div>
             </div>
@@ -140,8 +151,7 @@
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
                     <label for="register_number_as_in_tax_invoice">@lang('messages.Tax Register Number (As in Tax Invoice)') <span
                             class="text-danger">*</span></label>
-                    <input type="number" class="form-control" id="register_number_as_in_tax_invoice" data-maxLength="16" min="0" maxlength="16"
-                        name="register_number_as_in_tax_invoice" placeholder="@lang('messages.Placeholder Tax')" required>
+                    <input type="text" class="form-control" id="register_number_as_in_tax_invoice" data-maxLength="16" min="0" maxlength="16" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,16)" name="register_number_as_in_tax_invoice" placeholder="@lang('messages.Placeholder Tax')" required>
                     <span class="text-danger message-danger" id="message_register_number_as_in_tax_invoice"
                         role="alert"></span>
                 </div>
