@@ -22,3 +22,23 @@ docker-compose-old.yml
 serve-xampp.sh
 switch-env.sh
 catatan revisi.txt
+
+# Environment
+.env
+.env.backup
+
+# Docker local override
+docker-compose.override.yml
+docker/nginx/default.conf
+
+# Laravel
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*

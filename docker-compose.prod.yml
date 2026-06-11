@@ -1,0 +1,14 @@
+services:
+
+  partner_php:
+    image: partner-management-php
+    container_name: partner_php
+    environment:
+      - PHP_OPCACHE_ENABLE=1
+
+  partner_nginx:
+    container_name: partner_nginx
+    environment:
+      - PHP_HOST=partner_php    # override khusus server
+    depends_on:
+      - partner_php

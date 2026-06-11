@@ -239,7 +239,7 @@
                                             @if($step->notes)
                                                 <div class="alert alert-{{ $step->isApproved() ? 'success' : 'danger' }} mb-0">
                                                     <strong><i class="fas fa-comment"></i> Notes:</strong>
-                                                    <p class="mb-0 mt-1">{{ $step->notes }}</p>
+                                                    <p class="mb-0 mt-1">{!! $step->notes !!}</p>
                                                 </div>
                                             @endif
                                         </div>
