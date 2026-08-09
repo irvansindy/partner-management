@@ -1,0 +1,119 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.83kB 0.0s done
+#1 WARN: NoEmptyContinuation: Empty continuation line (line 46)
+#1 WARN: NoEmptyContinuation: Empty continuation line (line 70)
+#1 WARN: NoEmptyContinuation: Empty continuation line (line 91)
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 1.8s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [assets 1/7] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#6 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.1s done
+#6 DONE 0.1s
+
+#7 [assets 2/7] WORKDIR /app
+#7 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 257.41kB 0.5s done
+#5 DONE 0.6s
+
+#8 [assets 3/7] COPY package.json package-lock.json ./
+#8 DONE 0.1s
+
+#9 [assets 4/7] RUN npm ci
+#9 21.38 npm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+#9 30.64 npm warn deprecated @babel/plugin-proposal-object-rest-spread@7.20.7: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+#9 49.66 
+#9 49.66 added 771 packages, and audited 772 packages in 49s
+#9 49.66 
+#9 49.66 88 packages are looking for funding
+#9 49.66   run `npm fund` for details
+#9 49.82 
+#9 49.82 48 vulnerabilities (6 low, 19 moderate, 18 high, 5 critical)
+#9 49.82 
+#9 49.82 To address issues that do not require attention, run:
+#9 49.82   npm audit fix
+#9 49.82 
+#9 49.82 To address all issues possible (including breaking changes), run:
+#9 49.82   npm audit fix --force
+#9 49.82 
+#9 49.82 Some issues need review, and may require choosing
+#9 49.82 a different dependency.
+#9 49.82 
+#9 49.82 Run `npm audit` for details.
+#9 49.82 npm notice
+#9 49.82 npm notice New major version of npm available! 10.8.2 -> 12.0.1
+#9 49.82 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1
+#9 49.82 npm notice To update run: npm install -g npm@12.0.1
+#9 49.82 npm notice
+#9 DONE 50.5s
+
+#10 [assets 5/7] COPY resources/ resources/
+#10 DONE 2.3s
+
+#11 [assets 6/7] COPY webpack.mix.js .
+#11 DONE 0.1s
+
+#12 [assets 7/7] RUN npm run production
+#12 0.863 
+#12 0.863 > production
+#12 0.863 > mix --production
+#12 0.863 
+#12 3.093 Browserslist: caniuse-lite is outdated. Please run:
+#12 3.093   npx update-browserslist-db@latest
+#12 3.093   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+#12 4.042 ℹ Compiling Mix
+#12 30.33 
+#12 30.33 [1;1H[0J
+#12 30.49                          
+#12 30.49    Laravel Mix v6.0.49   
+#12 30.49                          
+#12 30.49 
+#12 30.49 ✔ Compiled Successfully in 26316ms
+#12 30.53 ┌───────────────────────────────────┬───────────┐
+#12 30.53 │                              File │ Size      │
+#12 30.53 ├───────────────────────────────────┼───────────┤
+#12 30.53 │                 /public/js/app.js │ 168 KiB   │
+#12 30.53 │     /public/js/app.js.LICENSE.txt │ 574 bytes │
+#12 30.53 │             /public/js/app.js.map │ 1.07 MiB  │
+#12 30.53 │                public/css/app.css │ 221 KiB   │
+#12 30.53 │            public/css/app.css.map │ 359 KiB   │
+#12 30.53 └───────────────────────────────────┴───────────┘
+#12 30.53 ✔ Mix: Compiled successfully in 24.70s
+#12 30.55 webpack compiled successfully
+#12 DONE 30.7s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 12.5s done
+#13 exporting manifest sha256:7adc8893edb4f96322163e0b02ad171916681b27ec1958f57229a8a5d0a8efea 0.0s done
+#13 exporting config sha256:b58b4d896e3dfe44a771b655166ead88d8b215f7c3503b2ca6eba0c00daa119a 0.0s done
+#13 exporting attestation manifest sha256:c532e62f2eead3a75f7276d2db90012aa842dc5f946644e6fb1792eea62bd83f
+#13 exporting attestation manifest sha256:c532e62f2eead3a75f7276d2db90012aa842dc5f946644e6fb1792eea62bd83f 0.1s done
+#13 exporting manifest list sha256:d80d8c2d41ca40fe0bfaccf9e89ffb17da0f30dc848356b8a3f8ab2427f194f8 0.0s done
+#13 naming to docker.io/library/test-assets-fresh:latest done
+#13 unpacking to docker.io/library/test-assets-fresh:latest
+#13 unpacking to docker.io/library/test-assets-fresh:latest 15.2s done
+#13 DONE 28.1s
+
+ [33m3 warnings found (use docker --debug to expand):
+[0m - NoEmptyContinuation: Empty continuation line (line 46)
+ - NoEmptyContinuation: Empty continuation line (line 70)
+ - NoEmptyContinuation: Empty continuation line (line 91)

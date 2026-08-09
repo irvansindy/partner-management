@@ -1,0 +1,9 @@
+{
+  "providers": {
+    "9router": {
+      "type": "openai",
+      "baseURL": "http://localhost:20128/v1",
+      "apiKey": "sk-3f4233ef37f2155b-51j0zv-1c0290e4"
+    }
+  }
+}

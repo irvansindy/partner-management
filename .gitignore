@@ -22,6 +22,7 @@ docker-compose-old.yml
 serve-xampp.sh
 switch-env.sh
 catatan revisi.txt
+end-user-license-agreement.txt
 
 # Environment
 .env

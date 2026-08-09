@@ -30,7 +30,11 @@ class DashboardController extends Controller
 
     public function index()
     {
-        return view('dashboard');
+        // return view('dashboard');
+        return view('admin.dashboard.index', [
+            'user' => $this->user,
+            'isSuperAdmin' => $this->isSuperAdmin,
+        ]);
     }
 
     /**

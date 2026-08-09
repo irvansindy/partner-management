@@ -14,30 +14,26 @@ class MenuService
             ->orderBy('order')
             ->get()
             ->filter(function ($menu) use ($user) {
-                return !$menu->permission_name || $user->can($menu->permission_name);
+                return !$menu->can_permission || $user->can($menu->can_permission);
             });
 
         return $this->buildMenuTree($menus);
     }
-    // private function buildMenuTree($menus, $parentId = null)
-    // {
-    //     return $menus->filter(function ($menu) use ($parentId) {
-    //         return $menu->parent_id == $parentId;
-    //     })->map(function ($menu) use ($menus) {
-    //         $menu->children = $this->buildMenuTree($menus, $menu->id);
-    //         return $menu;
-    //     });
-    // }
+
     private function buildMenuTree($menus, $parentId = null)
     {
         return $menus->filter(function ($menu) use ($parentId) {
             return $menu->parent_id == $parentId;
         })->map(function ($menu) use ($menus) {
+            $url = $menu->url_name;
+            if ($url === '#' || $url === '') {
+                $url = null;
+            }
 
             return [
                 'id' => $menu->id,
-                'name' => $menu->name,
-                'url' => $menu->url,
+                'name' => $menu->name_text,
+                'url' => $url,
                 'icon' => $menu->icon,
                 'parent_id' => $menu->parent_id,
                 'order' => $menu->order,

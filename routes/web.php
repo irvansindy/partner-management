@@ -36,18 +36,20 @@ use App\Http\Controllers\CompanyExportController;
 
 use Illuminate\Support\Facades\DB;
 
-Route::get('/db-test', function () {
-    try {
-        DB::connection()->getPdo();
-        return "Koneksi database berhasil: " . DB::connection()->getDatabaseName();
-    } catch (\Exception $e) {
-        return "Koneksi database gagal. Error: " . $e->getMessage();
-    }
-});
+// Route::get('/db-test', function () {
+//     try {
+//         DB::connection()->getPdo();
+//         return "Koneksi database berhasil: " . DB::connection()->getDatabaseName();
+//     } catch (\Exception $e) {
+//         return "Koneksi database gagal. Error: " . $e->getMessage();
+//     }
+// });
 
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    // return view('login');
+    return redirect()->route('login');
 })->name('/');
 Route::get('/refresh-csrf', function () {
     return response()->json([
@@ -210,6 +212,8 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('fetch-children-menu', [MenuController::class,'fetchChildrenMenu'])->name('fetch-children-menu');
     Route::get('/fetch-permission-view', [RoleAndPermissionController::class,'fetchPermissionView'])->name('fetch-permission-view');
     Route::post('store-menu', [MenuController::class,'storeMenu'])->name('store-menu');
+    Route::post('update-menu', [MenuController::class,'updateMenu'])->name('update-menu');
+    Route::post('delete-menu', [MenuController::class,'deleteMenu'])->name('delete-menu');
 
     Route::get('approval-setting', [ApprovalSettingController::class,'index'])->name('approval-setting');
     Route::get('fetch-approval', [ApprovalSettingController::class,'fetchApproval'])->name('fetch-approval');

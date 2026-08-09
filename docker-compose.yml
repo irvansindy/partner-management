@@ -2,32 +2,37 @@ networks:
   default:
     name: shared_network
     external: true
-
 services:
-
-  php:
+  partner_php:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
+      target: app
     container_name: partner_php
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
-      - .:/var/www/html
+      # HANYA storage & config — BUKAN seluruh source code.
+      # public/js, public/css, mix-manifest.json hasil build webpack
+      # datang dari image (COPY di Dockerfile), bukan dari host.
+      - ./storage:/var/www/html/storage
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       - PHP_OPCACHE_ENABLE=1
 
-  nginx:
-    image: nginx:1.25-alpine
+  partner_nginx:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: web
     container_name: partner_nginx
     restart: unless-stopped
     ports:
       - "8084:80"
     volumes:
-      - .:/var/www/html
+      # Hanya config nginx — public/ sudah ikut ter-bake di image (stage "web")
       - ./docker/nginx/default.conf.template:/etc/nginx/templates/default.conf.template
     environment:
-      - PHP_HOST=${PHP_HOST:-php}    # default ke "php" kalau tidak di-set
+      - PHP_HOST=${PHP_HOST:-partner_php}
     depends_on:
-      - php
+      - partner_php

@@ -22,22 +22,13 @@ use App\Models\UserFinancialRatio;
 use App\Models\UserValueIncomeStatement;
 use App\Models\ApprovalMaster;
 use App\Models\ApprovalDetails;
+
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register()
     {
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot()
     {
         if (Auth::check()) {
@@ -47,19 +38,12 @@ class AppServiceProvider extends ServiceProvider
                 ? 'dashboard'
                 : 'home';
 
-            // Replace config value (overwrite closure)
             Config::set('adminlte.dashboard_url', $dashboardUrl);
         }
 
         config(['app.locale' => 'id']);
         Carbon::setLocale('id');
         Schema::defaultStringLength(191);
-        View::composer('*', function ($view) {
-            if (auth()->check()) {
-                $menuService = new MenuService();
-                $view->with('menus', $menuService->getAccessibleMenus());
-            }
-        });
 
         $models = [
             CompanyInformation::class,
@@ -67,7 +51,6 @@ class AppServiceProvider extends ServiceProvider
             CompanyAddress::class,
             CompanyTax::class,
             CompanySupportingDocument::class,
-            // User::class,
             UserBalanceSheet::class,
             UserFinancialRatio::class,
             UserValueIncomeStatement::class,
@@ -78,6 +61,5 @@ class AppServiceProvider extends ServiceProvider
         foreach ($models as $model) {
             $model::observe(GenericModelObserver::class);
         }
-
     }
 }

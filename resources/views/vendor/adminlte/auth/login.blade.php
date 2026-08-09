@@ -84,7 +84,7 @@
                 {{ __('adminlte::adminlte.sign_in') }}
             </button>
             <button onclick="window.location.href='{{ $home_url }}'" type="button" class="btn btn-block btn-secondary mt-2 ">
-                <span class="fas fa-home"></span> Kembali ke Halaman Utama
+                <span class="fas fa-home"></span> Kembali ke Halaman Utama1
             </button>
         </div>
     </form>
