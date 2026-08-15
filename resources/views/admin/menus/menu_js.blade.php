@@ -9,17 +9,92 @@
         function getModal(id) {
             var el = document.getElementById(id);
             if (!el) return null;
-            return bootstrap.Modal.getOrCreateInstance(el);
+            // Support multiple bootstrap versions and fallbacks.
+            try {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    // Bootstrap 5.2+ provides getOrCreateInstance
+                    if (typeof bootstrap.Modal.getOrCreateInstance === 'function') {
+                        return bootstrap.Modal.getOrCreateInstance(el);
+                    }
+                    // Bootstrap 5 older: try getInstance or create new
+                    if (typeof bootstrap.Modal.getInstance === 'function') {
+                        var inst = bootstrap.Modal.getInstance(el);
+                        if (inst) return inst;
+                        return new bootstrap.Modal(el);
+                    }
+                }
+            } catch (e) {
+                // ignore and fallback to jQuery modal below
+            }
+            // Fallback for Bootstrap 4 jQuery plugin or when bootstrap not available
+            if (typeof $ !== 'undefined' && $(el).modal) {
+                return {
+                    show: function () { $(el).modal('show'); },
+                    hide: function () { $(el).modal('hide'); }
+                };
+            }
+            return null;
         }
 
         function showModal(id) {
+            // remove any leftover backdrops before showing
+            forceRemoveBackdropsAndResetModal(id);
             var modal = getModal(id);
             if (modal) modal.show();
         }
 
         function hideModal(id) {
             var modal = getModal(id);
-            if (modal) modal.hide();
+            if (modal) {
+                try {
+                    modal.hide();
+                } catch (e) {
+                    try { if (typeof $ !== 'undefined') $('#' + id).modal('hide'); } catch (e) { }
+                }
+            }
+
+            // Force cleanup for leftover backdrop when mixed bootstrap versions or manual DOM was used
+            setTimeout(function () {
+                try {
+                    if (typeof $ !== 'undefined') {
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open');
+                        // clear any inline padding-right added by bootstrap
+                        $('body').css('padding-right', '');
+                    } else {
+                        var backs = document.querySelectorAll('.modal-backdrop');
+                        backs.forEach(function(b){ b.parentNode && b.parentNode.removeChild(b); });
+                        document.body.classList.remove('modal-open');
+                        document.body.style.paddingRight = '';
+                    }
+                } catch (e) { }
+            }, 50);
+        }
+
+        // Strong cleanup utility for modal backdrops and modal element state
+        function forceRemoveBackdropsAndResetModal(modalId) {
+            try {
+                // remove all backdrops
+                var backs = document.querySelectorAll('.modal-backdrop');
+                backs.forEach(function (b) { b.parentNode && b.parentNode.removeChild(b); });
+
+                // remove modal-open class from body and reset padding
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+
+                // also ensure modal element itself is hidden
+                if (modalId) {
+                    var el = document.getElementById(modalId);
+                    if (el) {
+                        el.classList.remove('show');
+                        el.style.display = 'none';
+                        el.setAttribute('aria-hidden', 'true');
+                        el.removeAttribute('aria-modal');
+                        el.removeAttribute('role');
+                        el.tabIndex = -1;
+                    }
+                }
+            } catch (e) { }
         }
 
         window.current_master_id = null;
@@ -73,6 +148,62 @@
             if (!container) return;
             const observer = new MutationObserver(() => attachWavesEffect(containerId));
             observer.observe(container, { childList: true, subtree: true });
+        }
+
+        // Helper: init/destroy roles select2 safely. Accepts array of selected ids.
+        function initRolesSelect(selectedValues = []) {
+            if (typeof $().select2 === 'undefined') return;
+            if ($('#roles').hasClass('select2-hidden-accessible')) {
+                try { $('#roles').select2('destroy'); } catch (e) { /* ignore */ }
+            }
+            $('#roles').select2({
+                dropdownParent: $('#formCreateMenu'),
+                placeholder: 'Select One',
+                closeOnSelect: false,
+                allowClear: true,
+            });
+            if (selectedValues && selectedValues.length) {
+                $('#roles').val(selectedValues).trigger('change');
+            } else {
+                $('#roles').val([]).trigger('change');
+            }
+        }
+
+        // Helper: unified toast notification. Uses AdminLTE $(document).Toasts if available,
+        // otherwise falls back to SweetAlert2 toast.
+        function showToast(title, body, type = 'success') {
+            try {
+                if (typeof $ !== 'undefined' && typeof $(document).Toasts === 'function') {
+                    $(document).Toasts('create', {
+                        title: title,
+                        class: type === 'success' ? 'bg-success' : 'bg-danger',
+                        body: body,
+                        delay: 5000,
+                        autohide: true,
+                        fade: true,
+                        close: true,
+                        autoremove: true,
+                    });
+                    return;
+                }
+            } catch (e) { /* fall through */ }
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: type,
+                    title: title,
+                    html: body,
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                });
+                return;
+            }
+
+            // final fallback
+            console.log(title + ': ' + body);
         }
 
         const gridColumns = (showSubmenuButton) => ([
@@ -221,8 +352,7 @@
                             <option value="">Select One</option>
                         </select>
                     `);
-                    $('#parent_id').select2({
-                        dropdownParent: $('#formCreateMenu'),
+$('#parent_id').select2({
                         data: parent_menu.map(parent => ({
                             id: parent.id,
                             text: parent.name_text
@@ -251,12 +381,9 @@
             $('#menu_id').val('')
             $('#formCreateMenuLabel').html('Create Menu')
             $('#parent_menu').empty()
-            $('[name="roles[]"]').val([]).trigger('change')
-
-            $('#roles').select2({
-                dropdownParent: $('#formCreateMenu'),
-                placeholder: 'Select One',
-            })
+            // initialize roles select2 for multiple selection and open modal (Bootstrap5)
+            initRolesSelect([]);
+            showModal('formCreateMenu');
         })
 
         $(document).on('click', '#submit_create_menu', function (e) {
@@ -277,16 +404,7 @@
                 processData: false,
                 success: function (res) {
                     hideModal('formCreateMenu')
-                    $(document).Toasts('create', {
-                        title: 'Success',
-                        class: 'bg-success',
-                        body: res.meta.message,
-                        delay: 5000,
-                        autohide: true,
-                        fade: true,
-                        close: true,
-                        autoremove: true,
-                    });
+                    showToast('Success', res.meta.message, 'success');
                     fetchMenu()
                     if (window.current_master_id) {
                         reloadSubmenus(window.current_master_id);
@@ -304,16 +422,7 @@
                             bodyMessage = Object.values(response_error.meta.message.errors).flat().join('<br>');
                         }
                     }
-                    $(document).Toasts('create', {
-                        title: 'Error!',
-                        class: 'bg-danger',
-                        body: bodyMessage,
-                        delay: 5000,
-                        autohide: true,
-                        fade: true,
-                        close: true,
-                        autoremove: true,
-                    });
+                    showToast('Error!', bodyMessage, 'error');
                 }
             })
         });
@@ -357,24 +466,15 @@
                         $('#parent_menu').empty();
                     }
 
-                    $('[name="roles[]"]').val(roles.map(role => role.id)).trigger('change')
+                    // initialize roles select2 and set selected role ids
+                    const selectedRoleIds = roles.map(r => r.id);
+                    initRolesSelect(selectedRoleIds);
 
-                    $('#roles').select2({
-                        dropdownParent: $('#formCreateMenu'),
-                        placeholder: 'Select One',
-                    })
+                    // show the modal explicitly (we used e.preventDefault above)
+                    showModal('formCreateMenu');
                 },
                 error: function (xhr) {
-                    $(document).Toasts('create', {
-                        title: 'Error!',
-                        class: 'bg-danger',
-                        body: 'gagal memuat data, silahkan hubungi admin.',
-                        delay: 5000,
-                        autohide: true,
-                        fade: true,
-                        close: true,
-                        autoremove: true,
-                    });
+                    showToast('Error!', 'gagal memuat data, silahkan hubungi admin.', 'error');
                 }
             })
         })
@@ -385,6 +485,46 @@
             window.current_master_id = master_id;
             reloadSubmenus(master_id);
         })
+
+        // Clean up select2 instances when the create/edit modal hides
+        if (typeof $().select2 !== 'undefined') {
+            $('#formCreateMenu').on('hidden.bs.modal', function () {
+                try {
+                    if ($('#roles').hasClass('select2-hidden-accessible')) {
+                        $('#roles').select2('destroy');
+                    }
+                } catch (e) { }
+                try {
+                    if ($('#parent_id').hasClass('select2-hidden-accessible')) {
+                        $('#parent_id').select2('destroy');
+                    }
+                } catch (e) { }
+                // reset form state
+                $('#form_create_new_menu')[0].reset();
+                $('#menu_id').val('');
+                // ensure any leftover backdrops are removed
+                forceRemoveBackdropsAndResetModal('formCreateMenu');
+            });
+            // also attach native DOM listener for Bootstrap (non-jQuery) events
+            var formModalEl = document.getElementById('formCreateMenu');
+            if (formModalEl && formModalEl.addEventListener) {
+                formModalEl.addEventListener('hidden.bs.modal', function () {
+                    try {
+                        if ($('#roles').hasClass('select2-hidden-accessible')) {
+                            $('#roles').select2('destroy');
+                        }
+                    } catch (e) { }
+                    try {
+                        if ($('#parent_id').hasClass('select2-hidden-accessible')) {
+                            $('#parent_id').select2('destroy');
+                        }
+                    } catch (e) { }
+                    $('#form_create_new_menu')[0].reset();
+                    $('#menu_id').val('');
+                    forceRemoveBackdropsAndResetModal('formCreateMenu');
+                });
+            }
+        }
 
         $(document).on('click', '.delete_menu', function (e) {
             e.preventDefault();
@@ -412,32 +552,14 @@
                         },
                         success: function (res) {
                             hideModal('ModalListSubMenu');
-                            $(document).Toasts('create', {
-                                title: 'Success',
-                                class: 'bg-success',
-                                body: res.meta.message,
-                                delay: 5000,
-                                autohide: true,
-                                fade: true,
-                                close: true,
-                                autoremove: true,
-                            });
+                            showToast('Success', res.meta.message, 'success');
                             fetchMenu();
                             if (window.current_master_id) {
                                 reloadSubmenus(window.current_master_id);
                             }
                         },
                         error: function (xhr) {
-                            $(document).Toasts('create', {
-                                title: 'Error!',
-                                class: 'bg-danger',
-                                body: 'Gagal menghapus menu, silahkan hubungi admin.',
-                                delay: 5000,
-                                autohide: true,
-                                fade: true,
-                                close: true,
-                                autoremove: true,
-                            });
+                            showToast('Error!', 'Gagal menghapus menu, silahkan hubungi admin.', 'error');
                         }
                     });
                 }

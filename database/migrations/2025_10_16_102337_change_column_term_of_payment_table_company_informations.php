@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-// use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+
 class ChangeColumnTermOfPaymentTableCompanyInformations extends Migration
 {
     /**
@@ -13,8 +12,15 @@ class ChangeColumnTermOfPaymentTableCompanyInformations extends Migration
      */
     public function up()
     {
-        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN term_of_payment varchar(255) NULL");
-        DB::statement("ALTER TABLE company_informations ALTER COLUMN term_of_payment DROP NOT NULL");
+        /*
+         * MySQL:
+         * Ubah term_of_payment menjadi VARCHAR(255)
+         * dan izinkan NULL.
+         */
+        DB::statement("
+            ALTER TABLE company_informations
+            MODIFY COLUMN term_of_payment VARCHAR(255) NULL
+        ");
     }
 
     /**
@@ -24,7 +30,16 @@ class ChangeColumnTermOfPaymentTableCompanyInformations extends Migration
      */
     public function down()
     {
-        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN term_of_payment ENUM('30', '45', '60', '90') NULL");
-        DB::statement("ALTER TABLE company_informations ALTER COLUMN term_of_payment TYPE VARCHAR(20)");
+        /*
+         * Kembalikan ke struktur ENUM sebelumnya.
+         *
+         * Nilai yang diperbolehkan:
+         * 30, 45, 60, 90
+         */
+        DB::statement("
+            ALTER TABLE company_informations
+            MODIFY COLUMN term_of_payment
+            ENUM('30', '45', '60', '90') NULL
+        ");
     }
 }

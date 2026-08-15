@@ -68,8 +68,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submit_create_menu">Save</button>
+                    <button type="button" class="btn btn-soft-secondary btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-shadow waves-effect waves-themed" id="submit_create_menu">Save</button>
                 </div>
             </form>
         </div>

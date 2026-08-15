@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+
 class ModifyAndAddSomeColumnTableCompanyInformations extends Migration
 {
     /**
@@ -13,25 +14,38 @@ class ModifyAndAddSomeColumnTableCompanyInformations extends Migration
      */
     public function up()
     {
+        /*
+         * Hapus kolom yang sudah tidak digunakan.
+         */
         Schema::table('company_informations', function (Blueprint $table) {
-            $table->dropColumn(['liable_person_and_position', 'liable_position', 'board_of_directors', 'major_shareholders', 'remark', 'signature', 'stamp']);
+            $table->dropColumn([
+                'liable_person_and_position',
+                'liable_position',
+                'board_of_directors',
+                'major_shareholders',
+                'remark',
+                'signature',
+                'stamp',
+            ]);
         });
 
-        // Ubah kolom type menggunakan raw SQL
-        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN type ENUM('vendor', 'customer') NOT NULL");
-        DB::statement("ALTER TABLE company_informations ALTER COLUMN type TYPE VARCHAR(20)");
+        /*
+         * MySQL menggunakan MODIFY COLUMN,
+         * bukan ALTER COLUMN ... TYPE seperti PostgreSQL.
+         */
+        DB::statement("
+            ALTER TABLE company_informations
+            MODIFY COLUMN type VARCHAR(20)
+        ");
 
-        // Schema::table('company_informations', function (Blueprint $table) {
-        //     $table->enum('term_of_payment', ['30', '45', '60', '90'])->after('email_address')->nullable();
-        //     $table->integer('credit_limit')->after('term_of_payment')->nullable();
-        //     $table->string('npwp')->nullable()->after('owner_name');
-        // });
+        /*
+         * Tambahkan kolom baru.
+         */
         Schema::table('company_informations', function (Blueprint $table) {
-        // Hapus 'after' karena Postgres tidak mendukung pengurutan kolom (otomatis ditaruh di akhir)
-        $table->string('term_of_payment')->nullable();
-        $table->integer('credit_limit')->nullable();
-        $table->string('npwp')->nullable();
-    });
+            $table->string('term_of_payment')->nullable();
+            $table->integer('credit_limit')->nullable();
+            $table->string('npwp')->nullable();
+        });
     }
 
     /**
@@ -41,15 +55,31 @@ class ModifyAndAddSomeColumnTableCompanyInformations extends Migration
      */
     public function down()
     {
+        /*
+         * Hapus kolom yang ditambahkan pada up().
+         */
         Schema::table('company_informations', function (Blueprint $table) {
-            $table->dropColumn(['term_of_payment', 'credit_limit', 'npwp']);
-
+            $table->dropColumn([
+                'term_of_payment',
+                'credit_limit',
+                'npwp',
+            ]);
         });
 
-        // Kembalikan kolom type ke nilai semula
-        // DB::statement("ALTER TABLE company_informations MODIFY COLUMN type ENUM('customer', 'vendor', 'customer dan vendor') NOT NULL");
-        DB::statement("ALTER TABLE company_informations ALTER COLUMN type TYPE VARCHAR(50)");
+        /*
+         * Kembalikan tipe kolom type.
+         *
+         * Sesuaikan VARCHAR(50) dengan struktur database
+         * sebelum migration ini dijalankan.
+         */
+        DB::statement("
+            ALTER TABLE company_informations
+            MODIFY COLUMN type VARCHAR(50)
+        ");
 
+        /*
+         * Kembalikan kolom yang dihapus pada up().
+         */
         Schema::table('company_informations', function (Blueprint $table) {
             $table->string('liable_person_and_position')->nullable();
             $table->string('liable_position')->nullable();
@@ -59,6 +89,5 @@ class ModifyAndAddSomeColumnTableCompanyInformations extends Migration
             $table->string('signature')->nullable();
             $table->string('stamp')->nullable();
         });
-
     }
 }

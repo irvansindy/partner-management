@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-// use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+
 class FixParentIdTypeInMenus extends Migration
 {
     /**
@@ -13,18 +12,43 @@ class FixParentIdTypeInMenus extends Migration
      */
     public function up()
     {
-        DB::statement('
+        /*
+         * Ubah string kosong menjadi NULL terlebih dahulu.
+         *
+         * Ini penting karena parent_id akan diubah
+         * menjadi BIGINT.
+         */
+        DB::statement("
+            UPDATE menus
+            SET parent_id = NULL
+            WHERE parent_id = ''
+        ");
+
+        /*
+         * Ubah tipe parent_id menjadi BIGINT.
+         *
+         * NULL tetap diperbolehkan karena root menu
+         * biasanya tidak mempunyai parent.
+         */
+        DB::statement("
             ALTER TABLE menus
-            ALTER COLUMN parent_id TYPE BIGINT
-            USING NULLIF(parent_id, \'\')::bigint
-        ');
+            MODIFY COLUMN parent_id BIGINT NULL
+        ");
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
-        DB::statement('
+        /*
+         * Kembalikan parent_id menjadi VARCHAR(255).
+         */
+        DB::statement("
             ALTER TABLE menus
-            ALTER COLUMN parent_id TYPE VARCHAR(255)
-        ');
+            MODIFY COLUMN parent_id VARCHAR(255) NULL
+        ");
     }
 }

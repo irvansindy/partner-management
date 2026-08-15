@@ -46,7 +46,8 @@ class MenuController extends Controller
             return FormatResponseJson::error(null, $th->getMessage(), 500);
         }
     }
-    public function fetchChildrenMenu(Request $request)    {
+    public function fetchChildrenMenu(Request $request)
+    {
         try {
             $menus = Menu::with(['permission'])
             ->where('parent_id', $request->id)
