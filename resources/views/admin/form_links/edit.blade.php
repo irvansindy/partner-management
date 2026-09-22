@@ -1,13 +1,17 @@
-@extends('adminlte::page')
-
-@section('title', 'Edit Form Link')
-
-@section('content_header')
-    <h1>Edit Form Link</h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
-    <div class="container-fluid">
+    @push('styles')
+        @include('admin.form_links._alpha_styles')
+    @endpush
+
+    <div class="container-fluid form-links-page">
+        <div class="page-heading">
+            <div>
+                <h2>Edit Form Link</h2>
+                <p>Update the configuration of this public registration form.</p>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
@@ -78,4 +82,4 @@
             </div>
         </div>
     </div>
-@stop
+@endsection

@@ -1,5 +1,20 @@
 <script>
+    function closeOfficeModal() {
+        let modal = $('#formOffice');
+
+        modal.modal('hide');
+
+        setTimeout(function() {
+            if (modal.hasClass('show') || modal.is(':visible')) {
+                modal.removeClass('show').attr('aria-hidden', 'true').css('display', 'none');
+                $('body').removeClass('modal-open').css('padding-right', '');
+                $('.modal-backdrop').remove();
+            }
+        }, 350);
+    }
+
     $(document).ready(function() {
+
         $('#office_table').DataTable({
             processing: true,
             // serverSide: true,
@@ -50,7 +65,7 @@
         $('#office_id').val(id);
         $('#office_name').val(name);
         $.ajax({
-            header: {
+            headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             type: "GET",
@@ -88,7 +103,7 @@
         e.preventDefault();
         var formData = new FormData($('#form_data_office')[0]);
         $.ajax({
-            header: {
+            headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             type: "POST",
@@ -98,8 +113,7 @@
             processData: false,
             success: function(res) {
                 $('.text-danger').text('')
-                $('#formoffice').modal('toggle');
-                $('#formoffice').modal('hide');
+                closeOfficeModal();
                 $('#office_table').DataTable().ajax.reload();
                 $(document).Toasts('create', {
                     title: 'Success',

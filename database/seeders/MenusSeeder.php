@@ -126,8 +126,8 @@ class MenusSeeder extends Seeder
             [
                 'id' => 9,
                 'name_text' => 'API White List',
-                'url_name' => 'api-whitelist',
-                'can_permission' => 'api-whitelist',
+                'url_name' => 'ip-whitelist',
+                'can_permission' => 'ip-whitelist',
                 'icon' => 'fa fa-signal',
                 'type' => 2,
                 'description' => null,

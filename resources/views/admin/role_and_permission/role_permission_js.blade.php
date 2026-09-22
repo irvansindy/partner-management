@@ -1,5 +1,23 @@
 <script>
     $(document).ready(function () {
+        function closeRolePermissionModal(selector) {
+            let modal = $(selector);
+
+            if (!modal.length) {
+                return;
+            }
+
+            modal.modal('hide');
+
+            setTimeout(function() {
+                if (modal.hasClass('show') || modal.is(':visible')) {
+                    modal.removeClass('show').attr('aria-hidden', 'true').css('display', 'none');
+                    $('body').removeClass('modal-open').css('padding-right', '');
+                    $('.modal-backdrop').remove();
+                }
+            }, 350);
+        }
+
         $('#role_table').DataTable({
             processing: true,
             // serverside: true,
@@ -78,8 +96,8 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    closeRolePermissionModal('#formCreateRole');
                     $('#role_table').DataTable().ajax.reload();
-                    $('#formCreateRole').modal('toggle');
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -159,8 +177,8 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    closeRolePermissionModal('#formCreatePermission');
                     $('#permission_table').DataTable().ajax.reload();
-                    $('#formCreatePermission').modal('toggle');
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -226,8 +244,8 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    closeRolePermissionModal('#formUpdateRole');
                     $('#role_table').DataTable().ajax.reload();
-                    $('#formUpdateRole').modal('toggle');
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -293,8 +311,8 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    closeRolePermissionModal('#formUpdatePermission');
                     $('#permission_table').DataTable().ajax.reload();
-                    $('#formUpdatePermission').modal('toggle');
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',

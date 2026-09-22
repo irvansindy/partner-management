@@ -13,7 +13,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Partner Management') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('uploads/pt/1713190566.jpg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('uploads/logo/icon.png') }}">
     {{-- <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicons/favicon-16x16.png') }}"> --}}
 
     <!-- Scripts -->
@@ -155,6 +155,34 @@
     <script src="{{ asset('assets/plugins/flot/jquery.flot.resize.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/flot/jquery.flot.tooltip.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/toastr/toastr.min.js') }}"></script>
+    <script>
+        // Keep legacy AdminLTE Toasts calls compatible with the Alpha toastr plugin.
+        if (!$.fn.Toasts && window.toastr) {
+            $.fn.Toasts = function(action, options) {
+                if (action !== 'create') {
+                    return this;
+                }
+
+                options = options || {};
+                var message = options.body || options.message || '';
+                var title = options.title || '';
+                var className = options.class || '';
+                var type = className.indexOf('success') !== -1 ? 'success'
+                    : className.indexOf('warning') !== -1 ? 'warning'
+                    : className.indexOf('info') !== -1 ? 'info'
+                    : 'error';
+
+                window.toastr[type](message, title, {
+                    closeButton: options.close !== false,
+                    progressBar: true,
+                    timeOut: options.delay || 5000,
+                    extendedTimeOut: 1000
+                });
+
+                return this;
+            };
+        }
+    </script>
     <!-- select 2 -->
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/js/alpha.min.js') }}"></script>

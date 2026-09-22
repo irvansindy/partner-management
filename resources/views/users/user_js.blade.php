@@ -1,5 +1,53 @@
 <script>
     $(document).ready(function() {
+        function parseAjaxError(xhr, fallbackMessage) {
+            if (xhr && xhr.responseJSON && typeof xhr.responseJSON === 'object') {
+                return xhr.responseJSON;
+            }
+
+            let responseText = xhr && typeof xhr.responseText === 'string'
+                ? xhr.responseText.trim()
+                : '';
+
+            if (responseText !== '') {
+                try {
+                    return JSON.parse(responseText);
+                } catch (error) {
+                    // The server may return an HTML error page or plain text.
+                }
+            }
+
+            return {
+                meta: {
+                    code: xhr && xhr.status ? xhr.status : 0,
+                    message: fallbackMessage
+                }
+            };
+        }
+
+        function getAjaxErrorMessage(response, fallbackMessage) {
+            let message = response && response.meta ? response.meta.message : null;
+            return typeof message === 'string' ? message : fallbackMessage;
+        }
+
+        function closeUserModal(selector) {
+            let modal = $(selector);
+
+            if (!modal.length) {
+                return;
+            }
+
+            modal.modal('hide');
+
+            setTimeout(function() {
+                if (modal.hasClass('show') || modal.is(':visible')) {
+                    modal.removeClass('show').attr('aria-hidden', 'true').css('display', 'none');
+                    $('body').removeClass('modal-open').css('padding-right', '');
+                    $('.modal-backdrop').remove();
+                }
+            }, 350);
+        }
+
         $('#user_role, #user_job_title, #user_division, #user_department, #user_office, #user_parent').select2({
             dropdownParent: $('#formCreateUser'),
             width: '100%', // biar responsif
@@ -117,11 +165,11 @@
                     })
                 },
                 error: function(xhr) {
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = parseAjaxError(xhr, 'Gagal mengambil data pendukung user. Periksa koneksi server.');
                     $(document).Toasts('create', {
                         title: 'Error',
                         class: 'bg-danger',
-                        body: response_error.meta.message
+                        body: getAjaxErrorMessage(response_error, 'Gagal mengambil data pendukung user. Periksa koneksi server.')
                     });
                 }
             })
@@ -161,8 +209,8 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    closeUserModal('#formCreateUser');
                     $('#user_table').DataTable().ajax.reload();
-                    $('#formCreateUser').modal('toggle');
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',
@@ -175,12 +223,15 @@
                     });
                 },
                 error: function(xhr, status, error) {
-                    let response_error = JSON.parse(xhr.responseText)
-                    if (response_error.meta.code === 500 || response_error.meta.code === 400) {
+                    let response_error = parseAjaxError(xhr, 'Gagal membuat user. Periksa koneksi server.');
+                    let meta = response_error.meta || {};
+                    let validationErrors = meta.message && meta.message.errors;
+
+                    if (meta.code === 500 || meta.code === 400 || !validationErrors) {
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
-                            body: response_error.meta.message,
+                            body: getAjaxErrorMessage(response_error, 'Gagal membuat user. Periksa koneksi server.'),
                             delay: 10000,
                             autohide: true,
                             fade: true,
@@ -189,7 +240,7 @@
                         });
                     } else {
                         $('.text-danger').text('')
-                        $.each(response_error.meta.message.errors, function(i, value) {
+                        $.each(validationErrors, function(i, value) {
                             // alert(value)
                             $('#message_user_' + i).text(value)
                         })
@@ -292,11 +343,11 @@
                     $('.update_user').data('update_user_id', user.id);
                 },
                 error: function(xhr) {
-                    let response_error = JSON.parse(xhr.responseText);
+                    let response_error = parseAjaxError(xhr, 'Gagal mengambil detail user. Periksa koneksi server.');
                     $(document).Toasts('create', {
                         title: 'Error',
                         class: 'bg-danger',
-                        body: response_error.meta.message
+                        body: getAjaxErrorMessage(response_error, 'Gagal mengambil detail user. Periksa koneksi server.')
                     });
                 }
             });
@@ -360,11 +411,11 @@
                 dataType: 'json',
                 async: true,
                 success: function (res) {
+                    // Tutup modal update
+                    closeUserModal('#formUpdateUser');
+
                     // Reload DataTable
                     $('#user_table').DataTable().ajax.reload(null, false);
-
-                    // Tutup modal update
-                    $('#formUpdateUser').modal('hide');
 
                     // Tampilkan toast success
                     $(document).Toasts('create', {
@@ -376,20 +427,22 @@
                     });
                 },
                 error: function (xhr) {
-                    let response_error = JSON.parse(xhr.responseText);
+                    let response_error = parseAjaxError(xhr, 'Gagal memperbarui user. Periksa koneksi server.');
+                    let meta = response_error.meta || {};
+                    let message = meta.message;
 
-                    if (response_error.meta && (response_error.meta.code === 500 || response_error.meta.code === 400)) {
+                    if (meta.code === 500 || meta.code === 400) {
                         // Error server
                         $(document).Toasts('create', {
                             title: 'Error',
                             class: 'bg-danger',
-                            body: response_error.meta.message ?? 'Terjadi kesalahan server.',
+                            body: getAjaxErrorMessage(response_error, 'Terjadi kesalahan server.'),
                             delay: 8000,
                             autohide: true
                         });
-                    } else if (response_error.meta && response_error.meta.message && response_error.meta.message.errors) {
+                    } else if (message && message.errors) {
                         // Error validasi field
-                        $.each(response_error.meta.message.errors, function (field, messages) {
+                        $.each(message.errors, function (field, messages) {
                             $('#message_update_user_' + field).text(messages[0]);
                         });
 
@@ -452,7 +505,6 @@
                     });
                 },
                 error: function(xhr) {
-                    let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
                         title: 'Error',
                         class: 'bg-danger',

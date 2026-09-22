@@ -1,9 +1,17 @@
-@extends('adminlte::page')
+@extends('layouts.main')
 
 @section('content')
+@push('styles')
+    @include('admin.company._alpha_styles')
+@endpush
 
-<div class="container">
-    <h3>Preview Import</h3>
+<div class="container-fluid company-tools-page">
+    <div class="page-heading">
+        <div>
+            <h2>Preview Import</h2>
+            <p>Review the uploaded data before confirming the import.</p>
+        </div>
+    </div>
 
     @if (session('error'))
         <div class="alert alert-danger">
@@ -39,8 +47,12 @@
             Pastikan data sudah benar. Jika sudah, klik tombol "Import Data".
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-sm">
+        <div class="card">
+            <div class="card-header">
+                <h5>Data Preview</h5>
+            </div>
+            <div class="card-body table-responsive">
+            <table class="table table-hover table-sm">
                 <thead class="thead-dark">
                     <tr>
                         <th>No</th>
@@ -60,6 +72,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
 
         <form action="{{ route('admin.company.import.confirm') }}" method="POST" id="confirmForm">
@@ -76,7 +89,7 @@
 
 @endsection
 
-@section('js')
+@push('scripts')
 <script>
     document.getElementById('confirmForm').addEventListener('submit', function(e) {
         const btn = this.querySelector('button[type="submit"]');
@@ -84,4 +97,4 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     });
 </script>
-@endsection
+@endpush

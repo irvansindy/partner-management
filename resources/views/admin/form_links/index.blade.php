@@ -1,22 +1,24 @@
-@extends('adminlte::page')
-
-@section('title', 'Form Links Management')
-
-@section('content_header')
-    <h1>Form Links Management</h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
-    <div class="container-fluid">
-        @if (\Auth::user()->roles[0]->name == 'admin' || \Auth::user()->roles[0]->name == 'super-user')
-            <div class="row mb-3">
-                <div class="col-12">
-                    <a href="{{ route('admin.form-links.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Create New Form Link
+    @push('styles')
+        @include('admin.form_links._alpha_styles')
+    @endpush
+
+    <div class="container-fluid form-links-page">
+        <div class="page-heading">
+            <div>
+                <h2>Form Links Management</h2>
+                <p>Create and manage public partner registration links.</p>
+            </div>
+            @if (\Auth::user()->roles[0]->name == 'admin' || \Auth::user()->roles[0]->name == 'super-user')
+                <div class="page-actions">
+                    <a href="{{ route('admin.form-links.create') }}" class="btn btn-primary waves-effect">
+                        <i class="material-icons align-middle mr-1">add_link</i> Create Form Link
                     </a>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
@@ -139,9 +141,9 @@
             </div>
         </div>
     </div>
-@stop
+@endsection
 
-@section('js')
+@push('scripts')
     <script>
         function copyLink(elementId) {
             var copyText = document.getElementById(elementId);
@@ -152,4 +154,4 @@
             toastr.success('Link copied to clipboard!');
         }
     </script>
-@stop
+@endpush

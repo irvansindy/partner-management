@@ -19,7 +19,7 @@ class PermissionsSeeder extends Seeder
             [6, 'office-setting', '2025-10-20 03:11:20'],
             [7, 'department-setting', '2025-10-20 03:16:38'],
             [8, 'partner-management', '2025-10-20 03:45:19'],
-            [9, 'api-whitelist', '2025-10-20 04:02:10'],
+            [9, 'ip-whitelist', '2025-10-20 04:02:10'],
             [10, 'approval-setting', '2025-10-20 04:14:12'],
             [11, 'admin/form-links', '2025-11-11 14:20:14'],
             [12, 'admin/company/export/', '2026-01-14 11:08:31'],

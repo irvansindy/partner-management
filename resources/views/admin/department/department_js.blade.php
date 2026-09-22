@@ -1,4 +1,18 @@
 <script>
+    function closeDepartmentModal() {
+        let modal = $('#formDepartment');
+
+        modal.modal('hide');
+
+        setTimeout(function() {
+            if (modal.hasClass('show') || modal.is(':visible')) {
+                modal.removeClass('show').attr('aria-hidden', 'true').css('display', 'none');
+                $('body').removeClass('modal-open').css('padding-right', '');
+                $('.modal-backdrop').remove();
+            }
+        }, 350);
+    }
+
     $(document).ready(function() {
         $('#department_table').DataTable({
             processing: true,
@@ -60,7 +74,7 @@
         e.preventDefault();
         var formData = new FormData($('#form_data_department')[0]);
         $.ajax({
-            header: {
+            headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             type: "POST",
@@ -70,7 +84,7 @@
             processData: false,
             success: function(res) {
                 $('.text-danger').text('')
-                $('#formDepartment').modal('toggle');
+                closeDepartmentModal();
                 $('#department_table').DataTable().ajax.reload();
                 $(document).Toasts('create', {
                     title: 'Success',

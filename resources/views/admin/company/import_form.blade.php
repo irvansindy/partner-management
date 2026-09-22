@@ -1,22 +1,23 @@
-@extends('adminlte::page')
-
-@section('title', 'Import Data Perusahaan')
-
-@section('content_header')
-    <h1>
-        <i class="fas fa-file-import"></i> Import Data Perusahaan
-    </h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
+@push('styles')
+    @include('admin.company._alpha_styles')
+@endpush
 
-<div class="container-fluid">
+<div class="container-fluid company-tools-page">
+    <div class="page-heading">
+        <div>
+            <h2>Import Data Perusahaan</h2>
+            <p>Upload file Excel sesuai template untuk menambahkan data perusahaan.</p>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-file-import"></i> Import Data Perusahaan
+                        <i class="material-icons align-middle mr-1">upload_file</i> Import Data Perusahaan
                     </h3>
                 </div>
                 <div class="card-body">
@@ -54,9 +55,9 @@
                     <!-- ========================================
                          ACTION BUTTONS - INI YANG PENTING!
                          ======================================== -->
-                    <div class="row mb-4">
+                    <div class="upload-actions mb-4">
                         <!-- Button Download Template -->
-                        <div class="col-md-4">
+                        <div>
                             <a href="{{ route('admin.company.export.template') }}" class="btn btn-info btn-block btn-lg">
                                 <i class="fas fa-download"></i> Download Template Excel
                             </a>
@@ -66,7 +67,7 @@
                         </div>
 
                         <!-- Button Export All -->
-                        <div class="col-md-4">
+                        <div>
                             <a href="{{ route('admin.company.export.all') }}" class="btn btn-success btn-block btn-lg">
                                 <i class="fas fa-file-export"></i> Export Semua Data
                             </a>
@@ -76,7 +77,7 @@
                         </div>
 
                         <!-- Button Export Custom -->
-                        <div class="col-md-4">
+                        <div>
                             <a href="{{ route('admin.company.export.form') }}" class="btn btn-primary btn-block btn-lg">
                                 <i class="fas fa-tasks"></i> Export Custom
                             </a>
@@ -125,7 +126,7 @@
                     <h3 class="card-title"><i class="fas fa-question-circle"></i> Petunjuk Import</h3>
                 </div>
                 <div class="card-body">
-                    <ol>
+                    <ol class="instruction-list">
                         <li>
                             <strong>Download Template</strong> - Klik tombol
                             <span class="badge badge-info">
@@ -170,11 +171,12 @@
             </div>
         </div>
     </div>
+    </div>
 </div>
 
 @endsection
 
-@section('js')
+@push('scripts')
 <script>
     // Show filename when file selected
     $('.custom-file-input').on('change', function() {
@@ -182,4 +184,4 @@
         $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
     });
 </script>
-@endsection
+@endpush

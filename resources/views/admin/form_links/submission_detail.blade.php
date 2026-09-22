@@ -1,21 +1,41 @@
-@extends('adminlte::page')
-
-@section('title', 'Submission Detail')
-
-@section('content_header')
-    <h1>Submission Detail: {{ $company->name }}</h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row mb-3">
-            <div class="col-12">
-                <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Submissions
+    @push('styles')
+        @include('admin.form_links._alpha_styles')
+        <style>
+            .form-links-page .timeline-item {
+                border: 1px solid var(--form-link-border);
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(20, 20, 43, .04);
+            }
+
+            .form-links-page .timeline:before {
+                background: var(--form-link-border);
+            }
+
+            .form-links-page .card.card-outline,
+            .form-links-page .card.card-primary,
+            .form-links-page .card.card-info,
+            .form-links-page .card.card-warning,
+            .form-links-page .card.card-success {
+                border-top: 3px solid var(--form-link-primary);
+            }
+        </style>
+    @endpush
+
+    <div class="container-fluid form-links-page">
+        <div class="page-heading">
+            <div>
+                <h2>Submission Detail</h2>
+                <p>{{ $company->name }}</p>
+            </div>
+            <div class="page-actions">
+                <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-outline-secondary">
+                    <i class="material-icons align-middle mr-1">arrow_back</i> Submissions
                 </a>
-                <a href="{{ route('admin.form-links.submission-pdf', [$formLink, $company->id]) }}"
-                target="_blank" class="btn btn-danger ml-2">
-                    <i class="fas fa-file-pdf"></i> Export PDF
+                <a href="{{ route('admin.form-links.submission-pdf', [$formLink, $company->id]) }}" target="_blank" class="btn btn-danger">
+                    <i class="material-icons align-middle mr-1">picture_as_pdf</i> Export PDF
                 </a>
             </div>
         </div>
@@ -530,9 +550,9 @@
             </div>
         </div>
     </div>
-@stop
+@endsection
 
-@section('css')
+@push('styles')
     <style>
         /* Timeline Styles */
         .timeline {
@@ -641,4 +661,4 @@
             background-color: #d2d6de !important;
         }
     </style>
-@stop
+@endpush

@@ -1,13 +1,23 @@
-@extends('adminlte::page')
-
-@section('title', 'Form Link Details')
-
-@section('content_header')
-    <h1>Form Link Details</h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
-    <div class="container-fluid">
+    @push('styles')
+        @include('admin.form_links._alpha_styles')
+        <style>#qrcode { display: inline-block; }</style>
+    @endpush
+
+    <div class="container-fluid form-links-page">
+        <div class="page-heading">
+            <div>
+                <h2>Form Link Details</h2>
+                <p>Review configuration, public access, and recent submissions.</p>
+            </div>
+            <div class="page-actions">
+                <a href="{{ route('admin.form-links.index') }}" class="btn btn-outline-secondary">
+                    <i class="material-icons align-middle mr-1">arrow_back</i> Form Links
+                </a>
+            </div>
+        </div>
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
@@ -182,21 +192,9 @@
             </div>
         </div>
     </div>
-@stop
+@endsection
 
-@section('css')
-    <style>
-        #qrcode {
-            display: inline-block;
-            padding: 10px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-    </style>
-@stop
-
-@section('js')
+@push('scripts')
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> --}}
     <script src="{{ asset('js/cdn/qrcode.js') }}"></script>
     <script>
@@ -216,4 +214,4 @@
             height: 200
         });
     </script>
-@stop
+@endpush

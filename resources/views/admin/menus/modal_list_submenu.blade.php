@@ -10,25 +10,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-hover align-items-center mb-0 data_tables" id="list_submenu_table"
-                    style="width:100%">
-                    <thead>
-                        <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                No
-                            </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                Name
-                            </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                Url
-                            </th>
-                            <th class="text-secondary opacity-7">#</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div id="list_submenu_table"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

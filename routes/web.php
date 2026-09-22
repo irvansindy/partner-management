@@ -90,7 +90,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     ->name('form-links.submission-pdf');
     Route::get('form-links/{formLink}/submissions/{companyId}/edit', [FormLinkController::class, 'submissionEdit'])
     ->name('admin.form-links.submission-edit');
-Route::put('form-links/{formLink}/submissions/{companyId}', [FormLinkController::class, 'submissionUpdate'])
+    
+    Route::put('form-links/{formLink}/submissions/{companyId}', [FormLinkController::class, 'submissionUpdate'])
     ->name('admin.form-links.submission-update');
 
     // ========================================
@@ -268,9 +269,9 @@ Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(fun
 
 // Endpoint admin untuk whitelist IP
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
-    Route::get('api-whitelist', [APIWhiteListManageController::class, 'index'])->name('api-whitelist');
-    Route::get('api-whitelist.fetch', [APIWhiteListManageController::class, 'fetch'])->name('api-whitelist.fetch');
-    Route::post('api-whitelist.submit', [APIWhiteListManageController::class, 'createOrUpdate'])->name('api-whitelist.submit');
+    Route::get('ip-whitelist', [APIWhiteListManageController::class, 'index'])->name('ip-whitelist');
+    Route::get('ip-whitelist.fetch', [APIWhiteListManageController::class, 'fetch'])->name('ip-whitelist.fetch');
+    Route::post('ip-whitelist.submit', [APIWhiteListManageController::class, 'createOrUpdate'])->name('ip-whitelist.submit');
 
     Route::get('/system/clear-optimize', [SuperAdminController::class, 'clearOptimize'])->name('system.clear-optimize');
 });

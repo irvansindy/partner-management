@@ -1,13 +1,17 @@
-@extends('adminlte::page')
-
-@section('title', 'Create Form Link')
-
-@section('content_header')
-    <h1>Create New Form Link</h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
-    <div class="container-fluid">
+    @push('styles')
+        @include('admin.form_links._alpha_styles')
+    @endpush
+
+    <div class="container-fluid form-links-page">
+        <div class="page-heading">
+            <div>
+                <h2>Create New Form Link</h2>
+                <p>Configure a public registration form for partners.</p>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
@@ -103,4 +107,4 @@
             </div>
         </div>
     </div>
-@stop
+@endsection

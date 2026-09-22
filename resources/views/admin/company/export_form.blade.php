@@ -1,21 +1,23 @@
-@extends('adminlte::page')
-
-@section('title', 'Export Data Perusahaan')
-
-@section('content_header')
-    <h1>
-        <i class="fas fa-file-export"></i> Export Data Perusahaan
-    </h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
-    <div class="container-fluid">
+    @push('styles')
+        @include('admin.company._alpha_styles')
+    @endpush
+
+    <div class="container-fluid company-tools-page">
+        <div class="page-heading">
+            <div>
+                <h2>Export Data Perusahaan</h2>
+                <p>Pilih field yang dibutuhkan untuk menghasilkan file Excel atau PDF.</p>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header bg-success text-white">
+                    <div class="card-header">
                         <h3 class="card-title">
-                            <i class="fas fa-check-square"></i> Pilih Field untuk Export
+                            <i class="material-icons align-middle mr-1">fact_check</i> Pilih Field untuk Export
                         </h3>
                     </div>
                     <form action="{{ route('admin.company.export.custom') }}" method="POST" id="exportForm">
@@ -28,14 +30,14 @@
                             </div>
 
                             <!-- Buttons untuk Select All / Deselect All -->
-                            <div class="mb-3">
+                            <div class="selection-toolbar mb-3">
                                 <button type="button" class="btn btn-sm btn-primary" id="selectAll">
                                     <i class="fas fa-check-double"></i> Pilih Semua
                                 </button>
                                 <button type="button" class="btn btn-sm btn-secondary" id="deselectAll">
                                     <i class="fas fa-times"></i> Hapus Semua Pilihan
                                 </button>
-                                <span class="ml-3 badge badge-info" id="selectedCount">0 field dipilih</span>
+                                <span class="selection-count" id="selectedCount">0 field dipilih</span>
                             </div>
 
                             <hr>
@@ -43,7 +45,7 @@
                             <div class="row">
                                 <!-- Company Information -->
                                 <div class="col-md-6">
-                                    <div class="card card-outline card-primary">
+                                    <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
                                                 <i class="fas fa-building"></i> Informasi Perusahaan
@@ -167,7 +169,7 @@
 
                                 <!-- Contact Person -->
                                 <div class="col-md-6">
-                                    <div class="card card-outline card-info">
+                                    <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
                                                 <i class="fas fa-user-tie"></i> Contact Person
@@ -224,7 +226,7 @@
                                     </div>
 
                                     <!-- Addresses -->
-                                    <div class="card card-outline card-warning">
+                                    <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
                                                 <i class="fas fa-map-marker-alt"></i> Alamat
@@ -273,7 +275,7 @@
 
                                 <!-- Banks -->
                                 <div class="col-md-6">
-                                    <div class="card card-outline card-success">
+                                    <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
                                                 <i class="fas fa-university"></i> Bank
@@ -313,7 +315,7 @@
 
                                 <!-- Liable People -->
                                 <div class="col-md-6">
-                                    <div class="card card-outline card-danger">
+                                    <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
                                                 <i class="fas fa-user-shield"></i> Penanggung Jawab
@@ -381,32 +383,9 @@
             </div>
         </div>
     </div>
-@stop
+@endsection
 
-@section('css')
-    <style>
-        .form-check {
-            margin-bottom: 10px;
-            padding-left: 1.5rem;
-        }
-
-        .form-check-label {
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .card-body {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .toggle-section {
-            padding: 2px 8px;
-        }
-    </style>
-@stop
-
-@section('js')
+@push('scripts')
     <script>
         $(document).ready(function() {
             // Update counter
@@ -484,4 +463,4 @@
             updateCounter();
         });
     </script>
-@stop
+@endpush

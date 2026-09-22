@@ -14,6 +14,7 @@ class OfficeSeeder extends Seeder
      */
     public function run()
     {
+        DB::table("master_offices")->truncate();
         DB::table("master_offices")->insert([
             [
                 "name"=> "Head Office",

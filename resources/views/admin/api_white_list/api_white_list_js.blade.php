@@ -4,7 +4,7 @@
             processing: true,
             // serverSide: true,
             ajax: {
-                url: "{{ route('api-whitelist.fetch') }}",
+                url: "{{ route('ip-whitelist.fetch') }}",
                 type: "GET",
             },
             columns: [{
@@ -54,7 +54,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: "{{ route('api-whitelist.submit') }}",
+                url: "{{ route('ip-whitelist.submit') }}",
                 type: "POST",
                 data: formData,
                 contentType: false,

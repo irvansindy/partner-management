@@ -1,57 +1,50 @@
-@extends('adminlte::page')
-
-@section('title', 'Form Submissions')
-
-@section('content_header')
-    <h1>Form Submissions: {{ $formLink->title }}</h1>
-@stop
+@extends('layouts.main')
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row mb-3">
-            <div class="col-12">
-                <a href="{{ route('admin.form-links.show', $formLink) }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Form Link
+    @push('styles')
+        @include('admin.form_links._alpha_styles')
+    @endpush
+
+    <div class="container-fluid form-links-page">
+        <div class="page-heading">
+            <div>
+                <h2>Form Submissions</h2>
+                <p>{{ $formLink->title }}</p>
+            </div>
+            <div class="page-actions">
+                <a href="{{ route('admin.form-links.show', $formLink) }}" class="btn btn-outline-secondary">
+                    <i class="material-icons align-middle mr-1">arrow_back</i> Form Link
                 </a>
             </div>
         </div>
-
-        <!-- Statistics Cards -->
-        <div class="row">
-            <div class="col-lg-3 col-6">
+        <div class="form-link-stats">
+            <div class="stat-card stat-total">
+                    <div>
+                </a>
+            </div>
+        </div>
+                    <i class="material-icons">description</i>
                 <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>{{ $companies->total() }}</h3>
-                        <p>Total Submissions</p>
+            <div class="stat-card stat-approved">
+                    <div>
                     </div>
                     <div class="icon">
                         <i class="fas fa-file-alt"></i>
-                    </div>
-                </div>
-            </div>
-
+                    <i class="material-icons">check_circle</i>
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>{{ $companies->where('approvalProcess.status', 2)->count() }}</h3>
+            <div class="stat-card stat-progress">
+                    <div>
                         <p>Approved</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                </div>
-            </div>
+                    <i class="material-icons">schedule</i>
 
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
-                    <div class="inner">
+            <div class="stat-card stat-rejected">
+                    <div>
                         <h3>{{ $companies->whereIn('approvalProcess.status', [0, 1])->count() }}</h3>
                         <p>In Progress</p>
                     </div>
-                    <div class="icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
+                    <i class="material-icons">cancel</i>
             </div>
 
             <div class="col-lg-3 col-6">
@@ -185,9 +178,9 @@
             </div>
         </div>
     </div>
-@stop
+@endsection
 
-@section('js')
+@push('scripts')
 <script>
     $(document).ready(function() {
         // Simple search functionality
@@ -199,15 +192,4 @@
         });
     });
 </script>
-@stop
-
-@section('css')
-<style>
-    .progress-xs {
-        height: 7px;
-    }
-    .small-box .icon {
-        opacity: 0.15;
-    }
-</style>
-@stop
+@endpush
