@@ -146,6 +146,8 @@
         });
     </script>
 
+    @include('auth.partials.login-floating-labels')
+
     @stack('scripts')
 </body>
 </html>
