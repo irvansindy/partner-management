@@ -3,38 +3,52 @@
 @section('title', isset($formLink) ? $formLink->title : 'Partner Registration')
 
 @section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">
-                        <i class="fas fa-file-alt"></i>
-                        @if (isset($formLink))
-                            {{ $formLink->title }}
-                        @else
-                            @lang('messages.Form Register')
-                        @endif
-                    </h3>
-                </div>
-                <div class="card-body">
-                    @if (isset($formLink) && $formLink->description)
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> {{ $formLink->description }}
-                        </div>
+    <div class="public-form-page">
+        <div class="public-form-heading">
+            <div>
+                <div class="public-eyebrow">PARTNER REGISTRATION</div>
+                <h1>
+                    @if (isset($formLink))
+                        {{ $formLink->title }}
+                    @else
+                        @lang('messages.Form Register')
                     @endif
+                </h1>
+                <p>Complete the company details below to submit your registration.</p>
+            </div>
+            @if (isset($formLink))
+                <span class="public-form-type">{{ ucfirst($formLink->form_type) }} application</span>
+            @endif
+        </div>
 
-                    <form
-                        action="{{ isset($formLink) ? route('public.form.submit', $formLink->token) : route('submit-partner') }}"
-                        method="POST" id="form_company" enctype="multipart/form-data"
-                        data-storage-key="partner_form_{{ $formLink->token ?? 'default' }}">
-                        @csrf
+        @if (isset($formLink) && $formLink->description)
+            <div class="public-form-description">
+                <i class="fas fa-info-circle" aria-hidden="true"></i>
+                <span>{{ $formLink->description }}</span>
+            </div>
+        @endif
 
-                        @if (isset($formLink))
-                            <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
-                        @endif
-                        <input type="hidden" id="public_key" value="{{ env('PUBLIC_FORM_SECRET') }}">
+        <div class="public-form-card">
+            <form
+                action="{{ isset($formLink) ? route('public.form.submit', $formLink->token) : route('submit-partner') }}"
+                method="POST" id="form_company" enctype="multipart/form-data"
+                data-storage-key="partner_form_{{ $formLink->token ?? 'default' }}">
+                @csrf
 
-                        <div class="wizard-stepper mb-4" id="wizard_stepper">
+                @if (isset($formLink))
+                    <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
+                @endif
+                <input type="hidden" id="public_key" value="{{ env('PUBLIC_FORM_SECRET') }}">
+
+                <div class="wizard-shell">
+                    <div class="wizard-topline">
+                        <div>
+                            <span class="wizard-kicker">REGISTRATION STEPS</span>
+                            <span class="wizard-current-label" id="wizard_current_label">Master Information</span>
+                        </div>
+                        <span class="wizard-count"><span id="wizard_current_number">01</span> / 06</span>
+                    </div>
+                    <div class="wizard-stepper" id="wizard_stepper">
                             <div class="wizard-step active" data-step="1">
                                 <div class="wizard-step-number">1</div>
                                 <div class="wizard-step-text">Master Information</div>
@@ -59,7 +73,8 @@
                                 <div class="wizard-step-number">6</div>
                                 <div class="wizard-step-text">Form Upload</div>
                             </div>
-                        </div>
+                    </div>
+                </div>
 
                         <div class="step-pane" data-step="1">
                             @include('cs_vendor.form.master_information')
@@ -108,22 +123,20 @@
                             @include('cs_vendor.form.file_upload')
                         </div>
 
-                        <div class="d-flex justify-content-between mt-4 align-items-center" id="wizard_actions">
-                            <button type="button" class="btn btn-secondary btn-lg d-none" id="step_prev">
-                                <i class="fas fa-chevron-left"></i> Previous
-                            </button>
-                            <div>
-                                <button type="button" class="btn btn-primary btn-lg" id="step_next">
-                                    Next <i class="fas fa-chevron-right"></i>
-                                </button>
-                                <button type="button" class="btn btn-success btn-lg d-none" id="btn_submit_data_company">
-                                    <i class="fas fa-paper-plane"></i> Submit
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="wizard-actions d-flex justify-content-between align-items-center" id="wizard_actions">
+                    <button type="button" class="btn btn-outline-secondary d-none" id="step_prev">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i> Previous
+                    </button>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="step_next">
+                            Continue <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-success d-none" id="btn_submit_data_company">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Submit Registration
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 @stop
@@ -449,6 +462,364 @@
             #wizard_actions > div {
                 width: 100%;
                 flex-direction: column;
+            }
+        }
+
+        .public-form-page {
+            animation: public-form-enter .35s ease-out both;
+        }
+
+        @keyframes public-form-enter {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .public-form-heading {
+            align-items: flex-end;
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+            margin: 0 0 22px;
+        }
+
+        .public-eyebrow,
+        .wizard-kicker {
+            color: var(--public-primary);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .08em;
+        }
+
+        .public-form-heading h1 {
+            color: var(--public-ink);
+            font-size: 30px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 8px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .public-form-heading p {
+            color: var(--public-muted);
+            margin: 0;
+        }
+
+        .public-form-type {
+            background: #e8f4ef;
+            border-radius: 999px;
+            color: var(--public-success);
+            flex: 0 0 auto;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 9px 13px;
+        }
+
+        .public-form-description {
+            align-items: flex-start;
+            background: #fff;
+            border: 1px solid var(--public-line);
+            border-left: 3px solid var(--public-primary);
+            border-radius: 8px;
+            color: var(--public-muted);
+            display: flex;
+            gap: 11px;
+            line-height: 1.55;
+            margin-bottom: 20px;
+            padding: 14px 17px;
+        }
+
+        .public-form-description i {
+            color: var(--public-primary);
+            margin-top: 3px;
+        }
+
+        .wizard-shell {
+            background: #fff;
+            border: 1px solid var(--public-line);
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(32, 38, 56, .045);
+            margin-bottom: 22px;
+            padding: 19px 24px 10px;
+        }
+
+        .wizard-topline {
+            align-items: center;
+            border-bottom: 1px solid #edf0f4;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 15px;
+        }
+
+        .wizard-topline > div {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .wizard-current-label {
+            color: var(--public-ink);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .wizard-count {
+            color: var(--public-muted);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .wizard-count span {
+            color: var(--public-primary);
+            font-size: 15px;
+        }
+
+        #wizard_stepper {
+            gap: 8px;
+            margin: 0;
+            overflow: visible;
+            padding: 17px 0 6px;
+        }
+
+        #wizard_stepper::before {
+            background: #e4e8ef;
+            height: 2px;
+            left: 8%;
+            right: 8%;
+            top: 35px;
+        }
+
+        .public-form-page .wizard-step {
+            color: #8991a1;
+            min-width: 0;
+            max-width: none;
+            padding: 0 4px;
+            white-space: normal;
+        }
+
+        .public-form-page .wizard-step:hover {
+            color: var(--public-primary);
+            transform: translateY(-1px);
+        }
+
+        .public-form-page .wizard-step-number {
+            background: #fff;
+            border: 2px solid #dbe1e9;
+            color: #778195;
+            height: 38px;
+            margin-bottom: 8px;
+            width: 38px;
+        }
+
+        .public-form-page .wizard-step.active .wizard-step-number,
+        .public-form-page .wizard-step.completed .wizard-step-number {
+            background: var(--public-primary);
+            border-color: var(--public-primary);
+            color: #fff;
+        }
+
+        .public-form-page .wizard-step.active,
+        .public-form-page .wizard-step.completed {
+            color: var(--public-ink);
+        }
+
+        .public-form-page .wizard-step-text {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.25;
+            max-width: 130px;
+        }
+
+        #form_company .card {
+            background: #fff;
+            border: 1px solid var(--public-line);
+            border-radius: 10px;
+            box-shadow: 0 3px 14px rgba(32, 38, 56, .035);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #form_company .card-header {
+            background: #fff;
+            border-bottom: 1px solid #edf0f4;
+            color: var(--public-ink);
+            padding: 17px 24px;
+        }
+
+        #form_company .card-title,
+        #form_company .card-header h3,
+        #form_company .card-header h5 {
+            color: var(--public-ink);
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        #form_company .card-header .fas,
+        #form_company .card-header .fa {
+            color: var(--public-primary);
+            margin-right: 7px;
+        }
+
+        #form_company .card-body {
+            padding: 25px;
+        }
+
+        #form_company .form-control,
+        #form_company .form-select,
+        #form_company .select2-container--default .select2-selection--single {
+            background-color: #fbfcfe;
+            border: 1px solid #dce2eb;
+            color: var(--public-ink);
+            min-height: 44px;
+            transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+        }
+
+        #form_company textarea.form-control {
+            min-height: 92px;
+        }
+
+        #form_company .form-control:focus,
+        #form_company .form-select:focus {
+            background: #fff;
+            border-color: var(--public-primary);
+            box-shadow: 0 0 0 3px rgba(101, 88, 211, .12);
+        }
+
+        #form_company label {
+            color: #3b4352;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        #form_company .partner-fieldset,
+        #form_company fieldset.border {
+            background: #fcfdff;
+            border-color: var(--public-line) !important;
+            border-radius: 9px;
+        }
+
+        #form_company legend {
+            background: #fff;
+            color: var(--public-ink);
+            font-weight: 700;
+        }
+
+        #form_company .text-muted,
+        #form_company small {
+            color: var(--public-muted) !important;
+        }
+
+        #form_company .btn {
+            border-radius: 7px;
+            font-weight: 600;
+            min-height: 42px;
+            padding: 9px 16px;
+        }
+
+        #form_company .btn-primary {
+            background: var(--public-primary);
+            border-color: var(--public-primary);
+        }
+
+        #form_company .btn-primary:hover {
+            background: var(--public-primary-dark);
+            border-color: var(--public-primary-dark);
+        }
+
+        #form_company .btn-success {
+            background: var(--public-success);
+            border-color: var(--public-success);
+        }
+
+        #form_company .form-check-input:checked {
+            background-color: var(--public-primary);
+            border-color: var(--public-primary);
+        }
+
+        #form_company .form-check-input:not(:checked) {
+            background-color: #fff;
+            border-color: #b8c1ce;
+        }
+
+        #wizard_actions {
+            border-top: 1px solid var(--public-line);
+            margin-top: 24px;
+            padding-top: 20px;
+        }
+
+        #wizard_actions .btn {
+            min-width: 140px;
+        }
+
+        #form_company .partner-map {
+            border: 1px solid var(--public-line);
+            box-shadow: 0 4px 14px rgba(32, 38, 56, .08);
+        }
+
+        @media (max-width: 767px) {
+            .public-form-heading {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .public-form-heading h1 {
+                font-size: 25px;
+            }
+
+            .wizard-shell {
+                padding: 16px 15px 8px;
+            }
+
+            #wizard_stepper {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                scrollbar-width: thin;
+            }
+
+            #wizard_stepper::before {
+                left: 22px;
+                right: auto;
+                width: calc(6 * 112px - 44px);
+            }
+
+            .public-form-page .wizard-step {
+                flex: 0 0 112px;
+            }
+
+            #form_company .card-body {
+                padding: 18px 16px;
+            }
+
+            #form_company .card-header {
+                padding: 15px 16px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .public-form-page {
+                animation: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .wizard-current-label {
+                max-width: 230px;
+                overflow-wrap: anywhere;
+            }
+
+            #wizard_actions {
+                align-items: stretch !important;
+                gap: 10px;
+            }
+
+            #wizard_actions > button,
+            #wizard_actions > div,
+            #wizard_actions > div .btn {
+                width: 100%;
             }
         }
     </style>
@@ -819,6 +1190,14 @@
             setTimeout(restoreForm, 500);
 
             const totalWizardSteps = 6;
+            const wizardStepLabels = [
+                'Master Information',
+                'Contact',
+                'Address',
+                'Bank',
+                'Form Survey',
+                'Form Upload'
+            ];
             let currentWizardStep = 1;
 
             function getFieldLabel($field) {
@@ -973,6 +1352,8 @@
                     step = totalWizardSteps;
                 }
                 currentWizardStep = step;
+                $('#wizard_current_label').text(wizardStepLabels[currentWizardStep - 1]);
+                $('#wizard_current_number').text(String(currentWizardStep).padStart(2, '0'));
 
                 $('.step-pane').each(function() {
                     const stepIndex = parseInt($(this).data('step'));

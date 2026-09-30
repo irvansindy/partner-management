@@ -192,6 +192,7 @@
         </div>
 
         @include('admin.api_white_list.modal_api_white_list')
+        @include('admin.api_white_list.delete_api_white_list')
     </div>
 @endsection
 

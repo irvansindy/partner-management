@@ -24,6 +24,17 @@ class APIWhiteListManageController extends Controller
             return formatResponseJson::error(null, 'Failed to fetch data: ' . $e->getMessage(), 500);
         }
     }
+    public function fetchById(Request $request)
+    {
+        try {
+            $data = ApiWhitelist::findOrFail($request->id);
+
+            return FormatResponseJson::success($data, 'IP address fetched successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, 'Failed to fetch IP address: ' . $e->getMessage(), 404);
+        }
+    }
+
     public function createOrUpdate(Request $request)
     {
         DB::beginTransaction();
@@ -67,6 +78,18 @@ class APIWhiteListManageController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             return FormatResponseJson::error(null, $e->getMessage(), 500);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+            $data = ApiWhitelist::findOrFail($request->id);
+            $data->delete();
+
+            return FormatResponseJson::success(null, 'IP address deleted successfully');
+        } catch (\Exception $e) {
+            return FormatResponseJson::error(null, 'Failed to delete IP address: ' . $e->getMessage(), 500);
         }
     }
 

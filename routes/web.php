@@ -153,7 +153,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', action: [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
 });
-Route::middleware(['auth', 'role:user', 'verified'])->group(function () {
+// Route::middleware(['auth', 'role:user|admin', 'verified'])->group(function () {
+Route::middleware(['auth', 'role:user|admin'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/list-partner', [PartnerController::class,'index'])->name('list-partner');
     Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
@@ -271,7 +272,9 @@ Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(fun
 Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('ip-whitelist', [APIWhiteListManageController::class, 'index'])->name('ip-whitelist');
     Route::get('ip-whitelist.fetch', [APIWhiteListManageController::class, 'fetch'])->name('ip-whitelist.fetch');
+    Route::get('ip-whitelist.fetch-by-id', [APIWhiteListManageController::class, 'fetchById'])->name('ip-whitelist.fetch-by-id');
     Route::post('ip-whitelist.submit', [APIWhiteListManageController::class, 'createOrUpdate'])->name('ip-whitelist.submit');
+    Route::post('ip-whitelist.delete', [APIWhiteListManageController::class, 'delete'])->name('ip-whitelist.delete');
 
     Route::get('/system/clear-optimize', [SuperAdminController::class, 'clearOptimize'])->name('system.clear-optimize');
 });

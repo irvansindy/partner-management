@@ -1,21 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{-- Tambahkan di bagian HEAD layout --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    {{-- Setup AJAX global dengan CSRF --}}
-    <script>
-        // Set CSRF token untuk semua AJAX request
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-    </script>
     <title>@yield('title', 'Form Registration')</title>
+    <link rel="icon" type="image/png" href="{{ asset('uploads/logo/icon.png') }}">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -29,60 +19,141 @@
     <link rel="stylesheet" href="{{ asset('css/cdn/leaflet.css') }}">
     <link rel="stylesheet" href="{{ asset('css/cdn/leaflet_geocoder.css') }}">
 
-    @yield('css')
-
     <style>
+        :root {
+            --public-ink: #202638;
+            --public-muted: #70798b;
+            --public-line: #e3e8ef;
+            --public-paper: #fff;
+            --public-canvas: #f3f5f8;
+            --public-primary: #6558d3;
+            --public-primary-dark: #5043bd;
+            --public-primary-soft: #efedff;
+            --public-success: #238768;
+        }
+
+        html {
+            min-height: 100%;
+        }
+
         body {
-            background-color: #f4f6f9;
+            background: var(--public-canvas);
+            color: var(--public-ink);
+            font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
         }
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
+
+        .public-topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--public-line);
+            min-height: 68px;
         }
-        .card {
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+        .public-topbar-inner {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+            min-height: 68px;
         }
-        .card-header {
-            background-color: #17a2b8;
-            color: white;
-            font-weight: bold;
+
+        .public-brand {
+            align-items: center;
+            color: var(--public-ink);
+            display: inline-flex;
+            font-size: 15px;
+            font-weight: 700;
+            gap: 12px;
+            text-decoration: none;
         }
-        .select2-container--default .select2-selection--single {
-            background-color: #f8fafc !important;
+
+        .public-brand img {
+            height: 38px;
+            object-fit: contain;
+            width: 42px;
         }
-        .select2-container .select2-selection--single {
-            height: 38px !important;
+
+        .public-brand-caption {
+            border-left: 1px solid var(--public-line);
+            color: var(--public-muted);
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 4px;
+            padding-left: 14px;
         }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px !important;
+
+        .public-header-label {
+            color: var(--public-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .public-main {
+            margin: 0 auto;
+            max-width: 1240px;
+            min-height: calc(100vh - 142px);
+            padding: 38px 24px 52px;
+        }
+
+        .public-footer {
+            border-top: 1px solid var(--public-line);
+            color: var(--public-muted);
+            font-size: 12px;
+            padding: 18px 24px;
+            text-align: center;
+        }
+
+        @media (max-width: 576px) {
+            .public-topbar,
+            .public-topbar-inner {
+                min-height: 60px;
+            }
+
+            .public-brand img {
+                height: 32px;
+                width: 36px;
+            }
+
+            .public-brand-caption,
+            .public-header-label {
+                display: none;
+            }
+
+            .public-main {
+                padding: 24px 14px 36px;
+            }
         }
     </style>
+    @yield('css')
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-building"></i> Company Registration
+    <header class="public-topbar">
+        <div class="container-fluid public-topbar-inner px-4">
+            <a class="public-brand" href="/">
+                <img src="{{ asset('uploads/logo/logo.png') }}" alt="Company logo">
+                <span>PARTNER MANAGEMENT</span>
+                <span class="public-brand-caption">External Partner Portal</span>
             </a>
+            <span class="public-header-label">SECURE REGISTRATION</span>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <div class="container py-4">
+    <main class="public-main">
         @yield('content')
-    </div>
+    </main>
 
-    <!-- Footer -->
-    <footer class="bg-light py-3 mt-5">
-        <div class="container text-center">
-            <p class="mb-0 text-muted">&copy; {{ date('Y') }} Company Registration System. All rights reserved.</p>
-        </div>
+    <footer class="public-footer">
+        &copy; {{ date('Y') }} Partner Management. All rights reserved.
     </footer>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+    </script>
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Select2 -->
