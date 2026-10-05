@@ -336,11 +336,23 @@
             line-height: 1.25;
         }
 
+        #form_company .form-group {
+            position: relative;
+            margin-bottom: 1.15rem;
+        }
+
         #form_company label {
             display: block;
             margin-bottom: 0.45rem;
             line-height: 1.3;
             font-weight: 600;
+            color: #374151;
+            transition: color 0.2s ease;
+        }
+
+        #form_company label[for].active,
+        #form_company label[for]:focus-visible {
+            color: var(--public-primary);
         }
 
         #form_company .form-control,
@@ -1018,6 +1030,53 @@
 
         $(document).on("change", "#survey_form_switch", function() {
             saveForm();
+        });
+
+        function syncPublicFieldState($field) {
+            const field = $field.get(0);
+            if (!field) return;
+
+            const selector = field.id ? 'label[for="' + field.id + '"]' : null;
+            let label = selector ? document.querySelector('#form_company ' + selector) : null;
+
+            if (!label && field.name) {
+                label = document.querySelector('#form_company label[for="' + field.name.replace(/\[|\]/g, '').replace(/[^a-zA-Z0-9_-]/g, '_') + '"]');
+            }
+
+            if (!label) {
+                const group = $field.closest('.form-group, .row, .col-md-6, .col-md-4, .col-lg-6, .col-lg-4');
+                if (group.length) {
+                    label = group.find('label[for]').first().get(0);
+                }
+            }
+
+            if (!label) return;
+
+            const hasValue = field.value !== '' || document.activeElement === field;
+            label.classList.toggle('active', hasValue);
+            if (field.classList && field.classList.contains('select2-hidden-accessible')) {
+                label.classList.toggle('active', true);
+            }
+        }
+
+        $('#form_company').on('focusin', 'input, textarea, select', function () {
+            syncPublicFieldState($(this));
+        });
+
+        $('#form_company').on('focusout', 'input, textarea, select', function () {
+            syncPublicFieldState($(this));
+        });
+
+        $('#form_company').on('input change', 'input, textarea, select', function () {
+            syncPublicFieldState($(this));
+        });
+
+        $('#form_company').find('input, textarea, select').each(function () {
+            syncPublicFieldState($(this));
+        });
+
+        $('#form_company').on('select2:open select2:close', 'select', function () {
+            syncPublicFieldState($(this));
         });
 
         /* Clear setelah submit */

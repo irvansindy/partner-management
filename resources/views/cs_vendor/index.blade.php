@@ -175,6 +175,11 @@
                 font-size: 13px;
                 font-weight: 600;
                 line-height: 1.35;
+                transition: color 0.2s ease;
+            }
+
+            .partner-entry-page #form_company label.active {
+                color: var(--entry-primary);
             }
 
             .partner-entry-page #form_company .form-control,
@@ -358,5 +363,35 @@
 @push('scripts')
     <script src="{{ asset('js/cdn/file_input.js') }}"></script>
     <script src="{{ asset('js/cdn/file_input_sortable.js') }}"></script>
+    <script>
+        $(function () {
+            function syncPartnerFieldLabel($field) {
+                const field = $field.get(0);
+                if (!field) return;
+
+                const label = field.id ? document.querySelector('#form_company label[for="' + field.id + '"]') : null;
+                if (!label) return;
+
+                const isActive = field.value !== '' || document.activeElement === field;
+                label.classList.toggle('active', isActive);
+            }
+
+            $('#form_company').on('focusin', 'input, textarea, select', function () {
+                syncPartnerFieldLabel($(this));
+            });
+
+            $('#form_company').on('focusout', 'input, textarea, select', function () {
+                syncPartnerFieldLabel($(this));
+            });
+
+            $('#form_company').on('input change', 'input, textarea, select', function () {
+                syncPartnerFieldLabel($(this));
+            });
+
+            $('#form_company').find('input, textarea, select').each(function () {
+                syncPartnerFieldLabel($(this));
+            });
+        });
+    </script>
     @include('cs_vendor.partner_js')
 @endpush

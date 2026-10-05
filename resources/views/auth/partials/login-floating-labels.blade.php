@@ -6,20 +6,20 @@
             var group = input.closest('.form-group');
             var label = group ? group.querySelector('label') : null;
 
-            if (label) {
-                label.classList.toggle('active', input.matches(':focus') || input.value.length > 0);
+            if (!label) {
+                return;
             }
+
+            var hasValue = input.value.trim().length > 0 || input.matches(':focus');
+            label.classList.toggle('active', hasValue);
+            group.classList.toggle('has-value', hasValue);
         }
 
         inputs.forEach(function (input) {
-            input.addEventListener('focus', function () {
-                syncFloatingLabel(input);
-            });
-            input.addEventListener('blur', function () {
-                syncFloatingLabel(input);
-            });
-            input.addEventListener('input', function () {
-                syncFloatingLabel(input);
+            ['focus', 'blur', 'input', 'change'].forEach(function (eventName) {
+                input.addEventListener(eventName, function () {
+                    syncFloatingLabel(input);
+                });
             });
 
             syncFloatingLabel(input);

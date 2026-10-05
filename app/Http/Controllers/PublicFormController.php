@@ -15,6 +15,7 @@ use App\Services\ApprovalService; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Helpers\FormatResponseJson;
 
 class PublicFormController extends Controller
@@ -180,12 +181,20 @@ class PublicFormController extends Controller
                 $sortOrder = 1;
                 foreach ($request->file('input-multiple-file') as $file) {
                     $originalName = $file->getClientOriginalName();
-                    $filename = time() . '_' . $sortOrder . '_' . $originalName;
-                    $path = $file->storeAs('company_attachments', $filename, 'public');
+                    $safeName = pathinfo($originalName, PATHINFO_FILENAME);
+                    $safeExtension = strtolower($file->getClientOriginalExtension());
+                    $safeFilename = trim(Str::ascii($safeName) ?: 'attachment');
+
+                    if ($safeExtension !== '') {
+                        $safeFilename .= '.' . $safeExtension;
+                    }
+
+                    $storedFilename = time() . '_' . $sortOrder . '_' . $safeFilename;
+                    $path = $file->storeAs('company_attachments', $storedFilename, 'public');
 
                     CompanyAttachment::create([
                         'company_id' => $company->id,
-                        'filename' => $originalName,
+                        'filename' => $safeFilename,
                         'filepath' => $path,
                         'filesize' => $file->getSize(),
                         'filetype' => $file->getMimeType(),
