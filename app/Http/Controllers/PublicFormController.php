@@ -55,6 +55,16 @@ class PublicFormController extends Controller
 
         DB::beginTransaction();
         try {
+            $formLink = FormLink::whereKey($formLink->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (!$formLink->canAcceptSubmission()) {
+                DB::rollBack();
+
+                return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
+            }
+
             // 1. Simpan Company Information
             $company = CompanyInformation::create([
                 'form_link_id' => $formLink->id,
@@ -266,7 +276,7 @@ class PublicFormController extends Controller
             'business_classification' => 'required|string|max:255',
             'business_classification_detail' => 'nullable|string',
             'register_number_as_in_tax_invoice' => 'required|string|max:255',
-            'website_address' => 'nullable|max:255',
+            'website_address' => 'nullable|url|max:255',
             'system_management' => 'nullable|string|max:255',
             'email_address' => 'nullable|email|max:255',
             'credit_limit' => 'nullable|numeric|min:0',
@@ -277,7 +287,7 @@ class PublicFormController extends Controller
             'contact_position.*' => 'required|string|max:255',
             'contact_name.*' => 'required|string|max:255',
             'contact_email.*' => 'required|email|max:255',
-            'contact_telephone.*' => 'required|digits_between:1,13',
+            'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
 
             // Addresses
             'address.*' => 'required|string',
@@ -285,8 +295,8 @@ class PublicFormController extends Controller
             'province.*' => 'required|string|max:100',
             'city.*' => 'required|string|max:100',
             'zip_code.*' => 'required|digits:5',
-            'telephone.*' => 'required|digits_between:1,13',
-            'fax.*' => 'required|digits_between:1,15',
+            'telephone.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
+            'fax.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
 
@@ -313,6 +323,13 @@ class PublicFormController extends Controller
 
         $messages = [
             'company_type.required' => 'Jenis perusahaan wajib diisi. | Company type is required.',
+            'business_classification.required' => 'Klasifikasi bisnis wajib diisi. | Business classification is required.',
+            'website_address.url' => 'Alamat website harus berupa URL yang valid. | Website address must be a valid URL.',
+            'email_address.email' => 'Format alamat email tidak valid. | Email address format is invalid.',
+            'contact_email.*.email' => 'Format email kontak tidak valid. | Contact email format is invalid.',
+            'contact_telephone.*.regex' => 'Nomor telepon kontak harus menggunakan kode negara, contoh +62896232332423. | Contact telephone must include a country code, e.g. +62896232332423.',
+            'telephone.*.regex' => 'Nomor telepon harus menggunakan kode negara, contoh +62896232332423. | Telephone must include a country code, e.g. +62896232332423.',
+            'fax.*.regex' => 'Nomor fax harus menggunakan kode negara, contoh +62856676654. | Fax must include a country code, e.g. +62856676654.',
             'company_type.in' => 'Jenis perusahaan harus vendor atau customer. | Company type must be vendor or customer.',
             'company_name.required' => 'Nama perusahaan wajib diisi. | Company name is required.',
             'company_name.string' => 'Nama perusahaan harus berupa teks. | Company name must be a string.',

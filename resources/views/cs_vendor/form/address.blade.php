@@ -54,26 +54,28 @@
                             <div class="col-md-6">
                                 <label for="telephone_0">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                                <input type="text"
+                                <input type="tel"
                                     name="telephone[]"
                                     id="telephone_0"
-                                    class="form-control"
+                                    class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Telephone')"
-                                    maxlength="13"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,13)"
+                                    inputmode="tel"
+                                    maxlength="16"
+                                    pattern="\+[1-9][0-9]{1,14}"
                                     required>
                                 <span class="text-danger mt-2 message_telephone" id="message_telephone_0" role="alert"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="fax_0">@lang('messages.Fax') <span class="text-danger" role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                                <input type="text"
+                                <input type="tel"
                                     name="fax[]"
                                     id="fax_0"
-                                    class="form-control"
+                                    class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Fax')"
-                                    maxlength="15"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,15)"
+                                    inputmode="tel"
+                                    maxlength="16"
+                                    pattern="\+[1-9][0-9]{1,14}"
                                     required>
                                 <span class="text-danger mt-2 message_fax" id="message_fax_0" role="alert"></span>
                             </div>
@@ -125,7 +127,7 @@
                             <span class="text-danger mt-2 message_address" id="message_address_1" role="alert"></span>
                         </div>
 
-                        <div class="row mb-4">
+                        <div class="row mb-4 d-none">
                             <div class="col-md-6">
                                 <label for="latitude_1">Latitude <span class="text-danger" role="alert">*</span></label>
                                 <input type="text" name="latitude" id="latitude_1" class="form-control" readonly required>
@@ -173,26 +175,28 @@
                             <div class="col-md-6">
                                 <label for="telephone_1">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                                <input type="text"
+                                <input type="tel"
                                     name="telephone[]"
                                     id="telephone_1"
-                                    class="form-control"
+                                    class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Telephone')"
-                                    maxlength="13"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,13)"
+                                    inputmode="tel"
+                                    maxlength="16"
+                                    pattern="\+[1-9][0-9]{1,14}"
                                     required>
                                 <span class="text-danger mt-2 message_telephone" id="message_telephone_1" role="alert"></span>
                             </div>
                             <div class="col-md-6">
                                 <label for="fax_1">@lang('messages.Fax') <span class="text-danger" role="alert">*</span></label>
                                 <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                                <input type="text"
+                                <input type="tel"
                                     name="fax[]"
                                     id="fax_1"
-                                    class="form-control"
+                                    class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Fax')"
-                                    maxlength="15"
-                                    oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,15)"
+                                    inputmode="tel"
+                                    maxlength="16"
+                                    pattern="\+[1-9][0-9]{1,14}"
                                     required>
                                 <span class="text-danger mt-2 message_fax" id="message_fax_1" role="alert"></span>
                             </div>
@@ -280,6 +284,17 @@
             maxZoom: 19,
             attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom'
         }).addTo(map1);
+
+        function refreshMapSize() {
+            window.requestAnimationFrame(function () {
+                map1.invalidateSize({ pan: false });
+            });
+        }
+
+        document.addEventListener('partner:address-step-shown', refreshMapSize);
+        if (document.getElementById('map_1').offsetParent !== null) {
+            refreshMapSize();
+        }
 
         // ----------------------------------------------------------
         // 4. Fungsi utama: set marker + isi semua field
@@ -409,7 +424,7 @@
         // ----------------------------------------------------------
         function performSearch(query) {
             if (!query || query.trim() === '') {
-                alert('Harap masukkan alamat untuk dicari!');
+                showPartnerToast('Alamat belum diisi', 'Masukkan alamat terlebih dahulu untuk memulai pencarian.', 'warning');
                 return;
             }
 
@@ -418,7 +433,12 @@
             btnSearch.disabled   = true;
 
             fetch('https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(query))
-                .then(function (res) { return res.json(); })
+                .then(function (res) {
+                    if (!res.ok) {
+                        throw new Error('Address search returned HTTP ' + res.status);
+                    }
+                    return res.json();
+                })
                 .then(function (data) {
                     // Reset button
                     btnSearch.innerHTML = '<i class="fas fa-search"></i> Cari';
@@ -473,9 +493,10 @@
                                 });
                         }
 
+                        showPartnerToast('Pencarian berhasil', 'Ditemukan ' + data.length + ' alamat. Pilih alamat dari daftar hasil.', 'success');
                         console.log('[Map1] Ditemukan', data.length, 'alamat');
                     } else {
-                        alert('Alamat tidak ditemukan. Coba kata kunci lain.');
+                        showPartnerToast('Alamat tidak ditemukan', 'Coba gunakan kata kunci alamat yang berbeda.', 'warning');
                         resetFields();
                     }
                 })
@@ -483,7 +504,7 @@
                     console.error('[Map1] Error fetch Nominatim:', err);
                     btnSearch.innerHTML = '<i class="fas fa-search"></i> Cari';
                     btnSearch.disabled  = false;
-                    alert('Terjadi kesalahan saat mencari alamat.');
+                    showPartnerToast('Pencarian gagal', 'Terjadi kendala saat mencari alamat. Silakan coba lagi.', 'danger');
                 });
         }
 

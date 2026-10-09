@@ -3,7 +3,37 @@
 @section('content')
     @push('styles')
         @include('admin.form_links._alpha_styles')
-        <style>#qrcode { display: inline-block; }</style>
+        <style>
+            .form-links-page .public-link-field label,
+            .form-links-page .qr-code-field label {
+                display: block;
+                margin: 0 0 8px;
+                position: static;
+                transform: none;
+            }
+
+            .form-links-page .public-link-field .input-group {
+                align-items: stretch;
+            }
+
+            .form-links-page .public-link-field .form-control {
+                min-width: 0;
+                text-overflow: ellipsis;
+            }
+
+            .form-links-page .public-link-field .btn {
+                white-space: nowrap;
+            }
+
+            .form-links-page .qr-code-field #qrcode {
+                display: inline-block;
+                padding: 12px;
+                border: 1px solid var(--form-link-border);
+                border-radius: 8px;
+                background: #fff;
+                line-height: 0;
+            }
+        </style>
     @endpush
 
     <div class="container-fluid form-links-page">
@@ -95,8 +125,8 @@
                         <h3 class="card-title">Public Link</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label>Share this link with recipients:</label>
+                        <div class="form-group public-link-field">
+                            <label for="public-link">Share this link with recipients:</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" value="{{ $formLink->getPublicUrl() }}"
                                     id="public-link" readonly>
@@ -108,7 +138,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group qr-code-field">
                             <label>QR Code:</label>
                             <div class="text-center">
                                 <div id="qrcode"></div>

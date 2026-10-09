@@ -186,56 +186,6 @@
         $('#select_option_regency_1').prop('disabled', true); // Enable the regency select
     }
 
-    $('#select_option_province_0').on('change', function() {
-        var provinceId = $(this).val();
-        // Fetch regencies based on selected province
-        $.ajax({
-            url: "{{ route('fetch-regencies') }}", // Replace with your API endpoint to fetch regencies
-            data: {
-                province_id: provinceId
-            },
-            dataType: 'json',
-            success: function(data) {
-                var $regencySelect = $('#select_option_regency_0');
-                $regencySelect.empty(); // Clear previous options
-                $regencySelect.append('<option></option>'); // Add placeholder option
-                data.forEach(function(regency) {
-                    $regencySelect.append(new Option(regency.name, regency.id));
-                });
-                $regencySelect.prop('disabled', false); // Enable the regency select
-                $regencySelect.select2({
-                    placeholder: 'Select Regency',
-                    width: '100%'
-                });
-            }
-        });
-    });
-
-    $('#select_option_province_1').on('change', function() {
-        var provinceId = $(this).val();
-        // Fetch regencies based on selected province
-        $.ajax({
-            url: "{{ route('fetch-regencies') }}", // Replace with your API endpoint to fetch regencies
-            data: {
-                province_id: provinceId
-            },
-            dataType: 'json',
-            success: function(data) {
-                var $regencySelect = $('#select_option_regency_1');
-                $regencySelect.empty(); // Clear previous options
-                $regencySelect.append('<option></option>'); // Add placeholder option
-                data.forEach(function(regency) {
-                    $regencySelect.append(new Option(regency.name, regency.id));
-                });
-                $regencySelect.prop('disabled', false); // Enable the regency select
-                $regencySelect.select2({
-                    placeholder: 'Select Regency',
-                    width: '100%'
-                });
-            }
-        });
-    });
-
     $(document).ready(function() {
         var currentYear = new Date().getFullYear();
         $("#year-current").text(currentYear);
@@ -248,6 +198,20 @@
             showRemove: true,
             showCancel: false,
             showClose: false,
+            previewFileIcon: '<i class="fas fa-file"></i>',
+            browseIcon: '<i class="fas fa-folder-open"></i> ',
+            removeIcon: '<i class="fas fa-trash"></i>',
+            cancelIcon: '<i class="fas fa-ban"></i>',
+            uploadIcon: '<i class="fas fa-upload"></i>',
+            previewZoomButtonIcons: {
+                prev: '<i class="fas fa-chevron-left"></i>',
+                next: '<i class="fas fa-chevron-right"></i>',
+                rotate: '<i class="fas fa-rotate-right"></i>',
+                toggleheader: '<i class="fas fa-arrows-up-down"></i>',
+                fullscreen: '<i class="fas fa-expand"></i>',
+                borderless: '<i class="fas fa-up-right-and-down-left-from-center"></i>',
+                close: '<i class="fas fa-xmark"></i>'
+            },
             required: false,
             validateInitialCount: true,
             overwriteInitial: false,
@@ -267,7 +231,19 @@
                 showDrag: true, // Display the drag handle
                 // showZoom: true,
                 showUpload: false, // Tambahkan ini juga di file action settings
-                showRemove: true
+                showRemove: true,
+                removeIcon: '<i class="fas fa-trash"></i>',
+                uploadIcon: '<i class="fas fa-upload"></i>',
+                uploadRetryIcon: '<i class="fas fa-cloud-arrow-up"></i>',
+                downloadIcon: '<i class="fas fa-download"></i>',
+                rotateIcon: '<i class="fas fa-rotate-right"></i>',
+                zoomIcon: '<i class="fas fa-magnifying-glass-plus"></i>',
+                dragIcon: '<i class="fas fa-arrows-up-down-left-right"></i>',
+                indicatorNew: '<i class="fas fa-plus text-warning"></i>',
+                indicatorSuccess: '<i class="fas fa-check text-success"></i>',
+                indicatorError: '<i class="fas fa-triangle-exclamation text-danger"></i>',
+                indicatorLoading: '<i class="fas fa-hourglass-half text-muted"></i>',
+                indicatorPaused: '<i class="fas fa-pause text-primary"></i>'
             },
             // Jika masih muncul, paksa hide dengan CSS
             layoutTemplates: {
@@ -513,12 +489,12 @@
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_email_${index}">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_email[]" id="contact_email_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
+                            <input type="email" name="contact_email[]" id="contact_email_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
                             <span class="text-danger mt-2" id="message_contact_email_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <input type="number" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Phone')" data-max-digits="13" min="0" required>
+                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="tel" maxlength="16" pattern="\+[1-9][0-9]{1,14}" required>
                             <span class="text-danger mt-2" id="message_contact_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
@@ -581,6 +557,12 @@
                         placeholder: 'Select Regency',
                         width: '100%'
                     });
+
+                    var pendingCity = $regencySelect.attr('data-pending-city-restore');
+                    if (pendingCity !== undefined) {
+                        $regencySelect.val(pendingCity).trigger('change');
+                        $regencySelect.removeAttr('data-pending-city-restore');
+                    }
                 }
             });
         }
@@ -667,13 +649,13 @@
                         <div class="col-md-6">
                             <label for="telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                             <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                            <input type="number" name="telephone[]" id="telephone_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Telephone')" data-max-digits="13" min="0" required>
+                            <input type="tel" name="telephone[]" id="telephone_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Telephone')" inputmode="tel" maxlength="16" pattern="\+[1-9][0-9]{1,14}" required>
                             <span class="text-danger mt-2 message_telephone" id="message_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
                             <label for="fax_${index}">@lang('messages.Fax') <span class="text-danger" role="alert">*</span></label>
                             <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                            <input type="number" name="fax[]" id="fax_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Fax')" data-max-digits="15" min="0" required>
+                            <input type="tel" name="fax[]" id="fax_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Fax')" inputmode="tel" maxlength="16" pattern="\+[1-9][0-9]{1,14}" required>
                             <span class="text-danger mt-2 message_fax" id="message_fax_${index}" role="alert"></span>
                         </div>
                     </div>
@@ -1094,8 +1076,17 @@
         // ============================================
         // ENHANCED SUBMIT HANDLER
         // ============================================
+        var isPartnerFormSubmitting = false;
+
         $('#btn_submit_data_company').on('click', function(e) {
             e.preventDefault();
+
+            if (isPartnerFormSubmitting) {
+                return;
+            }
+
+            isPartnerFormSubmitting = true;
+            var $submitButton = $(this).prop('disabled', true);
 
             // Clear previous errors
             $('[id^="message_"]').text('');
@@ -1107,6 +1098,9 @@
                 $('input[name="_token"]').val();
 
             if (!csrfToken) {
+                isPartnerFormSubmitting = false;
+                $submitButton.prop('disabled', false);
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Session Error',
@@ -1171,6 +1165,9 @@
                         });
                         // Clear localStorage setelah sukses
                     } else {
+                        isPartnerFormSubmitting = false;
+                        $submitButton.prop('disabled', false);
+
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
@@ -1181,6 +1178,8 @@
 
                 error: function(xhr) {
                     Swal.close();
+                    isPartnerFormSubmitting = false;
+                    $submitButton.prop('disabled', false);
 
                     console.error('❌ Submit Error:', xhr.status, xhr.statusText);
                     console.error('Response:', xhr.responseJSON);

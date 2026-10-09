@@ -22,76 +22,72 @@ class ApprovalService
     public function createApprovalFromFormLink(CompanyInformation $company): ?ApprovalProcess
     {
         try {
-            DB::beginTransaction();
+            return DB::transaction(function () use ($company) {
+                // Get form link
+                $formLink = FormLink::find($company->form_link_id);
 
-            // Get form link
-            $formLink = FormLink::find($company->form_link_id);
+                if (!$formLink) {
+                    Log::warning("Form link not found for company ID: {$company->id}");
+                    return null;
+                }
 
-            if (!$formLink) {
-                Log::warning("Form link not found for company ID: {$company->id}");
-                return null;
-            }
+                // Find matching approval template
+                $template = ApprovalTemplate::where('location_id', $formLink->office_id)
+                    ->where('department_id', $formLink->department_id)
+                    ->where('status', 1) // Active template
+                    ->first();
 
-            // Find matching approval template
-            $template = ApprovalTemplate::where('location_id', $formLink->office_id)
-                ->where('department_id', $formLink->department_id)
-                ->where('status', 1) // Active template
-                ->first();
+                if (!$template) {
+                    Log::warning("No active approval template found for Office ID: {$formLink->office_id}, Department ID: {$formLink->department_id}");
+                    return null;
+                }
 
-            if (!$template) {
-                Log::warning("No active approval template found for Office ID: {$formLink->office_id}, Department ID: {$formLink->department_id}");
-                return null;
-            }
+                // Get template details (approvers)
+                $templateDetails = $template->details()
+                    ->where('status', 0) // Active approvers
+                    ->orderBy('step_ordering')
+                    ->get();
 
-            // Get template details (approvers)
-            $templateDetails = $template->details()
-                ->where('status', 0) // Active approvers
-                ->orderBy('step_ordering')
-                ->get();
+                if ($templateDetails->isEmpty()) {
+                    Log::warning("No approvers found in template ID: {$template->id}");
+                    return null;
+                }
 
-            if ($templateDetails->isEmpty()) {
-                Log::warning("No approvers found in template ID: {$template->id}");
-                return null;
-            }
-
-            // Create approval process
-            $approvalProcess = ApprovalProcess::create([
-                'company_information_id' => $company->id,
-                'user_id' => $company->user_id, // Initiator (form submitter)
-                'location_id' => $formLink->office_id,
-                'department_id' => $formLink->department_id,
-                'step_ordering' => 1, // Start at step 1
-                'status' => ApprovalProcess::STATUS_PENDING,
-            ]);
-
-            // Create approval process steps
-            foreach ($templateDetails as $detail) {
-                ApprovalProcessStep::create([
-                    'approval_id' => $approvalProcess->id,
-                    'user_id' => $detail->user_id,
-                    'step_ordering' => $detail->step_ordering,
-                    'status' => $detail->step_ordering === 1
-                        ? ApprovalProcessStep::STATUS_WAITING // First step is waiting
-                        : ApprovalProcessStep::STATUS_PENDING, // Others are pending
-                    'notes' => null,
-                    'approved_at' => null,
-                    'rejected_at' => null,
+                // Create approval process
+                $approvalProcess = ApprovalProcess::create([
+                    'company_information_id' => $company->id,
+                    'user_id' => $company->user_id, // Initiator (form submitter)
+                    'location_id' => $formLink->office_id,
+                    'department_id' => $formLink->department_id,
+                    'step_ordering' => 1, // Start at step 1
+                    'status' => ApprovalProcess::STATUS_PENDING,
                 ]);
-            }
 
-            // Update approval process status to IN_PROGRESS
-            $approvalProcess->update([
-                'status' => ApprovalProcess::STATUS_IN_PROGRESS
-            ]);
+                // Create approval process steps
+                foreach ($templateDetails as $detail) {
+                    ApprovalProcessStep::create([
+                        'approval_id' => $approvalProcess->id,
+                        'user_id' => $detail->user_id,
+                        'step_ordering' => $detail->step_ordering,
+                        'status' => $detail->step_ordering === 1
+                            ? ApprovalProcessStep::STATUS_WAITING // First step is waiting
+                            : ApprovalProcessStep::STATUS_PENDING, // Others are pending
+                        'notes' => null,
+                        'approved_at' => null,
+                        'rejected_at' => null,
+                    ]);
+                }
 
-            DB::commit();
+                // Update approval process status to IN_PROGRESS
+                $approvalProcess->update([
+                    'status' => ApprovalProcess::STATUS_IN_PROGRESS
+                ]);
 
-            Log::info("Approval process created successfully for company ID: {$company->id}, Process ID: {$approvalProcess->id}");
+                Log::info("Approval process created successfully for company ID: {$company->id}, Process ID: {$approvalProcess->id}");
 
-            return $approvalProcess->fresh(['steps']);
-
+                return $approvalProcess->fresh(['steps']);
+            });
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error("Failed to create approval process for company ID: {$company->id}. Error: {$e->getMessage()}");
             throw $e;
         }

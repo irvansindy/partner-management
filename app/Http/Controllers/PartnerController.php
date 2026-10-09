@@ -262,8 +262,8 @@ class PartnerController extends Controller
                 'detail_country.*' => 'nullable|string',
                 'detail_province.*' => 'nullable|string',
                 'detail_zip_code.*' => 'nullable|integer',
-                'detail_telephone.*' => 'nullable|string',
-                'detail_fax.*' => 'nullable|string',
+                'detail_telephone.*' => 'nullable|regex:/^\+[1-9][0-9]{1,14}$/',
+                'detail_fax.*' => 'nullable|regex:/^\+[1-9][0-9]{1,14}$/',
             ];
 
             // Only require stamp and signature if they are not already set
@@ -306,6 +306,8 @@ class PartnerController extends Controller
                 'detail_zip_code.*.required' => 'Zip code/Kode pos tidak boleh kosong',
                 'detail_telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
                 'detail_fax.*.required' => 'Fax tidak boleh kosong',
+                'detail_telephone.*.regex' => 'Telephone/Telepon harus menggunakan kode negara, contoh +62896232332423',
+                'detail_fax.*.regex' => 'Fax harus menggunakan kode negara, contoh +62856676654',
             ];
 
             // Apply validation
@@ -681,6 +683,7 @@ class PartnerController extends Controller
             'owner_name.required' => 'Owner name is required.',
             'business_classification.required' => 'Business classification is required.',
             'register_number_as_in_tax_invoice.required' => 'Tax invoice register number is required.',
+            'website_address.url' => 'Website address must be a valid URL.',
             'email_address.email' => 'Email address format is invalid.',
             'credit_limit.integer' => 'Credit limit must be a number.',
 
@@ -688,8 +691,12 @@ class PartnerController extends Controller
             'contact_department.0.required' => 'Contact department is required.',
             'contact_position.0.required' => 'Contact position is required.',
             'contact_name.0.required' => 'Contact name is required.',
-            'contact_email.0.required' => 'Contact email is required.',
-            'contact_telephone.0.required' => 'Contact telephone is required.',
+            'contact_email.*.required' => 'Contact email is required.',
+            'contact_email.*.email' => 'Contact email format is invalid.',
+            'contact_telephone.*.required' => 'Contact telephone is required.',
+            'contact_telephone.*.regex' => 'Contact telephone must include a country code, e.g. +62896232332423.',
+            'telephone.*.regex' => 'Telephone must include a country code, e.g. +62896232332423.',
+            'fax.*.regex' => 'Fax must include a country code, e.g. +62856676654.',
 
             // Address 1 (NPWP)
             'address.0.required' => 'Company address (according to NPWP) is required.',
@@ -742,6 +749,7 @@ class PartnerController extends Controller
             'owner_name.required' => 'Nama pemilik wajib diisi.',
             'business_classification.required' => 'Klasifikasi bisnis wajib diisi.',
             'register_number_as_in_tax_invoice.required' => 'Nomor registrasi sesuai faktur pajak wajib diisi.',
+            'website_address.url' => 'Alamat website harus berupa URL yang valid.',
             'email_address.email' => 'Format alamat email tidak valid.',
             'credit_limit.integer' => 'Limit kredit harus berupa angka.',
 
@@ -749,8 +757,12 @@ class PartnerController extends Controller
             'contact_department.0.required' => 'Departemen kontak wajib diisi.',
             'contact_position.0.required' => 'Posisi kontak wajib diisi.',
             'contact_name.0.required' => 'Nama kontak wajib diisi.',
-            'contact_email.0.required' => 'Email kontak wajib diisi.',
-            'contact_telephone.0.required' => 'Telepon kontak wajib diisi.',
+            'contact_email.*.required' => 'Email kontak wajib diisi.',
+            'contact_email.*.email' => 'Format email kontak tidak valid.',
+            'contact_telephone.*.required' => 'Telepon kontak wajib diisi.',
+            'contact_telephone.*.regex' => 'Nomor telepon kontak harus menggunakan kode negara, contoh +62896232332423.',
+            'telephone.*.regex' => 'Nomor telepon harus menggunakan kode negara, contoh +62896232332423.',
+            'fax.*.regex' => 'Nomor fax harus menggunakan kode negara, contoh +62856676654.',
 
             // Address 1 (NPWP)
             'address.0.required' => 'Alamat perusahaan (sesuai NPWP) wajib diisi.',
@@ -802,7 +814,7 @@ class PartnerController extends Controller
             'business_classification' => 'required|string',
             'business_classification_detail' => 'nullable|string',
             'register_number_as_in_tax_invoice' => 'required|string',
-            'website_address' => 'nullable|string',
+            'website_address' => 'nullable|url',
             'system_management' => 'nullable|string',
             'email_address' => 'nullable|email',
             'credit_limit' => 'nullable|integer',
@@ -812,8 +824,8 @@ class PartnerController extends Controller
             'contact_department.0' => 'required|string',
             'contact_position.0' => 'required|string',
             'contact_name.0' => 'required|string',
-            'contact_email.0' => 'required|string',
-            'contact_telephone.0' => 'required|string',
+            'contact_email.*' => 'required|email|max:255',
+            'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
 
             // Validasi address
             'address.0' => 'required|string',
@@ -821,14 +833,13 @@ class PartnerController extends Controller
             'country.0' => 'required|string',
             'province.0' => 'required|string',
             'zip_code.0' => 'required|integer',
-            'telephone.0' => 'required|string',
-            'fax.0' => 'nullable|string',
+            'telephone.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
+            'fax.*' => 'nullable|regex:/^\+[1-9][0-9]{1,14}$/',
             'address.1' => 'required|string',
             'city.1' => 'required|string',
             'country.1' => 'required|string',
             'province.1' => 'required|string',
             'zip_code.1' => 'required|integer',
-            'telephone.1' => 'required|string',
             'fax.1' => 'nullable|string',
             'latitude' => 'nullable|string',
             'longitude' => 'nullable|string',

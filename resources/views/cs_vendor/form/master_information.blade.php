@@ -124,7 +124,7 @@
             </div>
             <div class="dynamic_liable_person"></div>
             <div class="row mb-4">
-                <label class="col-md-3">@lang('messages.Business Classification') <span class="text-danger" role="alert">*</span></label>
+                <label class="col-md-3" for="business_classification">@lang('messages.Business Classification') <span class="text-danger" role="alert">*</span></label>
                 <div class="col-md-9">
                     <select class="form-select" name="business_classification" id="business_classification" required>
                         <option value="">-- @lang('messages.Placeholder Business Classification') --</option>
@@ -157,8 +157,8 @@
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
                     <label for="website_address">@lang('messages.Website Address')</label>
-                    <input type="text" name="website_address" id="website_address" class="form-control"
-                        placeholder="@lang('messages.Placeholder Website')">
+                    <input type="url" name="website_address" id="website_address" class="form-control"
+                        placeholder="https://contoh.com">
                     <span class="text-danger message-danger" id="message_website_address" role="alert"></span>
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
@@ -169,7 +169,7 @@
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
                     <label for="email_address">@lang('messages.Email Address')</label>
-                    <input type="text" name="email_address" id="email_address" class="form-control"
+                    <input type="email" name="email_address" id="email_address" class="form-control"
                         placeholder="@lang('messages.Placeholder Email')">
                     <span class="text-danger mt-2" id="message_email_address" role="alert"></span>
                 </div>
