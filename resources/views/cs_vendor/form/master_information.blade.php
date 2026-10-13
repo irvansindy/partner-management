@@ -157,8 +157,11 @@
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
                     <label for="website_address">@lang('messages.Website Address')</label>
-                    <input type="url" name="website_address" id="website_address" class="form-control"
-                        placeholder="https://contoh.com">
+                    <div class="input-group website-address-group">
+                        <span class="input-group-text">https://</span>
+                        <input type="text" name="website_address" id="website_address" class="form-control website-host"
+                            placeholder="contoh.com">
+                    </div>
                     <span class="text-danger message-danger" id="message_website_address" role="alert"></span>
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
@@ -173,30 +176,6 @@
                         placeholder="@lang('messages.Placeholder Email')">
                     <span class="text-danger mt-2" id="message_email_address" role="alert"></span>
                 </div>
-                @guest
-                    <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                        <label for="credit_limit">@lang('messages.Credit Limit')</label>
-                        <input type="number" name="credit_limit" id="credit_limit" class="form-control" min="0"
-                            max="9999999999" maxlength="25" placeholder="@lang('messages.Placeholder Credit Limit')">
-                        <span class="text-danger mt-2" id="message_credit_limit" role="alert"></span>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                        <label for="term_of_payment">@lang('messages.Term of Payment')</label>
-                        <select name="term_of_payment" id="term_of_payment" class="form-control">
-                            <option value="">-- @lang('messages.Placeholder TOP') --</option>
-                            <option value="cash">@lang('messages.Cash')</option>
-                            <option value="14">14 @lang('messages.Day')</option>
-                            <option value="30">30 @lang('messages.Day')</option>
-                            <option value="45">45 @lang('messages.Day')</option>
-                            <option value="60">60 @lang('messages.Day')</option>
-                            <option value="90">90 @lang('messages.Day')</option>
-                            <option value="Other">@lang('messages.Other')</option>
-                        </select>
-                        <div class="mt-2" id="other_term_of_payment_container">
-                        </div>
-                        <span class="text-danger mt-2" id="message_term_of_payment" role="alert"></span>
-                    </div>
-                @endguest
             </div>
 
         </div>

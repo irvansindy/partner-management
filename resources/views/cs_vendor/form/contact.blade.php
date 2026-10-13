@@ -37,7 +37,7 @@
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_telephone_0">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <input type="tel" name="contact_telephone[]" id="contact_telephone_0" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="tel" maxlength="16" pattern="\+[1-9][0-9]{1,14}" required>
+                            <input type="tel" name="contact_telephone[]" id="contact_telephone_0" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2" id="message_contact_telephone" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">

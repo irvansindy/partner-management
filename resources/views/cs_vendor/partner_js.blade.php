@@ -11,6 +11,101 @@
         width: '100%'
     })
 
+    window.partnerPhoneCountryCodes = [
+        { country: 'Indonesia', code: '+62' },
+        { country: 'Malaysia', code: '+60' },
+        { country: 'Singapore', code: '+65' },
+        { country: 'Thailand', code: '+66' },
+        { country: 'Vietnam', code: '+84' },
+        { country: 'Philippines', code: '+63' },
+        { country: 'Brunei', code: '+673' },
+        { country: 'Cambodia', code: '+855' },
+        { country: 'Laos', code: '+856' },
+        { country: 'Myanmar', code: '+95' },
+        { country: 'China', code: '+86' },
+        { country: 'Hong Kong', code: '+852' },
+        { country: 'India', code: '+91' },
+        { country: 'Japan', code: '+81' },
+        { country: 'South Korea', code: '+82' },
+        { country: 'Australia', code: '+61' },
+        { country: 'New Zealand', code: '+64' },
+        { country: 'United States', code: '+1' },
+        { country: 'Canada', code: '+1' },
+        { country: 'United Kingdom', code: '+44' },
+        { country: 'Germany', code: '+49' },
+        { country: 'France', code: '+33' },
+        { country: 'Netherlands', code: '+31' },
+        { country: 'Italy', code: '+39' },
+        { country: 'Spain', code: '+34' },
+        { country: 'Saudi Arabia', code: '+966' },
+        { country: 'United Arab Emirates', code: '+971' },
+        { country: 'Brazil', code: '+55' },
+        { country: 'South Africa', code: '+27' }
+    ];
+
+    function initializeInternationalPhoneInput(input) {
+        const $input = $(input);
+        if (!$input.length || $input.closest('.international-phone-group').length) return;
+
+        const inputName = $input.attr('name') || '';
+        const countryCodeName = inputName.replace(/\[\]$/, '_country_code[]');
+        const $countryCode = $('<select>', {
+            class: 'form-control phone-country-code',
+            name: countryCodeName,
+            'aria-label': 'Country calling code'
+        });
+
+        window.partnerPhoneCountryCodes.forEach(function (item) {
+            $('<option>').val(item.code).text(item.code + ' ' + item.country).appendTo($countryCode);
+        });
+
+        $input.wrap('<div class="input-group international-phone-group"></div>');
+        $input.before($countryCode);
+        $countryCode.css({ flex: '0 0 140px', maxWidth: '45%' });
+        $input.css({ flex: '1 1 auto', minWidth: 0 });
+    }
+
+    function initializeInternationalPhoneInputs(scope) {
+        $(scope).find('input.international-phone').addBack('input.international-phone').each(function () {
+            initializeInternationalPhoneInput(this);
+        });
+    }
+
+    function prepareInternationalPhoneFormData(formData) {
+        ['contact_telephone', 'telephone', 'fax'].forEach(function (fieldName) {
+            const inputName = fieldName + '[]';
+            const countryCodeName = fieldName + '_country_code[]';
+            const $inputs = $('#form_company input[name="' + inputName + '"]');
+            const $countryCodes = $('#form_company select[name="' + countryCodeName + '"]');
+            formData.delete(inputName);
+            formData.delete(countryCodeName);
+
+            $inputs.each(function (index) {
+                const countryCode = $countryCodes.eq(index).val() || '+62';
+                const localNumber = this.value.replace(/\D/g, '').replace(/^0/, '');
+                formData.append(inputName, localNumber ? countryCode + localNumber : '');
+            });
+        });
+
+        const websiteHost = ($('#website_address').val() || '').trim().replace(/^https?:\/\//i, '');
+        formData.delete('website_address');
+        if (websiteHost) {
+            formData.append('website_address', 'https://' + websiteHost);
+        }
+    }
+
+    function isValidWebsiteHost(value) {
+        const host = String(value || '').trim().replace(/^https?:\/\//i, '');
+        if (!host || /\s/.test(host)) return false;
+
+        try {
+            const url = new URL('https://' + host);
+            return url.protocol === 'https:' && url.hostname.includes('.') && !url.username && !url.password;
+        } catch (error) {
+            return false;
+        }
+    }
+
     $(document).on('input', '#established_year, #total_employee, [data-max-digits]', function() {
         // hapus semua karakter non-digit
         let maxDigits = $(this).data('max-digits');
@@ -187,6 +282,8 @@
     }
 
     $(document).ready(function() {
+        initializeInternationalPhoneInputs(document);
+
         var currentYear = new Date().getFullYear();
         $("#year-current").text(currentYear);
         $("#year_prev_1, #bs_year_minus_1, #fr_year_minus_1").text(currentYear - 1);
@@ -494,7 +591,7 @@
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="tel" maxlength="16" pattern="\+[1-9][0-9]{1,14}" required>
+                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2" id="message_contact_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
@@ -505,6 +602,7 @@
                     </div>
                 </div>
                 `)
+            initializeInternationalPhoneInput($('#contact_telephone_' + index));
         })
 
         $(document).on('click', '.delete_contact', function(e) {
@@ -649,13 +747,13 @@
                         <div class="col-md-6">
                             <label for="telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
                             <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                            <input type="tel" name="telephone[]" id="telephone_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Telephone')" inputmode="tel" maxlength="16" pattern="\+[1-9][0-9]{1,14}" required>
+                            <input type="tel" name="telephone[]" id="telephone_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Telephone')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2 message_telephone" id="message_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
                             <label for="fax_${index}">@lang('messages.Fax') <span class="text-danger" role="alert">*</span></label>
                             <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                            <input type="tel" name="fax[]" id="fax_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Fax')" inputmode="tel" maxlength="16" pattern="\+[1-9][0-9]{1,14}" required>
+                            <input type="tel" name="fax[]" id="fax_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Fax')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2 message_fax" id="message_fax_${index}" role="alert"></span>
                         </div>
                     </div>
@@ -669,6 +767,8 @@
             </div>
         </div>
     `);
+
+            initializeInternationalPhoneInputs($('.array_company_address').last());
 
             // Load provinces untuk select yang baru ditambahkan
             loadProvincesToSelect('select_option_province_' + index);
@@ -1121,6 +1221,7 @@
 
             // Get form data
             var formData = new FormData($('#form_company')[0]);
+            prepareInternationalPhoneFormData(formData);
 
             // Force update CSRF token di FormData
             formData.set('_token', csrfToken);

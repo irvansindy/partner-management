@@ -31,7 +31,7 @@ class DashboardController extends Controller
     public function index()
     {
         // return view('dashboard');
-        return view('admin.dashboard.index', [
+        return view('admin.dashboard.index_live', [
             'user' => $this->user,
             'isSuperAdmin' => $this->isSuperAdmin,
         ]);
@@ -60,13 +60,26 @@ class DashboardController extends Controller
                     ->where('location_id', $this->user->office_id);
     }
 
+    private function dashboardCacheKey(string $cacheName): string
+    {
+        $cacheScope = [
+            'user_id' => $this->user->id,
+            'roles' => $this->user->getRoleNames()->sort()->values()->all(),
+            'department_id' => $this->user->department_id ?? $this->user->dept_id ?? null,
+            'office_id' => $this->user->office_id ?? $this->user->location_id ?? null,
+            'is_super_admin' => $this->isSuperAdmin,
+        ];
+
+        return $cacheName . '_' . hash('sha256', json_encode($cacheScope));
+    }
+
     /**
      * Dashboard summary (partner, vendor, customer, dsb)
      */
     public function fetchDataCount()
     {
         try {
-            $cacheKey = "dashboard_data_count_{$this->isSuperAdmin}_{$this->user->office_id}";
+            $cacheKey = $this->dashboardCacheKey('dashboard_data_count');
             $data = Cache::remember($cacheKey, now()->addMinutes(5), function () {
                 $data = [];
 
@@ -110,7 +123,7 @@ class DashboardController extends Controller
                 $locId = $this->user->office_id ?? $this->user->location_id ?? null;
 
                 // Flags
-                $isSuper = $this->isSuperAdmin;
+                $isSuper = $this->isSuperAdmin || $this->user->hasRole('super-user');
                 $isAdminOrSuperUser = $this->user && in_array($this->user->getRoleNames()->first() ?? '', ['admin', 'super-user']);
                 $isSales = Str::contains($deptName, 'sales');
                 $isPurchasing = Str::contains($deptName, 'purchasing');
@@ -127,19 +140,16 @@ class DashboardController extends Controller
 
                     // apply role/location/department constraint only if NOT super admin
                     if (! $isSuper) {
-                        if ($isAdminOrSuperUser && $deptId) {
-                            // admin/super-user: filter by both department & location if available
-                            if ($locId) {
-                                $q->where('company_informations.department_id', $deptId)
-                                ->where('company_informations.location_id', $locId);
-                            } else {
+                        if ($isAdminOrSuperUser) {
+                            if ($deptId) {
                                 $q->where('company_informations.department_id', $deptId);
                             }
-                        } else {
-                            // other roles: filter by location only if available
                             if ($locId) {
                                 $q->where('company_informations.location_id', $locId);
                             }
+                        } else {
+                            $q->where('company_informations.department_id', $deptId)
+                                ->where('company_informations.location_id', $locId);
                         }
                     }
 
@@ -215,40 +225,15 @@ class DashboardController extends Controller
                             ->pluck('total', 'province');
                     }
                 }
-                // Build final array only with allowed keys
-                $final = [];
-
-                // SUPER ADMIN → tampilkan keduanya
-                if ($isSuper) {
-                    $final['vendor'] = $provinces->map(fn($p) => [
-                        'province' => $p->name,
-                        'total' => $resultVendor[$p->name] ?? 0,
-                    ]);
-
-                    $final['customer'] = $provinces->map(fn($p) => [
-                        'province' => $p->name,
-                        'total' => $resultCustomer[$p->name] ?? 0,
-                    ]);
-                }
-
-                // ADMIN / SUPER-USER (dengan department tertentu)
-                elseif ($isAdminOrSuperUser) {
-                    if ($isSales) {
-                        // hanya CUSTOMER
-                        $final['customer'] = $provinces->map(fn($p) => [
-                            'province' => $p->name,
-                            'total' => $resultCustomer[$p->name] ?? 0,
-                        ]);
-                    } elseif ($isPurchasing) {
-                        // hanya VENDOR
-                        $final['vendor'] = $provinces->map(fn($p) => [
-                            'province' => $p->name,
-                            'total' => $resultVendor[$p->name] ?? 0,
-                        ]);
-                    }
-
-                }
-                $data['total_partner_location'] = $final;
+                $data['total_partner_location'] = $this->formatProvinceDistribution(
+                    $provinces,
+                    $resultVendor,
+                    $resultCustomer,
+                    $isSuper,
+                    $isAdminOrSuperUser,
+                    $isSales,
+                    $isPurchasing
+                );
 
                 return $data;
             });
@@ -259,6 +244,37 @@ class DashboardController extends Controller
         }
     }
 
+    protected function formatProvinceDistribution($provinces, $vendorTotals, $customerTotals, $isSuper, $isAdminOrSuperUser, $isSales, $isPurchasing): array
+    {
+        $showVendor = true;
+        $showCustomer = true;
+
+        if (!$isSuper && $isAdminOrSuperUser) {
+            if ($isSales) {
+                $showVendor = false;
+            } elseif ($isPurchasing) {
+                $showCustomer = false;
+            }
+        }
+
+        $distribution = [];
+        if ($showVendor) {
+            $distribution['vendor'] = $provinces->map(fn($province) => [
+                'province' => $province->name,
+                'total' => $vendorTotals[$province->name] ?? 0,
+            ]);
+        }
+
+        if ($showCustomer) {
+            $distribution['customer'] = $provinces->map(fn($province) => [
+                'province' => $province->name,
+                'total' => $customerTotals[$province->name] ?? 0,
+            ]);
+        }
+
+        return $distribution;
+    }
+
     /**
      * Customer terbaru
      */
@@ -266,7 +282,7 @@ class DashboardController extends Controller
     {
         try {
             $query = CompanyInformation::where('type', 'customer')->latest()->limit(10);
-            $customers = Cache::remember("recent_customers_{$this->isSuperAdmin}_{$this->user->office_id}", now()->addMinutes(5), function () use ($query) {
+            $customers = Cache::remember($this->dashboardCacheKey('recent_customers'), now()->addMinutes(5), function () use ($query) {
                 return $this->filterCompanyQueryByUser($query)->get();
             });
 
@@ -287,7 +303,7 @@ class DashboardController extends Controller
     {
         try {
             $query = CompanyInformation::where('type', 'vendor')->latest()->limit(10);
-            $vendors = Cache::remember("recent_vendors_{$this->isSuperAdmin}_{$this->user->office_id}", now()->addMinutes(5), function () use ($query) {
+            $vendors = Cache::remember($this->dashboardCacheKey('recent_vendors'), now()->addMinutes(5), function () use ($query) {
                 return $this->filterCompanyQueryByUser($query)->get();
             });
 

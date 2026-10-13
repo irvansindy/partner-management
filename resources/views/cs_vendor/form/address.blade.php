@@ -60,8 +60,8 @@
                                     class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Telephone')"
                                     inputmode="tel"
-                                    maxlength="16"
-                                    pattern="\+[1-9][0-9]{1,14}"
+                                    maxlength="14"
+                                    pattern="[0-9]{2,14}"
                                     required>
                                 <span class="text-danger mt-2 message_telephone" id="message_telephone_0" role="alert"></span>
                             </div>
@@ -74,8 +74,8 @@
                                     class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Fax')"
                                     inputmode="tel"
-                                    maxlength="16"
-                                    pattern="\+[1-9][0-9]{1,14}"
+                                    maxlength="14"
+                                    pattern="[0-9]{2,14}"
                                     required>
                                 <span class="text-danger mt-2 message_fax" id="message_fax_0" role="alert"></span>
                             </div>
@@ -181,8 +181,8 @@
                                     class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Telephone')"
                                     inputmode="tel"
-                                    maxlength="16"
-                                    pattern="\+[1-9][0-9]{1,14}"
+                                    maxlength="14"
+                                    pattern="[0-9]{2,14}"
                                     required>
                                 <span class="text-danger mt-2 message_telephone" id="message_telephone_1" role="alert"></span>
                             </div>
@@ -195,8 +195,8 @@
                                     class="form-control international-phone"
                                     placeholder="@lang('messages.Placeholder Address Fax')"
                                     inputmode="tel"
-                                    maxlength="16"
-                                    pattern="\+[1-9][0-9]{1,14}"
+                                    maxlength="14"
+                                    pattern="[0-9]{2,14}"
                                     required>
                                 <span class="text-danger mt-2 message_fax" id="message_fax_1" role="alert"></span>
                             </div>
