@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
                             <div class="d-flex justify-content-end mb-1">
-                                <button class="btn btn-primary" id="add_contact"><i class="fa fa-plus"></i></button>
+                                <button type="button" class="btn btn-primary" id="add_contact" aria-label="Tambah narahubung"><i class="fa fa-plus" aria-hidden="true"></i></button>
                             </div>
                         </div>
                     </div>

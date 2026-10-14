@@ -12,35 +12,35 @@
     })
 
     window.partnerPhoneCountryCodes = [
-        { country: 'Indonesia', code: '+62' },
-        { country: 'Malaysia', code: '+60' },
-        { country: 'Singapore', code: '+65' },
-        { country: 'Thailand', code: '+66' },
-        { country: 'Vietnam', code: '+84' },
-        { country: 'Philippines', code: '+63' },
-        { country: 'Brunei', code: '+673' },
-        { country: 'Cambodia', code: '+855' },
-        { country: 'Laos', code: '+856' },
-        { country: 'Myanmar', code: '+95' },
-        { country: 'China', code: '+86' },
-        { country: 'Hong Kong', code: '+852' },
-        { country: 'India', code: '+91' },
-        { country: 'Japan', code: '+81' },
-        { country: 'South Korea', code: '+82' },
-        { country: 'Australia', code: '+61' },
-        { country: 'New Zealand', code: '+64' },
-        { country: 'United States', code: '+1' },
-        { country: 'Canada', code: '+1' },
-        { country: 'United Kingdom', code: '+44' },
-        { country: 'Germany', code: '+49' },
-        { country: 'France', code: '+33' },
-        { country: 'Netherlands', code: '+31' },
-        { country: 'Italy', code: '+39' },
-        { country: 'Spain', code: '+34' },
-        { country: 'Saudi Arabia', code: '+966' },
-        { country: 'United Arab Emirates', code: '+971' },
-        { country: 'Brazil', code: '+55' },
-        { country: 'South Africa', code: '+27' }
+        { country: 'Indonesia', iso: 'ID', code: '+62' },
+        { country: 'Malaysia', iso: 'MY', code: '+60' },
+        { country: 'Singapore', iso: 'SG', code: '+65' },
+        { country: 'Thailand', iso: 'TH', code: '+66' },
+        { country: 'Vietnam', iso: 'VN', code: '+84' },
+        { country: 'Philippines', iso: 'PH', code: '+63' },
+        { country: 'Brunei', iso: 'BN', code: '+673' },
+        { country: 'Cambodia', iso: 'KH', code: '+855' },
+        { country: 'Laos', iso: 'LA', code: '+856' },
+        { country: 'Myanmar', iso: 'MM', code: '+95' },
+        { country: 'China', iso: 'CN', code: '+86' },
+        { country: 'Hong Kong', iso: 'HK', code: '+852' },
+        { country: 'India', iso: 'IN', code: '+91' },
+        { country: 'Japan', iso: 'JP', code: '+81' },
+        { country: 'South Korea', iso: 'KR', code: '+82' },
+        { country: 'Australia', iso: 'AU', code: '+61' },
+        { country: 'New Zealand', iso: 'NZ', code: '+64' },
+        { country: 'United States', iso: 'US', code: '+1' },
+        { country: 'Canada', iso: 'CA', code: '+1' },
+        { country: 'United Kingdom', iso: 'GB', code: '+44' },
+        { country: 'Germany', iso: 'DE', code: '+49' },
+        { country: 'France', iso: 'FR', code: '+33' },
+        { country: 'Netherlands', iso: 'NL', code: '+31' },
+        { country: 'Italy', iso: 'IT', code: '+39' },
+        { country: 'Spain', iso: 'ES', code: '+34' },
+        { country: 'Saudi Arabia', iso: 'SA', code: '+966' },
+        { country: 'United Arab Emirates', iso: 'AE', code: '+971' },
+        { country: 'Brazil', iso: 'BR', code: '+55' },
+        { country: 'South Africa', iso: 'ZA', code: '+27' }
     ];
 
     function initializeInternationalPhoneInput(input) {
@@ -52,16 +52,19 @@
         const $countryCode = $('<select>', {
             class: 'form-control phone-country-code',
             name: countryCodeName,
-            'aria-label': 'Country calling code'
+            'aria-label': 'Kode negara telepon'
         });
 
         window.partnerPhoneCountryCodes.forEach(function (item) {
-            $('<option>').val(item.code).text(item.code + ' ' + item.country).appendTo($countryCode);
+            $('<option>')
+                .val(item.code)
+                .text(item.iso + ' ' + item.code)
+                .attr('title', item.country + ' (' + item.code + ')')
+                .appendTo($countryCode);
         });
 
         $input.wrap('<div class="input-group international-phone-group"></div>');
         $input.before($countryCode);
-        $countryCode.css({ flex: '0 0 140px', maxWidth: '45%' });
         $input.css({ flex: '1 1 auto', minWidth: 0 });
     }
 
@@ -596,7 +599,7 @@
                         </div>
                         <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
                             <div class="d-flex justify-content-end mb-1">
-                                <button class="btn btn-danger delete_contact"><i class="fa fa-minus"></i></button>
+                                <button type="button" class="btn btn-danger delete_contact" aria-label="Hapus narahubung"><i class="fa fa-minus" aria-hidden="true"></i></button>
                             </div>
                         </div>
                     </div>

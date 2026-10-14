@@ -261,6 +261,18 @@
             flex-wrap: nowrap;
         }
 
+        #form_company .international-phone-group .phone-country-code {
+            flex: 0 0 104px;
+            width: 104px;
+            max-width: 38%;
+            padding-right: 1.5rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #form_company .international-phone-group .international-phone {
+            min-width: 0;
+        }
+
         #form_company .btn {
             border-radius: 6px;
             white-space: nowrap;
