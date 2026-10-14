@@ -534,7 +534,7 @@
                     let message = field.type === 'url'
                         ? 'Alamat website harus berupa URL yang valid.'
                         : isInternationalPhone
-                            ? 'Gunakan format internasional dengan kode negara, contoh +62896232332423.'
+                            ? 'Nomor telepon harus terdiri dari 2–14 digit.'
                             : 'Format alamat email tidak valid.';
                     let label = getFieldLabel($field);
                     errors.push({

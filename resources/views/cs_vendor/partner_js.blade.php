@@ -1255,17 +1255,39 @@
                             clearSavedForm();
                         }
 
+                        var closeCountdown;
+
                         Swal.fire({
                             icon: 'success',
-                            title: 'Success!',
-                            text: response.message || 'Data berhasil disimpan',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            if (response.redirect_url) {
-                                window.location.href = response.redirect_url;
-                            } else {
-                                window.location.reload();
+                            title: 'Submit Berhasil',
+                            html: (response.message || 'Data berhasil disimpan') +
+                                '<br><small>Tab akan ditutup dalam <strong id="close_countdown">5</strong> detik.</small>',
+                            timer: 5000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: function() {
+                                var countdown = document.getElementById('close_countdown');
+                                closeCountdown = setInterval(function() {
+                                    countdown.textContent = Math.ceil(Swal.getTimerLeft() / 1000);
+                                }, 250);
+                            },
+                            willClose: function() {
+                                clearInterval(closeCountdown);
                             }
+                        }).then(function(result) {
+                            if (result.dismiss !== Swal.DismissReason.timer) return;
+
+                            window.close();
+                            setTimeout(function() {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Submit Berhasil',
+                                    text: 'Data berhasil dikirim. Silakan tutup tab ini.',
+                                    allowOutsideClick: false
+                                });
+                            }, 250);
                         });
                         // Clear localStorage setelah sukses
                     } else {

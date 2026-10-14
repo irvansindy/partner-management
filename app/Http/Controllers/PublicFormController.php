@@ -287,7 +287,7 @@ class PublicFormController extends Controller
             'contact_position.*' => 'required|string|max:255',
             'contact_name.*' => 'required|string|max:255',
             'contact_email.*' => 'required|email|max:255',
-            'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
+            'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
 
             // Addresses
             'address.*' => 'required|string',
@@ -295,8 +295,8 @@ class PublicFormController extends Controller
             'province.*' => 'required|string|max:100',
             'city.*' => 'required|string|max:100',
             'zip_code.*' => 'required|digits:5',
-            'telephone.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
-            'fax.*' => 'required|regex:/^\+[1-9][0-9]{1,14}$/',
+            'telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
+            'fax.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
 
@@ -327,9 +327,9 @@ class PublicFormController extends Controller
             'website_address.url' => 'Alamat website harus berupa URL yang valid. | Website address must be a valid URL.',
             'email_address.email' => 'Format alamat email tidak valid. | Email address format is invalid.',
             'contact_email.*.email' => 'Format email kontak tidak valid. | Contact email format is invalid.',
-            'contact_telephone.*.regex' => 'Nomor telepon kontak harus menggunakan kode negara, contoh +62896232332423. | Contact telephone must include a country code, e.g. +62896232332423.',
-            'telephone.*.regex' => 'Nomor telepon harus menggunakan kode negara, contoh +62896232332423. | Telephone must include a country code, e.g. +62896232332423.',
-            'fax.*.regex' => 'Nomor fax harus menggunakan kode negara, contoh +62856676654. | Fax must include a country code, e.g. +62856676654.',
+            'contact_telephone.*.regex' => 'Format atau panjang nomor telepon kontak tidak valid. | Contact telephone format or length is invalid.',
+            'telephone.*.regex' => 'Format atau panjang nomor telepon tidak valid. | Telephone format or length is invalid.',
+            'fax.*.regex' => 'Format atau panjang nomor fax tidak valid. | Fax format or length is invalid.',
             'company_type.in' => 'Jenis perusahaan harus vendor atau customer. | Company type must be vendor or customer.',
             'company_name.required' => 'Nama perusahaan wajib diisi. | Company name is required.',
             'company_name.string' => 'Nama perusahaan harus berupa teks. | Company name must be a string.',
