@@ -24,6 +24,7 @@ use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\CompanyImportController;
 use App\Http\Controllers\CompanyExportController;
 use App\Http\Controllers\Admin\PostalCodeImportController;
+use App\Http\Controllers\Admin\CompanyAttachmentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -90,6 +91,11 @@ Route::middleware(['auth', 'role:super-admin'])->prefix('admin')->name('admin.')
 // ADMIN ROUTES - Form Management
 // ========================================
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('company-attachments/{companyAttachment}', [CompanyAttachmentController::class, 'show'])
+        ->name('company-attachments.show');
+    Route::get('company-attachments/{companyAttachment}/download', [CompanyAttachmentController::class, 'download'])
+        ->name('company-attachments.download');
+
     // Form Links Management
     Route::resource('form-links', FormLinkController::class);
     Route::post('form-links/{formLink}/toggle-status', [FormLinkController::class, 'toggleStatus'])

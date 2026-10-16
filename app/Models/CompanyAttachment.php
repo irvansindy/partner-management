@@ -28,9 +28,8 @@ class CompanyAttachment extends Model
         return $this->belongsTo(CompanyInformation::class);
     }
 
-    // Accessor untuk get full URL
     public function getFileUrlAttribute()
     {
-        return asset('storage/' . $this->filepath);
+        return route('admin.company-attachments.show', $this);
     }
 }
