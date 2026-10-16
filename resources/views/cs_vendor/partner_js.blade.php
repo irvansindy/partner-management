@@ -1219,7 +1219,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Submit Berhasil',
-                            html: (response.message || 'Data berhasil disimpan') +
+                            html: (response.meta.message || 'Data berhasil disimpan') +
                                 '<br><small>Tab akan ditutup dalam <strong id="close_countdown">5</strong> detik.</small>',
                             timer: 5000,
                             timerProgressBar: true,

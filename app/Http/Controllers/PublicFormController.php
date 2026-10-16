@@ -14,6 +14,7 @@ use App\Services\ApprovalService; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Helpers\FormatResponseJson;
 use App\Rules\PublicHttpsUrl;
 use App\Support\CountryCatalog;
@@ -236,15 +237,19 @@ class PublicFormController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->attachmentService->deleteStored($storedAttachments);
-            Log::error('❌ ROLLBACK: ' . $e->getMessage());
-            Log::error('❌ FILE: ' . $e->getFile() . ' LINE: ' . $e->getLine()); // ← TAMBAH INI
-            Log::error('❌ TRACE: ' . $e->getTraceAsString());
-            Log::error('Form submission error: ' . $e->getMessage(), [
+            $correlationId = (string) Str::uuid();
+            Log::error('Public form submission failed', [
+                'correlation_id' => $correlationId,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'request_data' => $request->except(['input-multiple-file', '_token'])
             ]);
 
-            return FormatResponseJson::error(false, $e->getMessage(), 500);
+            return FormatResponseJson::error(
+                false,
+                'Gagal memproses formulir. Silakan coba lagi. | Failed to process the form. Please try again.',
+                500
+            );
         }
     }
 
