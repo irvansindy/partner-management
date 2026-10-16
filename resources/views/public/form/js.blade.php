@@ -7,6 +7,19 @@
             return name.replace(/([\[\]])/g, "\\$1");
         }
 
+        $('#form_company').on('input', '[data-alpha-spaces]', function(event) {
+            if (event.originalEvent && event.originalEvent.isComposing) return;
+
+            const cursor = this.selectionStart;
+            const value = this.value;
+            const filtered = value.replace(/[^\p{L} ]/gu, '');
+            if (filtered === value) return;
+
+            const filteredPrefix = value.slice(0, cursor).replace(/[^\p{L} ]/gu, '');
+            this.value = filtered;
+            this.setSelectionRange(filteredPrefix.length, filteredPrefix.length);
+        });
+
         /* Generate row dinamis jika belum ada */
         function ensureRowExists(baseName, index) {
             const container = $('[data-repeat="' + baseName + '"]');
