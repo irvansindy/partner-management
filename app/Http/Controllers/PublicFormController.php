@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Helpers\FormatResponseJson;
 use App\Rules\PublicHttpsUrl;
+use App\Support\CountryCatalog;
 
 class PublicFormController extends Controller
 {
@@ -40,7 +41,10 @@ class PublicFormController extends Controller
             ]);
         }
 
-        return view('public.form_index', compact('formLink'));
+        return view('public.form_index', [
+            'formLink' => $formLink,
+            'countries' => CountryCatalog::all(),
+        ]);
     }
 
     public function submit(Request $request, $token)
