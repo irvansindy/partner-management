@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\ApprovalProcessController;
 use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\CompanyImportController;
 use App\Http\Controllers\CompanyExportController;
+use App\Http\Controllers\Admin\PostalCodeImportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -74,6 +75,12 @@ Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit
 Route::get('/form/success', [PublicFormController::class, 'success'])->name('public.form.success');
 Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');
 Route::get('/fetch-regencies', [PartnerController::class,'fetchRegencies'])->name('fetch-regencies');
+
+Route::middleware(['auth', 'role:super-admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('postal-codes/import', [PostalCodeImportController::class, 'show'])->name('postal-codes.import.form');
+    Route::post('postal-codes/import', [PostalCodeImportController::class, 'store'])->name('postal-codes.import.store');
+    Route::get('postal-codes/import/errors', [PostalCodeImportController::class, 'errors'])->name('postal-codes.import.errors');
+});
 // ========================================
 // ADMIN ROUTES - Form Management
 // ========================================
