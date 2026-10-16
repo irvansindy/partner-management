@@ -11,9 +11,15 @@ class CompanyAttachment extends Model
     protected $fillable = [
         'company_id',
         'filename',
+        'original_name',
         'filepath',
+        'storage_disk',
         'filesize',
         'filetype',
+        'mime_type',
+        'width',
+        'height',
+        'sha256',
         'sort_order'
     ];
 

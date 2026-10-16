@@ -250,6 +250,9 @@
 
         $("#input-multiple-file").fileinput({
             uploadUrl: false,
+            maxFileCount: 10,
+            maxFileSize: 5120,
+            allowedFileExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
             showUpload: false,
             showRemove: true,
             showCancel: false,

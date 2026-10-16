@@ -10,12 +10,10 @@ use App\Models\CompanyContact;
 use App\Models\CompanyLiablePerson;
 use App\Models\SalesSurvey;
 use App\Models\ProductCustomer;
-use App\Models\CompanyAttachment;
 use App\Services\ApprovalService; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use App\Helpers\FormatResponseJson;
 use App\Rules\PublicHttpsUrl;
 use App\Support\CountryCatalog;
@@ -23,15 +21,18 @@ use App\Models\Provinces;
 use App\Models\Regencies;
 use App\Models\PostalCode;
 use Illuminate\Validation\ValidationException;
+use App\Services\CompanyAttachmentService;
 
 class PublicFormController extends Controller
 {
     protected $approvalService; // ✅ ADD THIS
+    protected $attachmentService;
 
     // ✅ ADD CONSTRUCTOR
-    public function __construct(ApprovalService $approvalService)
+    public function __construct(ApprovalService $approvalService, CompanyAttachmentService $attachmentService = null)
     {
         $this->approvalService = $approvalService;
+        $this->attachmentService = $attachmentService ?: app(CompanyAttachmentService::class);
     }
 
     public function show($token)
@@ -59,9 +60,14 @@ class PublicFormController extends Controller
             return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
         }
 
-        // Validasi data
         $validated = $this->validateSubmission($request, $formLink->form_type);
+        $uploads = $request->file('input-multiple-file', []);
+        $attachmentMetadata = [];
+        foreach ($uploads as $file) {
+            $attachmentMetadata[] = $this->attachmentService->validate($file);
+        }
 
+        $storedAttachments = [];
         DB::beginTransaction();
         try {
             $formLink = FormLink::whereKey($formLink->id)
@@ -195,32 +201,13 @@ class PublicFormController extends Controller
             }
 
             // 7. Handle File Uploads
-            if ($request->hasFile('input-multiple-file')) {
-                $sortOrder = 1;
-                foreach ($request->file('input-multiple-file') as $file) {
-                    $originalName = $file->getClientOriginalName();
-                    $safeName = pathinfo($originalName, PATHINFO_FILENAME);
-                    $safeExtension = strtolower($file->getClientOriginalExtension());
-                    $safeFilename = trim(Str::ascii($safeName) ?: 'attachment');
-
-                    if ($safeExtension !== '') {
-                        $safeFilename .= '.' . $safeExtension;
-                    }
-
-                    $storedFilename = time() . '_' . $sortOrder . '_' . $safeFilename;
-                    $path = $file->storeAs('company_attachments', $storedFilename, 'public');
-
-                    CompanyAttachment::create([
-                        'company_id' => $company->id,
-                        'filename' => $safeFilename,
-                        'filepath' => $path,
-                        'filesize' => $file->getSize(),
-                        'filetype' => $file->getMimeType(),
-                        'sort_order' => $sortOrder,
-                    ]);
-
-                    $sortOrder++;
-                }
+            foreach ($uploads as $index => $file) {
+                $storedAttachments[] = $this->attachmentService->store(
+                    $company,
+                    $file,
+                    $attachmentMetadata[$index],
+                    $index + 1
+                );
             }
 
             // 8. Increment submission count
@@ -248,6 +235,7 @@ class PublicFormController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->attachmentService->deleteStored($storedAttachments);
             Log::error('❌ ROLLBACK: ' . $e->getMessage());
             Log::error('❌ FILE: ' . $e->getFile() . ' LINE: ' . $e->getLine()); // ← TAMBAH INI
             Log::error('❌ TRACE: ' . $e->getTraceAsString());
@@ -328,7 +316,8 @@ class PublicFormController extends Controller
             'account_number.*' => 'required|digits_between:1,16',
 
             // Files
-            'input-multiple-file.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'input-multiple-file' => 'nullable|array|max:10',
+            'input-multiple-file.*' => 'nullable|file|max:5120',
         ];
 
         if ($formType === 'customer') {
