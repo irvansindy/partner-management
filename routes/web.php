@@ -75,6 +75,11 @@ Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit
 Route::get('/form/success', [PublicFormController::class, 'success'])->name('public.form.success');
 Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');
 Route::get('/fetch-regencies', [PartnerController::class,'fetchRegencies'])->name('fetch-regencies');
+Route::middleware('throttle:60,1')->prefix('address-master')->name('public.form.')->group(function () {
+    Route::get('provinces', [PublicFormController::class, 'provinces'])->name('provinces');
+    Route::get('provinces/{province}/regencies', [PublicFormController::class, 'regencies'])->name('regencies');
+    Route::get('regencies/{regency}/postal-codes', [PublicFormController::class, 'postalCodes'])->name('postal-codes');
+});
 
 Route::middleware(['auth', 'role:super-admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('postal-codes/import', [PostalCodeImportController::class, 'show'])->name('postal-codes.import.form');

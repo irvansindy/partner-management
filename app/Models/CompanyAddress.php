@@ -22,8 +22,10 @@ class CompanyAddress extends Model
     protected $table = 'company_addresses';
     protected $fillable = [
         'company_id',
+        'address_role',
         'address',
         'country',
+        'country_code',
         'province',
         'city',
         'zip_code',

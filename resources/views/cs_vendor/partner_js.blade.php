@@ -109,8 +109,6 @@
         }
         this.value = value;
     });
-    fetchProvinces()
-
     function showPartnerToast(title, body, type = 'danger') {
         if ($.fn.Toasts) {
             $(document).Toasts('create', {
@@ -240,39 +238,6 @@
         }
 
         showPartnerToast('Validation Error', body, 'danger');
-    }
-
-    function fetchProvinces() {
-        $.ajax({
-            url: "{{ route('fetch-provinces') }}",
-            dataType: 'json',
-            success: function(data) {
-                var $provinceSelect = $('#select_option_province_0');
-                $provinceSelect.empty(); // Clear previous options
-                $provinceSelect.append('<option></option>'); // Add placeholder option
-                data.forEach(function(province) {
-                    $provinceSelect.append(new Option(province.name, province.id));
-                });
-                $provinceSelect.prop('disabled', false); // Enable the province select
-                $provinceSelect.select2({
-                    placeholder: 'Select Province',
-                    width: '100%'
-                });
-                var $provinceSelect2 = $('#select_option_province_1');
-                $provinceSelect2.empty(); // Clear previous options
-                $provinceSelect2.append('<option></option>'); // Add placeholder option
-                data.forEach(function(province) {
-                    $provinceSelect2.append(new Option(province.name, province.id));
-                });
-                $provinceSelect2.prop('disabled', false); // Enable the province select
-                $provinceSelect2.select2({
-                    placeholder: 'Select Province',
-                    width: '100%'
-                });
-            }
-        });
-        $('#select_option_regency_0').prop('disabled', true); // Enable the regency select
-        $('#select_option_regency_1').prop('disabled', true); // Enable the regency select
     }
 
     $(document).ready(function() {

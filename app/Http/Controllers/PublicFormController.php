@@ -19,6 +19,10 @@ use Illuminate\Support\Str;
 use App\Helpers\FormatResponseJson;
 use App\Rules\PublicHttpsUrl;
 use App\Support\CountryCatalog;
+use App\Models\Provinces;
+use App\Models\Regencies;
+use App\Models\PostalCode;
+use Illuminate\Validation\ValidationException;
 
 class PublicFormController extends Controller
 {
@@ -123,7 +127,9 @@ class PublicFormController extends Controller
                 foreach ($validated['address'] as $index => $address) {
                     $addressData = [
                         'company_id' => $company->id,
+                        'address_role' => $validated['address_role'][$index] ?? null,
                         'address' => $address,
+                        'country_code' => $validated['country_code'][$index] ?? null,
                         'country' => $validated['country'][$index] ?? null,
                         'province' => $validated['province'][$index] ?? null,
                         'city' => $validated['city'][$index] ?? null,
@@ -132,11 +138,8 @@ class PublicFormController extends Controller
                         'fax' => $validated['fax'][$index] ?? null,
                     ];
 
-                    // Address index 1 (kedua) memiliki lat/long dari map
-                    if ($index == 1) {
-                        $addressData['latitude'] = $validated['latitude'] ?? null;
-                        $addressData['longitude'] = $validated['longitude'] ?? null;
-                    }
+                    $addressData['latitude'] = $validated['latitude'][$index] ?? null;
+                    $addressData['longitude'] = $validated['longitude'][$index] ?? null;
 
                     CompanyAddress::create($addressData);
                 }
@@ -262,6 +265,10 @@ class PublicFormController extends Controller
         return view('public.form_success');
     }
 
+    public function provinces() { return response()->json(['data' => Provinces::orderBy('name')->get(['id','name'])]); }
+    public function regencies($province) { return response()->json(['data' => Regencies::where('province_id', $province)->orderBy('name')->get(['id','name'])]); }
+    public function postalCodes($regency) { return response()->json(['data' => PostalCode::where('regency_id', $regency)->orderBy('postal_code')->get(['id','district','village','postal_code'])]); }
+
     private function validateSubmission(Request $request, $formType)
     {
         if ($request->filled('website_address')) {
@@ -301,15 +308,19 @@ class PublicFormController extends Controller
             'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
 
             // Addresses
+            'address_role' => 'required|array|min:1',
+            'address_role.*' => 'required|in:legal,operational,branch',
             'address.*' => 'required|string|max:1000',
+            'country_code' => 'required|array|min:1',
+            'country_code.*' => 'required|string|size:2',
             'country.*' => 'required|string|max:100',
             'province.*' => 'required|string|max:100',
             'city.*' => 'required|string|max:100',
-            'zip_code.*' => 'required|digits:5',
+            'zip_code.*' => 'required|string|max:20',
             'telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
             'fax.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude.*' => 'nullable|numeric|between:-90,90',
+            'longitude.*' => 'nullable|numeric|between:-180,180',
 
             // Banks
             'bank_name.*' => 'required|string|max:255|regex:/^[\p{L}\p{N} .-]+$/u',
@@ -358,7 +369,37 @@ class PublicFormController extends Controller
             // ... (rest of messages sama)
         ];
 
-        return $request->validate($rules, $messages);
+        $validated = $request->validate($rules, $messages);
+        $this->normalizeAndValidateAddresses($validated);
+
+        return $validated;
+    }
+
+    private function normalizeAndValidateAddresses(array &$validated): void
+    {
+        $fields = ['address_role', 'country_code', 'country', 'province', 'city', 'zip_code', 'latitude', 'longitude', 'telephone', 'fax'];
+        $count = count($validated['address'] ?? []);
+        foreach ($fields as $field) {
+            if (!isset($validated[$field]) || count($validated[$field]) !== $count) {
+                throw ValidationException::withMessages([$field => 'Data alamat tidak lengkap atau tidak sejajar.']);
+            }
+        }
+        if (($validated['address_role'][0] ?? null) !== 'legal' || count(array_filter($validated['address_role'], function ($role) { return $role === 'legal'; })) !== 1) {
+            throw ValidationException::withMessages(['address_role' => 'Alamat legal wajib ada tepat satu.']);
+        }
+        foreach ($validated['address'] as $index => $address) {
+            $country = CountryCatalog::find($validated['country_code'][$index]);
+            if (!$country) throw ValidationException::withMessages(["country_code.$index" => 'Negara tidak valid.']);
+            $validated['country_code'][$index] = $country['code'];
+            $validated['country'][$index] = $country['name'];
+            if ($country['code'] !== 'ID') continue;
+            $province = Provinces::find($validated['province'][$index]);
+            $regency = $province ? Regencies::where('province_id', $province->id)->find($validated['city'][$index]) : null;
+            $postal = $regency ? PostalCode::where('province_id', $province->id)->where('regency_id', $regency->id)->where('postal_code', $validated['zip_code'][$index])->exists() : false;
+            if (!$province || !$regency || !$postal) throw ValidationException::withMessages(["zip_code.$index" => 'Relasi provinsi, kota, dan kode pos tidak valid.']);
+            $validated['province'][$index] = $province->name;
+            $validated['city'][$index] = $regency->name;
+        }
     }
 
     private function getClosedMessage(FormLink $formLink)
