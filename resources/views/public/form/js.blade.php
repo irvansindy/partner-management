@@ -547,6 +547,40 @@
                     getMessageContainer($field).text(message);
                 });
 
+                $pane.find('[data-alpha-spaces], [data-bank-name], [data-year-range]').each(function() {
+                    let $field = $(this);
+                    let value = $.trim($field.val() || '');
+                    if (!value) return;
+
+                    let message = '';
+                    if ($field.is('[data-alpha-spaces]') && !/^[\p{L} ]+$/u.test(value)) {
+                        message = 'Hanya boleh berisi huruf dan spasi.';
+                    }
+
+                    if ($field.is('[data-bank-name]') && !/^[\p{L}\p{N} .-]+$/u.test(value)) {
+                        message = 'Hanya boleh berisi huruf, angka, spasi, titik, dan tanda hubung.';
+                    }
+
+                    if ($field.is('[data-year-range]')) {
+                        let year = Number(value);
+                        let currentYear = new Date().getFullYear();
+                        if (!/^\d{4}$/.test(value) || year < 1900 || year > currentYear) {
+                            message = 'Tahun harus antara 1900 dan ' + currentYear + '.';
+                        }
+                    }
+
+                    if (!message) return;
+
+                    let label = getFieldLabel($field);
+                    errors.push({
+                        field: $field,
+                        label: label,
+                        message: message
+                    });
+                    $field.addClass('is-invalid');
+                    getMessageContainer($field).text(message);
+                });
+
                 if (!errors.length) {
                     return true;
                 }

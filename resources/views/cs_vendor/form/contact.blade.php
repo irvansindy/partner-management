@@ -17,22 +17,22 @@
                     <div class="row mt-4">
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_department_0">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_department[]" id="contact_department_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')" required>
+                            <input type="text" name="contact_department[]" id="contact_department_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Department')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_department" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_position_0">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_position[]" id="contact_position_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')" required>
+                            <input type="text" name="contact_position[]" id="contact_position_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Position')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_position" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_name_0">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_name[]" id="contact_name_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')" required>
+                            <input type="text" name="contact_name[]" id="contact_name_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Name')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_name" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_email_0">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
-                            <input type="email" name="contact_email[]" id="contact_email_0" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
+                            <input type="email" name="contact_email[]" id="contact_email_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Email')" required>
                             <span class="text-danger mt-2" id="message_contact_email" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">

@@ -389,7 +389,7 @@
                     <div class="row mb-4" id="liable_person_group_${index}">
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
                             <label for="liable_person_${index}">@lang('messages.Liable Person') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" placeholder="@lang('messages.Placeholder Liable Person')" required>
+                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Liable Person')" data-alpha-spaces required>
                             <span class="text-danger message-danger" id="message_liable_person_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
@@ -574,17 +574,17 @@
                     <div class="row mt-4">
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_department_${index}">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')" required>
+                            <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Department')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_department_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_position_${index}">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')" required>
+                            <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Position')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_position_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_name_${index}">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')" required>
+                            <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Name')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_name_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
@@ -824,12 +824,12 @@
                         <div class="row mt-4">
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
                                 <label for="bank_name_${index}">@lang('messages.Bank Name') <span class="text-danger" role="alert">*</span></label>
-                                <input type="text" name="bank_name[]" id="bank_name_${index}" class="form-control" required>
+                                <input type="text" name="bank_name[]" id="bank_name_${index}" class="form-control" maxlength="255" data-bank-name required>
                                 <span class="text-danger mt-2" id="message_bank_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
                                 <label for="account_name_${index}">@lang('messages.Account Name') <span class="text-danger" role="alert">*</span></label>
-                                <input type="text" name="account_name[]" id="account_name_${index}" class="form-control" required>
+                                <input type="text" name="account_name[]" id="account_name_${index}" class="form-control" maxlength="255" data-alpha-spaces required>
                                 <span class="text-danger mt-2" id="message_account_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
