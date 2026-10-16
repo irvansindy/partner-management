@@ -24,4 +24,8 @@ class Regencies extends Model
     {
         return $this->hasMany(CompanyAddress::class, 'city', 'name');
     }
+    public function postalCodes()
+    {
+        return $this->hasMany(PostalCode::class, 'regency_id');
+    }
 }
