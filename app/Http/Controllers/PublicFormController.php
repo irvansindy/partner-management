@@ -262,13 +262,13 @@ class PublicFormController extends Controller
         $rules = [
             // Master Information
             'company_type' => 'required|in:vendor,customer',
-            'company_name' => 'required|string|max:255',
-            'company_group_name' => 'nullable|string|max:255',
-            'established_year' => 'nullable',
+            'company_name' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
+            'company_group_name' => 'nullable|string|max:255|regex:/^[\p{L} ]+$/u',
+            'established_year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'total_employee' => 'nullable|integer|min:1',
 
             // Liable Persons
-            'liable_person.*' => 'required|string|max:255',
+            'liable_person.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'liable_position.*' => 'required|string|max:255',
             'nik.*' => 'required|digits_between:1,16',
 
@@ -283,9 +283,9 @@ class PublicFormController extends Controller
             'term_of_payment' => 'nullable|string|max:50',
 
             // Contacts
-            'contact_department.*' => 'required|string|max:255',
-            'contact_position.*' => 'required|string|max:255',
-            'contact_name.*' => 'required|string|max:255',
+            'contact_department.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
+            'contact_position.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
+            'contact_name.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'contact_email.*' => 'required|email|max:255',
             'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
 
@@ -301,8 +301,8 @@ class PublicFormController extends Controller
             'longitude' => 'required|numeric',
 
             // Banks
-            'bank_name.*' => 'required|string|max:255',
-            'account_name.*' => 'required|string|max:255',
+            'bank_name.*' => ['required', 'string', 'max:255', "regex:~^[\\p{L}\\p{N} .,&'()/+\\-]+$~u"],
+            'account_name.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'account_number.*' => 'required|digits_between:1,16',
 
             // Files
@@ -334,6 +334,17 @@ class PublicFormController extends Controller
             'company_name.required' => 'Nama perusahaan wajib diisi. | Company name is required.',
             'company_name.string' => 'Nama perusahaan harus berupa teks. | Company name must be a string.',
             'company_name.max' => 'Nama perusahaan maksimal 255 karakter. | Company name may not exceed 255 characters.',
+            'company_name.regex' => 'Nama perusahaan hanya boleh berisi huruf dan spasi. | Company name may only contain letters and spaces.',
+            'company_group_name.regex' => 'Nama grup perusahaan hanya boleh berisi huruf dan spasi. | Company group name may only contain letters and spaces.',
+            'established_year.integer' => 'Tahun berdiri harus berupa empat digit angka. | Established year must be a four-digit number.',
+            'established_year.min' => 'Tahun berdiri minimal 1900. | Established year must be at least 1900.',
+            'established_year.max' => 'Tahun berdiri tidak boleh melebihi tahun berjalan. | Established year may not exceed the current year.',
+            'liable_person.*.regex' => 'Nama penanggung jawab hanya boleh berisi huruf dan spasi. | Liable person name may only contain letters and spaces.',
+            'contact_department.*.regex' => 'Departemen hanya boleh berisi huruf dan spasi. | Department may only contain letters and spaces.',
+            'contact_position.*.regex' => 'Jabatan hanya boleh berisi huruf dan spasi. | Position may only contain letters and spaces.',
+            'contact_name.*.regex' => 'Nama kontak hanya boleh berisi huruf dan spasi. | Contact name may only contain letters and spaces.',
+            'bank_name.*.regex' => 'Nama bank mengandung karakter yang tidak didukung. | Bank name contains unsupported characters.',
+            'account_name.*.regex' => 'Nama akun hanya boleh berisi huruf dan spasi. | Account name may only contain letters and spaces.',
             // ... (rest of messages sama)
         ];
 

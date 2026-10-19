@@ -16,6 +16,8 @@ class PublicFormSuccessFeedbackTest extends TestCase
         $this->assertStringContainsString('timer: 5000', $script);
         $this->assertStringContainsString('timerProgressBar: true', $script);
         $this->assertStringContainsString('window.close()', $script);
+        $this->assertStringContainsString('setTimeout(attemptCloseTab, 5000)', $script);
+        $this->assertStringContainsString("window.open('', '_self')", $script);
         $this->assertStringContainsString('Silakan tutup tab ini.', $script);
     }
 }

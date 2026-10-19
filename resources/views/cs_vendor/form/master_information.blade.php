@@ -40,14 +40,14 @@
                     <label for="company_name">@lang('messages.Company Name') <span class="text-danger"
                             role="alert">*</span></label>
                     <input type="text" name="company_name" id="company_name" class="form-control"
-                        placeholder="@lang('messages.Placeholder Company Name')" required>
+                        placeholder="@lang('messages.Placeholder Company Name')" data-alpha-spaces required>
                     <span class="text-danger message-danger" id="message_company_name" role="alert"></span>
                 </div>
                 <div class="col-md-5 col-lg-6 col-sm-12">
                     <label for="company_group_name">@lang('messages.Company Group Name')</label>
                     <input type="text" name="company_group_name" id="company_group_name" class="form-control"
-                        placeholder="@lang('messages.Placeholder Company Group Name')">
-                    <span class="text-muted" id="message_company_group_name" role="alert">@lang('messages.Company Group Name Info')</span>
+                        placeholder="@lang('messages.Placeholder Company Group Name')" data-alpha-spaces>
+                    <span class="text-muted" id="company_group_name_info">@lang('messages.Company Group Name Info')</span>
                     <span class="text-danger message-danger" id="message_company_group_name" role="alert"></span>
                 </div>
                 <div class="col-md-6 col-sm-12">
@@ -57,6 +57,8 @@
                         id="established_year"
                         class="form-control"
                         maxlength="4"
+                        inputmode="numeric"
+                        data-year-range
                         placeholder="@lang('messages.Placeholder Established Year')"
                         oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
                     <span class="text-danger message-danger" id="message_established_year" role="alert"></span>
@@ -80,7 +82,7 @@
                     <label for="liable_person_0">@lang('messages.Liable Person') <span class="text-danger"
                             role="alert">*</span></label>
                     <input type="text" name="liable_person[]" id="liable_person_0" class="form-control"
-                        placeholder="@lang('messages.Placeholder Liable Person')" required>
+                        placeholder="@lang('messages.Placeholder Liable Person')" data-alpha-spaces required>
                     <span class="text-danger message-danger" id="message_liable_person" role="alert"></span>
                 </div>
                 <div class="col-md-4 col-lg-4 col-sm-12 mb-2">

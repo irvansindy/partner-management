@@ -7,6 +7,36 @@
             return name.replace(/([\[\]])/g, "\\$1");
         }
 
+        const alphaSpaceFields = '#company_name, #company_group_name, ' +
+            '[name="liable_person[]"], [name="contact_department[]"], ' +
+            '[name="contact_position[]"], [name="contact_name[]"], [name="account_name[]"]';
+
+        $('#form_company').on('input', alphaSpaceFields, function(event) {
+            if (event.originalEvent && event.originalEvent.isComposing) return;
+
+            const cursor = this.selectionStart;
+            const value = this.value;
+            const filtered = value.replace(/[^\p{L} ]/gu, '');
+            if (filtered === value) return;
+
+            const filteredPrefix = value.slice(0, cursor).replace(/[^\p{L} ]/gu, '');
+            this.value = filtered;
+            this.setSelectionRange(filteredPrefix.length, filteredPrefix.length);
+        });
+
+        $('#form_company').on('input', '[data-bank-name]', function(event) {
+            if (event.originalEvent && event.originalEvent.isComposing) return;
+
+            const cursor = this.selectionStart;
+            const value = this.value;
+            const filtered = value.replace(/[^\p{L}\p{N} .,&'()\/+\-]/gu, '');
+            if (filtered === value) return;
+
+            const filteredPrefix = value.slice(0, cursor).replace(/[^\p{L}\p{N} .,&'()\/+\-]/gu, '');
+            this.value = filtered;
+            this.setSelectionRange(filteredPrefix.length, filteredPrefix.length);
+        });
+
         /* Generate row dinamis jika belum ada */
         function ensureRowExists(baseName, index) {
             const container = $('[data-repeat="' + baseName + '"]');
@@ -543,6 +573,40 @@
                         message: message
                     });
 
+                    $field.addClass('is-invalid');
+                    getMessageContainer($field).text(message);
+                });
+
+                $pane.find('[data-alpha-spaces], [data-bank-name], [data-year-range]').each(function() {
+                    let $field = $(this);
+                    let value = $.trim($field.val() || '');
+                    if (!value) return;
+
+                    let message = '';
+                    if ($field.is('[data-alpha-spaces]') && !/^[\p{L} ]+$/u.test(value)) {
+                        message = 'Hanya boleh berisi huruf dan spasi.';
+                    }
+
+                    if ($field.is('[data-bank-name]') && !/^[\p{L}\p{N} .,&'()\/+\-]+$/u.test(value)) {
+                        message = 'Nama bank mengandung karakter yang tidak didukung.';
+                    }
+
+                    if ($field.is('[data-year-range]')) {
+                        let year = Number(value);
+                        let currentYear = new Date().getFullYear();
+                        if (!/^\d{4}$/.test(value) || year < 1900 || year > currentYear) {
+                            message = 'Tahun harus antara 1900 dan ' + currentYear + '.';
+                        }
+                    }
+
+                    if (!message) return;
+
+                    let label = getFieldLabel($field);
+                    errors.push({
+                        field: $field,
+                        label: label,
+                        message: message
+                    });
                     $field.addClass('is-invalid');
                     getMessageContainer($field).text(message);
                 });
