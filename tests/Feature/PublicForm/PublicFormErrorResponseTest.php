@@ -45,6 +45,7 @@ class PublicFormErrorResponseTest extends TestCase
     private function validPayload(): array
     {
         return [
+            'idempotency_key'=>'11111111-1111-4111-8111-111111111111',
             'company_type'=>'vendor','company_name'=>'Pralon','established_year'=>'2000',
             'liable_person'=>['Budi'],'liable_position'=>['Director'],'nik'=>['1234567890123456'],
             'business_classification'=>'Supplier','register_number_as_in_tax_invoice'=>'123',

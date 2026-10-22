@@ -24,17 +24,21 @@ use App\Models\PostalCode;
 use Illuminate\Validation\ValidationException;
 use App\Services\CompanyAttachmentService;
 use App\Support\SecurityLogSanitizer;
+use App\Exceptions\PublicFormClosedException;
+use App\Services\PublicFormSubmissionService;
 
 class PublicFormController extends Controller
 {
     protected $approvalService; // ✅ ADD THIS
     protected $attachmentService;
+    protected $submissionService;
 
     // ✅ ADD CONSTRUCTOR
-    public function __construct(ApprovalService $approvalService, CompanyAttachmentService $attachmentService = null)
+    public function __construct(ApprovalService $approvalService, CompanyAttachmentService $attachmentService = null, PublicFormSubmissionService $submissionService = null)
     {
         $this->approvalService = $approvalService;
         $this->attachmentService = $attachmentService ?: app(CompanyAttachmentService::class);
+        $this->submissionService = $submissionService ?: app(PublicFormSubmissionService::class);
     }
 
     public function show($token)
@@ -58,10 +62,6 @@ class PublicFormController extends Controller
     {
         $formLink = FormLink::where('token', $token)->firstOrFail();
 
-        if (!$formLink->canAcceptSubmission()) {
-            return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
-        }
-
         $validated = $this->validateSubmission($request, $formLink->form_type);
         $uploads = $request->file('input-multiple-file', []);
         $attachmentMetadata = [];
@@ -70,21 +70,16 @@ class PublicFormController extends Controller
         }
 
         $storedAttachments = [];
-        DB::beginTransaction();
         try {
-            $formLink = FormLink::whereKey($formLink->id)
-                ->lockForUpdate()
-                ->firstOrFail();
-
-            if (!$formLink->canAcceptSubmission()) {
-                DB::rollBack();
-
-                return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
-            }
+            $this->submissionService->submit(
+                $formLink,
+                $validated['idempotency_key'],
+                function (FormLink $formLink, string $idempotencyKey) use ($validated, $request, $uploads, $attachmentMetadata, &$storedAttachments) {
 
             // 1. Simpan Company Information
             $company = CompanyInformation::create([
                 'form_link_id' => $formLink->id,
+                'idempotency_key' => $idempotencyKey,
                 'user_id' => 0,
                 'name' => $validated['company_name'],
                 'group_name' => $validated['company_group_name'] ?? null,
@@ -212,9 +207,6 @@ class PublicFormController extends Controller
                 );
             }
 
-            // 8. Increment submission count
-            $formLink->incrementSubmissionCount();
-
             // ✅ ============================================
             // 9. CREATE APPROVAL PROCESS
             // ✅ ============================================
@@ -228,15 +220,20 @@ class PublicFormController extends Controller
                 }
             } catch (\Exception $e) {
                 // Log error but don't fail the entire transaction
-                Log::error("❌ Failed to create approval for company ID: {$company->id}. Error: " . $e->getMessage());
+                Log::error("Failed to create approval for company ID: {$company->id}", [
+                    'exception' => get_class($e),
+                ]);
             }
 
-            DB::commit();
+                    return $company;
+                }
+            );
 
             return FormatResponseJson::success(true, 'Data berhasil dikirim! Terima kasih.');
 
+        } catch (PublicFormClosedException $e) {
+            return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
         } catch (\Exception $e) {
-            DB::rollBack();
             $this->attachmentService->deleteStored($storedAttachments);
             $requestId = (string) Str::uuid();
             $request->attributes->set('request_id', $requestId);
@@ -272,6 +269,7 @@ class PublicFormController extends Controller
         }
 
         $rules = [
+            'idempotency_key' => 'required|uuid',
             // Master Information
             'company_type' => 'required|in:vendor,customer',
             'company_name' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',

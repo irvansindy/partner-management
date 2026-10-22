@@ -34,6 +34,7 @@
                 method="POST" id="form_company" enctype="multipart/form-data"
                 data-storage-key="partner_form_{{ $formLink->token ?? 'default' }}">
                 @csrf
+                <input type="hidden" name="idempotency_key" value="{{ (string) \Illuminate\Support\Str::uuid() }}">
 
                 @if (isset($formLink))
                     <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
