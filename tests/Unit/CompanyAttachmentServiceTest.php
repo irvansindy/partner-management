@@ -54,6 +54,31 @@ class CompanyAttachmentServiceTest extends TestCase
         $this->assertStringNotContainsString('..', $metadata['original_name']);
     }
 
+    /** @test */
+    public function it_enforces_configured_size_and_image_dimension_limits(): void
+    {
+        config([
+            'company_attachments.max_bytes' => 10,
+            'company_attachments.max_width' => 1,
+            'company_attachments.max_height' => 1,
+        ]);
+        $service = new CompanyAttachmentService();
+
+        try {
+            $service->validate($this->upload('large.pdf', "%PDF-1.4\n%%EOF"));
+            $this->fail('Configured file size limit should be enforced.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('input-multiple-file', $exception->errors());
+        }
+
+        try {
+            $service->validate(UploadedFile::fake()->image('wide.png', 2, 1));
+            $this->fail('Configured image dimension limit should be enforced.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('input-multiple-file', $exception->errors());
+        }
+    }
+
     private function upload(string $name, string $contents): UploadedFile
     {
         $path = tempnam(sys_get_temp_dir(), 'attachment-test-');

@@ -21,7 +21,7 @@ class CompanyAttachmentService
     {
         $path = $file->getRealPath();
         $size = $file->getSize();
-        if (!$path || $size === false || $size > 5 * 1024 * 1024) {
+        if (!$path || $size === false || $size > config('company_attachments.max_bytes', 5 * 1024 * 1024)) {
             $this->invalid('Ukuran file maksimal 5 MB.');
         }
 
@@ -45,7 +45,12 @@ class CompanyAttachmentService
             }
             if (is_resource($decoded) || is_object($decoded)) imagedestroy($decoded);
             [$width, $height] = $image;
-            if ($width > 6000 || $height > 6000) $this->invalid('Dimensi gambar maksimal 6000 × 6000 piksel.');
+            if (
+                $width > config('company_attachments.max_width', 6000)
+                || $height > config('company_attachments.max_height', 6000)
+            ) {
+                $this->invalid('Dimensi gambar melebihi batas yang diizinkan.');
+            }
         }
 
         $original = basename(str_replace('\\', '/', $file->getClientOriginalName()));
@@ -67,7 +72,8 @@ class CompanyAttachmentService
     {
         $filename = Str::uuid().'.'.$metadata['extension'];
         $path = 'companies/'.$company->id.'/'.$filename;
-        Storage::disk('company_attachments')->putFileAs('companies/'.$company->id, $file, $filename);
+        $disk = config('company_attachments.disk', 'company_attachments');
+        Storage::disk($disk)->putFileAs('companies/'.$company->id, $file, $filename);
 
         try {
             return CompanyAttachment::create([
@@ -78,14 +84,14 @@ class CompanyAttachmentService
                 'filesize' => $metadata['size'],
                 'filetype' => $metadata['extension'],
                 'mime_type' => $metadata['mime'],
-                'storage_disk' => 'company_attachments',
+                'storage_disk' => $disk,
                 'width' => $metadata['width'],
                 'height' => $metadata['height'],
                 'sha256' => $metadata['sha256'],
                 'sort_order' => $sortOrder,
             ]);
         } catch (\Throwable $exception) {
-            Storage::disk('company_attachments')->delete($path);
+            Storage::disk($disk)->delete($path);
             throw $exception;
         }
     }

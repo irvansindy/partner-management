@@ -70,6 +70,23 @@ class PublicFormAttachmentTest extends TestCase
         }
     }
 
+    /** @test */
+    public function identical_original_names_always_receive_distinct_storage_paths(): void
+    {
+        $service = new CompanyAttachmentService();
+        $company = new CompanyInformation();
+        $company->id = 42;
+        $first = $this->pdf();
+        $second = $this->pdf();
+
+        $firstAttachment = $service->store($company, $first, $service->validate($first), 1);
+        $secondAttachment = $service->store($company, $second, $service->validate($second), 2);
+
+        $this->assertNotSame($firstAttachment->filepath, $secondAttachment->filepath);
+        Storage::disk('company_attachments')->assertExists($firstAttachment->filepath);
+        Storage::disk('company_attachments')->assertExists($secondAttachment->filepath);
+    }
+
     private function pdf(): UploadedFile
     {
         $path = tempnam(sys_get_temp_dir(), 'attachment-test-');
