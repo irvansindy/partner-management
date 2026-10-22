@@ -3,6 +3,15 @@
         const STORAGE_KEY = "partner_form_" + formToken;
         const MAX_REPEAT_ROWS = {{ (int) config('public_form.max_repeat_rows', 10) }};
         const MAX_SURVEY_ROWS = {{ (int) config('public_form.max_survey_rows', 20) }};
+        const DRAFT_FIELD_ALLOWLIST = new Set([
+            'idempotency_key', 'established_year', 'total_employee',
+            'business_classification', 'system_management', 'term_of_payment',
+            'survey_form_switch', 'survey_ownership_status', 'rental_year'
+        ]);
+        const SENSITIVE_DRAFT_FIELDS = new Set([
+            '_token', 'nik', 'account_number', 'contact_email',
+            'contact_telephone', 'address', 'input-multiple-file'
+        ]);
 
         const repeatButtons = {
             '#add_liable_person': ['liable_person[]', MAX_REPEAT_ROWS],
@@ -89,6 +98,9 @@
                     if (this.type === "file") return;
                     if (this.name === "company_type") return;
 
+                    const cleanFieldName = this.name.replace('[]', '');
+                    if (!DRAFT_FIELD_ALLOWLIST.has(cleanFieldName) || SENSITIVE_DRAFT_FIELDS.has(cleanFieldName)) return;
+
                     // ❌ SKIP survey fields - akan disimpan terpisah
                     if (this.name.includes('survey') ||
                         this.name.includes('ownership_status') ||
@@ -123,13 +135,13 @@
 
             data['survey_form_switch'] = $('#survey_form_switch').is(':checked');
 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             console.log("📝 Form saved (excluding survey):", data);
         }
 
         /* RESTORE FORM - EXCLUDE SURVEY FIELDS */
         function restoreForm() {
-            const saved = localStorage.getItem(STORAGE_KEY);
+            const saved = sessionStorage.getItem(STORAGE_KEY);
             if (!saved) return;
 
             let data = JSON.parse(saved);
@@ -278,9 +290,9 @@
 
         /* Clear setelah submit */
         function clearSavedForm() {
-            localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem(STORAGE_KEY + '_survey');
-            console.log("✅ Form data cleared from localStorage");
+            sessionStorage.removeItem(STORAGE_KEY);
+            sessionStorage.removeItem(STORAGE_KEY + '_survey');
+            console.log("Form draft cleared from session storage");
         }
 
         // ============================================
@@ -357,6 +369,9 @@
                 $('#survey_form_container').find('input, textarea, select').each(function() {
                     if (!this.name) return;
 
+                    const cleanFieldName = this.name.replace('[]', '');
+                    if (!DRAFT_FIELD_ALLOWLIST.has(cleanFieldName) || SENSITIVE_DRAFT_FIELDS.has(cleanFieldName)) return;
+
                     let fieldName = this.name;
                     let fieldValue = null;
 
@@ -380,13 +395,13 @@
                     }
                 });
 
-                localStorage.setItem(STORAGE_KEY + '_survey', JSON.stringify(surveyData));
+                sessionStorage.setItem(STORAGE_KEY + '_survey', JSON.stringify(surveyData));
                 console.log('💾 Survey data saved separately:', surveyData);
             }
 
             // Fungsi untuk restore data survey
             function restoreSurveyData() {
-                const savedSurvey = localStorage.getItem(STORAGE_KEY + '_survey');
+                const savedSurvey = sessionStorage.getItem(STORAGE_KEY + '_survey');
                 if (!savedSurvey) return;
 
                 let surveyData = JSON.parse(savedSurvey);
