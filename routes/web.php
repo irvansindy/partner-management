@@ -68,8 +68,12 @@ Route::post('forward-map', [GeocodeController::class,'forward'])->name('forward-
 // PUBLIC ROUTES - Form Submission
 // ========================================
 Route::prefix('f')->name('public.form.')->group(function () {
-    Route::get('/{token}', [PublicFormController::class, 'show'])->name('show');
-    Route::post('/{token}', [PublicFormController::class, 'submit'])->name('submit');
+    Route::get('/{token}', [PublicFormController::class, 'show'])
+        ->middleware('throttle:public-form-view')
+        ->name('show');
+    Route::post('/{token}', [PublicFormController::class, 'submit'])
+        ->middleware('throttle:public-form-submit')
+        ->name('submit');
 });
 Route::get('/form/success', [PublicFormController::class, 'success'])->name('public.form.success');
 Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');

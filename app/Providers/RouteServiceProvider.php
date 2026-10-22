@@ -60,5 +60,27 @@ class RouteServiceProvider extends ServiceProvider
             // return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
             return Limit::perHour(1000)->by(optional($request->user())->id ?: $request->ip());
         });
+
+        RateLimiter::for('public-form-view', function (Request $request) {
+            return $this->publicFormLimits($request, 'view');
+        });
+
+        RateLimiter::for('public-form-submit', function (Request $request) {
+            return $this->publicFormLimits($request, 'submit');
+        });
+    }
+
+    private function publicFormLimits(Request $request, string $action): array
+    {
+        $key = (string) config('app.key');
+        $tokenHash = hash_hmac('sha256', (string) $request->route('token'), $key);
+        $ipHash = hash_hmac('sha256', (string) $request->ip(), $key);
+
+        return [
+            Limit::perMinute((int) config("public_form.rate_limits.{$action}_per_ip"))
+                ->by("public-form:{$action}:ip:{$ipHash}"),
+            Limit::perMinute((int) config("public_form.rate_limits.{$action}_per_token"))
+                ->by("public-form:{$action}:token:{$tokenHash}"),
+        ];
     }
 }
