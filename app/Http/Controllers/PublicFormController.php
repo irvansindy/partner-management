@@ -238,6 +238,8 @@ class PublicFormController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->attachmentService->deleteStored($storedAttachments);
+            $requestId = (string) Str::uuid();
+            $request->attributes->set('request_id', $requestId);
             Log::error(
                 'Public form submission failed',
                 app(SecurityLogSanitizer::class)->exceptionContext($e, $request)
@@ -246,7 +248,8 @@ class PublicFormController extends Controller
             return FormatResponseJson::error(
                 false,
                 'Gagal memproses formulir. Silakan coba lagi. | Failed to process the form. Please try again.',
-                500
+                500,
+                $requestId
             );
         }
     }

@@ -35,11 +35,16 @@ class FormatResponseJson
     /**
      * Give error response.
      */
-    public static function error($data = null, $message = null, $code = 400)
+    public static function error($data = null, $message = null, $code = 400, $requestId = null)
     {
         self::$response['meta']['status'] = 'error';
         self::$response['meta']['code'] = $code;
         self::$response['meta']['message'] = $message;
+        if ($requestId) {
+            self::$response['meta']['request_id'] = $requestId;
+        } else {
+            unset(self::$response['meta']['request_id']);
+        }
         self::$response['data'] = $data;
 
         return response()->json(self::$response, self::$response['meta']['code']);
