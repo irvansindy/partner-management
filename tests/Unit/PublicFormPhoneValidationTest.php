@@ -28,6 +28,7 @@ class PublicFormPhoneValidationTest extends TestCase
     private function validateSubmission(array $phones): array
     {
         $request = Request::create('/', 'POST', array_merge([
+            'idempotency_key' => '11111111-1111-4111-8111-111111111111',
             'company_type' => 'vendor',
             'company_name' => 'Pralon',
             'liable_person' => ['Person'],

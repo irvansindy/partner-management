@@ -70,6 +70,7 @@ class PublicFormTextValidationTest extends TestCase
     private function validateSubmission(array $overrides): array
     {
         $request = Request::create('/', 'POST', array_replace([
+            'idempotency_key' => '11111111-1111-4111-8111-111111111111',
             'company_type' => 'vendor',
             'company_name' => 'PT Pralon',
             'company_group_name' => 'Pralon Group',

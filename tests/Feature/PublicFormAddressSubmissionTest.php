@@ -57,6 +57,7 @@ class PublicFormAddressSubmissionTest extends TestCase
     private function payload(array $overrides): array
     {
         return array_replace([
+            'idempotency_key'=>'11111111-1111-4111-8111-111111111111',
             'company_type'=>'vendor','company_name'=>'Pralon','established_year'=>'2000','liable_person'=>['Budi'],'liable_position'=>['Director'],'nik'=>['1234567890123456'],
             'business_classification'=>'Supplier','register_number_as_in_tax_invoice'=>'123','contact_department'=>['Sales'],'contact_position'=>['Manager'],'contact_name'=>['Tasya'],'contact_email'=>['a@example.com'],'contact_telephone'=>['+62812345678'],
             'address_role'=>['legal'],'address'=>['Jl. Satu'],'country_code'=>['ID'],'country'=>['Indonesia'],'province'=>['999'],'city'=>['999'],'zip_code'=>['15144'],'latitude'=>[null],'longitude'=>[null],'telephone'=>['+62812345678'],'fax'=>['+62812345678'],
