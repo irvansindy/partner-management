@@ -14,6 +14,7 @@ use App\Models\BlockedRequest;
 use App\Models\RequestLog;
 use App\Models\Notifications;
 use App\Events\SecurityAlertEvent;
+use App\Support\SecurityLogSanitizer;
 class SanitizeInputMiddleware
 {
     /**
@@ -32,9 +33,6 @@ class SanitizeInputMiddleware
             ]);
             abort(400, 'Bad Request: Header tidak valid');
         }
-
-        // 📈 Log semua request ke DB (tidak hanya blocked)
-        $this->logRequest($request);
 
         // 🚨 Rate limit per IP
         $rateKey = 'global:' . $ip;
@@ -86,6 +84,9 @@ class SanitizeInputMiddleware
 
         // 🚀 Next middleware/controller
         $response = $next($request);
+
+        $request->attributes->set('response_status', $response->getStatusCode());
+        $this->logRequest($request);
 
         // 🛡️ Security headers
         $response->headers->set('X-Frame-Options', 'DENY');
@@ -142,13 +143,15 @@ class SanitizeInputMiddleware
      */
     private function logRequest(Request $request)
     {
-        $logData = SecurityLogHelper::createLogData('REQUEST', [
-            'method'  => $request->method(),
-            'headers' => $request->headers->all(),
-            'query'   => $request->query(),
-            'body'    => $request->all(),
-        ]);
+        $metadata = app(SecurityLogSanitizer::class)->requestMetadata($request);
 
-        RequestLog::create($logData);
+        RequestLog::create([
+            'type' => 'REQUEST',
+            'ip' => null,
+            'user_agent' => ['summary' => $metadata['user_agent']],
+            'url' => $metadata['route'],
+            'extra' => $metadata,
+            'time' => now(),
+        ]);
     }
 }

@@ -23,6 +23,7 @@ use App\Models\Regencies;
 use App\Models\PostalCode;
 use Illuminate\Validation\ValidationException;
 use App\Services\CompanyAttachmentService;
+use App\Support\SecurityLogSanitizer;
 
 class PublicFormController extends Controller
 {
@@ -237,13 +238,10 @@ class PublicFormController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             $this->attachmentService->deleteStored($storedAttachments);
-            $correlationId = (string) Str::uuid();
-            Log::error('Public form submission failed', [
-                'correlation_id' => $correlationId,
-                'exception' => get_class($e),
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            Log::error(
+                'Public form submission failed',
+                app(SecurityLogSanitizer::class)->exceptionContext($e, $request)
+            );
 
             return FormatResponseJson::error(
                 false,
