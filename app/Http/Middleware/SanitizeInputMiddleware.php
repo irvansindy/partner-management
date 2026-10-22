@@ -149,13 +149,20 @@ class SanitizeInputMiddleware
     {
         $metadata = app(SecurityLogSanitizer::class)->requestMetadata($request);
 
-        RequestLog::create([
-            'type' => 'REQUEST',
-            'ip' => null,
-            'user_agent' => ['summary' => $metadata['user_agent']],
-            'url' => $metadata['route'],
-            'extra' => $metadata,
-            'time' => now(),
-        ]);
+        try {
+            RequestLog::create([
+                'type' => 'REQUEST',
+                'ip' => null,
+                'user_agent' => ['summary' => $metadata['user_agent']],
+                'url' => $metadata['route'],
+                'extra' => $metadata,
+                'time' => now(),
+            ]);
+        } catch (\Throwable $error) {
+            Log::warning('Request audit persistence failed', [
+                'request_id' => $metadata['request_id'],
+                'exception' => get_class($error),
+            ]);
+        }
     }
 }
