@@ -1,6 +1,25 @@
     <script>
         const formToken = "{{ $formLink->token ?? '' }}";
         const STORAGE_KEY = "partner_form_" + formToken;
+        const MAX_REPEAT_ROWS = {{ (int) config('public_form.max_repeat_rows', 10) }};
+        const MAX_SURVEY_ROWS = {{ (int) config('public_form.max_survey_rows', 20) }};
+
+        const repeatButtons = {
+            '#add_liable_person': ['liable_person[]', MAX_REPEAT_ROWS],
+            '#add_contact': ['contact_name[]', MAX_REPEAT_ROWS],
+            '#add_dynamic_address': ['address[]', MAX_REPEAT_ROWS],
+            '#add_bank': ['bank_name[]', MAX_REPEAT_ROWS],
+            '#add_survey_data': ['product_survey[]', MAX_SURVEY_ROWS]
+        };
+
+        $(document).on('click', Object.keys(repeatButtons).join(','), function(event) {
+            const [fieldName, maximum] = repeatButtons['#' + this.id];
+            if ($('[name="' + fieldName + '"]').length >= maximum) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                showPartnerToast('warning', 'Batas Data', 'Maksimal ' + maximum + ' baris dapat ditambahkan.');
+            }
+        });
 
         /* Escape untuk name selector dengan bracket */
         function escapeName(name) {

@@ -73,7 +73,7 @@
                         name="total_employee"
                         id="total_employee"
                         class="form-control"
-                        maxlength="4"
+                        maxlength="7"
                         placeholder="@lang('messages.Placeholder Total Employee')"
                         oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
                     <span class="text-danger message-danger" id="message_total_employee" role="alert"></span>

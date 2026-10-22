@@ -278,6 +278,9 @@ class PublicFormController extends Controller
             'total_employee' => 'nullable|integer|min:1|max:1000000',
 
             // Liable Persons
+            'liable_person' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'liable_position' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'nik' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'liable_person.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'liable_position.*' => 'required|string|max:255',
             'nik.*' => 'required|digits_between:1,16',
@@ -293,6 +296,11 @@ class PublicFormController extends Controller
             'term_of_payment' => 'nullable|string|max:50',
 
             // Contacts
+            'contact_department' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_position' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_name' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_email' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_telephone' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'contact_department.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'contact_position.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'contact_name.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
@@ -300,10 +308,19 @@ class PublicFormController extends Controller
             'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
 
             // Addresses
-            'address_role' => 'required|array|min:1',
+            'address_role' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'address' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'country_code' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'country' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'province' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'city' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'zip_code' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'telephone' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'fax' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'latitude' => 'nullable|array|max:' . config('public_form.max_repeat_rows', 10),
+            'longitude' => 'nullable|array|max:' . config('public_form.max_repeat_rows', 10),
             'address_role.*' => 'required|in:legal,operational,branch',
             'address.*' => 'required|string|max:1000',
-            'country_code' => 'required|array|min:1',
             'country_code.*' => 'required|string|size:2',
             'country.*' => 'required|string|max:100',
             'province.*' => 'required|string|max:100',
@@ -315,13 +332,16 @@ class PublicFormController extends Controller
             'longitude.*' => 'nullable|numeric|between:-180,180',
 
             // Banks
+            'bank_name' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'account_name' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'account_number' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'bank_name.*' => 'required|string|max:255|regex:/^[\p{L}\p{N} .-]+$/u',
             'account_name.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'account_number.*' => 'required|digits_between:1,16',
 
             // Files
-            'input-multiple-file' => 'nullable|array|max:10',
-            'input-multiple-file.*' => 'nullable|file|max:5120',
+            'input-multiple-file' => 'nullable|array|max:' . config('company_attachments.max_files', 10),
+            'input-multiple-file.*' => 'nullable|file|max:' . (int) ceil(config('company_attachments.max_bytes', 5 * 1024 * 1024) / 1024),
         ];
 
         if ($formType === 'customer') {
@@ -330,6 +350,9 @@ class PublicFormController extends Controller
                 'rental_year' => 'nullable|integer|min:1900|max:' . date('Y'),
                 'survey_pick_up' => 'nullable|string|max:255',
                 'survey_truck' => 'nullable|string|max:255',
+                'product_survey' => 'nullable|array|max:' . config('public_form.max_survey_rows', 20),
+                'merk_survey' => 'nullable|array|max:' . config('public_form.max_survey_rows', 20),
+                'distributor_survey' => 'nullable|array|max:' . config('public_form.max_survey_rows', 20),
                 'product_survey.*' => 'nullable|string|max:255',
                 'merk_survey.*' => 'nullable|string|max:255',
                 'distributor_survey.*' => 'nullable|string|max:255',
@@ -363,9 +386,25 @@ class PublicFormController extends Controller
         ];
 
         $validated = $request->validate($rules, $messages);
+        $this->validateAlignedFields($validated, ['liable_person', 'liable_position', 'nik']);
+        $this->validateAlignedFields($validated, ['contact_department', 'contact_position', 'contact_name', 'contact_email', 'contact_telephone']);
+        $this->validateAlignedFields($validated, ['bank_name', 'account_name', 'account_number']);
+        if ($formType === 'customer' && isset($validated['product_survey'])) {
+            $this->validateAlignedFields($validated, ['product_survey', 'merk_survey', 'distributor_survey']);
+        }
         $this->normalizeAndValidateAddresses($validated);
 
         return $validated;
+    }
+
+    private function validateAlignedFields(array $validated, array $fields): void
+    {
+        $expected = count($validated[$fields[0]] ?? []);
+        foreach ($fields as $field) {
+            if (!isset($validated[$field]) || count($validated[$field]) !== $expected) {
+                throw ValidationException::withMessages([$field => 'Data berulang tidak lengkap atau tidak sejajar.']);
+            }
+        }
     }
 
     private function normalizeAndValidateAddresses(array &$validated): void
