@@ -71,8 +71,6 @@ Route::prefix('f')->name('public.form.')->group(function () {
     Route::get('/{token}', [PublicFormController::class, 'show'])->name('show');
     Route::post('/{token}', [PublicFormController::class, 'submit'])->name('submit');
 });
-Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner')->middleware('public_form');
-
 Route::get('/form/success', [PublicFormController::class, 'success'])->name('public.form.success');
 Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');
 Route::get('/fetch-regencies', [PartnerController::class,'fetchRegencies'])->name('fetch-regencies');

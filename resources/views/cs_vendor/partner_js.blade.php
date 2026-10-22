@@ -1198,7 +1198,6 @@
                 type: 'POST',
                 data: formData,
                 headers: {
-                    "X-APP-KEY": $('#public_key').val(),
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
