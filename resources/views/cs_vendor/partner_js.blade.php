@@ -1097,7 +1097,7 @@
         // ============================================
         function refreshCsrfToken() {
             $.ajax({
-                url: '/refresh-csrf', // Buat route ini di Laravel
+                url: @json(route('refresh-csrf')),
                 type: 'GET',
                 success: function(response) {
                     if (response.token) {

@@ -62,7 +62,13 @@ class GeocodeController extends Controller
                     'longitude' => $coordinate->getLongitude(),
                     'display_name' => $item->getDisplayName(),
                 ],
-                'raw' => config('app.debug') ? $item->toArray() : null, // Hanya tampil di debug mode
+                // 'raw' => config('app.debug') ? $item->toArray() : null, // Hanya tampil di debug mode
+                'raw' => config('app.debug') ? [
+                    'place_id' => $item->getPlaceId(),
+                    'display_name' => $item->getDisplayName(),
+                    'latitude' => $coordinate->getLatitude(),
+                    'longitude' => $coordinate->getLongitude(),
+                ] : null,
             ]);
         } catch (\Throwable $e) {
             // Log error untuk debugging
