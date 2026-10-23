@@ -262,16 +262,16 @@
         }
 
         #form_company .international-phone-group .phone-country-code {
-            width: 128px;
+            width: 96px;
             padding-right: 1.5rem;
             font-variant-numeric: tabular-nums;
         }
 
         #form_company .international-phone-group > .select2-container {
-            flex: 0 0 128px;
-            width: 128px !important;
-            min-width: 128px;
-            max-width: 42%;
+            flex: 0 0 96px;
+            width: 96px !important;
+            min-width: 96px;
+            max-width: 36%;
         }
 
         #form_company .contact-phone-column,
@@ -318,9 +318,9 @@
 
         @media (max-width: 576px) {
             #form_company .international-phone-group > .select2-container {
-                flex-basis: 116px;
-                width: 116px !important;
-                min-width: 116px;
+                flex-basis: 88px;
+                width: 88px !important;
+                min-width: 88px;
             }
 
             #form_company .card-header h3 {

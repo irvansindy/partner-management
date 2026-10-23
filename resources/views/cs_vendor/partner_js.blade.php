@@ -22,7 +22,7 @@
     function formatCountryOption(option) {
         if (!option.id) return option.text;
         const country = $(option.element).data('country');
-        return country ? countryFlag(country.code) + ' ' + country.code + ' ' + country.calling_code + ' — ' + country.name : option.text;
+        return country ? countryFlag(country.code) + ' ' + country.calling_code + ' — ' + country.name : option.text;
     }
 
     function initializeInternationalPhoneInput(input) {
@@ -40,7 +40,7 @@
         window.partnerCountries.forEach(function (item) {
             $('<option>')
                 .val(item.calling_code)
-                .text(item.code + ' ' + item.calling_code + ' ' + item.name)
+                .text(item.calling_code + ' — ' + item.name)
                 .prop('selected', item.code === 'ID')
                 .data('country', item)
                 .appendTo($countryCode);
@@ -54,7 +54,7 @@
             templateResult: formatCountryOption,
             templateSelection: function(option) {
                 const country = $(option.element).data('country');
-                return country ? countryFlag(country.code) + ' ' + country.code + ' ' + country.calling_code : option.text;
+                return country ? countryFlag(country.code) + ' ' + country.calling_code : option.text;
             }
         });
     }

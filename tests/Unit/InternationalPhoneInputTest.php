@@ -14,13 +14,14 @@ class InternationalPhoneInputTest extends TestCase
     }
 
     /** @test */
-    public function country_selector_uses_compact_iso_and_calling_code_labels(): void
+    public function country_selector_uses_flag_and_calling_code_without_iso_label(): void
     {
         $script = $this->partnerScript();
 
         $this->assertStringContainsString('window.partnerCountries', $script);
         $this->assertStringContainsString('templateResult: formatCountryOption', $script);
-        $this->assertStringContainsString("country.code + ' ' + country.calling_code", $script);
+        $this->assertStringContainsString("countryFlag(country.code) + ' ' + country.calling_code", $script);
+        $this->assertStringNotContainsString("countryFlag(country.code) + ' ' + country.code + ' ' + country.calling_code", $script);
     }
 
     /** @test */
@@ -31,7 +32,7 @@ class InternationalPhoneInputTest extends TestCase
 
         $this->assertStringNotContainsString("\$countryCode.css({ flex: '0 0 140px'", $script);
         $this->assertStringContainsString('.international-phone-group > .select2-container', $css);
-        $this->assertStringContainsString('flex: 0 0 128px', $css);
+        $this->assertStringContainsString('flex: 0 0 96px', $css);
     }
 
     /** @test */
