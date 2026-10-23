@@ -3,20 +3,12 @@
         const STORAGE_KEY = "partner_form_" + formToken;
         const MAX_REPEAT_ROWS = {{ (int) config('public_form.max_repeat_rows', 10) }};
         const MAX_SURVEY_ROWS = {{ (int) config('public_form.max_survey_rows', 20) }};
-        const DRAFT_FIELD_ALLOWLIST = new Set([
-            'idempotency_key', 'established_year', 'total_employee',
-            'business_classification', 'business_classification_other_detail', 'system_management', 'term_of_payment',
-            'survey_form_switch', 'survey_ownership_status', 'rental_year'
-        ]);
-        const SENSITIVE_DRAFT_FIELDS = new Set([
-            '_token', 'nik', 'account_number', 'contact_email',
-            'contact_telephone', 'address', 'input-multiple-file'
-        ]);
+        const DRAFT_EXCLUDED_FIELDS = new Set(['_token']);
 
         const repeatButtons = {
             '#add_liable_person': ['liable_person[]', MAX_REPEAT_ROWS],
             '#add_contact': ['contact_name[]', MAX_REPEAT_ROWS],
-            '#add_dynamic_address': ['address[]', MAX_REPEAT_ROWS],
+            '#add_branch': ['address[]', MAX_REPEAT_ROWS],
             '#add_bank': ['bank_name[]', MAX_REPEAT_ROWS],
             '#add_survey_data': ['product_survey[]', MAX_SURVEY_ROWS]
         };
@@ -102,8 +94,12 @@
             if (!container.length) {
                 let addButton = null;
 
-                if (baseName === 'address') {
-                    addButton = $('#add_dynamic_address');
+                if ([
+                    'address_role', 'address', 'country_code', 'country', 'province', 'city',
+                    'zip_code', 'telephone', 'telephone_country_code', 'fax', 'fax_country_code',
+                    'latitude', 'longitude'
+                ].includes(baseName)) {
+                    addButton = $('#add_branch');
                 } else if (baseName === 'bank_name' || baseName === 'account_name' || baseName === 'account_number') {
                     addButton = $('#add_bank');
                 } else if (baseName.includes('contact_')) {
@@ -144,10 +140,8 @@
                 .each(function() {
                     if (!this.name) return;
                     if (this.type === "file") return;
-                    if (this.name === "company_type") return;
-
                     const cleanFieldName = this.name.replace('[]', '');
-                    if (!DRAFT_FIELD_ALLOWLIST.has(cleanFieldName) || SENSITIVE_DRAFT_FIELDS.has(cleanFieldName)) return;
+                    if (DRAFT_EXCLUDED_FIELDS.has(cleanFieldName)) return;
 
                     // ❌ SKIP survey fields - akan disimpan terpisah
                     if (this.name.includes('survey') ||
@@ -184,7 +178,7 @@
             data['survey_form_switch'] = $('#survey_form_switch').is(':checked');
 
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            console.log("📝 Form saved (excluding survey):", data);
+            console.log("📝 Form draft saved:", data);
         }
 
         /* RESTORE FORM - EXCLUDE SURVEY FIELDS */
@@ -192,13 +186,17 @@
             const saved = sessionStorage.getItem(STORAGE_KEY);
             if (!saved) return;
 
-            let data = JSON.parse(saved);
+            let data;
+            try {
+                data = JSON.parse(saved);
+            } catch (error) {
+                sessionStorage.removeItem(STORAGE_KEY);
+                return;
+            }
             console.log("🔄 Restoring form:", data);
 
             for (let key in data) {
                 const value = data[key];
-
-                if (key === "company_type") continue;
 
                 // Handle survey switch
                 if (key === "survey_form_switch") {
@@ -287,6 +285,11 @@
 
         $(document).on("change", "#survey_form_switch", function() {
             saveForm();
+        });
+
+        $(document).on('click', Object.keys(repeatButtons).join(',') +
+            ', .delete_contact, .delete_dynamic_address, .delete_bank, [data-remove-address]', function() {
+            setTimeout(saveForm, 0);
         });
 
         function syncPublicFieldState($field) {
@@ -417,8 +420,10 @@
                 $('#survey_form_container').find('input, textarea, select').each(function() {
                     if (!this.name) return;
 
+                    if (this.type === "file") return;
+
                     const cleanFieldName = this.name.replace('[]', '');
-                    if (!DRAFT_FIELD_ALLOWLIST.has(cleanFieldName) || SENSITIVE_DRAFT_FIELDS.has(cleanFieldName)) return;
+                    if (DRAFT_EXCLUDED_FIELDS.has(cleanFieldName)) return;
 
                     let fieldName = this.name;
                     let fieldValue = null;
@@ -452,7 +457,13 @@
                 const savedSurvey = sessionStorage.getItem(STORAGE_KEY + '_survey');
                 if (!savedSurvey) return;
 
-                let surveyData = JSON.parse(savedSurvey);
+                let surveyData;
+                try {
+                    surveyData = JSON.parse(savedSurvey);
+                } catch (error) {
+                    sessionStorage.removeItem(STORAGE_KEY + '_survey');
+                    return;
+                }
                 console.log('🔄 Restoring survey data:', surveyData);
 
                 setTimeout(function() {
