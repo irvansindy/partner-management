@@ -15,32 +15,32 @@
                 <fieldset class="partner-fieldset mb-4">
                     <legend class="float-none w-auto text-bold">@lang('messages.Contact Person')</legend>
                     <div class="row mt-4">
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_department_0">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_department[]" id="contact_department_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Department')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_department" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_position_0">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_position[]" id="contact_position_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Position')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_position" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_name_0">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_name[]" id="contact_name_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Name')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_name" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_email_0">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
                             <input type="email" name="contact_email[]" id="contact_email_0" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Email')" required>
                             <span class="text-danger mt-2" id="message_contact_email" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-3 mb-3 contact-phone-column">
                             <label for="contact_telephone_0">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <input type="tel" name="contact_telephone[]" id="contact_telephone_0" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
+                            <input type="tel" name="contact_telephone[]" id="contact_telephone_0" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="numeric" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2" id="message_contact_telephone" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
+                        <div class="col-12 col-md-6 col-xl-1 mb-3 d-flex align-items-end justify-content-end contact-action-column">
                             <div class="d-flex justify-content-end mb-1">
                                 <button type="button" class="btn btn-primary" id="add_contact" aria-label="Tambah narahubung"><i class="fa fa-plus" aria-hidden="true"></i></button>
                             </div>

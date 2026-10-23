@@ -262,15 +262,32 @@
         }
 
         #form_company .international-phone-group .phone-country-code {
-            flex: 0 0 104px;
-            width: 104px;
-            max-width: 38%;
+            width: 128px;
             padding-right: 1.5rem;
             font-variant-numeric: tabular-nums;
         }
 
-        #form_company .international-phone-group .international-phone {
+        #form_company .international-phone-group > .select2-container {
+            flex: 0 0 128px;
+            width: 128px !important;
+            min-width: 128px;
+            max-width: 42%;
+        }
+
+        #form_company .contact-phone-column,
+        #form_company .international-phone-group {
             min-width: 0;
+        }
+
+        #form_company .international-phone-group .international-phone {
+            flex: 1 1 0;
+            width: 1%;
+            min-width: 0;
+        }
+
+        #form_company .contact-action-column .btn {
+            min-width: 48px;
+            min-height: 40px;
         }
 
         #form_company .btn {
@@ -300,6 +317,12 @@
         }
 
         @media (max-width: 576px) {
+            #form_company .international-phone-group > .select2-container {
+                flex-basis: 116px;
+                width: 116px !important;
+                min-width: 116px;
+            }
+
             #form_company .card-header h3 {
                 font-size: 1.35rem;
             }

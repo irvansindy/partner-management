@@ -61,6 +61,19 @@
             this.setSelectionRange(filteredPrefix.length, filteredPrefix.length);
         });
 
+        $('#form_company').on('input', '.international-phone', function(event) {
+            if (event.originalEvent && event.originalEvent.isComposing) return;
+
+            const cursor = this.selectionStart;
+            const value = this.value;
+            const filtered = value.replace(/\D/g, '').slice(0, 14);
+            if (filtered === value) return;
+
+            const filteredPrefix = value.slice(0, cursor).replace(/\D/g, '').slice(0, 14);
+            this.value = filtered;
+            this.setSelectionRange(filteredPrefix.length, filteredPrefix.length);
+        });
+
         function syncBusinessClassificationOther() {
             const businessClassification = $('#business_classification').val();
             const isOther = businessClassification === 'Other';

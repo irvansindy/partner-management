@@ -520,32 +520,32 @@
             $('.dynamic_contact').append(`
                 <div class="array_dynamic_contact">
                     <div class="row mt-4">
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_department_${index}">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Department')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_department_${index}" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_position_${index}">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Position')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_position_${index}" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_name_${index}">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Name')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_name_${index}" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-2 mb-3">
                             <label for="contact_email_${index}">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
                             <input type="email" name="contact_email[]" id="contact_email_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
                             <span class="text-danger mt-2" id="message_contact_email_${index}" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-6 col-xl mb-3">
+                        <div class="col-12 col-md-6 col-xl-3 mb-3 contact-phone-column">
                             <label for="contact_telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
+                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="numeric" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2" id="message_contact_telephone_${index}" role="alert"></span>
                         </div>
-                        <div class="col-12 col-md-auto mb-3 d-flex align-items-end justify-content-end">
+                        <div class="col-12 col-md-6 col-xl-1 mb-3 d-flex align-items-end justify-content-end contact-action-column">
                             <div class="d-flex justify-content-end mb-1">
                                 <button type="button" class="btn btn-danger delete_contact" aria-label="Hapus narahubung"><i class="fa fa-minus" aria-hidden="true"></i></button>
                             </div>
