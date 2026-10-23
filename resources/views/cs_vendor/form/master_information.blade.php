@@ -56,7 +56,7 @@
                         name="established_year"
                         id="established_year"
                         class="form-control"
-                        maxlength="7"
+                        maxlength="4"
                         inputmode="numeric"
                         min="1"
                         max="1000000"

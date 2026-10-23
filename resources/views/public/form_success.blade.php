@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submission Successful</title>
+    <title>Registrasi Berhasil</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -54,17 +54,14 @@
                         <div class="success-icon mb-4">
                             <i class="fas fa-check text-white" style="font-size: 50px;"></i>
                         </div>
-                        <h2 class="mb-3">Submission Successful!</h2>
+                        <h2 class="mb-3">Terima Kasih</h2>
                         <p class="text-muted mb-4">
-                            Thank you for submitting your information. We have received your data and will review it
-                            shortly.
+                            Data registrasi berhasil dikirim dan telah kami terima untuk proses peninjauan.
                         </p>
                         <p class="text-muted">
-                            <small>You will be contacted if additional information is needed.</small>
+                            <small>Tim terkait akan menghubungi Anda apabila diperlukan informasi tambahan.</small>
                         </p>
-                        <a href="/" class="btn btn-primary mt-3">
-                            <i class="fas fa-home"></i> Go to Homepage
-                        </a>
+                        <p class="text-muted mb-0"><small>Anda dapat menutup halaman ini.</small></p>
                     </div>
                 </div>
             </div>

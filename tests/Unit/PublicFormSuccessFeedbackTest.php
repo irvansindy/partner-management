@@ -18,6 +18,7 @@ class PublicFormSuccessFeedbackTest extends TestCase
         $this->assertStringContainsString('window.close()', $script);
         $this->assertStringContainsString('setTimeout(attemptCloseTab, 5000)', $script);
         $this->assertStringContainsString("window.open('', '_self')", $script);
-        $this->assertStringContainsString('Silakan tutup tab ini.', $script);
+        $this->assertStringContainsString("route('public.form.success')", $script);
+        $this->assertStringContainsString('window.location.replace(successPageUrl)', $script);
     }
 }

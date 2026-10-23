@@ -46,4 +46,13 @@ class InternationalPhoneInputTest extends TestCase
         $this->assertStringContainsString("on('input', '.international-phone'", $script);
         $this->assertStringContainsString("replace(/\\D/g, '')", $script);
     }
+
+    /** @test */
+    public function disabled_address_phone_fields_are_not_added_to_submission(): void
+    {
+        $script = $this->partnerScript();
+
+        $this->assertStringContainsString(".filter(':not(:disabled)')", $script);
+        $this->assertStringContainsString("closest('.international-phone-group')", $script);
+    }
 }

@@ -79,7 +79,12 @@
                         <input type="text" class="form-control" data-coordinate-search maxlength="500" placeholder="Cari alamat untuk mendapatkan koordinat">
                         <button type="button" class="btn btn-outline-secondary" data-find-coordinate>Cari</button>
                     </div>
+                    <div class="mt-2">
+                        <label data-label="geocoded_address">Alamat ditemukan</label>
+                        <input type="text" name="geocoded_address[]" class="form-control" data-field="geocoded_address" placeholder="Hasil pencarian alamat akan tampil di sini" readonly>
+                    </div>
                     <small class="text-muted" data-coordinate-status>Pencarian peta tidak wajib untuk melanjutkan.</small>
+                    <div class="partner-map mt-3" data-address-map aria-label="Peta lokasi alamat"></div>
                 </div>
             </div>
         </fieldset>
@@ -100,7 +105,17 @@ window.addEventListener('load', function () {
     const regenciesUrl = @json(route('public.form.regencies', ['province' => '__PROVINCE__']));
     const postalCodesUrl = @json(route('public.form.postal-codes', ['regency' => '__REGENCY__']));
     const geocodeUrl = @json(route('forward-map'));
+    const maps = new WeakMap();
     let nextIndex = 0;
+
+    if (typeof L !== 'undefined') {
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+        });
+    }
 
     function field(row, name) {
         return row.querySelector('[data-field="' + name + '"]');
@@ -123,6 +138,7 @@ window.addEventListener('load', function () {
 
     function replaceLocationInput(row, name, asSelect, placeholder) {
         const old = field(row, name);
+        const pendingValue = old.dataset.pendingLocationRestore || old.value;
         if ($(old).hasClass('select2-hidden-accessible')) $(old).select2('destroy');
         const control = document.createElement(asSelect ? 'select' : 'input');
         control.name = name + '[]';
@@ -136,6 +152,7 @@ window.addEventListener('load', function () {
             control.maxLength = name === 'zip_code' ? 20 : 100;
             control.placeholder = placeholder;
         }
+        if (pendingValue) control.dataset.pendingLocationRestore = pendingValue;
         old.replaceWith(control);
         return control;
     }
@@ -149,7 +166,7 @@ window.addEventListener('load', function () {
         items.forEach(function (item) {
             control.add(new Option(label(item), item[valueKey]));
         });
-        control.disabled = false;
+        control.disabled = Boolean(control.closest('[data-address-row][hidden]'));
         $(control).trigger('change.select2');
     }
 
@@ -160,10 +177,56 @@ window.addEventListener('load', function () {
         });
     }
 
+    function restorePendingLocation(control, dispatchChange) {
+        const value = control.dataset.pendingLocationRestore;
+        if (!value) return false;
+        if (control.tagName === 'SELECT' && !Array.from(control.options).some(function (option) { return option.value == value; })) {
+            return false;
+        }
+        control.value = value;
+        delete control.dataset.pendingLocationRestore;
+        $(control).trigger('change.select2');
+        if (dispatchChange) control.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+    }
+
+    function initializeMap(row) {
+        const canvas = row.querySelector('[data-address-map]');
+        if (!canvas || typeof L === 'undefined') return;
+        const map = L.map(canvas).setView([-2.5, 118], 5);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 19
+        }).addTo(map);
+        maps.set(row, { map: map, marker: null });
+    }
+
+    function showCoordinates(row, latitude, longitude) {
+        const state = maps.get(row);
+        const lat = Number(latitude);
+        const lng = Number(longitude);
+        if (!state || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
+        if (state.marker) state.marker.setLatLng([lat, lng]);
+        else state.marker = L.marker([lat, lng]).addTo(state.map);
+        state.map.setView([lat, lng], 16);
+        setTimeout(function () { state.map.invalidateSize(); }, 0);
+    }
+
+    function clearCoordinates(row) {
+        field(row, 'latitude').value = '';
+        field(row, 'longitude').value = '';
+        field(row, 'geocoded_address').value = '';
+        const state = maps.get(row);
+        if (state && state.marker) {
+            state.map.removeLayer(state.marker);
+            state.marker = null;
+        }
+    }
+
     function configureIndonesia(row) {
         const province = replaceLocationInput(row, 'province', true, 'Memuat provinsi...');
         const city = replaceLocationInput(row, 'city', true, 'Pilih provinsi terlebih dahulu');
-        const postal = replaceLocationInput(row, 'zip_code', true, 'Pilih kota/kabupaten terlebih dahulu');
+        let postal = replaceLocationInput(row, 'zip_code', true, 'Pilih kota/kabupaten terlebih dahulu');
         city.disabled = true;
         postal.disabled = true;
         select2(province, 'Pilih provinsi');
@@ -172,11 +235,16 @@ window.addEventListener('load', function () {
 
         loadJson(provincesUrl).then(function (payload) {
             populate(province, payload.data || [], 'id', function (item) { return item.name; });
+            restorePendingLocation(province, true);
         }).catch(function () {
             province.innerHTML = '<option value="">Provinsi tidak dapat dimuat</option>';
         });
 
-        province.addEventListener('change', function () {
+        $(province).on('change', function () {
+            if (postal.tagName !== 'SELECT') {
+                postal = replaceLocationInput(row, 'zip_code', true, 'Pilih kota/kabupaten terlebih dahulu');
+                select2(postal, 'Pilih kode pos');
+            }
             city.innerHTML = '<option value="">Memuat kota/kabupaten...</option>';
             city.disabled = true;
             postal.innerHTML = '<option value="">Pilih kota/kabupaten terlebih dahulu</option>';
@@ -184,12 +252,13 @@ window.addEventListener('load', function () {
             if (!province.value) return;
             loadJson(regenciesUrl.replace('__PROVINCE__', encodeURIComponent(province.value))).then(function (payload) {
                 populate(city, payload.data || [], 'id', function (item) { return item.name; });
+                restorePendingLocation(city, true);
             }).catch(function () {
                 city.innerHTML = '<option value="">Kota/kabupaten tidak dapat dimuat</option>';
             });
         });
 
-        city.addEventListener('change', function () {
+        $(city).on('change', function () {
             postal.innerHTML = '<option value="">Memuat kode pos...</option>';
             postal.disabled = true;
             if (!city.value) return;
@@ -197,11 +266,15 @@ window.addEventListener('load', function () {
                 const items = payload.data || [];
                 if (!items.length) {
                     postal.innerHTML = '<option value="">Kode pos tidak tersedia</option>';
+                    postal = replaceLocationInput(row, 'zip_code', false, 'Masukkan kode pos');
+                    postal.inputMode = 'numeric';
+                    restorePendingLocation(postal, false);
                     return;
                 }
                 populate(postal, items, 'postal_code', function (item) {
                     return item.postal_code + ' — ' + item.district + ', ' + item.village;
                 });
+                restorePendingLocation(postal, false);
             }).catch(function () {
                 postal.innerHTML = '<option value="">Kode pos tidak dapat dimuat</option>';
             });
@@ -228,9 +301,10 @@ window.addEventListener('load', function () {
         rows.appendChild(row);
         const country = field(row, 'country_code');
         select2(country, 'Pilih negara');
-        country.addEventListener('change', function () { configureCountry(row); });
+        $(country).on('change', function () { configureCountry(row); });
         configureCountry(row);
         initializeInternationalPhoneInputs(row);
+        initializeMap(row);
         if (role === 'branch') row.querySelector('[data-remove-address]').hidden = false;
         return row;
     }
@@ -240,6 +314,7 @@ window.addEventListener('load', function () {
         const hidden = sameAsLegal.checked;
         row.hidden = hidden;
         row.querySelectorAll('input, select, button').forEach(function (control) { control.disabled = hidden; });
+        if (!hidden && maps.has(row)) setTimeout(function () { maps.get(row).map.invalidateSize(); }, 0);
     }
 
     rows.addEventListener('click', function (event) {
@@ -253,6 +328,7 @@ window.addEventListener('load', function () {
         const status = row.querySelector('[data-coordinate-status]');
         if (!query) {
             status.textContent = 'Masukkan alamat yang akan dicari.';
+            showPartnerToast('Pencarian Alamat', 'Masukkan alamat yang akan dicari.', 'warning');
             return;
         }
         search.disabled = true;
@@ -267,9 +343,15 @@ window.addEventListener('load', function () {
         }).then(function (payload) {
             field(row, 'latitude').value = payload.data.latitude;
             field(row, 'longitude').value = payload.data.longitude;
+            field(row, 'geocoded_address').value = payload.data.display_name || query;
+            field(row, 'geocoded_address').dispatchEvent(new Event('input', { bubbles: true }));
             status.textContent = 'Koordinat ditemukan: ' + payload.data.latitude + ', ' + payload.data.longitude;
+            showCoordinates(row, payload.data.latitude, payload.data.longitude);
+            showPartnerToast('Pencarian Alamat', 'Alamat berhasil ditemukan.', 'success');
         }).catch(function () {
+            clearCoordinates(row);
             status.textContent = 'Koordinat tidak ditemukan. Form tetap dapat dilanjutkan.';
+            showPartnerToast('Pencarian Alamat', 'Alamat tidak ditemukan.', 'danger');
         }).finally(function () { search.disabled = false; });
     });
 
@@ -277,6 +359,24 @@ window.addEventListener('load', function () {
         addAddress('branch', 'Alamat Cabang');
     });
     sameAsLegal.addEventListener('change', setOperationalVisibility);
+    rows.addEventListener('partner:draft-location-ready', function (event) {
+        const row = event.target.closest('[data-address-row]');
+        if (!row || field(row, 'country_code').value !== 'ID') return;
+        restorePendingLocation(field(row, 'province'), true);
+        restorePendingLocation(field(row, 'city'), true);
+        restorePendingLocation(field(row, 'zip_code'), false);
+    });
+    document.addEventListener('partner:draft-restored', function () {
+        rows.querySelectorAll('[data-address-row]').forEach(function (row) {
+            showCoordinates(row, field(row, 'latitude').value, field(row, 'longitude').value);
+        });
+    });
+    document.addEventListener('partner:address-step-shown', function () {
+        rows.querySelectorAll('[data-address-row]:not([hidden])').forEach(function (row) {
+            const state = maps.get(row);
+            if (state) setTimeout(function () { state.map.invalidateSize(); }, 0);
+        });
+    });
     addAddress('legal', 'Alamat Legal (sesuai NPWP)');
     addAddress('operational', 'Alamat Operasional');
     setOperationalVisibility();

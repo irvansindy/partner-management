@@ -139,6 +139,7 @@
                 .find("input, textarea, select")
                 .each(function() {
                     if (!this.name) return;
+                    if (this.disabled) return;
                     if (this.type === "file") return;
                     const cleanFieldName = this.name.replace('[]', '');
                     if (DRAFT_EXCLUDED_FIELDS.has(cleanFieldName)) return;
@@ -178,7 +179,7 @@
             data['survey_form_switch'] = $('#survey_form_switch').is(':checked');
 
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            console.log("📝 Form draft saved:", data);
+            // console.log("📝 Form draft saved:", data);
         }
 
         /* RESTORE FORM - EXCLUDE SURVEY FIELDS */
@@ -193,7 +194,7 @@
                 sessionStorage.removeItem(STORAGE_KEY);
                 return;
             }
-            console.log("🔄 Restoring form:", data);
+            // console.log("🔄 Restoring form:", data);
 
             for (let key in data) {
                 const value = data[key];
@@ -226,8 +227,11 @@
                             let $el = $els.eq(index);
                             const type = $el.attr("type");
 
-                            if (key === "city") {
-                                $el.attr('data-pending-city-restore', val);
+                            if (["province", "city", "zip_code"].includes(key)) {
+                                $el.attr('data-pending-location-restore', val);
+                                $el.closest('[data-address-row]').get(0)?.dispatchEvent(
+                                    new CustomEvent('partner:draft-location-ready', { bubbles: true })
+                                );
                                 return;
                             }
 
@@ -272,6 +276,8 @@
                     });
                 }
             }
+
+            document.dispatchEvent(new Event('partner:draft-restored'));
         }
 
         // Event listener untuk auto-save (EXCLUDE survey fields)
@@ -343,7 +349,7 @@
         function clearSavedForm() {
             sessionStorage.removeItem(STORAGE_KEY);
             sessionStorage.removeItem(STORAGE_KEY + '_survey');
-            console.log("Form draft cleared from session storage");
+            // console.log("Form draft cleared from session storage");
         }
 
         // ============================================
@@ -371,7 +377,7 @@
                     // Restore data survey dari localStorage jika ada
                     restoreSurveyData();
 
-                    console.log('✅ Survey form added to DOM');
+                    // console.log('✅ Survey form added to DOM');
                 } else {
                     // HIDE: Konfirmasi dan remove survey form
                     Swal.fire({
@@ -391,7 +397,7 @@
                             // Remove dari DOM
                             $('#survey_form_container').slideUp(300, function() {
                                 $(this).empty();
-                                console.log('❌ Survey form removed from DOM');
+                                // console.log('❌ Survey form removed from DOM');
                             });
 
                             $('#switch_label').text('Show Survey');
@@ -449,7 +455,7 @@
                 });
 
                 sessionStorage.setItem(STORAGE_KEY + '_survey', JSON.stringify(surveyData));
-                console.log('💾 Survey data saved separately:', surveyData);
+                // console.log('💾 Survey data saved separately:', surveyData);
             }
 
             // Fungsi untuk restore data survey
@@ -464,7 +470,7 @@
                     sessionStorage.removeItem(STORAGE_KEY + '_survey');
                     return;
                 }
-                console.log('🔄 Restoring survey data:', surveyData);
+                // console.log('🔄 Restoring survey data:', surveyData);
 
                 setTimeout(function() {
                     for (let key in surveyData) {
@@ -581,7 +587,7 @@
             }
 
             function isRequiredFieldEmpty($field) {
-                if ($field.is(':disabled')) {
+                if ($field.is(':disabled') || $field.closest('[data-address-row][hidden]').length) {
                     return false;
                 }
 

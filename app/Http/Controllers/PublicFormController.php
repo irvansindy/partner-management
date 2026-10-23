@@ -430,9 +430,15 @@ class PublicFormController extends Controller
             if ($country['code'] !== 'ID') continue;
             $province = Provinces::find($validated['province'][$index]);
             $regency = $province ? Regencies::where('province_id', $province->id)->find($validated['city'][$index]) : null;
-            $postal = $regency ? PostalCode::where('province_id', $province->id)->where('regency_id', $regency->id)->where('postal_code', $validated['zip_code'][$index])->exists() : false;
-            if (!$province || !$regency || !$postal) throw ValidationException::withMessages(["zip_code.$index" => 'Relasi provinsi, kota, dan kode pos tidak valid.']);
-            $validated['province'][$index] = $province->name;
+            if (!$province || !$regency) {
+                throw ValidationException::withMessages(["city.$index" => 'Relasi provinsi dan kota/kabupaten tidak valid.']);
+            }
+
+            $postalCodes = PostalCode::where('province_id', $province->id)->where('regency_id', $regency->id);
+            if ($postalCodes->exists() && !(clone $postalCodes)->where('postal_code', $validated['zip_code'][$index])->exists()) {
+                throw ValidationException::withMessages(["zip_code.$index" => 'Kode pos tidak sesuai dengan kota/kabupaten yang dipilih.']);
+            }
+            $validated['province'][$index] = (string) $province->id;
             $validated['city'][$index] = $regency->name;
         }
     }

@@ -69,13 +69,13 @@
         ['contact_telephone', 'telephone', 'fax'].forEach(function (fieldName) {
             const inputName = fieldName + '[]';
             const countryCodeName = fieldName + '_country_code[]';
-            const $inputs = $('#form_company input[name="' + inputName + '"]');
-            const $countryCodes = $('#form_company select[name="' + countryCodeName + '"]');
+            const $inputs = $('#form_company input[name="' + inputName + '"]').filter(':not(:disabled)');
             formData.delete(inputName);
             formData.delete(countryCodeName);
 
-            $inputs.each(function (index) {
-                const countryCode = $countryCodes.eq(index).val() || '+62';
+            $inputs.each(function () {
+                const countryCode = $(this).closest('.international-phone-group')
+                    .find('select[name="' + countryCodeName + '"]').val() || '+62';
                 const localNumber = this.value.replace(/\D/g, '').replace(/^0/, '');
                 formData.append(inputName, localNumber ? countryCode + localNumber : '');
             });
@@ -1128,6 +1128,7 @@
         // ENHANCED SUBMIT HANDLER
         // ============================================
         var isPartnerFormSubmitting = false;
+        var successPageUrl = @json(route('public.form.success'));
 
         function attemptCloseTab() {
             Swal.close();
@@ -1141,12 +1142,7 @@
             setTimeout(function() {
                 if (window.closed) return;
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Submit Berhasil',
-                    text: 'Data berhasil dikirim. Browser memblokir penutupan otomatis. Silakan tutup tab ini.',
-                    allowOutsideClick: false
-                });
+                window.location.replace(successPageUrl);
             }, 250);
         }
 
@@ -1229,7 +1225,7 @@
                             icon: 'success',
                             title: 'Submit Berhasil',
                             html: (response.meta.message || 'Data berhasil disimpan') +
-                                '<br><small>Tab akan ditutup dalam <strong id="close_countdown">5</strong> detik.</small>',
+                                '<br><small>Tab akan ditutup dalam <strong id="close_countdown">5</strong> detik. Jika browser memblokirnya, halaman akan dialihkan.</small>',
                             timer: 5000,
                             timerProgressBar: true,
                             showConfirmButton: false,

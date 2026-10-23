@@ -43,7 +43,7 @@ class PublicFormAddressSubmissionTest extends TestCase
             'telephone' => ['+62812345678', '+6512345678'], 'fax' => ['+62812345678', '+6512345678'],
         ]));
 
-        $this->assertSame(['Banten', 'Central Region'], $validated['province']);
+        $this->assertSame([(string) $province->id, 'Central Region'], $validated['province']);
         $this->assertSame(['Tangerang', 'Singapore'], $validated['city']);
     }
 
@@ -52,6 +52,38 @@ class PublicFormAddressSubmissionTest extends TestCase
     {
         $this->expectException(ValidationException::class);
         $this->validateSubmission($this->payload(['country_code' => ['ID'], 'address_role' => ['legal'], 'latitude' => [], 'longitude' => []]));
+    }
+
+    /** @test */
+    public function it_accepts_a_manual_postal_code_when_the_regency_has_no_postal_master_data(): void
+    {
+        $province = Provinces::create(['name' => 'Banten']);
+        $regency = Regencies::create(['province_id' => $province->id, 'name' => 'Tangerang']);
+
+        $validated = $this->validateSubmission($this->payload([
+            'province' => [(string) $province->id],
+            'city' => [(string) $regency->id],
+            'zip_code' => ['15325'],
+        ]));
+
+        $this->assertSame([(string) $province->id], $validated['province']);
+        $this->assertSame(['Tangerang'], $validated['city']);
+        $this->assertSame(['15325'], $validated['zip_code']);
+    }
+
+    /** @test */
+    public function it_rejects_a_postal_code_outside_the_regency_when_master_data_exists(): void
+    {
+        $province = Provinces::create(['name' => 'Banten']);
+        $regency = Regencies::create(['province_id' => $province->id, 'name' => 'Tangerang']);
+        PostalCode::create(['province_id' => $province->id, 'regency_id' => $regency->id, 'district' => 'Pinang', 'village' => 'Kunciran', 'postal_code' => '15144']);
+
+        $this->expectException(ValidationException::class);
+        $this->validateSubmission($this->payload([
+            'province' => [(string) $province->id],
+            'city' => [(string) $regency->id],
+            'zip_code' => ['99999'],
+        ]));
     }
 
     private function payload(array $overrides): array
