@@ -41,6 +41,14 @@ class EventServiceProvider extends ServiceProvider
 
             $user = auth()->user();
 
+            if ($user && $user->hasRole('super-admin')) {
+                $event->menu->add([
+                    'text' => 'Import Kode Pos',
+                    'route' => 'admin.postal-codes.import.form',
+                    'icon' => 'fas fa-map-marker-alt',
+                ]);
+            }
+
             // Ambil semua permission dari role-role yang dimiliki user
             $rolePermissions = $user->roles
                 ->flatMap(function ($role) {

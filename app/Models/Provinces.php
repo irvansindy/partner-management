@@ -18,6 +18,10 @@ class Provinces extends Model
     {
         return $this->hasMany(Regencies::class, 'province_id', 'id');
     }
+    public function postalCodes()
+    {
+        return $this->hasMany(PostalCode::class, 'province_id');
+    }
     // relasi ke alamat perusahaan berdasarkan nama provinsi
     public function companyAddresses()
     {

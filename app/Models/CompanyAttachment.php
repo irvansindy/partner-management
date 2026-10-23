@@ -11,9 +11,15 @@ class CompanyAttachment extends Model
     protected $fillable = [
         'company_id',
         'filename',
+        'original_name',
         'filepath',
+        'storage_disk',
         'filesize',
         'filetype',
+        'mime_type',
+        'width',
+        'height',
+        'sha256',
         'sort_order'
     ];
 
@@ -22,9 +28,8 @@ class CompanyAttachment extends Model
         return $this->belongsTo(CompanyInformation::class);
     }
 
-    // Accessor untuk get full URL
     public function getFileUrlAttribute()
     {
-        return asset('storage/' . $this->filepath);
+        return route('admin.company-attachments.show', $this);
     }
 }

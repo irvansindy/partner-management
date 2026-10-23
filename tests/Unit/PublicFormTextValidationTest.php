@@ -43,23 +43,34 @@ class PublicFormTextValidationTest extends TestCase
             'department with number' => ['contact_department', ['ICT 2']],
             'position with symbol' => ['contact_position', ['Manager!']],
             'contact name with number' => ['contact_name', ['Tasya 2']],
-            'bank name with unsafe symbol' => ['bank_name', ['Bank <ABC>']],
+            'bank name with unsupported symbol' => ['bank_name', ['Bank_ABC']],
             'account name with number' => ['account_name', ['Tasya 2']],
+            'employee count below minimum' => ['total_employee', 0],
+            'employee count above maximum' => ['total_employee', 1000001],
+            'company name over limit' => ['company_name', str_repeat('A', 256)],
+            'address over limit' => ['address', [str_repeat('A', 1001)]],
         ];
     }
 
     /** @test */
-    public function it_accepts_international_bank_names_with_common_numbers_and_symbols(): void
+    public function it_accepts_boundary_values_unicode_names_and_supported_bank_punctuation(): void
     {
-        foreach (["Bank 24/7", "S&P Global Bank", "O'Bank (Europe), N.A.", 'Bank A+B-C'] as $bankName) {
-            $validated = $this->validateSubmission(['bank_name' => [$bankName]]);
-            $this->assertSame($bankName, $validated['bank_name'][0]);
-        }
+        $validated = $this->validateSubmission([
+            'company_name' => 'Maju Bersama',
+            'total_employee' => 1000000,
+            'liable_person' => ['José Santoso'],
+            'bank_name' => ["Bank & Trust (Asia) / Unit+2, Ltd.'"],
+            'address' => [str_repeat('A', 1000)],
+        ]);
+
+        $this->assertSame(1000000, $validated['total_employee']);
+        $this->assertSame(["Bank & Trust (Asia) / Unit+2, Ltd.'"], $validated['bank_name']);
     }
 
     private function validateSubmission(array $overrides): array
     {
         $request = Request::create('/', 'POST', array_replace([
+            'idempotency_key' => '11111111-1111-4111-8111-111111111111',
             'company_type' => 'vendor',
             'company_name' => 'PT Pralon',
             'company_group_name' => 'Pralon Group',
@@ -75,14 +86,16 @@ class PublicFormTextValidationTest extends TestCase
             'contact_email' => ['tasya@example.com'],
             'contact_telephone' => ['+628123456789'],
             'address' => ['Address'],
-            'country' => ['Indonesia'],
-            'province' => ['1'],
-            'city' => ['1'],
-            'zip_code' => ['12122'],
+            'address_role' => ['legal'],
+            'country_code' => ['SG'],
+            'country' => ['Singapore'],
+            'province' => ['Central Region'],
+            'city' => ['Singapore'],
+            'zip_code' => ['018956'],
             'telephone' => ['+628123456789'],
             'fax' => ['+628123456789'],
-            'latitude' => '-6.2244004',
-            'longitude' => '106.6530741',
+            'latitude' => [null],
+            'longitude' => [null],
             'bank_name' => ['Bank Central Asia'],
             'account_name' => ['Tasya'],
             'account_number' => ['9876456654675765'],

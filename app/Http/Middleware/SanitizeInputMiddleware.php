@@ -14,6 +14,7 @@ use App\Models\BlockedRequest;
 use App\Models\RequestLog;
 use App\Models\Notifications;
 use App\Events\SecurityAlertEvent;
+use App\Support\SecurityLogSanitizer;
 class SanitizeInputMiddleware
 {
     /**
@@ -32,9 +33,6 @@ class SanitizeInputMiddleware
             ]);
             abort(400, 'Bad Request: Header tidak valid');
         }
-
-        // 📈 Log semua request ke DB (tidak hanya blocked)
-        $this->logRequest($request);
 
         // 🚨 Rate limit per IP
         $rateKey = 'global:' . $ip;
@@ -87,11 +85,18 @@ class SanitizeInputMiddleware
         // 🚀 Next middleware/controller
         $response = $next($request);
 
+        $request->attributes->set('response_status', $response->getStatusCode());
+        $this->logRequest($request);
+
         // 🛡️ Security headers
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'no-referrer');
+        $response->headers->set(
+            'Content-Security-Policy',
+            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:; connect-src 'self' https:"
+        );
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
         return $response;
@@ -142,13 +147,22 @@ class SanitizeInputMiddleware
      */
     private function logRequest(Request $request)
     {
-        $logData = SecurityLogHelper::createLogData('REQUEST', [
-            'method'  => $request->method(),
-            'headers' => $request->headers->all(),
-            'query'   => $request->query(),
-            'body'    => $request->all(),
-        ]);
+        $metadata = app(SecurityLogSanitizer::class)->requestMetadata($request);
 
-        RequestLog::create($logData);
+        try {
+            RequestLog::create([
+                'type' => 'REQUEST',
+                'ip' => null,
+                'user_agent' => ['summary' => $metadata['user_agent']],
+                'url' => $metadata['route'],
+                'extra' => $metadata,
+                'time' => now(),
+            ]);
+        } catch (\Throwable $error) {
+            Log::warning('Request audit persistence failed', [
+                'request_id' => $metadata['request_id'],
+                'exception' => get_class($error),
+            ]);
+        }
     }
 }

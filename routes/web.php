@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\ApprovalProcessController;
 use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\CompanyImportController;
 use App\Http\Controllers\CompanyExportController;
+use App\Http\Controllers\Admin\PostalCodeImportController;
+use App\Http\Controllers\Admin\CompanyAttachmentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,18 +68,36 @@ Route::post('forward-map', [GeocodeController::class,'forward'])->name('forward-
 // PUBLIC ROUTES - Form Submission
 // ========================================
 Route::prefix('f')->name('public.form.')->group(function () {
-    Route::get('/{token}', [PublicFormController::class, 'show'])->name('show');
-    Route::post('/{token}', [PublicFormController::class, 'submit'])->name('submit');
+    Route::get('/{token}', [PublicFormController::class, 'show'])
+        ->middleware('throttle:public-form-view')
+        ->name('show');
+    Route::post('/{token}', [PublicFormController::class, 'submit'])
+        ->middleware('throttle:public-form-submit')
+        ->name('submit');
 });
-Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner')->middleware('public_form');
-
 Route::get('/form/success', [PublicFormController::class, 'success'])->name('public.form.success');
 Route::get('/fetch-provinces', [PartnerController::class,'fetchProvinces'])->name('fetch-provinces');
 Route::get('/fetch-regencies', [PartnerController::class,'fetchRegencies'])->name('fetch-regencies');
+Route::middleware('throttle:60,1')->prefix('address-master')->name('public.form.')->group(function () {
+    Route::get('provinces', [PublicFormController::class, 'provinces'])->name('provinces');
+    Route::get('provinces/{province}/regencies', [PublicFormController::class, 'regencies'])->name('regencies');
+    Route::get('regencies/{regency}/postal-codes', [PublicFormController::class, 'postalCodes'])->name('postal-codes');
+});
+
+Route::middleware(['auth', 'role:super-admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('postal-codes/import', [PostalCodeImportController::class, 'show'])->name('postal-codes.import.form');
+    Route::post('postal-codes/import', [PostalCodeImportController::class, 'store'])->name('postal-codes.import.store');
+    Route::get('postal-codes/import/errors', [PostalCodeImportController::class, 'errors'])->name('postal-codes.import.errors');
+});
 // ========================================
 // ADMIN ROUTES - Form Management
 // ========================================
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('company-attachments/{companyAttachment}', [CompanyAttachmentController::class, 'show'])
+        ->name('company-attachments.show');
+    Route::get('company-attachments/{companyAttachment}/download', [CompanyAttachmentController::class, 'download'])
+        ->name('company-attachments.download');
+
     // Form Links Management
     Route::resource('form-links', FormLinkController::class);
     Route::post('form-links/{formLink}/toggle-status', [FormLinkController::class, 'toggleStatus'])

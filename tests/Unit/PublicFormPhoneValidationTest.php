@@ -28,6 +28,7 @@ class PublicFormPhoneValidationTest extends TestCase
     private function validateSubmission(array $phones): array
     {
         $request = Request::create('/', 'POST', array_merge([
+            'idempotency_key' => '11111111-1111-4111-8111-111111111111',
             'company_type' => 'vendor',
             'company_name' => 'Pralon',
             'liable_person' => ['Person'],
@@ -40,12 +41,14 @@ class PublicFormPhoneValidationTest extends TestCase
             'contact_name' => ['Tasya'],
             'contact_email' => ['tasya@example.com'],
             'address' => ['Address'],
-            'country' => ['Indonesia'],
-            'province' => ['1'],
-            'city' => ['1'],
-            'zip_code' => ['12122'],
-            'latitude' => '-6.2244004',
-            'longitude' => '106.6530741',
+            'address_role' => ['legal'],
+            'country_code' => ['SG'],
+            'country' => ['Singapore'],
+            'province' => ['Central Region'],
+            'city' => ['Singapore'],
+            'zip_code' => ['018956'],
+            'latitude' => [null],
+            'longitude' => [null],
             'bank_name' => ['OCBC'],
             'account_name' => ['Tasya'],
             'account_number' => ['9876456654675765'],

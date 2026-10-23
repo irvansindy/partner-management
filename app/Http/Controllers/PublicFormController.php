@@ -10,22 +10,35 @@ use App\Models\CompanyContact;
 use App\Models\CompanyLiablePerson;
 use App\Models\SalesSurvey;
 use App\Models\ProductCustomer;
-use App\Models\CompanyAttachment;
 use App\Services\ApprovalService; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Helpers\FormatResponseJson;
+use App\Rules\PublicHttpsUrl;
+use App\Support\CountryCatalog;
+use App\Models\Provinces;
+use App\Models\Regencies;
+use App\Models\PostalCode;
+use Illuminate\Validation\ValidationException;
+use App\Services\CompanyAttachmentService;
+use App\Support\SecurityLogSanitizer;
+use App\Exceptions\PublicFormClosedException;
+use App\Services\PublicFormSubmissionService;
 
 class PublicFormController extends Controller
 {
     protected $approvalService; // ✅ ADD THIS
+    protected $attachmentService;
+    protected $submissionService;
 
     // ✅ ADD CONSTRUCTOR
-    public function __construct(ApprovalService $approvalService)
+    public function __construct(ApprovalService $approvalService, CompanyAttachmentService $attachmentService = null, PublicFormSubmissionService $submissionService = null)
     {
         $this->approvalService = $approvalService;
+        $this->attachmentService = $attachmentService ?: app(CompanyAttachmentService::class);
+        $this->submissionService = $submissionService ?: app(PublicFormSubmissionService::class);
     }
 
     public function show($token)
@@ -39,35 +52,34 @@ class PublicFormController extends Controller
             ]);
         }
 
-        return view('public.form_index', compact('formLink'));
+        return view('public.form_index', [
+            'formLink' => $formLink,
+            'countries' => CountryCatalog::all(),
+        ]);
     }
 
     public function submit(Request $request, $token)
     {
         $formLink = FormLink::where('token', $token)->firstOrFail();
 
-        if (!$formLink->canAcceptSubmission()) {
-            return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
+        $validated = $this->validateSubmission($request, $formLink->form_type);
+        $uploads = $request->file('input-multiple-file', []);
+        $attachmentMetadata = [];
+        foreach ($uploads as $file) {
+            $attachmentMetadata[] = $this->attachmentService->validate($file);
         }
 
-        // Validasi data
-        $validated = $this->validateSubmission($request, $formLink->form_type);
-
-        DB::beginTransaction();
+        $storedAttachments = [];
         try {
-            $formLink = FormLink::whereKey($formLink->id)
-                ->lockForUpdate()
-                ->firstOrFail();
-
-            if (!$formLink->canAcceptSubmission()) {
-                DB::rollBack();
-
-                return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
-            }
+            $this->submissionService->submit(
+                $formLink,
+                $validated['idempotency_key'],
+                function (FormLink $formLink, string $idempotencyKey) use ($validated, $request, $uploads, $attachmentMetadata, &$storedAttachments) {
 
             // 1. Simpan Company Information
             $company = CompanyInformation::create([
                 'form_link_id' => $formLink->id,
+                'idempotency_key' => $idempotencyKey,
                 'user_id' => 0,
                 'name' => $validated['company_name'],
                 'group_name' => $validated['company_group_name'] ?? null,
@@ -118,7 +130,9 @@ class PublicFormController extends Controller
                 foreach ($validated['address'] as $index => $address) {
                     $addressData = [
                         'company_id' => $company->id,
+                        'address_role' => $validated['address_role'][$index] ?? null,
                         'address' => $address,
+                        'country_code' => $validated['country_code'][$index] ?? null,
                         'country' => $validated['country'][$index] ?? null,
                         'province' => $validated['province'][$index] ?? null,
                         'city' => $validated['city'][$index] ?? null,
@@ -127,11 +141,8 @@ class PublicFormController extends Controller
                         'fax' => $validated['fax'][$index] ?? null,
                     ];
 
-                    // Address index 1 (kedua) memiliki lat/long dari map
-                    if ($index == 1) {
-                        $addressData['latitude'] = $validated['latitude'] ?? null;
-                        $addressData['longitude'] = $validated['longitude'] ?? null;
-                    }
+                    $addressData['latitude'] = $validated['latitude'][$index] ?? null;
+                    $addressData['longitude'] = $validated['longitude'][$index] ?? null;
 
                     CompanyAddress::create($addressData);
                 }
@@ -187,36 +198,14 @@ class PublicFormController extends Controller
             }
 
             // 7. Handle File Uploads
-            if ($request->hasFile('input-multiple-file')) {
-                $sortOrder = 1;
-                foreach ($request->file('input-multiple-file') as $file) {
-                    $originalName = $file->getClientOriginalName();
-                    $safeName = pathinfo($originalName, PATHINFO_FILENAME);
-                    $safeExtension = strtolower($file->getClientOriginalExtension());
-                    $safeFilename = trim(Str::ascii($safeName) ?: 'attachment');
-
-                    if ($safeExtension !== '') {
-                        $safeFilename .= '.' . $safeExtension;
-                    }
-
-                    $storedFilename = time() . '_' . $sortOrder . '_' . $safeFilename;
-                    $path = $file->storeAs('company_attachments', $storedFilename, 'public');
-
-                    CompanyAttachment::create([
-                        'company_id' => $company->id,
-                        'filename' => $safeFilename,
-                        'filepath' => $path,
-                        'filesize' => $file->getSize(),
-                        'filetype' => $file->getMimeType(),
-                        'sort_order' => $sortOrder,
-                    ]);
-
-                    $sortOrder++;
-                }
+            foreach ($uploads as $index => $file) {
+                $storedAttachments[] = $this->attachmentService->store(
+                    $company,
+                    $file,
+                    $attachmentMetadata[$index],
+                    $index + 1
+                );
             }
-
-            // 8. Increment submission count
-            $formLink->incrementSubmissionCount();
 
             // ✅ ============================================
             // 9. CREATE APPROVAL PROCESS
@@ -231,24 +220,34 @@ class PublicFormController extends Controller
                 }
             } catch (\Exception $e) {
                 // Log error but don't fail the entire transaction
-                Log::error("❌ Failed to create approval for company ID: {$company->id}. Error: " . $e->getMessage());
+                Log::error("Failed to create approval for company ID: {$company->id}", [
+                    'exception' => get_class($e),
+                ]);
             }
 
-            DB::commit();
+                    return $company;
+                }
+            );
 
             return FormatResponseJson::success(true, 'Data berhasil dikirim! Terima kasih.');
 
+        } catch (PublicFormClosedException $e) {
+            return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('❌ ROLLBACK: ' . $e->getMessage());
-            Log::error('❌ FILE: ' . $e->getFile() . ' LINE: ' . $e->getLine()); // ← TAMBAH INI
-            Log::error('❌ TRACE: ' . $e->getTraceAsString());
-            Log::error('Form submission error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'request_data' => $request->except(['input-multiple-file', '_token'])
-            ]);
+            $this->attachmentService->deleteStored($storedAttachments);
+            $requestId = (string) Str::uuid();
+            $request->attributes->set('request_id', $requestId);
+            Log::error(
+                'Public form submission failed',
+                app(SecurityLogSanitizer::class)->exceptionContext($e, $request)
+            );
 
-            return FormatResponseJson::error(false, $e->getMessage(), 500);
+            return FormatResponseJson::error(
+                false,
+                'Gagal memproses formulir. Silakan coba lagi. | Failed to process the form. Please try again.',
+                500,
+                $requestId
+            );
         }
     }
 
@@ -257,32 +256,51 @@ class PublicFormController extends Controller
         return view('public.form_success');
     }
 
+    public function provinces() { return response()->json(['data' => Provinces::orderBy('name')->get(['id','name'])]); }
+    public function regencies($province) { return response()->json(['data' => Regencies::where('province_id', $province)->orderBy('name')->get(['id','name'])]); }
+    public function postalCodes($regency) { return response()->json(['data' => PostalCode::where('regency_id', $regency)->orderBy('postal_code')->get(['id','district','village','postal_code'])]); }
+
     private function validateSubmission(Request $request, $formType)
     {
+        if ($request->filled('website_address')) {
+            $request->merge([
+                'website_address' => PublicHttpsUrl::normalize($request->input('website_address')),
+            ]);
+        }
+
         $rules = [
+            'idempotency_key' => 'required|uuid',
             // Master Information
             'company_type' => 'required|in:vendor,customer',
             'company_name' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'company_group_name' => 'nullable|string|max:255|regex:/^[\p{L} ]+$/u',
             'established_year' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'total_employee' => 'nullable|integer|min:1',
+            'total_employee' => 'nullable|integer|min:1|max:1000000',
 
             // Liable Persons
+            'liable_person' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'liable_position' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'nik' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'liable_person.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'liable_position.*' => 'required|string|max:255',
             'nik.*' => 'required|digits_between:1,16',
 
             // Business
             'business_classification' => 'required|string|max:255',
-            'business_classification_detail' => 'nullable|string',
+            'business_classification_detail' => 'nullable|string|max:1000',
             'register_number_as_in_tax_invoice' => 'required|string|max:255',
-            'website_address' => 'nullable|url|max:255',
+            'website_address' => ['nullable', 'string', 'max:255', new PublicHttpsUrl()],
             'system_management' => 'nullable|string|max:255',
             'email_address' => 'nullable|email|max:255',
             'credit_limit' => 'nullable|numeric|min:0',
             'term_of_payment' => 'nullable|string|max:50',
 
             // Contacts
+            'contact_department' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_position' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_name' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_email' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'contact_telephone' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'contact_department.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'contact_position.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'contact_name.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
@@ -290,23 +308,40 @@ class PublicFormController extends Controller
             'contact_telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
 
             // Addresses
-            'address.*' => 'required|string',
+            'address_role' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'address' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'country_code' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'country' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'province' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'city' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'zip_code' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'telephone' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'fax' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'latitude' => 'nullable|array|max:' . config('public_form.max_repeat_rows', 10),
+            'longitude' => 'nullable|array|max:' . config('public_form.max_repeat_rows', 10),
+            'address_role.*' => 'required|in:legal,operational,branch',
+            'address.*' => 'required|string|max:1000',
+            'country_code.*' => 'required|string|size:2',
             'country.*' => 'required|string|max:100',
             'province.*' => 'required|string|max:100',
             'city.*' => 'required|string|max:100',
-            'zip_code.*' => 'required|digits:5',
+            'zip_code.*' => 'required|string|max:20',
             'telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
             'fax.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude.*' => 'nullable|numeric|between:-90,90',
+            'longitude.*' => 'nullable|numeric|between:-180,180',
 
             // Banks
+            'bank_name' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'account_name' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'account_number' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'bank_name.*' => ['required', 'string', 'max:255', "regex:~^[\\p{L}\\p{N} .,&'()/+\\-]+$~u"],
             'account_name.*' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'account_number.*' => 'required|digits_between:1,16',
 
             // Files
-            'input-multiple-file.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'input-multiple-file' => 'nullable|array|max:' . config('company_attachments.max_files', 10),
+            'input-multiple-file.*' => 'nullable|file|max:' . (int) ceil(config('company_attachments.max_bytes', 5 * 1024 * 1024) / 1024),
         ];
 
         if ($formType === 'customer') {
@@ -315,6 +350,9 @@ class PublicFormController extends Controller
                 'rental_year' => 'nullable|integer|min:1900|max:' . date('Y'),
                 'survey_pick_up' => 'nullable|string|max:255',
                 'survey_truck' => 'nullable|string|max:255',
+                'product_survey' => 'nullable|array|max:' . config('public_form.max_survey_rows', 20),
+                'merk_survey' => 'nullable|array|max:' . config('public_form.max_survey_rows', 20),
+                'distributor_survey' => 'nullable|array|max:' . config('public_form.max_survey_rows', 20),
                 'product_survey.*' => 'nullable|string|max:255',
                 'merk_survey.*' => 'nullable|string|max:255',
                 'distributor_survey.*' => 'nullable|string|max:255',
@@ -324,7 +362,6 @@ class PublicFormController extends Controller
         $messages = [
             'company_type.required' => 'Jenis perusahaan wajib diisi. | Company type is required.',
             'business_classification.required' => 'Klasifikasi bisnis wajib diisi. | Business classification is required.',
-            'website_address.url' => 'Alamat website harus berupa URL yang valid. | Website address must be a valid URL.',
             'email_address.email' => 'Format alamat email tidak valid. | Email address format is invalid.',
             'contact_email.*.email' => 'Format email kontak tidak valid. | Contact email format is invalid.',
             'contact_telephone.*.regex' => 'Format atau panjang nomor telepon kontak tidak valid. | Contact telephone format or length is invalid.',
@@ -348,7 +385,53 @@ class PublicFormController extends Controller
             // ... (rest of messages sama)
         ];
 
-        return $request->validate($rules, $messages);
+        $validated = $request->validate($rules, $messages);
+        $this->validateAlignedFields($validated, ['liable_person', 'liable_position', 'nik']);
+        $this->validateAlignedFields($validated, ['contact_department', 'contact_position', 'contact_name', 'contact_email', 'contact_telephone']);
+        $this->validateAlignedFields($validated, ['bank_name', 'account_name', 'account_number']);
+        if ($formType === 'customer' && isset($validated['product_survey'])) {
+            $this->validateAlignedFields($validated, ['product_survey', 'merk_survey', 'distributor_survey']);
+        }
+        $this->normalizeAndValidateAddresses($validated);
+
+        return $validated;
+    }
+
+    private function validateAlignedFields(array $validated, array $fields): void
+    {
+        $expected = count($validated[$fields[0]] ?? []);
+        foreach ($fields as $field) {
+            if (!isset($validated[$field]) || count($validated[$field]) !== $expected) {
+                throw ValidationException::withMessages([$field => 'Data berulang tidak lengkap atau tidak sejajar.']);
+            }
+        }
+    }
+
+    private function normalizeAndValidateAddresses(array &$validated): void
+    {
+        $fields = ['address_role', 'country_code', 'country', 'province', 'city', 'zip_code', 'latitude', 'longitude', 'telephone', 'fax'];
+        $count = count($validated['address'] ?? []);
+        foreach ($fields as $field) {
+            if (!isset($validated[$field]) || count($validated[$field]) !== $count) {
+                throw ValidationException::withMessages([$field => 'Data alamat tidak lengkap atau tidak sejajar.']);
+            }
+        }
+        if (($validated['address_role'][0] ?? null) !== 'legal' || count(array_filter($validated['address_role'], function ($role) { return $role === 'legal'; })) !== 1) {
+            throw ValidationException::withMessages(['address_role' => 'Alamat legal wajib ada tepat satu.']);
+        }
+        foreach ($validated['address'] as $index => $address) {
+            $country = CountryCatalog::find($validated['country_code'][$index]);
+            if (!$country) throw ValidationException::withMessages(["country_code.$index" => 'Negara tidak valid.']);
+            $validated['country_code'][$index] = $country['code'];
+            $validated['country'][$index] = $country['name'];
+            if ($country['code'] !== 'ID') continue;
+            $province = Provinces::find($validated['province'][$index]);
+            $regency = $province ? Regencies::where('province_id', $province->id)->find($validated['city'][$index]) : null;
+            $postal = $regency ? PostalCode::where('province_id', $province->id)->where('regency_id', $regency->id)->where('postal_code', $validated['zip_code'][$index])->exists() : false;
+            if (!$province || !$regency || !$postal) throw ValidationException::withMessages(["zip_code.$index" => 'Relasi provinsi, kota, dan kode pos tidak valid.']);
+            $validated['province'][$index] = $province->name;
+            $validated['city'][$index] = $regency->name;
+        }
     }
 
     private function getClosedMessage(FormLink $formLink)

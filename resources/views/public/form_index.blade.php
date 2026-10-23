@@ -30,16 +30,15 @@
 
         <div class="public-form-card">
             <form
-                action="{{ isset($formLink) ? route('public.form.submit', $formLink->token) : route('submit-partner') }}"
+                action="{{ route('public.form.submit', $formLink->token) }}"
                 method="POST" id="form_company" enctype="multipart/form-data"
                 data-storage-key="partner_form_{{ $formLink->token ?? 'default' }}">
                 @csrf
+                <input type="hidden" name="idempotency_key" value="{{ (string) \Illuminate\Support\Str::uuid() }}">
 
                 @if (isset($formLink))
                     <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
                 @endif
-                <input type="hidden" id="public_key" value="{{ env('PUBLIC_FORM_SECRET') }}">
-
                 <div class="wizard-shell">
                     <div class="wizard-topline">
                         <div>

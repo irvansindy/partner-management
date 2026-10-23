@@ -18,9 +18,9 @@ class InternationalPhoneInputTest extends TestCase
     {
         $script = $this->partnerScript();
 
-        $this->assertStringContainsString("{ country: 'Indonesia', iso: 'ID', code: '+62' }", $script);
-        $this->assertStringContainsString(".text(item.iso + ' ' + item.code)", $script);
-        $this->assertStringNotContainsString(".text(item.code + ' ' + item.country)", $script);
+        $this->assertStringContainsString('window.partnerCountries', $script);
+        $this->assertStringContainsString('templateResult: formatCountryOption', $script);
+        $this->assertStringContainsString("country.code + ' ' + country.calling_code", $script);
     }
 
     /** @test */

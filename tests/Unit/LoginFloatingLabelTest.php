@@ -37,9 +37,9 @@ class LoginFloatingLabelTest extends TestCase
             $this->resource('views/auth/partials/login-floating-labels.blade.php')
         );
 
-        $this->assertStringContainsString("input.matches(':focus') || input.value.length > 0", $contents);
-        $this->assertStringContainsString("input.addEventListener('focus'", $contents);
-        $this->assertStringContainsString("input.addEventListener('blur'", $contents);
-        $this->assertStringContainsString("input.addEventListener('input'", $contents);
+        $this->assertStringContainsString("input.matches(':focus')", $contents);
+        $this->assertStringContainsString("input.value.trim().length > 0", $contents);
+        $this->assertStringContainsString("['focus', 'blur', 'input', 'change']", $contents);
+        $this->assertStringContainsString('input.addEventListener(eventName', $contents);
     }
 }

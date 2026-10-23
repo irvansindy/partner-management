@@ -11,37 +11,19 @@
         width: '100%'
     })
 
-    window.partnerPhoneCountryCodes = [
-        { country: 'Indonesia', iso: 'ID', code: '+62' },
-        { country: 'Malaysia', iso: 'MY', code: '+60' },
-        { country: 'Singapore', iso: 'SG', code: '+65' },
-        { country: 'Thailand', iso: 'TH', code: '+66' },
-        { country: 'Vietnam', iso: 'VN', code: '+84' },
-        { country: 'Philippines', iso: 'PH', code: '+63' },
-        { country: 'Brunei', iso: 'BN', code: '+673' },
-        { country: 'Cambodia', iso: 'KH', code: '+855' },
-        { country: 'Laos', iso: 'LA', code: '+856' },
-        { country: 'Myanmar', iso: 'MM', code: '+95' },
-        { country: 'China', iso: 'CN', code: '+86' },
-        { country: 'Hong Kong', iso: 'HK', code: '+852' },
-        { country: 'India', iso: 'IN', code: '+91' },
-        { country: 'Japan', iso: 'JP', code: '+81' },
-        { country: 'South Korea', iso: 'KR', code: '+82' },
-        { country: 'Australia', iso: 'AU', code: '+61' },
-        { country: 'New Zealand', iso: 'NZ', code: '+64' },
-        { country: 'United States', iso: 'US', code: '+1' },
-        { country: 'Canada', iso: 'CA', code: '+1' },
-        { country: 'United Kingdom', iso: 'GB', code: '+44' },
-        { country: 'Germany', iso: 'DE', code: '+49' },
-        { country: 'France', iso: 'FR', code: '+33' },
-        { country: 'Netherlands', iso: 'NL', code: '+31' },
-        { country: 'Italy', iso: 'IT', code: '+39' },
-        { country: 'Spain', iso: 'ES', code: '+34' },
-        { country: 'Saudi Arabia', iso: 'SA', code: '+966' },
-        { country: 'United Arab Emirates', iso: 'AE', code: '+971' },
-        { country: 'Brazil', iso: 'BR', code: '+55' },
-        { country: 'South Africa', iso: 'ZA', code: '+27' }
-    ];
+    window.partnerCountries = @json($countries ?? \App\Support\CountryCatalog::all());
+
+    function countryFlag(iso) {
+        return String(iso || '').toUpperCase().replace(/./g, function(character) {
+            return String.fromCodePoint(127397 + character.charCodeAt(0));
+        });
+    }
+
+    function formatCountryOption(option) {
+        if (!option.id) return option.text;
+        const country = $(option.element).data('country');
+        return country ? countryFlag(country.code) + ' ' + country.code + ' ' + country.calling_code + ' — ' + country.name : option.text;
+    }
 
     function initializeInternationalPhoneInput(input) {
         const $input = $(input);
@@ -55,17 +37,26 @@
             'aria-label': 'Kode negara telepon'
         });
 
-        window.partnerPhoneCountryCodes.forEach(function (item) {
+        window.partnerCountries.forEach(function (item) {
             $('<option>')
-                .val(item.code)
-                .text(item.iso + ' ' + item.code)
-                .attr('title', item.country + ' (' + item.code + ')')
+                .val(item.calling_code)
+                .text(item.code + ' ' + item.calling_code + ' ' + item.name)
+                .prop('selected', item.code === 'ID')
+                .data('country', item)
                 .appendTo($countryCode);
         });
 
         $input.wrap('<div class="input-group international-phone-group"></div>');
         $input.before($countryCode);
         $input.css({ flex: '1 1 auto', minWidth: 0 });
+        $countryCode.select2({
+            width: '100%',
+            templateResult: formatCountryOption,
+            templateSelection: function(option) {
+                const country = $(option.element).data('country');
+                return country ? countryFlag(country.code) + ' ' + country.code + ' ' + country.calling_code : option.text;
+            }
+        });
     }
 
     function initializeInternationalPhoneInputs(scope) {
@@ -118,8 +109,6 @@
         }
         this.value = value;
     });
-    fetchProvinces()
-
     function showPartnerToast(title, body, type = 'danger') {
         if ($.fn.Toasts) {
             $(document).Toasts('create', {
@@ -251,39 +240,6 @@
         showPartnerToast('Validation Error', body, 'danger');
     }
 
-    function fetchProvinces() {
-        $.ajax({
-            url: "{{ route('fetch-provinces') }}",
-            dataType: 'json',
-            success: function(data) {
-                var $provinceSelect = $('#select_option_province_0');
-                $provinceSelect.empty(); // Clear previous options
-                $provinceSelect.append('<option></option>'); // Add placeholder option
-                data.forEach(function(province) {
-                    $provinceSelect.append(new Option(province.name, province.id));
-                });
-                $provinceSelect.prop('disabled', false); // Enable the province select
-                $provinceSelect.select2({
-                    placeholder: 'Select Province',
-                    width: '100%'
-                });
-                var $provinceSelect2 = $('#select_option_province_1');
-                $provinceSelect2.empty(); // Clear previous options
-                $provinceSelect2.append('<option></option>'); // Add placeholder option
-                data.forEach(function(province) {
-                    $provinceSelect2.append(new Option(province.name, province.id));
-                });
-                $provinceSelect2.prop('disabled', false); // Enable the province select
-                $provinceSelect2.select2({
-                    placeholder: 'Select Province',
-                    width: '100%'
-                });
-            }
-        });
-        $('#select_option_regency_0').prop('disabled', true); // Enable the regency select
-        $('#select_option_regency_1').prop('disabled', true); // Enable the regency select
-    }
-
     $(document).ready(function() {
         initializeInternationalPhoneInputs(document);
 
@@ -294,6 +250,9 @@
 
         $("#input-multiple-file").fileinput({
             uploadUrl: false,
+            maxFileCount: 10,
+            maxFileSize: 5120,
+            allowedFileExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
             showUpload: false,
             showRemove: true,
             showCancel: false,
@@ -389,7 +348,7 @@
                     <div class="row mb-4" id="liable_person_group_${index}">
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
                             <label for="liable_person_${index}">@lang('messages.Liable Person') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" placeholder="@lang('messages.Placeholder Liable Person')" data-alpha-spaces required>
+                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Liable Person')" data-alpha-spaces required>
                             <span class="text-danger message-danger" id="message_liable_person_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
@@ -574,17 +533,17 @@
                     <div class="row mt-4">
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_department_${index}">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Department')" data-alpha-spaces required>
+                            <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Department')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_department_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_position_${index}">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Position')" data-alpha-spaces required>
+                            <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Position')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_position_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
                             <label for="contact_name_${index}">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Name')" data-alpha-spaces required>
+                            <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Name')" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_name_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl mb-3">
@@ -824,12 +783,12 @@
                         <div class="row mt-4">
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
                                 <label for="bank_name_${index}">@lang('messages.Bank Name') <span class="text-danger" role="alert">*</span></label>
-                                <input type="text" name="bank_name[]" id="bank_name_${index}" class="form-control" data-bank-name required>
+                                <input type="text" name="bank_name[]" id="bank_name_${index}" class="form-control" maxlength="255" data-bank-name required>
                                 <span class="text-danger mt-2" id="message_bank_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
                                 <label for="account_name_${index}">@lang('messages.Account Name') <span class="text-danger" role="alert">*</span></label>
-                                <input type="text" name="account_name[]" id="account_name_${index}" class="form-control" data-alpha-spaces required>
+                                <input type="text" name="account_name[]" id="account_name_${index}" class="form-control" maxlength="255" data-alpha-spaces required>
                                 <span class="text-danger mt-2" id="message_account_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
@@ -1260,7 +1219,6 @@
                 type: 'POST',
                 data: formData,
                 headers: {
-                    "X-APP-KEY": $('#public_key').val(),
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
@@ -1281,7 +1239,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Submit Berhasil',
-                            html: ((response.meta && response.meta.message) || 'Data berhasil disimpan') +
+                            html: (response.meta.message || 'Data berhasil disimpan') +
                                 '<br><small>Tab akan ditutup dalam <strong id="close_countdown">5</strong> detik.</small>',
                             timer: 5000,
                             timerProgressBar: true,

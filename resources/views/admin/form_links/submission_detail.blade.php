@@ -526,16 +526,16 @@
                             <div class="col-md-3 mb-3">
                                 <div class="card">
                                     <div class="card-body text-center">
-                                        @if (str_contains($file->filetype, 'image'))
-                                            <img src="{{ asset('storage/' . $file->filepath) }}"
-                                                alt="{{ $file->filename }}" class="img-fluid mb-2"
+                                        @if (strpos($file->mime_type ?? $file->filetype, 'image/') === 0)
+                                            <img src="{{ route('admin.company-attachments.show', $file) }}"
+                                                alt="{{ $file->original_name ?? $file->filename }}" class="img-fluid mb-2"
                                                 style="max-height: 150px;">
                                         @else
                                             <i class="fas fa-file-pdf fa-4x text-danger mb-2"></i>
                                         @endif
-                                        <p class="small mb-2">{{ $file->filename }}</p>
+                                        <p class="small mb-2">{{ $file->original_name ?? $file->filename }}</p>
                                         <p class="small text-muted">{{ number_format($file->filesize / 1024, 2) }} KB</p>
-                                        <a href="{{ asset('storage/' . $file->filepath) }}" target="_blank"
+                                        <a href="{{ route('admin.company-attachments.download', $file) }}"
                                             class="btn btn-sm btn-primary">
                                             <i class="fas fa-download"></i> Download
                                         </a>
