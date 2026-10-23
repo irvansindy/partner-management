@@ -137,7 +137,14 @@
                             <option value="{{ $item->name }}">{{ $item->name }}</option>
                         @endforeach
                     </select>
-                    <div class="col-md-auto my-2" id="field_form_create_business_other"></div>
+                    <div class="my-2" id="field_form_create_business_other" style="display: none;">
+                        <label for="business_classification_other_detail">Klasifikasi Bisnis Lainnya <span class="text-danger" role="alert">*</span></label>
+                        <input type="text" name="business_classification_other_detail"
+                            id="business_classification_other_detail" class="form-control" maxlength="255"
+                            placeholder="Masukkan klasifikasi bisnis lainnya">
+                        <span class="text-danger message-danger"
+                            id="message_business_classification_other_detail" role="alert"></span>
+                    </div>
 
                     <span class="text-danger message-danger" id="message_business_classification"
                         role="alert"></span>

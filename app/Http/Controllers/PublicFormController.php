@@ -87,6 +87,7 @@ class PublicFormController extends Controller
                 'established_year' => $validated['established_year'] ?? null,
                 'total_employee' => $validated['total_employee'] ?? null,
                 'business_classification' => $validated['business_classification'],
+                'other_business' => $validated['business_classification_other_detail'] ?? null,
                 'business_classification_detail' => $validated['business_classification_detail'] ?? null,
                 'website_address' => $validated['website_address'] ?? null,
                 'system_management' => $validated['system_management'] ?? null,
@@ -287,6 +288,7 @@ class PublicFormController extends Controller
 
             // Business
             'business_classification' => 'required|string|max:255',
+            'business_classification_other_detail' => 'required_if:business_classification,Other|nullable|string|max:255',
             'business_classification_detail' => 'nullable|string|max:1000',
             'register_number_as_in_tax_invoice' => 'required|string|max:255',
             'website_address' => ['nullable', 'string', 'max:255', new PublicHttpsUrl()],
@@ -362,6 +364,7 @@ class PublicFormController extends Controller
         $messages = [
             'company_type.required' => 'Jenis perusahaan wajib diisi. | Company type is required.',
             'business_classification.required' => 'Klasifikasi bisnis wajib diisi. | Business classification is required.',
+            'business_classification_other_detail.required_if' => 'Klasifikasi bisnis lainnya wajib diisi. | Other business classification is required.',
             'email_address.email' => 'Format alamat email tidak valid. | Email address format is invalid.',
             'contact_email.*.email' => 'Format email kontak tidak valid. | Contact email format is invalid.',
             'contact_telephone.*.regex' => 'Format atau panjang nomor telepon kontak tidak valid. | Contact telephone format or length is invalid.',

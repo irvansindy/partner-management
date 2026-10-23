@@ -514,17 +514,6 @@
             })
         })
 
-        $(document).on('change', 'select[name="business_classification"]', function() {
-            let value = $(this).val()
-            if (value == 'Other') {
-                $('#field_form_create_business_other').append(`
-                    <input type="text" name="business_classification_other_detail" id="business_classification_other_detail" placeholder="Other" class="form-control" style="width: 50% !important;">
-                `)
-            } else {
-                $('#field_form_create_business_other').empty()
-            }
-        })
-
         $(document).on('click', '#add_contact', function(e) {
             e.preventDefault()
             let index = $('input[name="contact_name[]"]').length;

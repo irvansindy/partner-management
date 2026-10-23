@@ -5,7 +5,7 @@
         const MAX_SURVEY_ROWS = {{ (int) config('public_form.max_survey_rows', 20) }};
         const DRAFT_FIELD_ALLOWLIST = new Set([
             'idempotency_key', 'established_year', 'total_employee',
-            'business_classification', 'system_management', 'term_of_payment',
+            'business_classification', 'business_classification_other_detail', 'system_management', 'term_of_payment',
             'survey_form_switch', 'survey_ownership_status', 'rental_year'
         ]);
         const SENSITIVE_DRAFT_FIELDS = new Set([
@@ -59,6 +59,28 @@
             const filteredPrefix = value.slice(0, cursor).replace(/[^\p{L}\p{N} .,&'()\/+\-]/gu, '');
             this.value = filtered;
             this.setSelectionRange(filteredPrefix.length, filteredPrefix.length);
+        });
+
+        function syncBusinessClassificationOther() {
+            const businessClassification = $('#business_classification').val();
+            const isOther = businessClassification === 'Other';
+            const $container = $('#field_form_create_business_other');
+            const $field = $('#business_classification_other_detail');
+
+            $container.toggle(isOther);
+            $field.prop('required', isOther);
+
+            if (!isOther) {
+                $field.val('').removeClass('is-invalid');
+                $('#message_business_classification_other_detail').text('');
+            }
+        }
+
+        $('#form_company').on('change', '#business_classification', syncBusinessClassificationOther);
+
+        $(function() {
+            syncBusinessClassificationOther();
+            setTimeout(syncBusinessClassificationOther, 850);
         });
 
         /* Generate row dinamis jika belum ada */
