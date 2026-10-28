@@ -13,50 +13,42 @@
 
     window.partnerCountries = @json($countries ?? \App\Support\CountryCatalog::all());
 
-    function countryFlag(iso) {
-        return String(iso || '').toUpperCase().replace(/./g, function(character) {
-            return String.fromCodePoint(127397 + character.charCodeAt(0));
-        });
-    }
-
-    function formatCountryOption(option) {
-        if (!option.id) return option.text;
-        const country = $(option.element).data('country');
-        return country ? countryFlag(country.code) + ' ' + country.calling_code + ' — ' + country.name : option.text;
-    }
-
     function initializeInternationalPhoneInput(input) {
-        const $input = $(input);
-        if (!$input.length || $input.closest('.international-phone-group').length) return;
+        if (!input || input._intlTelInput || typeof window.intlTelInput !== 'function') return;
 
-        const inputName = $input.attr('name') || '';
+        const inputName = input.name || '';
         const countryCodeName = inputName.replace(/\[\]$/, '_country_code[]');
-        const $countryCode = $('<select>', {
-            class: 'form-control phone-country-code',
-            name: countryCodeName,
-            'aria-label': 'Kode negara telepon'
-        });
+        const countryCode = document.createElement('input');
+        countryCode.type = 'hidden';
+        countryCode.name = countryCodeName;
+        countryCode.className = 'phone-country-code';
+        countryCode.value = '+62';
+        input.insertAdjacentElement('afterend', countryCode);
 
-        window.partnerCountries.forEach(function (item) {
-            $('<option>')
-                .val(item.calling_code)
-                .text(item.calling_code + ' — ' + item.name)
-                .prop('selected', item.code === 'ID')
-                .data('country', item)
-                .appendTo($countryCode);
+        const phoneInput = window.intlTelInput(input, {
+            initialCountry: 'id',
+            preferredCountries: ['id', 'sg', 'my', 'au', 'us'],
+            separateDialCode: true,
+            nationalMode: true,
+            autoPlaceholder: 'aggressive',
+            utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js'
         });
+        input._intlTelInput = phoneInput;
 
-        $input.wrap('<div class="input-group international-phone-group"></div>');
-        $input.before($countryCode);
-        $input.css({ flex: '1 1 auto', minWidth: 0 });
-        $countryCode.select2({
-            width: '100%',
-            templateResult: formatCountryOption,
-            templateSelection: function(option) {
-                const country = $(option.element).data('country');
-                return country ? countryFlag(country.code) + ' ' + country.calling_code : option.text;
-            }
+        function syncCallingCode(notifyDraft) {
+            const selected = phoneInput.getSelectedCountryData();
+            countryCode.value = selected.dialCode ? '+' + selected.dialCode : '';
+            if (notifyDraft) countryCode.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        input.addEventListener('countrychange', function () { syncCallingCode(true); });
+        $(countryCode).on('change', function () {
+            const selectedCountry = window.partnerCountries.find(function (country) {
+                return country.calling_code === countryCode.value;
+            });
+            if (selectedCountry) phoneInput.setCountry(selectedCountry.code.toLowerCase());
         });
+        syncCallingCode(false);
     }
 
     function initializeInternationalPhoneInputs(scope) {
@@ -68,16 +60,16 @@
     function prepareInternationalPhoneFormData(formData) {
         ['contact_telephone', 'telephone', 'fax'].forEach(function (fieldName) {
             const inputName = fieldName + '[]';
-            const countryCodeName = fieldName + '_country_code[]';
             const $inputs = $('#form_company input[name="' + inputName + '"]').filter(':not(:disabled)');
             formData.delete(inputName);
-            formData.delete(countryCodeName);
+            formData.delete(fieldName + '_country_code[]');
 
             $inputs.each(function () {
-                const countryCode = $(this).closest('.international-phone-group')
-                    .find('select[name="' + countryCodeName + '"]').val() || '+62';
                 const localNumber = this.value.replace(/\D/g, '').replace(/^0/, '');
-                formData.append(inputName, localNumber ? countryCode + localNumber : '');
+                const selected = this._intlTelInput ? this._intlTelInput.getSelectedCountryData() : null;
+                const countryCode = selected && selected.dialCode ? '+' + selected.dialCode : '+62';
+                const internationalNumber = this._intlTelInput ? this._intlTelInput.getNumber() : '';
+                formData.append(inputName, localNumber ? (internationalNumber || countryCode + localNumber) : '');
             });
         });
 
@@ -542,7 +534,7 @@
                         </div>
                         <div class="col-12 col-md-6 col-xl-3 mb-3 contact-phone-column">
                             <label for="contact_telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="numeric" maxlength="14" pattern="[0-9]{2,14}" required>
+                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="numeric" autocomplete="tel-national" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2" id="message_contact_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl-1 mb-3 d-flex align-items-end justify-content-end contact-action-column">

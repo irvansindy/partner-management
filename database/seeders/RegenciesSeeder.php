@@ -49,6 +49,7 @@ class RegenciesSeeder extends Seeder
             (2, 'Tebing Tinggi', 3.3283, 99.1628),
             (2, 'Tanjungbalai', 2.9667, 99.8000),
             (2, 'Gunungsitoli', 1.2881, 97.6144),
+            (2, 'Sibolga', 1.7402, 98.7828),
             (2, 'Asahan', 2.9833, 99.6167),
             (2, 'Batubara', 2.7167, 99.7167),
             (2, 'Dairi', 2.6667, 98.3333),
@@ -73,7 +74,7 @@ class RegenciesSeeder extends Seeder
             (2, 'Tapanuli Selatan', 1.5333, 99.1667),
             (2, 'Tapanuli Tengah', 1.8833, 98.5667),
             (2, 'Tapanuli Utara', 2.0167, 99.0667),
-            (2, 'Toba Samosir', 2.4667, 99.0833);
+            (2, 'Toba', 2.4667, 99.0833);
 
             -- SUMATERA BARAT
             INSERT INTO regencies (province_id, name, latitude, longitude) VALUES
@@ -270,13 +271,14 @@ class RegenciesSeeder extends Seeder
             (14, 'Kendal', -7.0000, 110.2000),
             (14, 'Klaten', -7.7167, 110.6000),
             (14, 'Kudus', -6.8000, 110.8333),
+            (14, 'Pati', -6.7487, 111.0379),
             (14, 'Kabupaten Magelang', -7.4833, 110.2167),
             (14, 'Kabupaten Pekalongan', -6.9333, 109.6500),
             (14, 'Pemalang', -6.8833, 109.3833),
             (14, 'Purbalingga', -7.3833, 109.3667),
             (14, 'Purworejo', -7.7167, 110.0000),
             (14, 'Rembang', -6.7167, 111.3500),
-            (14, 'Semarang', -7.3167, 110.5000),
+            (14, 'Kabupaten Semarang', -7.3167, 110.5000),
             (14, 'Sragen', -7.4333, 111.0167),
             (14, 'Sukoharjo', -7.6833, 110.8333),
             (14, 'Kabupaten Tegal', -7.0000, 109.1333),
@@ -501,9 +503,8 @@ class RegenciesSeeder extends Seeder
             INSERT INTO regencies (province_id, name, latitude, longitude) VALUES
             (28, 'Mamuju', -2.6736, 118.8889),
             (28, 'Majene', -3.5333, 118.9833),
-            (28, 'Kabupaten Mamuju', -2.5333, 119.3333),
+            (28, 'Mamasa', -2.9420, 119.3770),
             (28, 'Mamuju Tengah', -2.2833, 119.4167),
-            (28, 'Mamuju Utara', -1.5167, 119.3667),
             (28, 'Pasangkayu', -0.8167, 119.3167),
             (28, 'Polewali Mandar', -3.4333, 119.3500);
 
@@ -583,51 +584,25 @@ class RegenciesSeeder extends Seeder
 
             -- PAPUA BARAT
             INSERT INTO regencies (province_id, name, latitude, longitude) VALUES
-            (33, 'Sorong', -0.8667, 131.2500),
             (33, 'Fakfak', -2.9167, 132.3000),
             (33, 'Kaimana', -3.6500, 133.6833),
             (33, 'Manokwari', -0.8667, 134.0833),
             (33, 'Manokwari Selatan', -1.4167, 134.0500),
-            (33, 'Maybrat', -1.3000, 132.3333),
             (33, 'Pegunungan Arfak', -1.2667, 133.8667),
-            (33, 'Raja Ampat', -0.5000, 130.8333),
-            (33, 'Sorong', -1.0833, 131.7500),
-            (33, 'Sorong Selatan', -1.8500, 132.1167),
-            (33, 'Tambrauw', -0.6167, 132.6667),
             (33, 'Teluk Bintuni', -2.0833, 133.5333),
             (33, 'Teluk Wondama', -2.7500, 134.3833);
 
             -- PAPUA
             INSERT INTO regencies (province_id, name, latitude, longitude) VALUES
-            (34, 'Jayapura', -2.5333, 140.7167),
-            (34, 'Asmat', -5.0500, 138.4667),
             (34, 'Biak Numfor', -1.0500, 136.0833),
-            (34, 'Boven Digoel', -5.8167, 140.3667),
-            (34, 'Deiyai', -4.1667, 136.3333),
-            (34, 'Dogiyai', -4.0000, 135.5000),
-            (34, 'Intan Jaya', -3.5667, 136.7667),
+            (34, 'Kota Jayapura', -2.5333, 140.7167),
             (34, 'Jayapura', -2.6667, 140.5000),
-            (34, 'Jayawijaya', -3.9667, 138.9167),
             (34, 'Keerom', -3.2833, 140.5833),
             (34, 'Kepulauan Yapen', -1.8167, 136.2000),
-            (34, 'Lanny Jaya', -3.9000, 138.3000),
             (34, 'Mamberamo Raya', -2.3500, 138.3333),
-            (34, 'Mamberamo Tengah', -2.6500, 138.0500),
-            (34, 'Mappi', -6.5833, 139.3500),
-            (34, 'Merauke', -8.4667, 140.4000),
-            (34, 'Mimika', -4.5333, 136.5500),
-            (34, 'Nabire', -3.3667, 135.4833),
-            (34, 'Nduga', -4.3667, 137.6500),
-            (34, 'Paniai', -3.8833, 136.3500),
-            (34, 'Pegunungan Bintang', -4.6167, 140.5167),
-            (34, 'Puncak', -3.6667, 137.2667),
-            (34, 'Puncak Jaya', -3.4500, 137.2000),
             (34, 'Sarmi', -1.8833, 138.7833),
             (34, 'Supiori', -0.7833, 135.6333),
-            (34, 'Tolikara', -3.4833, 138.3833),
-            (34, 'Waropen', -2.1667, 136.8167),
-            (34, 'Yahukimo', -4.7000, 139.5000),
-            (34, 'Yalimo', -3.7500, 139.0167);
+            (34, 'Waropen', -2.1667, 136.8167);
 
             -- PAPUA TENGAH
             INSERT INTO regencies (province_id, name, latitude, longitude) VALUES
@@ -660,16 +635,12 @@ class RegenciesSeeder extends Seeder
 
             -- PAPUA BARAT DAYA
             INSERT INTO regencies (province_id, name, latitude, longitude) VALUES
-            (38, 'Sorong', -0.8667, 131.2500),
-            (38, 'Fakfak', -2.9167, 132.3000),
-            (38, 'Kaimana', -3.6500, 133.6833),
+            (38, 'Kabupaten Sorong', -1.0833, 131.7500),
+            (38, 'Kota Sorong', -0.8667, 131.2500),
             (38, 'Maybrat', -1.3000, 132.3333),
             (38, 'Raja Ampat', -0.5000, 130.8333),
-            (38, 'Sorong', -1.0833, 131.7500),
             (38, 'Sorong Selatan', -1.8500, 132.1167),
-            (38, 'Tambrauw', -0.6167, 132.6667),
-            (38, 'Teluk Bintuni', -2.0833, 133.5333),
-            (38, 'Teluk Wondama', -2.7500, 134.3833);
+            (38, 'Tambrauw', -0.6167, 132.6667);
 
             -- Buat index untuk pencarian yang lebih cepat
             CREATE INDEX idx_provinces_name ON provinces(name);

@@ -261,27 +261,41 @@
             flex-wrap: nowrap;
         }
 
-        #form_company .international-phone-group .phone-country-code {
-            width: 96px;
-            padding-right: 1.5rem;
-            font-variant-numeric: tabular-nums;
+        #form_company .iti {
+            display: block;
+            width: 100%;
         }
 
-        #form_company .international-phone-group > .select2-container {
-            flex: 0 0 96px;
-            width: 96px !important;
-            min-width: 96px;
-            max-width: 36%;
+        #form_company .iti .international-phone {
+            min-height: 44px;
+            width: 100%;
+        }
+
+        #form_company .iti--separate-dial-code .iti__selected-flag {
+            background: #f8fafc;
+            border-right: 1px solid #d8dee8;
+            min-width: 88px;
+            padding-left: 12px;
+            padding-right: 10px;
+        }
+
+        #form_company .iti__selected-dial-code {
+            color: var(--partner-ink);
+            font-variant-numeric: tabular-nums;
+            margin-left: 8px;
+        }
+
+        #form_company .iti__country-list {
+            border-color: #d8dee8;
+            border-radius: 6px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, .14);
+            max-width: min(420px, calc(100vw - 32px));
+            white-space: normal;
+            z-index: 1080;
         }
 
         #form_company .contact-phone-column,
-        #form_company .international-phone-group {
-            min-width: 0;
-        }
-
-        #form_company .international-phone-group .international-phone {
-            flex: 1 1 0;
-            width: 1%;
+        #form_company .iti {
             min-width: 0;
         }
 
@@ -709,6 +723,10 @@
         }
 
         @media (max-width: 576px) {
+            #form_company .iti__country-list {
+                width: calc(100vw - 48px);
+            }
+
             .wizard-current-label {
                 max-width: 230px;
                 overflow-wrap: anywhere;

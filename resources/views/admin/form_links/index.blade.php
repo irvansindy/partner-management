@@ -89,39 +89,47 @@
                                             value="{{ $formLink->getPublicUrl() }}" id="link-{{ $formLink->id }}"
                                             readonly>
                                         <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary" type="button"
-                                                onclick="copyLink('link-{{ $formLink->id }}')">
-                                                <i class="fas fa-copy"></i>
+                                            <button type="button"
+                                                onclick="copyLink('link-{{ $formLink->id }}')"
+                                                class="table-action table-action--copy" title="Copy public link"
+                                                aria-label="Copy public link for {{ $formLink->title }}">
+                                                <i class="fas fa-copy" aria-hidden="true"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('admin.form-links.show', $formLink) }}" class="mx-1 btn btn-info"
-                                            title="View">
-                                            <i class="fas fa-eye"></i>
+                                    <div class="table-actions" role="group"
+                                        aria-label="Actions for {{ $formLink->title }}">
+                                        <a href="{{ route('admin.form-links.show', $formLink) }}"
+                                            class="table-action table-action--view" title="View form link"
+                                            aria-label="View {{ $formLink->title }}">
+                                            <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
                                         <a href="{{ route('admin.form-links.edit', $formLink) }}"
-                                            class="mx-1 btn btn-warning" title="Edit">
-                                            <i class="fas fa-edit"></i>
+                                            class="table-action table-action--edit" title="Edit form link"
+                                            aria-label="Edit {{ $formLink->title }}">
+                                            <i class="fas fa-edit" aria-hidden="true"></i>
                                         </a>
                                         <form action="{{ route('admin.form-links.toggle-status', $formLink) }}"
                                             method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit"
-                                                class="mx-1 btn btn-{{ $formLink->is_active ? 'secondary' : 'success' }}"
-                                                title="{{ $formLink->is_active ? 'Deactivate' : 'Activate' }}">
+                                                class="table-action table-action--toggle{{ $formLink->is_active ? ' is-inactive' : '' }}"
+                                                title="{{ $formLink->is_active ? 'Deactivate' : 'Activate' }} form link"
+                                                aria-label="{{ $formLink->is_active ? 'Deactivate' : 'Activate' }} {{ $formLink->title }}">
                                                 <i
-                                                    class="fas fa-{{ $formLink->is_active ? 'toggle-off' : 'toggle-on' }}"></i>
+                                                    class="fas fa-{{ $formLink->is_active ? 'toggle-off' : 'toggle-on' }}"
+                                                    aria-hidden="true"></i>
                                             </button>
                                         </form>
                                         <form action="{{ route('admin.form-links.destroy', $formLink) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Are you sure?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="mx-1 btn btn-danger" title="Delete">
-                                                <i class="fas fa-trash"></i>
+                                            <button type="submit" class="table-action table-action--delete"
+                                                title="Delete form link" aria-label="Delete {{ $formLink->title }}">
+                                                <i class="fas fa-trash" aria-hidden="true"></i>
                                             </button>
                                         </form>
                                     </div>

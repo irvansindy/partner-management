@@ -20,7 +20,7 @@ class PublicAddressMarkupTest extends TestCase
         $this->assertStringContainsString('id="add_branch"', $html);
         $this->assertStringContainsString('data-address-country', $html);
         $this->assertStringContainsString('Memuat kota/kabupaten', $html);
-        $this->assertStringContainsString('Kode pos tidak tersedia', $html);
+        $this->assertStringContainsString('Kode pos belum tersedia untuk kota/kabupaten ini', $html);
         $this->assertStringContainsString('data-address-map', $html);
         $this->assertStringContainsString('L.map(', $html);
         $this->assertStringContainsString("$(city).on('change'", $html);
@@ -35,7 +35,9 @@ class PublicAddressMarkupTest extends TestCase
         $this->assertStringContainsString('data-pending-location-restore', $publicScript);
         $this->assertStringContainsString("closest('[data-address-row][hidden]')", $html);
         $this->assertStringContainsString("closest('[data-address-row][hidden]')", $publicScript);
-        $this->assertStringContainsString('Masukkan kode pos', $html);
+        $this->assertStringContainsString('Pilih kota/kabupaten terlebih dahulu', $html);
+        $this->assertStringContainsString("item.area ? item.postal_code + ' — ' + item.area : item.postal_code", $html);
+        $this->assertStringNotContainsString("replaceLocationInput(row, 'zip_code', false, 'Masukkan kode pos')", $html);
         $this->assertStringContainsString("route('public.form.regencies'", $html);
         $this->assertStringContainsString("route('public.form.postal-codes'", $html);
     }

@@ -14,14 +14,16 @@ class InternationalPhoneInputTest extends TestCase
     }
 
     /** @test */
-    public function country_selector_uses_flag_and_calling_code_without_iso_label(): void
+    public function phone_input_uses_the_twilio_referenced_international_input_pattern(): void
     {
         $script = $this->partnerScript();
+        $layout = file_get_contents(dirname(__DIR__, 2).'/resources/views/layouts/public.blade.php');
 
-        $this->assertStringContainsString('window.partnerCountries', $script);
-        $this->assertStringContainsString('templateResult: formatCountryOption', $script);
-        $this->assertStringContainsString("countryFlag(country.code) + ' ' + country.calling_code", $script);
-        $this->assertStringNotContainsString("countryFlag(country.code) + ' ' + country.code + ' ' + country.calling_code", $script);
+        $this->assertStringContainsString('window.intlTelInput(input', $script);
+        $this->assertStringContainsString('separateDialCode: true', $script);
+        $this->assertStringContainsString("initialCountry: 'id'", $script);
+        $this->assertStringContainsString('intlTelInput.css', $layout);
+        $this->assertStringContainsString('intlTelInput.min.js', $layout);
     }
 
     /** @test */
@@ -30,9 +32,22 @@ class InternationalPhoneInputTest extends TestCase
         $script = $this->partnerScript();
         $css = file_get_contents(dirname(__DIR__, 2).'/resources/views/public/form/css.blade.php');
 
-        $this->assertStringNotContainsString("\$countryCode.css({ flex: '0 0 140px'", $script);
-        $this->assertStringContainsString('.international-phone-group > .select2-container', $css);
-        $this->assertStringContainsString('flex: 0 0 96px', $css);
+        $this->assertStringContainsString('#form_company .iti', $css);
+        $this->assertStringContainsString('width: 100%', $css);
+        $this->assertStringContainsString('min-height: 44px', $css);
+        $this->assertStringContainsString('.iti__selected-flag', $css);
+    }
+
+    /** @test */
+    public function established_year_only_accepts_viable_year_values_on_the_client(): void
+    {
+        $form = file_get_contents(dirname(__DIR__, 2).'/resources/views/cs_vendor/form/master_information.blade.php');
+        $script = file_get_contents(dirname(__DIR__, 2).'/resources/views/public/form/js.blade.php');
+
+        $this->assertStringContainsString('data-year-min="1900"', $form);
+        $this->assertStringContainsString('data-year-max="{{ date(\'Y\') }}"', $form);
+        $this->assertStringContainsString('isViableYearPrefix', $script);
+        $this->assertStringContainsString("on('input', '[data-year-range]'", $script);
     }
 
     /** @test */
@@ -53,6 +68,6 @@ class InternationalPhoneInputTest extends TestCase
         $script = $this->partnerScript();
 
         $this->assertStringContainsString(".filter(':not(:disabled)')", $script);
-        $this->assertStringContainsString("closest('.international-phone-group')", $script);
+        $this->assertStringContainsString('input._intlTelInput', $script);
     }
 }

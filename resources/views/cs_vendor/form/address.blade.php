@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label data-label="telephone">Telepon <span class="text-danger">*</span></label>
-                    <input type="tel" name="telephone[]" class="form-control international-phone" inputmode="numeric" maxlength="14" pattern="[0-9]{2,14}" required>
+                    <input type="tel" name="telephone[]" class="form-control international-phone" inputmode="numeric" autocomplete="tel-national" maxlength="14" pattern="[0-9]{2,14}" required>
                     <span class="text-danger mt-2 d-block" data-message="telephone" role="alert"></span>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -170,6 +170,12 @@ window.addEventListener('load', function () {
         $(control).trigger('change.select2');
     }
 
+    function resetLocationSelect(control, message, disabled) {
+        control.innerHTML = '<option value="">' + message + '</option>';
+        control.disabled = disabled;
+        $(control).trigger('change.select2');
+    }
+
     function loadJson(url) {
         return fetch(url, { headers: { Accept: 'application/json' } }).then(function (response) {
             if (!response.ok) throw new Error('lookup failed');
@@ -241,42 +247,32 @@ window.addEventListener('load', function () {
         });
 
         $(province).on('change', function () {
-            if (postal.tagName !== 'SELECT') {
-                postal = replaceLocationInput(row, 'zip_code', true, 'Pilih kota/kabupaten terlebih dahulu');
-                select2(postal, 'Pilih kode pos');
-            }
-            city.innerHTML = '<option value="">Memuat kota/kabupaten...</option>';
-            city.disabled = true;
-            postal.innerHTML = '<option value="">Pilih kota/kabupaten terlebih dahulu</option>';
-            postal.disabled = true;
+            resetLocationSelect(city, province.value ? 'Memuat kota/kabupaten...' : 'Pilih provinsi terlebih dahulu', true);
+            resetLocationSelect(postal, 'Pilih kota/kabupaten terlebih dahulu', true);
             if (!province.value) return;
             loadJson(regenciesUrl.replace('__PROVINCE__', encodeURIComponent(province.value))).then(function (payload) {
                 populate(city, payload.data || [], 'id', function (item) { return item.name; });
                 restorePendingLocation(city, true);
             }).catch(function () {
-                city.innerHTML = '<option value="">Kota/kabupaten tidak dapat dimuat</option>';
+                resetLocationSelect(city, 'Kota/kabupaten tidak dapat dimuat', true);
             });
         });
 
         $(city).on('change', function () {
-            postal.innerHTML = '<option value="">Memuat kode pos...</option>';
-            postal.disabled = true;
+            resetLocationSelect(postal, city.value ? 'Memuat kode pos...' : 'Pilih kota/kabupaten terlebih dahulu', true);
             if (!city.value) return;
             loadJson(postalCodesUrl.replace('__REGENCY__', encodeURIComponent(city.value))).then(function (payload) {
                 const items = payload.data || [];
                 if (!items.length) {
-                    postal.innerHTML = '<option value="">Kode pos tidak tersedia</option>';
-                    postal = replaceLocationInput(row, 'zip_code', false, 'Masukkan kode pos');
-                    postal.inputMode = 'numeric';
-                    restorePendingLocation(postal, false);
+                    resetLocationSelect(postal, 'Kode pos belum tersedia untuk kota/kabupaten ini', true);
                     return;
                 }
                 populate(postal, items, 'postal_code', function (item) {
-                    return item.postal_code + ' — ' + item.district + ', ' + item.village;
+                    return item.area ? item.postal_code + ' — ' + item.area : item.postal_code;
                 });
                 restorePendingLocation(postal, false);
             }).catch(function () {
-                postal.innerHTML = '<option value="">Kode pos tidak dapat dimuat</option>';
+                resetLocationSelect(postal, 'Kode pos tidak dapat dimuat', true);
             });
         });
     }

@@ -53,6 +53,32 @@
             this.setSelectionRange(filteredPrefix.length, filteredPrefix.length);
         });
 
+        function isViableYearPrefix(value, minimum, maximum) {
+            if (value === '') return true;
+
+            for (let year = minimum; year <= maximum; year++) {
+                if (String(year).startsWith(value)) return true;
+            }
+
+            return false;
+        }
+
+        $('#form_company').on('input', '[data-year-range]', function(event) {
+            if (event.originalEvent && event.originalEvent.isComposing) return;
+
+            const minimum = Number(this.dataset.yearMin || 1900);
+            const maximum = Number(this.dataset.yearMax || new Date().getFullYear());
+            const value = this.value.replace(/\D/g, '').slice(0, 4);
+
+            if (isViableYearPrefix(value, minimum, maximum)) {
+                this.value = value;
+                this.dataset.lastYearPrefix = value;
+                return;
+            }
+
+            this.value = this.dataset.lastYearPrefix || '';
+        });
+
         $('#form_company').on('input', '.international-phone', function(event) {
             if (event.originalEvent && event.originalEvent.isComposing) return;
 

@@ -58,12 +58,11 @@
                         class="form-control"
                         maxlength="4"
                         inputmode="numeric"
-                        min="1"
-                        max="1000000"
-                        inputmode="numeric"
                         data-year-range
+                        data-year-min="1900"
+                        data-year-max="{{ date('Y') }}"
                         placeholder="@lang('messages.Placeholder Established Year')"
-                        oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,7)">
+                        autocomplete="off">
                     <span class="text-danger message-danger" id="message_established_year" role="alert"></span>
                 </div>
 

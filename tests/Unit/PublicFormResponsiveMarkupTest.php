@@ -18,7 +18,7 @@ class PublicFormResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('data-remove-address', $address);
         $this->assertStringContainsString('select2', $address);
         $this->assertStringContainsString('@media (max-width:', $css);
-        $this->assertStringContainsString('international-phone-group', $phone);
+        $this->assertStringContainsString('window.intlTelInput', $phone);
         $this->assertStringContainsString("timer: 5000", $phone);
         $this->assertStringContainsString('window.close()', $phone);
         $this->assertStringContainsString('response.meta.message', $phone);

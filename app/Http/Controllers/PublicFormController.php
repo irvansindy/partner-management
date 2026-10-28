@@ -258,8 +258,34 @@ class PublicFormController extends Controller
     }
 
     public function provinces() { return response()->json(['data' => Provinces::orderBy('name')->get(['id','name'])]); }
-    public function regencies($province) { return response()->json(['data' => Regencies::where('province_id', $province)->orderBy('name')->get(['id','name'])]); }
-    public function postalCodes($regency) { return response()->json(['data' => PostalCode::where('regency_id', $regency)->orderBy('postal_code')->get(['id','district','village','postal_code'])]); }
+    public function regencies($province)
+    {
+        $query = Regencies::where('province_id', $province);
+        if ((clone $query)->whereNotNull('code')->exists()) {
+            $query->whereNotNull('code');
+        }
+
+        return response()->json(['data' => $query->orderBy('name')->get(['id', 'code', 'name'])]);
+    }
+    public function postalCodes($regency)
+    {
+        $postalCodes = PostalCode::where('regency_id', $regency)
+            ->orderBy('postal_code')
+            ->orderBy('district')
+            ->orderBy('village')
+            ->get(['district', 'postal_code'])
+            ->groupBy('postal_code')
+            ->map(function ($locations, $postalCode) {
+                $areas = $locations->pluck('district')->filter()->unique()->values();
+
+                return [
+                    'postal_code' => (string) $postalCode,
+                    'area' => $areas->implode('; '),
+                ];
+            })->values();
+
+        return response()->json(['data' => $postalCodes]);
+    }
 
     private function validateSubmission(Request $request, $formType)
     {
