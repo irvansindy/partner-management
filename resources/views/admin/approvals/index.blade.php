@@ -15,7 +15,7 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-warning">
                     <div class="inner">
-                        <h3>{{ $approvals->where('status', 0)->count() + $approvals->where('status', 1)->count() }}</h3>
+                        <h3>{{ $approvalStats['in_progress'] }}</h3>
                         <p>In Progress</p>
                     </div>
                     <div class="icon">
@@ -27,7 +27,7 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-success">
                     <div class="inner">
-                        <h3>{{ $approvals->where('status', 2)->count() }}</h3>
+                        <h3>{{ $approvalStats['approved'] }}</h3>
                         <p>Approved</p>
                     </div>
                     <div class="icon">
@@ -39,7 +39,7 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-danger">
                     <div class="inner">
-                        <h3>{{ $approvals->where('status', 3)->count() }}</h3>
+                        <h3>{{ $approvalStats['rejected'] }}</h3>
                         <p>Rejected</p>
                     </div>
                     <div class="icon">
@@ -51,7 +51,7 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
-                        <h3>{{ $approvals->total() }}</h3>
+                        <h3>{{ $approvalStats['total'] }}</h3>
                         <p>Total Processes</p>
                     </div>
                     <div class="icon">

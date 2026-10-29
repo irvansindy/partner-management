@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Approval extends Model
+/**
+ * @deprecated Use ApprovalProcess instead.
+ */
+class Approval extends ApprovalProcess
 {
-    use HasFactory;
 }

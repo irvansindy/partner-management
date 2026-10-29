@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FormLinkStoreRequest;
 use App\Http\Requests\FormLinkUpdateRequest;
 use App\Models\FormLink;
+use App\Models\ApprovalProcess;
 use App\Services\FormLinkService;
 use Illuminate\Http\Request;
 
@@ -125,7 +126,20 @@ class FormLinkController extends Controller
 
         $companies = $this->formLinkService->getSubmissions($formLink);
 
-        return view('admin.form_links.submissions', compact('formLink', 'companies'));
+        $submissionStats = [
+            'total' => $formLink->companies()->count(),
+            'approved' => $formLink->companies()->whereHas('approvalProcess', function ($query) {
+                $query->where('status', ApprovalProcess::STATUS_APPROVED);
+            })->count(),
+            'in_progress' => $formLink->companies()->whereHas('approvalProcess', function ($query) {
+                $query->whereIn('status', [ApprovalProcess::STATUS_PENDING, ApprovalProcess::STATUS_IN_PROGRESS]);
+            })->count(),
+            'rejected' => $formLink->companies()->whereHas('approvalProcess', function ($query) {
+                $query->where('status', ApprovalProcess::STATUS_REJECTED);
+            })->count(),
+        ];
+
+        return view('admin.form_links.submissions', compact('formLink', 'companies', 'submissionStats'));
     }
 
     /**

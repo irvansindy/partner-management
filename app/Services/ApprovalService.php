@@ -23,7 +23,12 @@ class ApprovalService
     {
         try {
             return DB::transaction(function () use ($company) {
-                // Get form link
+                $company = CompanyInformation::whereKey($company->id)->lockForUpdate()->firstOrFail();
+                $existingProcess = ApprovalProcess::where('company_information_id', $company->id)->first();
+                if ($existingProcess) {
+                    return $existingProcess->load('steps');
+                }
+
                 $formLink = FormLink::find($company->form_link_id);
 
                 if (!$formLink) {
@@ -98,72 +103,64 @@ class ApprovalService
      *
      * @param ApprovalProcessStep $step
      * @param string $action ('approve' or 'reject')
+     * @param int $actorId
      * @param string|null $notes
      * @return bool
      * @throws \Exception
      */
-    public function processApprovalAction(ApprovalProcessStep $step, string $action, ?string $notes = null): bool
+    public function processApprovalAction(ApprovalProcessStep $step, string $action, int $actorId, ?string $notes = null): bool
     {
+        if (!in_array($action, ['approve', 'reject'], true)) {
+            throw new \InvalidArgumentException("Invalid action: {$action}");
+        }
+        if ($action === 'reject' && trim((string) $notes) === '') {
+            throw new \InvalidArgumentException('Rejection notes are required.');
+        }
+
         try {
-            \Log::info('Processing approval action', [
-                'step_id' => $step->id,
-                'approval_process_id' => $step->approval_id,
-                'action' => $action,
-                'user_id' => auth()->id()
-            ]);
-            DB::beginTransaction();
+            return DB::transaction(function () use ($step, $action, $actorId, $notes) {
+                $lockedStep = ApprovalProcessStep::whereKey($step->id)->lockForUpdate()->firstOrFail();
+                $process = ApprovalProcess::whereKey($lockedStep->approval_id)->lockForUpdate()->firstOrFail();
 
-            if (!in_array($action, ['approve', 'reject'])) {
-                throw new \InvalidArgumentException("Invalid action: {$action}");
-            }
-
-            // Check if step is in waiting status
-            if (!$step->isWaiting()) {
-                throw new \Exception("This step is not waiting for approval");
-            }
-
-            // Perform action
-            if ($action === 'approve') {
-                $step->approve($notes);
-
-                // Check if there's next step
-                $nextStep = ApprovalProcessStep::where('approval_id', $step->approval_id)
-                    ->where('step_ordering', $step->step_ordering + 1)
-                    ->where('status', ApprovalProcessStep::STATUS_PENDING)
-                    ->first();
-
-                if ($nextStep) {
-                    // Activate next step
-                    $nextStep->update(['status' => ApprovalProcessStep::STATUS_WAITING]);
-
-                    // Update process step_ordering
-                    $step->process->update([
-                        'step_ordering' => $nextStep->step_ordering
-                    ]);
-                } else {
-                    // All steps approved - complete the process
-                    $step->process->update([
-                        'status' => ApprovalProcess::STATUS_APPROVED
-                    ]);
+                if ($lockedStep->user_id !== $actorId) {
+                    throw new \RuntimeException('You are not the approver for this step.');
                 }
-            } else {
-                // Reject
-                $step->reject($notes);
+                if (!$lockedStep->isWaiting() || !$process->isInProgress()) {
+                    throw new \RuntimeException('This approval step has already been processed.');
+                }
 
-                // Reject the entire process
-                $step->process->update([
-                    'status' => ApprovalProcess::STATUS_REJECTED
+                if ($action === 'reject') {
+                    $lockedStep->reject($notes);
+                    $process->update(['status' => ApprovalProcess::STATUS_REJECTED]);
+                    $process->company()->update(['status' => 'reject']);
+                } else {
+                    $lockedStep->approve($notes);
+                    $nextStep = ApprovalProcessStep::where('approval_id', $process->id)
+                        ->where('step_ordering', '>', $lockedStep->step_ordering)
+                        ->where('status', ApprovalProcessStep::STATUS_PENDING)
+                        ->orderBy('step_ordering')
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($nextStep) {
+                        $nextStep->update(['status' => ApprovalProcessStep::STATUS_WAITING]);
+                        $process->update(['step_ordering' => $nextStep->step_ordering]);
+                    } else {
+                        $process->update(['status' => ApprovalProcess::STATUS_APPROVED]);
+                        $process->company()->update(['status' => 'approved']);
+                    }
+                }
+
+                Log::info('Approval action processed', [
+                    'step_id' => $lockedStep->id,
+                    'approval_process_id' => $process->id,
+                    'action' => $action,
+                    'user_id' => $actorId,
                 ]);
-            }
 
-            DB::commit();
-
-            Log::info("Approval action '{$action}' processed successfully for step ID: {$step->id}");
-
-            return true;
-
+                return true;
+            }, 3);
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error("Failed to process approval action for step ID: {$step->id}. Error: {$e->getMessage()}");
             throw $e;
         }

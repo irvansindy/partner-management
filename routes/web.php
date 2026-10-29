@@ -145,7 +145,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     });
 
     // Approval Process Routes
-    Route::prefix('approvals')->name('approvals.')->group(function () {
+    Route::middleware('role:super-admin|admin|super-user')->prefix('approvals')->name('approvals.')->group(function () {
         // List all approval processes
         Route::get('/', [ApprovalProcessController::class, 'index'])
             ->name('index');
@@ -175,6 +175,16 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', action: [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
+});
+
+Route::middleware(['auth', 'role:super-admin'])->group(function () {
+    Route::get('approval-setting', [ApprovalSettingController::class, 'index'])->name('approval-setting');
+    Route::get('fetch-approval', [ApprovalSettingController::class, 'fetchApproval'])->name('fetch-approval');
+    Route::get('fetch-user-approval', [ApprovalSettingController::class, 'fetchUserApproval'])->name('fetch-user-approval');
+    Route::get('fetch-office-department', [ApprovalSettingController::class, 'fetchOfficeAndDepartment'])->name('fetch-office-department');
+    Route::post('store-approval-master', [ApprovalSettingController::class, 'storeApprovalTemplate'])->name('store-approval-master');
+    Route::post('submit-approval-detail', [ApprovalSettingController::class, 'submitApprovalDetail'])->name('submit-approval-detail');
+    Route::delete('delete-approval-template', [ApprovalSettingController::class, 'deleteApprovalTemplate'])->name('delete-approval-template');
 });
 // Route::middleware(['auth', 'role:user|admin', 'verified'])->group(function () {
 Route::middleware(['auth', 'role:user|admin'])->group(function () {
@@ -239,13 +249,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('store-menu', [MenuController::class,'storeMenu'])->name('store-menu');
     Route::post('update-menu', [MenuController::class,'updateMenu'])->name('update-menu');
     Route::post('delete-menu', [MenuController::class,'deleteMenu'])->name('delete-menu');
-
-    Route::get('approval-setting', [ApprovalSettingController::class,'index'])->name('approval-setting');
-    Route::get('fetch-approval', [ApprovalSettingController::class,'fetchApproval'])->name('fetch-approval');
-    Route::get('fetch-user-approval', [ApprovalSettingController::class,'fetchUserApproval'])->name('fetch-user-approval');
-    Route::get('fetch-office-department', [ApprovalSettingController::class,'fetchOfficeAndDepartment'])->name('fetch-office-department');
-    Route::post('store-approval-master', [ApprovalSettingController::class,'storeApprovalTemplate'])->name('store-approval-master');
-    Route::post('submit-approval-detail', [ApprovalSettingController::class,'submitApprovalDetail'])->name('submit-approval-detail');
 
     Route::get('end-user-license-agreement', [EndUserLicenseAgreementController::class,'index'])->name('end-user-license-agreement');
     Route::get('fetch-end-user-license-agreement', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement');

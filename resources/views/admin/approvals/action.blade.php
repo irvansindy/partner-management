@@ -162,10 +162,10 @@
                             <div class="form-group">
                                 <label for="notes">
                                     Notes / Comments
-                                    <span class="text-muted">(Optional)</span>
+                                    <span class="text-muted">(Wajib jika memilih Reject)</span>
                                 </label>
                                 <textarea name="notes" id="notes" class="form-control @error('notes') is-invalid @enderror" rows="5"
-                                    placeholder="Add your comments or reasons for this action...">{{ old('notes') }}</textarea>
+                                    maxlength="1000" placeholder="Add your comments or reasons for this action...">{{ old('notes') }}</textarea>
                                 @error('notes')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -273,7 +273,10 @@
             // Change button color based on action selected
             $('input[name="action"]').on('change', function() {
                 const submitBtn = $('#submitBtn');
+                  const notes = $('#notes');
                 const action = $(this).val();
+
+                  notes.prop('required', action === 'reject');
 
                 if (action === 'approve') {
                     submitBtn.removeClass('btn-danger').addClass('btn-success');

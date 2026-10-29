@@ -13,4 +13,9 @@ class ApprovalDetails extends ApprovalProcessStep
     {
         return $this->process();
     }
+
+    public function user()
+    {
+        return $this->approver();
+    }
 }

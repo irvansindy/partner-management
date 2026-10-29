@@ -12,7 +12,7 @@ class ApprovalTemplateDetail extends Model
     protected $table = 'approval_template_details';
 
     protected $fillable = [
-        'approval_template_id', // ✅ Pastikan ini ada
+        'approval_id',
         'user_id',
         'step_ordering',
         'status'
@@ -25,10 +25,9 @@ class ApprovalTemplateDetail extends Model
 
     // ========== RELATIONSHIPS ==========
 
-    // ✅ PERBAIKAN: Foreign key yang benar
     public function template()
     {
-        return $this->belongsTo(ApprovalTemplate::class, 'approval_template_id', 'id');
+        return $this->belongsTo(ApprovalTemplate::class, 'approval_id', 'id');
     }
 
     public function user()

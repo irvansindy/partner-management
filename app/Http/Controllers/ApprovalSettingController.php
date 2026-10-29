@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\FormatResponseJson;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use App\Models\ApprovalTemplate;
 use App\Models\ApprovalTemplateDetail;
@@ -43,7 +42,8 @@ class ApprovalSettingController extends Controller
 
             return FormatResponseJson::success($templates, 'Approval templates fetched successfully');
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            \Log::error('Fetch Approval Template Error', ['exception' => $e]);
+            return FormatResponseJson::error(null, 'Data template approval tidak dapat dimuat.', 500);
         }
     }
 
@@ -83,7 +83,8 @@ class ApprovalSettingController extends Controller
             ], 'Users fetched successfully');
 
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            \Log::error('Fetch Approval User Error', ['exception' => $e]);
+            return FormatResponseJson::error(null, 'Data approver tidak dapat dimuat.', 500);
         }
     }
 
@@ -108,7 +109,8 @@ class ApprovalSettingController extends Controller
             ], 'Office and department fetched successfully');
 
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            \Log::error('Fetch Approval Master Data Error', ['exception' => $e]);
+            return FormatResponseJson::error(null, 'Data office dan department tidak dapat dimuat.', 500);
         }
     }
 
@@ -117,101 +119,54 @@ class ApprovalSettingController extends Controller
      */
     public function storeApprovalTemplate(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'approval_master_name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[\pL\pN\s_-]+$/u'],
+            'stagging_approval_office' => ['required', 'integer', 'exists:master_offices,id'],
+            'stagging_approval_department' => ['required', 'integer', 'exists:master_departments,id'],
+            'status' => 'nullable|integer|in:0,1',
+        ], [
+            'approval_master_name.required' => 'Nama template approval wajib diisi',
+            'approval_master_name.min' => 'Nama template minimal 3 karakter',
+            'approval_master_name.max' => 'Nama template maksimal 255 karakter',
+            'approval_master_name.regex' => 'Nama template hanya boleh berisi huruf, angka, spasi, dan tanda hubung',
+            'stagging_approval_office.required' => 'Office wajib dipilih',
+            'stagging_approval_office.exists' => 'Office yang dipilih tidak valid',
+            'stagging_approval_department.required' => 'Department wajib dipilih',
+            'stagging_approval_department.exists' => 'Department yang dipilih tidak valid',
+        ]);
+        if ($validator->fails()) {
+            return FormatResponseJson::error(null, ['errors' => $validator->errors()], 422);
+        }
+
         try {
-            DB::beginTransaction();
-
-            // ✅ VALIDASI LENGKAP
-            $validator = Validator::make($request->all(), [
-                // Required fields
-                'approval_master_name' => [
-                    'required',
-                    'string',
-                    'min:3',
-                    'max:255',
-                    'regex:/^[a-zA-Z0-9\s\-\_]+$/', // Hanya alphanumeric, space, dash, underscore
-                ],
-                'stagging_approval_office' => [
-                    'required',
-                    'integer',
-                    'exists:master_offices,id',
-                ],
-                'stagging_approval_department' => [
-                    'required',
-                    'integer',
-                    'exists:master_departments,id',
-                ],
-
-                // Optional fields
-                'status' => 'nullable|in:0,1',
-
-            ], [
-                // Custom error messages (Bahasa Indonesia)
-                'approval_master_name.required' => 'Nama template approval wajib diisi',
-                'approval_master_name.min' => 'Nama template minimal 3 karakter',
-                'approval_master_name.max' => 'Nama template maksimal 255 karakter',
-                'approval_master_name.regex' => 'Nama template hanya boleh berisi huruf, angka, spasi, dan tanda hubung',
-
-                'stagging_approval_office.required' => 'Office wajib dipilih',
-                'stagging_approval_office.exists' => 'Office yang dipilih tidak valid',
-
-                'stagging_approval_department.required' => 'Department wajib dipilih',
-                'stagging_approval_department.exists' => 'Department yang dipilih tidak valid',
-            ]);
-
-            if ($validator->fails()) {
-                throw new ValidationException($validator);
-            }
-
-            // ✅ CEK DUPLIKASI (office + department sudah ada?)
-            $existingTemplate = ApprovalTemplate::where([
-                'location_id' => $request->stagging_approval_office,
-                'department_id' => $request->stagging_approval_department,
-            ])->first();
-
-            if ($existingTemplate) {
-                return FormatResponseJson::error(null,
-                    'Template approval untuk kombinasi Office dan Department ini sudah ada. Silakan edit template yang sudah ada atau pilih kombinasi lain.',
-                    409 // 409 Conflict
-                );
-            }
-
-            // ✅ VALIDASI OFFICE & DEPARTMENT AKTIF
-            $office = MasterOffice::where('id', $request->stagging_approval_office)->first();
-
-            if (!$office) {
-                return FormatResponseJson::error(null, 'Office yang dipilih tidak aktif', 400);
-            }
-
-            $department = MasterDepartment::where('id', $request->stagging_approval_department)->first();
-
-            if (!$department) {
-                return FormatResponseJson::error(null, 'Department yang dipilih tidak aktif', 400);
-            }
-
-            // ✅ CREATE TEMPLATE
-            $template = ApprovalTemplate::create([
-                'name' => trim($request->approval_master_name),
-                'user_id' => auth()->id(),
-                'location_id' => $request->stagging_approval_office,
-                'department_id' => $request->stagging_approval_department,
-                'step_ordering' => 1,
-                'status' => $request->status ?? 1, // Default active
-            ]);
-
-            DB::commit();
+            $template = DB::transaction(function () use ($request) {
+                $duplicate = ApprovalTemplate::where('location_id', $request->stagging_approval_office)
+                    ->where('department_id', $request->stagging_approval_department)
+                    ->lockForUpdate()
+                    ->exists();
+                if ($duplicate) {
+                    throw new \DomainException('Template approval untuk kombinasi Office dan Department ini sudah ada.');
+                }
+                return ApprovalTemplate::create([
+                    'name' => trim($request->approval_master_name),
+                    'user_id' => auth()->id(),
+                    'location_id' => $request->stagging_approval_office,
+                    'department_id' => $request->stagging_approval_department,
+                    'step_ordering' => 1,
+                    'status' => $request->input('status', 1),
+                ]);
+            }, 3);
 
             return FormatResponseJson::success([
                 'template_id' => $template->id,
                 'name' => $template->name,
             ], 'Template approval berhasil dibuat');
 
-        } catch (ValidationException $e) {
-            DB::rollback();
-            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
+        } catch (\DomainException $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 409);
         } catch (\Exception $e) {
-            DB::rollback();
-            \Log::error('Store Approval Template Error: ' . $e->getMessage());
-            return FormatResponseJson::error(null, 'Terjadi kesalahan saat membuat template: ' . $e->getMessage(), 500);
+            \Log::error('Store Approval Template Error', ['exception' => $e]);
+            return FormatResponseJson::error(null, 'Terjadi kesalahan saat membuat template approval.', 500);
         }
     }
 
@@ -220,11 +175,7 @@ class ApprovalSettingController extends Controller
      */
     public function submitApprovalDetail(Request $request)
     {
-        try {
-            DB::beginTransaction();
-
-            // ✅ VALIDASI LENGKAP
-            $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
                 'master_approval_id' => [
                     'required',
                     'integer',
@@ -255,66 +206,47 @@ class ApprovalSettingController extends Controller
                 'stagging_approval_name.*.exists' => 'Salah satu user yang dipilih tidak valid',
             ]);
 
-            if ($validator->fails()) {
-                throw new ValidationException($validator);
-            }
+        if ($validator->fails()) {
+            return FormatResponseJson::error(null, ['errors' => $validator->errors()], 422);
+        }
 
-            // ✅ VALIDASI APPROVER ADALAH ADMIN/SUPER-USER
-            $invalidUsers = User::whereIn('id', $request->stagging_approval_name)
-                ->whereDoesntHave('roles', function($q) {
-                    $q->whereIn('name', ['admin', 'super-user']);
-                })
-                ->pluck('name');
+        $invalidUsers = User::whereIn('id', $request->stagging_approval_name)
+            ->whereDoesntHave('roles', function($q) {
+                $q->whereIn('name', ['admin', 'super-user']);
+            })
+            ->pluck('name');
 
-            if ($invalidUsers->isNotEmpty()) {
-                return FormatResponseJson::error(null,
-                    'User berikut tidak memiliki role yang sesuai: ' . $invalidUsers->implode(', '),
-                    400
-                );
-            }
+        if ($invalidUsers->isNotEmpty()) {
+            return FormatResponseJson::error(null,
+                'User berikut tidak memiliki role yang sesuai: ' . $invalidUsers->implode(', '),
+                400
+            );
+        }
 
-            // ✅ VALIDASI USER AKTIF
-            // $inactiveUsers = User::whereIn('id', $request->stagging_approval_name)
-            //     ->where('status', '!=', 1)
-            //     ->pluck('name');
-            // dd($inactiveUsers);
-            // if ($inactiveUsers->isNotEmpty()) {
-            //     return FormatResponseJson::error(null,
-            //         'User berikut tidak aktif: ' . $inactiveUsers->implode(', '),
-            //         400
-            //     );
-            // }
-
-            // ✅ DELETE EXISTING & INSERT NEW
-            ApprovalTemplateDetail::where('approval_id', $request->master_approval_id)->delete();
-
-            $details = [];
-            foreach ($request->stagging_approval_name as $index => $userId) {
-                $details[] = [
-                    'approval_id' => $request->master_approval_id,
-                    'user_id' => $userId,
-                    'step_ordering' => $index + 1,
-                    'status' => 0, // Active
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-
-            ApprovalTemplateDetail::insert($details);
-
-            DB::commit();
-
+        try {
+            $details = DB::transaction(function () use ($request) {
+                ApprovalTemplate::whereKey($request->master_approval_id)->lockForUpdate()->firstOrFail();
+                ApprovalTemplateDetail::where('approval_id', $request->master_approval_id)->delete();
+                $details = [];
+                foreach ($request->stagging_approval_name as $index => $userId) {
+                    $details[] = [
+                        'approval_id' => $request->master_approval_id,
+                        'user_id' => $userId,
+                        'step_ordering' => $index + 1,
+                        'status' => 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                ApprovalTemplateDetail::insert($details);
+                return $details;
+            }, 3);
             return FormatResponseJson::success([
                 'total_approvers' => count($details),
             ], 'Detail approver berhasil disimpan');
-
-        } catch (ValidationException $e) {
-            DB::rollback();
-            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            DB::rollback();
-            \Log::error('Submit Approval Detail Error: ' . $e->getMessage());
-            return FormatResponseJson::error(null, 'Terjadi kesalahan: ' . $e->getMessage(), 500);
+            \Log::error('Submit Approval Detail Error', ['exception' => $e]);
+            return FormatResponseJson::error(null, 'Terjadi kesalahan saat menyimpan detail approver.', 500);
         }
     }
 
@@ -323,37 +255,29 @@ class ApprovalSettingController extends Controller
      */
     public function deleteApprovalTemplate(Request $request)
     {
+        $validated = $request->validate([
+            'template_id' => 'required|integer|exists:approval_templates,id',
+        ]);
+
         try {
-            DB::beginTransaction();
-
-            $template = ApprovalTemplate::findOrFail($request->template_id);
-
-            // ✅ CEK APAKAH TEMPLATE SEDANG DIGUNAKAN
-            $isUsed = ApprovalProcess::where([
-                'location_id' => $template->location_id,
-                'department_id' => $template->department_id,
-            ])->whereIn('status', [0, 1])->exists();
-
-            if ($isUsed) {
-                return FormatResponseJson::error(null,
-                    'Template tidak dapat dihapus karena sedang digunakan dalam proses approval',
-                    409
-                );
-            }
-
-            // Delete details first (foreign key)
-            $template->details()->delete();
-
-            // Delete template
-            $template->delete();
-
-            DB::commit();
-
+            DB::transaction(function () use ($validated) {
+                $template = ApprovalTemplate::whereKey($validated['template_id'])->lockForUpdate()->firstOrFail();
+                $isUsed = ApprovalProcess::where('location_id', $template->location_id)
+                    ->where('department_id', $template->department_id)
+                    ->whereIn('status', [ApprovalProcess::STATUS_PENDING, ApprovalProcess::STATUS_IN_PROGRESS])
+                    ->exists();
+                if ($isUsed) {
+                    throw new \DomainException('Template tidak dapat dihapus karena sedang digunakan dalam proses approval.');
+                }
+                $template->details()->delete();
+                $template->delete();
+            }, 3);
             return FormatResponseJson::success(null, 'Template berhasil dihapus');
-
+        } catch (\DomainException $e) {
+            return FormatResponseJson::error(null, $e->getMessage(), 409);
         } catch (\Exception $e) {
-            DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            \Log::error('Delete Approval Template Error', ['exception' => $e]);
+            return FormatResponseJson::error(null, 'Terjadi kesalahan saat menghapus template approval.', 500);
         }
     }
 }
