@@ -42,6 +42,28 @@ class ApprovalModuleIntegrityTest extends TestCase
     }
 
     /** @test */
+    public function approval_list_and_action_use_the_current_admin_layout(): void
+    {
+        $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/ApprovalProcessController.php');
+        $index = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/approvals/index.blade.php');
+        $action = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/approvals/action.blade.php');
+        $show = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/approvals/show.blade.php');
+
+        $this->assertStringContainsString("@extends('layouts.main')", $index);
+        $this->assertStringContainsString("@extends('layouts.main')", $action);
+        $this->assertStringNotContainsString("@extends('adminlte::page')", $index);
+        $this->assertStringNotContainsString("@extends('adminlte::page')", $action);
+        $this->assertStringContainsString('approval-action-shell', $action);
+        $this->assertStringContainsString('decision-option', $action);
+        $this->assertStringContainsString('approval-field', $action);
+        $this->assertStringNotContainsString('<div class="form-group">', $action);
+        $this->assertStringContainsString("@extends('layouts.main')", $show);
+        $this->assertStringContainsString('approval-detail-shell', $show);
+        $this->assertStringContainsString("'company.formLink'", $controller);
+        $this->assertStringContainsString("'process.steps.approver'", $controller);
+    }
+
+    /** @test */
     public function approval_setting_is_super_admin_only_and_uses_atomic_writes(): void
     {
         $routes = file_get_contents(dirname(__DIR__, 2).'/routes/web.php');

@@ -1,306 +1,279 @@
 <script>
-    $(document).ready(function() {
-        var data_approval_count = 0
-        $('#approval_table').DataTable({
-            processing: true,
-            // serverside: true,
-            ajax: {
-                url: '{{ route('fetch-approval') }}',
-                type: 'GET',
-            },
-            columns: [{
-                    "data": null,
-                    "render": function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
-                    "data": "name",
-                    "defaultContent": "<i>Not set</i>"
-                },
-                {
-                    "data": "office",
-                    "defaultContent": "<i>Not set</i>"
-                },
-                {
-                    "data": "department",
-                    "defaultContent": "<i>Not set</i>"
-                },
-                {
-                    'data': null,
-                    title: 'Action',
-                    wrap: true,
-                    "render": function(item) {
-                        return '<button type="button" data-master_approval_id="' + item.id +
-                            '" data-master_approval_name="' + item.name +
-                            '" data-office_id="' + item.office_id +
-                            '" data-department_id="' + item.department_id +
-                            '" class="btn btn-outline-info btn-sm mt-2 detail_approval_detail" data-toggle="modal" data-target="#addViewApprovalDetail">Stagging</button>'
-                    }
-                },
-            ]
-        })
+    $(function () {
+        let availableUsers = [];
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-        $(document).on('click', '#for_create_approval', function(e) {
-            e.preventDefault()
-            $('#data_approval_master')[0].reset()
-            // get data office and department
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        function escapeHtml(value) {
+            return $('<div>').text(value == null ? '' : String(value)).html();
+        }
+
+        function toast(title, message, type) {
+            $(document).Toasts('create', {
+                title: title,
+                class: type === 'success' ? 'bg-success' : 'bg-danger',
+                body: escapeHtml(message),
+                delay: 5000,
+                autohide: true,
+                close: true,
+                autoremove: true
+            });
+        }
+
+        function clearValidation($form) {
+            $form.find('.is-invalid').removeClass('is-invalid');
+            $form.find('[data-field-error]').text('');
+        }
+
+        function responseErrors(xhr) {
+            const response = xhr.responseJSON || {};
+            const message = response.meta && response.meta.message;
+            return (message && message.errors) || response.errors || {};
+        }
+
+        function responseMessage(xhr, fallback) {
+            const response = xhr.responseJSON || {};
+            const message = response.meta && response.meta.message;
+            return typeof message === 'string' ? message : fallback;
+        }
+
+        function showValidationErrors($form, xhr) {
+            const errors = responseErrors(xhr);
+            Object.keys(errors).forEach(function (field) {
+                const baseField = field.split('.')[0];
+                const message = Array.isArray(errors[field]) ? errors[field][0] : errors[field];
+                $form.find('[name="' + baseField + '"], [name="' + baseField + '[]"]').addClass('is-invalid');
+                $form.find('[data-field-error="' + baseField + '"]').text(message);
+            });
+            toast('Unable to save', responseMessage(xhr, 'Please check the highlighted fields.'), 'error');
+        }
+
+        function setButtonLoading($button, loading, loadingText) {
+            if (loading) {
+                $button.data('original-html', $button.html()).prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm mr-1" aria-hidden="true"></span>' + loadingText);
+            } else {
+                $button.prop('disabled', false).html($button.data('original-html'));
+            }
+        }
+
+        const table = $('#approval_table').DataTable({
+            processing: true,
+            ajax: { url: '{{ route('fetch-approval') }}', type: 'GET' },
+            order: [[0, 'asc']],
+            columns: [
+                {
+                    data: null,
+                    orderable: false,
+                    render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }
                 },
+                { data: 'name', render: function (data) { return '<strong>' + escapeHtml(data || 'Not set') + '</strong>'; } },
+                { data: 'office', render: function (data) { return escapeHtml(data || '-'); } },
+                { data: 'department', render: function (data) { return escapeHtml(data || '-'); } },
+                { data: 'total_steps', className: 'text-center', render: function (data) { return '<span class="badge badge-light">' + Number(data || 0) + '</span>'; } },
+                { data: 'status', render: function (data) { const active = data === 'Active'; return '<span class="badge ' + (active ? 'badge-success' : 'badge-secondary') + '">' + escapeHtml(data) + '</span>'; } },
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    render: function (item) {
+                        return '<button type="button" data-master-approval-id="' + Number(item.id) +
+                            '" class="btn btn-primary btn-sm detail_approval_detail" data-toggle="modal" data-target="#addViewApprovalDetail"' +
+                            ' aria-label="Arrange approvers for ' + escapeHtml(item.name) + '">' +
+                            '<i class="fas fa-list-ol mr-1" aria-hidden="true"></i>Approvers</button>';
+                    }
+                }
+            ],
+            language: {
+                emptyTable: 'No approval templates have been created.',
+                processing: 'Loading approval templates...'
+            }
+        });
+
+        function initializeMasterSelects() {
+            $('.option_approval_master').select2({
+                width: '100%',
+                dropdownParent: $('#formCreateApproval'),
+                dropdownCssClass: 'approval-select2-dropdown',
+                placeholder: 'Select an option'
+            });
+        }
+
+        $('#for_create_approval').on('click', function () {
+            const $form = $('#data_approval_master');
+            $form[0].reset();
+            clearValidation($form);
+            const $office = $('#stagging_approval_office').empty().append('<option value="">Loading offices...</option>').prop('disabled', true);
+            const $department = $('#stagging_approval_department').empty().append('<option value="">Loading departments...</option>').prop('disabled', true);
+
+            $.ajax({
                 url: "{{ route('fetch-office-department') }}",
                 method: 'GET',
-                async: true,
-                success: function(res) {
-                    $('#stagging_approval_office').empty()
-                    $('#stagging_approval_department').empty()
-                    $('#stagging_approval_office').append(
-                        `<option value="">Select Office</option>`)
-                    $('#stagging_approval_department').append(
-                        `<option value="">Select Department</option>`)
-                    // looping & append data office
-                    for (let i = 0; i < res.data.offices.length; i++) {
-                        $('#stagging_approval_office').append(
-                            `<option value="${res.data.offices[i].id}">${res.data.offices[i].name}</option>`
-                        )
-                    }
-                    // looping & append data departments
-                    for (let i = 0; i < res.data.departments.length; i++) {
-                        $('#stagging_approval_department').append(
-                            `<option value="${res.data.departments[i].id}">${res.data.departments[i].name}</option>`
-                        )
-                    }
-                }
-            })
-        })
-
-        $(document).on('click', '.detail_approval_detail', function(e) {
-            e.preventDefault()
-            data_approval_count = 0
-            let master_approval_id = $(this).data('master_approval_id')
-            let master_approval_name = $(this).data('master_approval_name')
-            let office_id = $(this).data('office_id')
-            let department_id = $(this).data('department_id')
-
-            $('#data_approval_detail')[0].reset()
-            $('.dynamic_approval').empty()
-            $('#master_approval_id').val(master_approval_id)
-            $('#master_approval_name').val(master_approval_name)
-            $('#create_approval_detail_data').attr('data-master_approval_stagging', master_approval_id)
-
-            // get data user approval
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{ route('fetch-user-approval') }}",
-                method: 'GET',
-                data: {
-                    master_approval_id: master_approval_id,
-                    office_id: office_id,
-                    department_id: department_id
-                },
-                dataType: 'json',
-                async: true,
-                success: function(res) {
-                    const users = res.data.users;
-                    const existingApprovals = res.data.existing_approvers;
-                    // console.log(existingApprovals.length);
-
-                    $('#add_stagging').attr('data-approval_id', master_approval_id);
-                    $('#add_stagging').attr('data-department_id', department_id);
-                    $('#add_stagging').attr('data-office_id', office_id);
-                    // --- Handle first (index 0) ---
-                    $('#stagging_approval_name_0').empty().append(
-                        '<option value="">Select One</option>');
-                    if (existingApprovals.length != 0) {
-                        users.forEach(user => {
-                            const selected = user.id === existingApprovals[0]
-                                .user_id ? 'selected' : '';
-                            $('#stagging_approval_name_0').append(
-                                `<option value="${user.id}" ${selected}>${user.name}</option>`
-                                );
-                        });
-                    } else {
-                        // jika tidak ada existing_approval, isi tetap dengan list user
-                        users.forEach(user => {
-                            $('#stagging_approval_name_0').append(
-                                `<option value="${user.id}">${user.name}</option>`
-                                );
-                        });
-                    }
-
-                    // --- Append sisanya (index 1 dan seterusnya) ---
-                    for (let i = 1; i < existingApprovals.length; i++) {
-                        const approval = existingApprovals[i];
-                        let selectOptions = `<option value="">Select One</option>`;
-
-                        users.forEach(user => {
-                            const selected = user.id === approval.user_id ?
-                                'selected' : '';
-                            selectOptions +=
-                                `<option value="${user.id}" ${selected}>${user.name}</option>`;
-                        });
-
-                        $('.dynamic_approval').append(`
-                            <div class="row array_dynamic_approval mb-2">
-                                <div class="col-md-10">
-                                    <div class="form-group">
-                                        <select class="form-control option_approval_detail" name="stagging_approval_name[]" style="width: 100%">
-                                            ${selectOptions}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-auto">
-                                    <button type="button" class="btn btn-outline-danger float-right delete_stagging">
-                                        <i class="fas fa-fw fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `);
-                    }
-                    $('.option_approval_detail').select2({
-                        dropdownParent: $('#addViewApprovalDetail')
-                    })
-                }
-            })
-        })
-
-        $(document).on('click', '#add_stagging', function(e) {
-            e.preventDefault();
-            data_approval_count++;
-
-            let id_select = `stagging_approval_name_${data_approval_count}`;
-            let approval_id = $(this).data('approval_id');
-            let department_id = $(this).data('department_id');
-            let office_id = $(this).data('office_id');
-            // Append elemen baru dengan ID yang sudah disiapkan
-            $('.dynamic_approval').append(`
-                <div class="row array_dynamic_approval mb-2">
-                    <div class="col-md-10">
-                        <div class="form-group">
-                            <select class="form-control option_approval_detail" name="stagging_approval_name[]" id="${id_select}" style="width: 100%"></select>
-                        </div>
-                    </div>
-                    <div class="col-md-auto">
-                        <button type="button" class="btn btn-outline-danger float-right delete_stagging">
-                            <i class="fas fa-fw fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-            `);
-            updateFormIdApprovalDetail()
-            // Baru setelah elemen ada, isi datanya
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{ route('fetch-user-approval') }}",
-                method: 'GET',
-                data: {
-                    master_approval_id: approval_id,
-                    office_id: office_id,
-                    department_id: department_id
-                },
-                async: true,
-                success: function(res) {
-                    const $select = $(`#${id_select}`);
-                    $select.empty().append(
-                    `<option value="">Select User Approval</option>`);
-                    res.data.users.forEach(user => {
-                        $select.append(
-                            `<option value="${user.id}">${user.name}</option>`);
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                success: function (response) {
+                    $office.empty().append('<option value=""></option>').prop('disabled', false);
+                    $department.empty().append('<option value=""></option>').prop('disabled', false);
+                    response.data.offices.forEach(function (office) {
+                        $office.append(new Option(office.name, office.id));
                     });
-
-                    // Baru jalankan select2 SETELAH isi option
-                    $select.select2({
-                        dropdownParent: $('#addViewApprovalDetail')
+                    response.data.departments.forEach(function (department) {
+                        $department.append(new Option(department.name, department.id));
                     });
+                    initializeMasterSelects();
+                },
+                error: function (xhr) {
+                    $office.empty().append('<option value="">Unable to load offices</option>');
+                    $department.empty().append('<option value="">Unable to load departments</option>');
+                    toast('Unable to load data', responseMessage(xhr, 'Office and department data could not be loaded.'), 'error');
                 }
             });
         });
 
-        $(document).on('click', '.delete_stagging', function(e) {
-            e.preventDefault()
-            $(this).closest('.array_dynamic_approval').remove();
-            data_approval_count--
-            updateFormIdApprovalDetail()
-        })
-
-        function updateFormIdApprovalDetail() {
-            $('.array_dynamic_approval').each(function(i) {
-                $(this).find('.option_approval_detail').attr('id', 'stagging_approval_name_' + (i + 1));
-            })
+        function userOptions(selectedId) {
+            let options = '<option value=""></option>';
+            availableUsers.forEach(function (user) {
+                const selected = Number(user.id) === Number(selectedId) ? ' selected' : '';
+                options += '<option value="' + Number(user.id) + '"' + selected + '>' + escapeHtml(user.name) + ' (' + escapeHtml(user.email) + ')</option>';
+            });
+            return options;
         }
 
-        $(document).on('click', '#create_approval_master_data', function(e) {
-            e.preventDefault()
-            let data_approval_master = new FormData($('#data_approval_master')[0])
+        function renderApproverRow(selectedId, removable) {
+            return '<div class="approver-step-card" data-approver-row>' +
+                '<span class="approver-step-card__number" data-step-number></span>' +
+                '<div class="form-group"><label class="sr-only">Approver</label>' +
+                '<select class="form-control option_approval_detail" name="stagging_approval_name[]" required>' + userOptions(selectedId) + '</select></div>' +
+                (removable ? '<button type="button" class="btn btn-outline-danger approver-step-card__remove delete_stagging" aria-label="Remove approval step"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>' : '<span aria-hidden="true"></span>') +
+                '</div>';
+        }
 
+        function refreshApproverRows() {
+            const $rows = $('[data-approver-list] [data-approver-row]');
+            $rows.each(function (index) {
+                $(this).find('[data-step-number]').text(index + 1);
+                $(this).find('label').text('Approver for step ' + (index + 1));
+                $(this).find('select').attr('aria-label', 'Approver for step ' + (index + 1));
+            });
+            $('#add_stagging').prop('disabled', $rows.length >= 10);
+        }
+
+        function initializeApproverSelects() {
+            $('.option_approval_detail').not('.select2-hidden-accessible').select2({
+                width: '100%',
+                dropdownParent: $('#addViewApprovalDetail'),
+                dropdownCssClass: 'approval-select2-dropdown',
+                placeholder: 'Select approver'
+            });
+        }
+
+        $(document).on('click', '.detail_approval_detail', function () {
+            const templateId = $(this).data('master-approval-id');
+            const $modal = $('#addViewApprovalDetail');
+            const $form = $('#data_approval_detail');
+            clearValidation($form);
+            $('#master_approval_id').val(templateId);
+            $('[data-approver-list]').empty();
+            $('[data-approval-error]').prop('hidden', true).text('');
+            $('[data-approval-loading]').prop('hidden', false);
+            $('#add_stagging, #create_approval_detail_data').prop('disabled', true);
+
+            $.ajax({
+                url: "{{ route('fetch-user-approval') }}",
+                method: 'GET',
+                data: { master_approval_id: templateId },
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                success: function (response) {
+                    availableUsers = response.data.users || [];
+                    const template = response.data.template;
+                    $('#master_approval_name').text(template.name);
+                    $('[data-template-office]').text(template.office);
+                    $('[data-template-department]').text(template.department);
+                    $('[data-approval-loading]').prop('hidden', true);
+
+                    const existing = response.data.existing_approvers || [];
+                    if (existing.length) {
+                        existing.forEach(function (approval, index) {
+                            $('[data-approver-list]').append(renderApproverRow(approval.user_id, index > 0));
+                        });
+                    } else {
+                        $('[data-approver-list]').append(renderApproverRow('', false));
+                    }
+                    initializeApproverSelects();
+                    refreshApproverRows();
+                    $('#create_approval_detail_data').prop('disabled', availableUsers.length === 0);
+                },
+                error: function (xhr) {
+                    $('[data-approval-loading]').prop('hidden', true);
+                    $('[data-approval-error]').prop('hidden', false).text(responseMessage(xhr, 'Approver data could not be loaded.'));
+                }
+            });
+        });
+
+        $('#add_stagging').on('click', function () {
+            const count = $('[data-approver-list] [data-approver-row]').length;
+            if (count >= 10) return;
+            $('[data-approver-list]').append(renderApproverRow('', true));
+            initializeApproverSelects();
+            refreshApproverRows();
+        });
+
+        $(document).on('click', '.delete_stagging', function () {
+            const $row = $(this).closest('[data-approver-row]');
+            $row.find('.option_approval_detail').select2('destroy');
+            $row.remove();
+            refreshApproverRows();
+        });
+
+        $('#data_approval_master').on('submit', function (event) {
+            event.preventDefault();
+            const $form = $(this);
+            const $button = $('#create_approval_master_data');
+            clearValidation($form);
+            setButtonLoading($button, true, 'Creating...');
             $.ajax({
                 url: '{{ route('store-approval-master') }}',
                 method: 'POST',
+                data: new FormData(this),
                 processData: false,
                 contentType: false,
-                cache: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                success: function (response) {
+                    table.ajax.reload(null, false);
+                    $('#formCreateApproval').modal('hide');
+                    toast('Template created', response.meta.message, 'success');
                 },
-                data: data_approval_master,
-                success: function(res) {
-                    $('#approval_table').DataTable().ajax.reload();
-                    $('#formCreateApproval').modal('hide')
-                    $(document).Toasts('create', {
-                        title: 'Success',
-                        class: 'bg-success',
-                        body: res.meta.message,
-                        delay: 5000,
-                        autohide: true,
-                        fade: true,
-                        close: true,
-                        autoremove: true,
-                    });
-                }
-            })
-        })
+                error: function (xhr) { showValidationErrors($form, xhr); },
+                complete: function () { setButtonLoading($button, false); }
+            });
+        });
 
-        $(document).on('click', '#create_approval_detail_data', function(e) {
-            e.preventDefault()
-            let data_approval_detail_stagging = new FormData($('#data_approval_detail')[0])
-
+        $('#data_approval_detail').on('submit', function (event) {
+            event.preventDefault();
+            const $form = $(this);
+            const values = $form.find('[name="stagging_approval_name[]"]').map(function () { return $(this).val(); }).get().filter(Boolean);
+            if (!values.length || new Set(values).size !== values.length) {
+                $('[data-field-error="stagging_approval_name"]').text(values.length ? 'Each approval step must use a different user.' : 'Add at least one approver.');
+                return;
+            }
+            const $button = $('#create_approval_detail_data');
+            clearValidation($form);
+            setButtonLoading($button, true, 'Saving...');
             $.ajax({
                 url: '{{ route('submit-approval-detail') }}',
                 method: 'POST',
+                data: new FormData(this),
                 processData: false,
                 contentType: false,
-                cache: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                success: function (response) {
+                    table.ajax.reload(null, false);
+                    $('#addViewApprovalDetail').modal('hide');
+                    toast('Sequence saved', response.meta.message, 'success');
                 },
-                data: data_approval_detail_stagging,
-                success: function(res) {
-                    $('#approval_table').DataTable().ajax.reload();
-                    $('#addViewApprovalDetail').modal('hide')
-                    $(document).Toasts('create', {
-                        title: 'Success',
-                        class: 'bg-success',
-                        body: res.meta.message,
-                        delay: 5000,
-                        autohide: true,
-                        fade: true,
-                        close: true,
-                        autoremove: true,
-                    });
-                }
-            })
-        })
-    })
+                error: function (xhr) { showValidationErrors($form, xhr); },
+                complete: function () { setButtonLoading($button, false); }
+            });
+        });
 
-    $('.option_approval_master').select2({
-        dropdownParent: $('#formCreateApproval')
-    })
-    $('.option_approval_detail').select2({
-        dropdownParent: $('#addViewApprovalDetail')
-    })
+        initializeMasterSelects();
+    });
 </script>

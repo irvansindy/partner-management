@@ -56,6 +56,7 @@ class ApprovalProcessController extends Controller
 
         $approval->load([
             'company.contact',
+            'company.formLink',
             'company.address',
             'company.bank',
             'company.liablePeople',
@@ -102,7 +103,7 @@ class ApprovalProcessController extends Controller
             return back()->with('error', 'Step ini tidak dalam status menunggu approval.');
         }
 
-        $step->load(['process.company', 'process.initiator', 'approver']);
+        $step->load(['process.company', 'process.initiator', 'process.steps.approver', 'approver']);
 
         return view('admin.approvals.action', compact('step'));
     }

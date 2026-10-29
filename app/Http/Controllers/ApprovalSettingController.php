@@ -24,6 +24,7 @@ class ApprovalSettingController extends Controller
     {
         try {
             $templates = ApprovalTemplate::with(['user', 'department', 'office', 'details.user'])
+                ->latest()
                 ->get()
                 ->map(function ($template) {
                     return [
@@ -33,7 +34,7 @@ class ApprovalSettingController extends Controller
                         'department_id' => $template->department_id,
                         'office' => $template->office->name ?? '-',
                         'department' => $template->department->name ?? '-',
-                        'total_steps' => $template->getTotalSteps(),
+                        'total_steps' => $template->details->count(),
                         'status' => $template->isActive() ? 'Active' : 'Inactive',
                         'created_by' => $template->user->name ?? '-',
                         'created_at' => $template->created_at->format('d M Y'),
@@ -54,8 +55,11 @@ class ApprovalSettingController extends Controller
                 'master_approval_id' => 'required|exists:approval_templates,id'
             ]);
 
-            // Ambil user yang eligible sebagai approver
-            $users = User::with('roles')
+            $template = ApprovalTemplate::with(['office:id,name', 'department:id,name'])
+                ->findOrFail($request->master_approval_id);
+
+            $users = User::select(['id', 'name', 'email'])
+                ->with('roles:id,name')
                 ->whereHas('roles', function($q) {
                     $q->whereIn('name', ['admin', 'super-user']);
                 })
@@ -70,8 +74,8 @@ class ApprovalSettingController extends Controller
                     return [
                         'id' => $detail->id,
                         'user_id' => $detail->user_id,
-                        'user_name' => $detail->user->name,
-                        'user_email' => $detail->user->email,
+                        'user_name' => optional($detail->user)->name ?? 'User tidak tersedia',
+                        'user_email' => optional($detail->user)->email ?? '-',
                         'step_ordering' => $detail->step_ordering,
                         'status' => $detail->status,
                     ];
@@ -80,6 +84,12 @@ class ApprovalSettingController extends Controller
             return FormatResponseJson::success([
                 'users' => $users,
                 'existing_approvers' => $existingApprovers,
+                'template' => [
+                    'id' => $template->id,
+                    'name' => $template->name,
+                    'office' => optional($template->office)->name ?? '-',
+                    'department' => optional($template->department)->name ?? '-',
+                ],
             ], 'Users fetched successfully');
 
         } catch (\Exception $e) {

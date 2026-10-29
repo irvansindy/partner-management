@@ -139,7 +139,7 @@
                                                 <strong><i class="fas fa-comment"></i> Notes:</strong>
                                                 <div
                                                     class="alert alert-{{ $step->isApproved() ? 'success' : 'danger' }} mt-1">
-                                                    {{ $step->notes }}
+                                                    {!! $step->notes !!}
                                                 </div>
                                             </div>
                                         @endif
