@@ -43,4 +43,20 @@ class PublicHttpsUrlTest extends TestCase
             'unicode host' => ['https://例子.测试'],
         ];
     }
+
+    /** @test */
+    public function public_form_applies_the_public_domain_rule_before_submission(): void
+    {
+        $form = file_get_contents(dirname(__DIR__, 2).'/resources/views/cs_vendor/form/master_information.blade.php');
+        $partnerScript = file_get_contents(dirname(__DIR__, 2).'/resources/views/cs_vendor/partner_js.blade.php');
+        $wizardScript = file_get_contents(dirname(__DIR__, 2).'/resources/views/public/form/js.blade.php');
+
+        $this->assertStringContainsString('data-public-website', $form);
+        $this->assertStringContainsString('function sanitizeWebsiteHost', $partnerScript);
+        $this->assertStringContainsString("on('input', '[data-public-website]'", $partnerScript);
+        $this->assertStringContainsString("on('blur', '[data-public-website]'", $partnerScript);
+        $this->assertStringContainsString('$pane.find(\'[data-public-website]\')', $wizardScript);
+        $this->assertStringContainsString('isValidWebsiteHost(value)', $wizardScript);
+        $this->assertStringContainsString('HTTPS dan domain publik yang valid', $wizardScript);
+    }
 }

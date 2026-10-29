@@ -3,9 +3,11 @@
         <h3 class="card-title">@lang('messages.Address Data')</h3>
     </div>
     <div class="card-body">
-        <div class="form-check mb-4">
-            <input class="form-check-input" type="checkbox" id="operational_same_as_legal" checked>
-            <label class="form-check-label" for="operational_same_as_legal">Alamat operasional sama dengan alamat legal</label>
+        <div class="address-sync-wrapper mb-4">
+            <label class="address-sync-control" for="operational_same_as_legal">
+                <input class="form-check-input" type="checkbox" id="operational_same_as_legal" checked>
+                <span class="address-sync-control__text">Alamat operasional sama dengan alamat legal</span>
+            </label>
         </div>
         <div id="address_rows"></div>
         <div class="d-flex justify-content-end">
@@ -84,7 +86,14 @@
                         <input type="text" name="geocoded_address[]" class="form-control" data-field="geocoded_address" placeholder="Hasil pencarian alamat akan tampil di sini" readonly>
                     </div>
                     <small class="text-muted" data-coordinate-status>Pencarian peta tidak wajib untuk melanjutkan.</small>
-                    <div class="partner-map mt-3" data-address-map aria-label="Peta lokasi alamat"></div>
+                    <div class="partner-map-shell mt-3" data-map-shell>
+                        <button type="button" class="partner-map-fullscreen" data-map-fullscreen
+                            aria-label="Buka peta layar penuh" title="Buka peta layar penuh">
+                            <i class="fas fa-expand" aria-hidden="true"></i>
+                            <span>Layar penuh</span>
+                        </button>
+                        <div class="partner-map" data-address-map aria-label="Peta lokasi alamat"></div>
+                    </div>
                 </div>
             </div>
         </fieldset>
@@ -105,8 +114,10 @@ window.addEventListener('load', function () {
     const regenciesUrl = @json(route('public.form.regencies', ['province' => '__PROVINCE__']));
     const postalCodesUrl = @json(route('public.form.postal-codes', ['regency' => '__REGENCY__']));
     const geocodeUrl = @json(route('forward-map'));
+    const reverseGeocodeUrl = @json(route('reverse-map'));
     const maps = new WeakMap();
     let nextIndex = 0;
+    let hasShownAddressGuidance = false;
 
     if (typeof L !== 'undefined') {
         delete L.Icon.Default.prototype._getIconUrl;
@@ -161,6 +172,20 @@ window.addEventListener('load', function () {
         $(control).select2({ width: '100%', placeholder: placeholder });
     }
 
+    function countryOptionMarkup(option) {
+        if (!option.id) return option.text;
+
+        const code = String(option.id).toLowerCase();
+        const optionRow = $('<span class="country-option"></span>');
+        $('<span></span>', {
+            class: 'iti__flag iti__' + code,
+            'aria-hidden': 'true'
+        }).appendTo(optionRow);
+        $('<span class="country-option__label"></span>').text(option.text).appendTo(optionRow);
+
+        return optionRow;
+    }
+
     function populate(control, items, valueKey, label) {
         control.innerHTML = '<option value=""></option>';
         items.forEach(function (item) {
@@ -199,12 +224,57 @@ window.addEventListener('load', function () {
     function initializeMap(row) {
         const canvas = row.querySelector('[data-address-map]');
         if (!canvas || typeof L === 'undefined') return;
-        const map = L.map(canvas).setView([-2.5, 118], 5);
+        const initialPosition = [-2.5, 118];
+        const map = L.map(canvas).setView(initialPosition, 5);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
             maxZoom: 19
         }).addTo(map);
-        maps.set(row, { map: map, marker: null });
+        maps.set(row, { map: map, marker: null, reverseRequestSequence: 0, hasSelection: false });
+        ensureDraggableMarker(row, initialPosition[0], initialPosition[1], false);
+        map.on('click', function (event) {
+            updatePinFromSelection(row, event.latlng.lat, event.latlng.lng);
+        });
+
+        const fullscreenButton = row.querySelector('[data-map-fullscreen]');
+        if (fullscreenButton) {
+            fullscreenButton.addEventListener('click', function (event) {
+                event.stopPropagation();
+                toggleMapFullscreen(row);
+            });
+        }
+    }
+
+    function setCoordinateValues(row, latitude, longitude) {
+        field(row, 'latitude').value = Number(latitude).toFixed(7);
+        field(row, 'longitude').value = Number(longitude).toFixed(7);
+        field(row, 'latitude').dispatchEvent(new Event('input', { bubbles: true }));
+        field(row, 'longitude').dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    function setMarkerSelectionState(state, selected) {
+        state.hasSelection = selected;
+        if (state.marker) state.marker.setOpacity(selected ? 1 : 0.65);
+    }
+
+    function ensureDraggableMarker(row, lat, lng, selected) {
+        const state = maps.get(row);
+        if (!state) return null;
+        if (state.marker) {
+            state.marker.setLatLng([lat, lng]);
+            setMarkerSelectionState(state, selected !== false);
+            return state.marker;
+        }
+
+        const marker = L.marker([lat, lng], { draggable: true }).addTo(state.map);
+        marker.bindTooltip('Geser pin atau klik peta untuk memilih lokasi', { direction: 'top' });
+        marker.on('dragend', function () {
+            const position = marker.getLatLng();
+            updatePinFromSelection(row, position.lat, position.lng);
+        });
+        state.marker = marker;
+        setMarkerSelectionState(state, selected !== false);
+        return marker;
     }
 
     function showCoordinates(row, latitude, longitude) {
@@ -212,10 +282,94 @@ window.addEventListener('load', function () {
         const lat = Number(latitude);
         const lng = Number(longitude);
         if (!state || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
-        if (state.marker) state.marker.setLatLng([lat, lng]);
-        else state.marker = L.marker([lat, lng]).addTo(state.map);
+        ensureDraggableMarker(row, lat, lng, true);
         state.map.setView([lat, lng], 16);
         setTimeout(function () { state.map.invalidateSize(); }, 0);
+    }
+
+    function setFullscreenButtonState(shell, active) {
+        const button = shell.querySelector('[data-map-fullscreen]');
+        if (!button) return;
+        const label = active ? 'Keluar dari layar penuh' : 'Buka peta layar penuh';
+        button.setAttribute('aria-label', label);
+        button.setAttribute('title', label);
+        button.querySelector('span').textContent = active ? 'Keluar layar penuh' : 'Layar penuh';
+        button.querySelector('i').className = active ? 'fas fa-compress' : 'fas fa-expand';
+    }
+
+    function resizeFullscreenMap(shell) {
+        const row = shell.closest('[data-address-row]');
+        const state = row ? maps.get(row) : null;
+        if (state) setTimeout(function () { state.map.invalidateSize(); }, 0);
+    }
+
+    function setFallbackFullscreen(shell, active) {
+        shell.classList.toggle('is-map-fullscreen', active);
+        document.body.classList.toggle('map-fullscreen-open', active);
+        setFullscreenButtonState(shell, active);
+        resizeFullscreenMap(shell);
+    }
+
+    function toggleMapFullscreen(row) {
+        const shell = row.querySelector('[data-map-shell]');
+        if (!shell) return;
+
+        if (document.fullscreenElement === shell) {
+            document.exitFullscreen();
+            return;
+        }
+        if (shell.classList.contains('is-map-fullscreen')) {
+            setFallbackFullscreen(shell, false);
+            return;
+        }
+        if (shell.requestFullscreen) {
+            const request = shell.requestFullscreen();
+            if (request && typeof request.catch === 'function') {
+                request.catch(function () { setFallbackFullscreen(shell, true); });
+            }
+            return;
+        }
+        setFallbackFullscreen(shell, true);
+    }
+
+    function reverseGeocodePin(row, latitude, longitude) {
+        const state = maps.get(row);
+        if (!state) return;
+        const requestSequence = ++state.reverseRequestSequence;
+        const status = row.querySelector('[data-coordinate-status]');
+        const address = field(row, 'geocoded_address');
+        address.value = '';
+        address.dispatchEvent(new Event('input', { bubbles: true }));
+        status.textContent = 'Memuat alamat untuk posisi pin...';
+
+        fetch(reverseGeocodeUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ latitude: latitude, longitude: longitude })
+        }).then(function (response) {
+            if (!response.ok) throw new Error('reverse lookup failed');
+            return response.json();
+        }).then(function (payload) {
+            if (requestSequence !== state.reverseRequestSequence) return;
+            address.value = payload.data.display_name || '';
+            address.dispatchEvent(new Event('input', { bubbles: true }));
+            status.textContent = 'Koordinat dipilih: ' + field(row, 'latitude').value + ', ' + field(row, 'longitude').value;
+            showPartnerToast('Pencarian Alamat', 'Posisi pin dan alamat berhasil diperbarui.', 'success');
+        }).catch(function () {
+            if (requestSequence !== state.reverseRequestSequence) return;
+            status.textContent = 'Koordinat tetap tersimpan, tetapi alamat untuk posisi pin tidak dapat dimuat.';
+            showPartnerToast('Pencarian Alamat', 'Koordinat tetap tersimpan. Alamat tidak dapat diperbarui.', 'warning');
+        });
+    }
+
+    function updatePinFromSelection(row, latitude, longitude) {
+        setCoordinateValues(row, latitude, longitude);
+        showCoordinates(row, latitude, longitude);
+        reverseGeocodePin(row, Number(latitude), Number(longitude));
     }
 
     function clearCoordinates(row) {
@@ -223,9 +377,11 @@ window.addEventListener('load', function () {
         field(row, 'longitude').value = '';
         field(row, 'geocoded_address').value = '';
         const state = maps.get(row);
+        if (state) state.reverseRequestSequence++;
         if (state && state.marker) {
-            state.map.removeLayer(state.marker);
-            state.marker = null;
+            const center = state.map.getCenter();
+            state.marker.setLatLng(center);
+            setMarkerSelectionState(state, false);
         }
     }
 
@@ -296,7 +452,12 @@ window.addEventListener('load', function () {
         setIdentity(row, role, title);
         rows.appendChild(row);
         const country = field(row, 'country_code');
-        select2(country, 'Pilih negara');
+        $(country).select2({
+            width: '100%',
+            placeholder: 'Pilih negara',
+            templateResult: countryOptionMarkup,
+            templateSelection: countryOptionMarkup
+        });
         $(country).on('change', function () { configureCountry(row); });
         configureCountry(row);
         initializeInternationalPhoneInputs(row);
@@ -320,6 +481,8 @@ window.addEventListener('load', function () {
         const search = event.target.closest('[data-find-coordinate]');
         if (!search) return;
         const row = search.closest('[data-address-row]');
+        const mapState = maps.get(row);
+        if (mapState) mapState.reverseRequestSequence++;
         const query = row.querySelector('[data-coordinate-search]').value.trim();
         const status = row.querySelector('[data-coordinate-status]');
         if (!query) {
@@ -337,8 +500,7 @@ window.addEventListener('load', function () {
             if (!response.ok) throw new Error('not found');
             return response.json();
         }).then(function (payload) {
-            field(row, 'latitude').value = payload.data.latitude;
-            field(row, 'longitude').value = payload.data.longitude;
+            setCoordinateValues(row, payload.data.latitude, payload.data.longitude);
             field(row, 'geocoded_address').value = payload.data.display_name || query;
             field(row, 'geocoded_address').dispatchEvent(new Event('input', { bubbles: true }));
             status.textContent = 'Koordinat ditemukan: ' + payload.data.latitude + ', ' + payload.data.longitude;
@@ -367,11 +529,34 @@ window.addEventListener('load', function () {
             showCoordinates(row, field(row, 'latitude').value, field(row, 'longitude').value);
         });
     });
+    document.addEventListener('fullscreenchange', function () {
+        rows.querySelectorAll('[data-map-shell]').forEach(function (shell) {
+            const active = document.fullscreenElement === shell;
+            setFullscreenButtonState(shell, active);
+            if (active || !document.fullscreenElement) resizeFullscreenMap(shell);
+        });
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            const shell = rows.querySelector('[data-map-shell].is-map-fullscreen');
+            if (shell) setFallbackFullscreen(shell, false);
+        }
+    });
     document.addEventListener('partner:address-step-shown', function () {
         rows.querySelectorAll('[data-address-row]:not([hidden])').forEach(function (row) {
             const state = maps.get(row);
             if (state) setTimeout(function () { state.map.invalidateSize(); }, 0);
         });
+        if (!hasShownAddressGuidance && typeof Swal !== 'undefined') {
+            hasShownAddressGuidance = true;
+            Swal.fire({
+                icon: 'info',
+                title: 'Tips mencari titik alamat',
+                html: 'Cari menggunakan nama tempat umum atau alamat terdekat, lalu geser pin atau klik peta untuk menentukan lokasi yang lebih tepat.',
+                confirmButtonText: 'Mengerti',
+                confirmButtonColor: '#6558d3'
+            });
+        }
     });
     addAddress('legal', 'Alamat Legal (sesuai NPWP)');
     addAddress('operational', 'Alamat Operasional');

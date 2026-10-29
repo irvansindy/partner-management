@@ -685,6 +685,23 @@
                     getMessageContainer($field).text(message);
                 });
 
+                $pane.find('[data-public-website]').each(function() {
+                    let $field = $(this);
+                    let value = $.trim($field.val() || '');
+                    if (!value || isValidWebsiteHost(value)) return;
+
+                    let message = 'Alamat website harus menggunakan HTTPS dan domain publik yang valid.';
+                    let label = getFieldLabel($field);
+                    errors.push({
+                        field: $field,
+                        label: label,
+                        message: message
+                    });
+                    $field.addClass('is-invalid');
+                    $field.get(0).setCustomValidity(message);
+                    getMessageContainer($field).text(message);
+                });
+
                 $pane.find('[data-alpha-spaces], [data-bank-name], [data-year-range]').each(function() {
                     let $field = $(this);
                     let value = $.trim($field.val() || '');

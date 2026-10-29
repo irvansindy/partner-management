@@ -18,6 +18,12 @@ class PublicFormResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('data-remove-address', $address);
         $this->assertStringContainsString('select2', $address);
         $this->assertStringContainsString('@media (max-width:', $css);
+        $this->assertStringContainsString('#form_company .address-sync-control', $css);
+        $this->assertStringContainsString('align-items: center', $css);
+        $this->assertStringContainsString('color: #5947d6', $css);
+        $this->assertStringContainsString('#form_company .partner-map-fullscreen', $css);
+        $this->assertStringContainsString('#form_company .partner-map-shell:fullscreen', $css);
+        $this->assertStringContainsString('#form_company .partner-map-shell.is-map-fullscreen', $css);
         $this->assertStringContainsString('window.intlTelInput', $phone);
         $this->assertStringContainsString("timer: 5000", $phone);
         $this->assertStringContainsString('window.close()', $phone);

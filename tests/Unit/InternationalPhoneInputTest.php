@@ -36,6 +36,10 @@ class InternationalPhoneInputTest extends TestCase
         $this->assertStringContainsString('width: 100%', $css);
         $this->assertStringContainsString('min-height: 44px', $css);
         $this->assertStringContainsString('.iti__selected-flag', $css);
+        $this->assertStringContainsString('.iti--separate-dial-code input.international-phone', $css);
+        $this->assertStringContainsString('padding-left: 104px !important', $css);
+        $this->assertStringContainsString('customPlaceholder:', $script);
+        $this->assertStringContainsString("return placeholder || '812 3456 7890'", $script);
     }
 
     /** @test */

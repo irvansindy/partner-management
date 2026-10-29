@@ -249,12 +249,71 @@
             line-height: 1.35;
         }
 
+        #form_company .partner-map-shell {
+            position: relative;
+            min-height: 400px;
+        }
+
         #form_company .partner-map {
             width: 100%;
+            height: 400px;
             min-height: 400px;
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
+        }
+
+        #form_company .partner-map-fullscreen {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 40px;
+            padding: 8px 12px;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #252b3b;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .18);
+        }
+
+        #form_company .partner-map-fullscreen:hover {
+            background: #f3f4f6;
+        }
+
+        #form_company .partner-map-fullscreen:focus-visible {
+            outline: 3px solid #f4b740;
+            outline-offset: 2px;
+        }
+
+        #form_company .partner-map-shell:fullscreen,
+        #form_company .partner-map-shell.is-map-fullscreen {
+            width: 100vw;
+            height: 100vh;
+            min-height: 100vh;
+            padding: 12px;
+            background: #ffffff;
+        }
+
+        #form_company .partner-map-shell.is-map-fullscreen {
+            position: fixed;
+            inset: 0;
+            z-index: 2050;
+        }
+
+        #form_company .partner-map-shell:fullscreen .partner-map,
+        #form_company .partner-map-shell.is-map-fullscreen .partner-map {
+            height: 100%;
+            min-height: 100%;
+            border-radius: 0;
+        }
+
+        body.map-fullscreen-open {
+            overflow: hidden;
         }
 
         #form_company .input-group {
@@ -269,6 +328,15 @@
         #form_company .iti .international-phone {
             min-height: 44px;
             width: 100%;
+        }
+
+        #form_company .iti--separate-dial-code input.international-phone {
+            padding-left: 104px !important;
+        }
+
+        #form_company .iti--separate-dial-code input.international-phone::placeholder {
+            color: #8a94a4;
+            opacity: 1;
         }
 
         #form_company .iti--separate-dial-code .iti__selected-flag {
@@ -292,6 +360,23 @@
             max-width: min(420px, calc(100vw - 32px));
             white-space: normal;
             z-index: 1080;
+        }
+
+        #form_company .country-option {
+            align-items: center;
+            display: inline-flex;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        #form_company .country-option .iti__flag {
+            flex: 0 0 auto;
+        }
+
+        #form_company .country-option__label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         #form_company .contact-phone-column,
@@ -658,6 +743,47 @@
         #form_company .form-check-input:not(:checked) {
             background-color: #fff;
             border-color: #b8c1ce;
+        }
+
+        #form_company .address-sync-control {
+            align-items: center;
+            background: #f4f1ff;
+            border: 1px solid #ddd7ff;
+            border-radius: 8px;
+            color: #5947d6;
+            cursor: pointer;
+            display: inline-flex;
+            gap: 10px;
+            margin: 0;
+            min-height: 44px;
+            padding: 10px 13px;
+        }
+
+        #form_company .address-sync-control:hover {
+            background: #ece8ff;
+            border-color: #c8c0ff;
+            color: #4736c3;
+        }
+
+        #form_company .address-sync-control:focus-within {
+            outline: 3px solid rgba(101, 88, 211, 0.22);
+            outline-offset: 2px;
+        }
+
+        #form_company .address-sync-control .form-check-input {
+            flex: 0 0 20px;
+            float: none;
+            height: 20px;
+            margin: 0;
+            position: static;
+            width: 20px;
+        }
+
+        #form_company .address-sync-control__text {
+            color: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.35;
         }
 
         #wizard_actions {

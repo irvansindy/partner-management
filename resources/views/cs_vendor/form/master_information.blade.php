@@ -171,7 +171,8 @@
                     <div class="input-group website-address-group">
                         <span class="input-group-text">https://</span>
                         <input type="text" name="website_address" id="website_address" class="form-control website-host"
-                            maxlength="255" placeholder="contoh.com">
+                            maxlength="255" inputmode="url" autocomplete="url" data-public-website
+                            placeholder="contoh.com">
                     </div>
                     <span class="text-danger message-danger" id="message_website_address" role="alert"></span>
                 </div>

@@ -31,6 +31,9 @@
             separateDialCode: true,
             nationalMode: true,
             autoPlaceholder: 'aggressive',
+            customPlaceholder: function(placeholder) {
+                return placeholder || '812 3456 7890';
+            },
             utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js'
         });
         input._intlTelInput = phoneInput;
@@ -80,17 +83,56 @@
         }
     }
 
+    function sanitizeWebsiteHost(value) {
+        let host = String(value || '')
+            .replace(/^[a-z][a-z0-9+.-]*:\/\//i, '')
+            .replace(/[\s@\\]+/g, '')
+            .replace(/[^\x21-\x7e]/g, '');
+        const suffixIndex = host.search(/[/?#]/);
+        const authority = suffixIndex === -1 ? host : host.slice(0, suffixIndex);
+        const suffix = suffixIndex === -1 ? '' : host.slice(suffixIndex);
+
+        return authority.toLowerCase() + suffix;
+    }
+
     function isValidWebsiteHost(value) {
         const host = String(value || '').trim().replace(/^https?:\/\//i, '');
-        if (!host || /\s/.test(host)) return false;
+        if (!host || /[\s@\\]/.test(host) || /[^\x21-\x7e]/.test(host)) return false;
 
         try {
             const url = new URL('https://' + host);
-            return url.protocol === 'https:' && url.hostname.includes('.') && !url.username && !url.password;
+            const hostname = url.hostname;
+            return url.protocol === 'https:'
+                && !url.username
+                && !url.password
+                && hostname === hostname.toLowerCase()
+                && !/^\d{1,3}(?:\.\d{1,3}){3}$/.test(hostname)
+                && !hostname.includes(':')
+                && /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(hostname);
         } catch (error) {
             return false;
         }
     }
+
+    function updateWebsiteValidation(input, revealError) {
+        const value = input.value.trim();
+        const valid = !value || isValidWebsiteHost(value);
+        const message = valid ? '' : 'Alamat website harus menggunakan HTTPS dan domain publik yang valid.';
+        input.setCustomValidity(message);
+        input.classList.toggle('is-invalid', Boolean(revealError && message));
+        $('#message_website_address').text(revealError ? message : '');
+        return valid;
+    }
+
+    $(document).on('input', '[data-public-website]', function() {
+        const sanitized = sanitizeWebsiteHost(this.value);
+        if (this.value !== sanitized) this.value = sanitized;
+        updateWebsiteValidation(this, this.classList.contains('is-invalid'));
+    });
+
+    $(document).on('blur', '[data-public-website]', function() {
+        updateWebsiteValidation(this, Boolean(this.value.trim()));
+    });
 
     $(document).on('input', '#established_year, #total_employee, [data-max-digits]', function() {
         // hapus semua karakter non-digit

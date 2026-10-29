@@ -63,6 +63,9 @@ Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementC
 
 Route::get('map-geocoder', [GeocodeController::class,'index'])->name('map-geocoder');
 Route::post('forward-map', [GeocodeController::class,'forward'])->name('forward-map');
+Route::post('reverse-map', [GeocodeController::class, 'reverse'])
+    ->middleware('throttle:60,1')
+    ->name('reverse-map');
 
 // ========================================
 // PUBLIC ROUTES - Form Submission

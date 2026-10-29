@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Wimski\Nominatim\Contracts\GeocoderServiceInterface;
 use Wimski\Nominatim\RequestParameters\ForwardGeocodingQueryRequestParameters;
+use Wimski\Nominatim\RequestParameters\ReverseGeocodingRequestParameters;
+use Wimski\Nominatim\Objects\Coordinate;
 use Illuminate\Support\Facades\Log;
 
 class GeocodeController extends Controller
@@ -83,6 +85,43 @@ class GeocodeController extends Controller
                 'message' => 'Geocoding request failed',
                 'error' => config('app.debug') ? $e->getMessage() : 'An error occurred while processing your request',
             ], 500);
+        }
+    }
+
+    public function reverse(Request $request)
+    {
+        $data = $request->validate([
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        $latitude = (float) $data['latitude'];
+        $longitude = (float) $data['longitude'];
+
+        try {
+            $parameters = ReverseGeocodingRequestParameters::make(
+                new Coordinate($latitude, $longitude)
+            )->zoom(18)->includeAddressDetails();
+
+            $response = $this->geocoder->requestReverseGeocoding($parameters);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'display_name' => $response->getDisplayName(),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('Reverse geocoding failed', [
+                'exception' => get_class($e),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Alamat untuk koordinat tersebut tidak dapat dimuat.',
+            ], 502);
         }
     }
 }
