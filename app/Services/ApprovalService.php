@@ -7,6 +7,7 @@ use App\Models\ApprovalProcessStep;
 use App\Models\ApprovalTemplate;
 use App\Models\CompanyInformation;
 use App\Models\FormLink;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -121,6 +122,7 @@ class ApprovalService
             return DB::transaction(function () use ($step, $action, $actorId, $notes) {
                 $lockedStep = ApprovalProcessStep::whereKey($step->id)->lockForUpdate()->firstOrFail();
                 $process = ApprovalProcess::whereKey($lockedStep->approval_id)->lockForUpdate()->firstOrFail();
+                $company = CompanyInformation::whereKey($process->company_information_id)->lockForUpdate()->firstOrFail();
 
                 if ($lockedStep->user_id !== $actorId) {
                     throw new \RuntimeException('You are not the approver for this step.');
@@ -132,8 +134,17 @@ class ApprovalService
                 if ($action === 'reject') {
                     $lockedStep->reject($notes);
                     $process->update(['status' => ApprovalProcess::STATUS_REJECTED]);
-                    $process->company()->update(['status' => 'reject']);
+                    $company->update(['status' => 'reject']);
                 } else {
+                    $actor = User::whereKey($actorId)->lockForUpdate()->firstOrFail();
+                    if (!$actor->office_id || !$actor->department_id) {
+                        throw new \RuntimeException('Approver office and department must be configured.');
+                    }
+
+                    $company->update([
+                        'location_id' => $actor->office_id,
+                        'department_id' => $actor->department_id,
+                    ]);
                     $lockedStep->approve($notes);
                     $nextStep = ApprovalProcessStep::where('approval_id', $process->id)
                         ->where('step_ordering', '>', $lockedStep->step_ordering)
@@ -147,7 +158,7 @@ class ApprovalService
                         $process->update(['step_ordering' => $nextStep->step_ordering]);
                     } else {
                         $process->update(['status' => ApprovalProcess::STATUS_APPROVED]);
-                        $process->company()->update(['status' => 'approved']);
+                        $company->update(['status' => 'approved']);
                     }
                 }
 

@@ -113,7 +113,7 @@ class MenusSeeder extends Seeder
                 'id' => 8,
                 'name_text' => 'Partner List',
                 'url_name' => 'partner-management',
-                'can_permission' => 'partner-management',
+                'can_permission' => 'partner-list',
                 'icon' => 'fa fa-users',
                 'type' => 1,
                 'description' => null,

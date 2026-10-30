@@ -189,8 +189,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 // Route::middleware(['auth', 'role:user|admin', 'verified'])->group(function () {
 Route::middleware(['auth', 'role:user|admin'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/list-partner', [PartnerController::class,'index'])->name('list-partner');
-    Route::get('/create-partner', [PartnerController::class,'viewCreatePartner'])->name('create-partner');
+    // Route::get('/list-partner', [PartnerController::class,'index'])->name('list-partner');
     Route::get('/user-attachment', [PartnerController::class,'viewAttachment'])->name('user-attachment');
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
@@ -204,7 +203,6 @@ Route::middleware(['auth', 'role:user|admin'])->group(function () {
     Route::get('/fetch-partner-tax', [PartnerController::class,'fetchTaxById'])->name('fetch-partner-tax');
 
     Route::post('/result-financial-ratio', [PartnerController::class,'resultFinancialRatio'])->name('result-financial-ratio');
-    Route::post('/submit-partner', [PartnerController::class,'store'])->name('submit-partner')->middleware('public_form');
     Route::post('/update-partner', [PartnerController::class,'update'])->name('update-partner');
     Route::post('store-attachment', [PartnerController::class,'storeAttachment'])->name('store-attachment');
     Route::post('update-attachment', [PartnerController::class,'updateAttachmentById'])->name('update-attachment');
@@ -283,7 +281,7 @@ Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(fun
     Route::get('fetch-map-point', [DashboardController::class, 'mapPoint'])->name('fetch-map-point');
     Route::get('fetch-regency-summary', [DashboardController::class, 'fetchDataCountByRegency'])->name('fetch-regency-summary');
 
-    Route::get('/partner-management', [PartnerManagementController::class,'index'])->name('partner-management');
+    Route::get('/partner-list', [PartnerManagementController::class,'index'])->name('partner-list');
     Route::get('/fetch-partner-list', [PartnerManagementController::class,'fetchPartner'])->name('fetch-partner-list');
     Route::get('/user-attachment', [PartnerController::class,'viewAttachment'])->name('user-attachment');
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');

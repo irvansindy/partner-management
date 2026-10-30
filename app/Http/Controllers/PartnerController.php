@@ -26,6 +26,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Jobs\GeocodeAddressJob;
+use App\Support\CountryCatalog;
 class PartnerController extends Controller
 {
     /**
@@ -59,7 +60,9 @@ class PartnerController extends Controller
     }
     public function viewCreatePartner()
     {
-        return view('cs_vendor.index');
+        return view('cs_vendor.index', [
+            'countries' => CountryCatalog::all(),
+        ]);
     }
     public function viewAttachment()
     {

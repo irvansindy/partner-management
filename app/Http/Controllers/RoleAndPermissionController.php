@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Spatie\Permission\PermissionRegistrar;
 class RoleAndPermissionController extends Controller
 {
     public function __construct()
@@ -147,14 +149,39 @@ class RoleAndPermissionController extends Controller
     {
         try {
             $request->validate([
-                'permission_name'=> 'required|string|unique:permissions,name',
+                'permission_id' => ['required', 'integer', 'exists:permissions,id'],
+                'permission_name' => [
+                    'required',
+                    'string',
+                    Rule::unique('permissions', 'name')
+                        ->ignore($request->permission_id)
+                        ->where(fn ($query) => $query->where('guard_name', 'web')),
+                ],
             ]);
-            $data = [
-                'name' => $request->permission_name,
-                'guard_name'=>'web',
-            ];
-            $update_permission = Permission::findOrFail($request->permission_id)->update($data);
-            return FormatResponseJson::success($update_permission,'permission updated successfully');
+
+            $permission = DB::transaction(function () use ($request) {
+                $permission = Permission::whereKey($request->permission_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+                $oldName = $permission->name;
+                $newName = trim($request->permission_name);
+
+                if ($oldName !== $newName) {
+                    Menu::where('can_permission', $oldName)
+                        ->update(['can_permission' => $newName]);
+
+                    $permission->update([
+                        'name' => $newName,
+                        'guard_name' => 'web',
+                    ]);
+                }
+
+                return $permission->fresh();
+            }, 3);
+
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+            return FormatResponseJson::success($permission, 'permission updated successfully');
         } catch (\Exception $e) {
             return FormatResponseJson::error(null,$e->getMessage(), 500);
         }

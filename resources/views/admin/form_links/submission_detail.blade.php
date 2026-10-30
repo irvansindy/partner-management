@@ -4,22 +4,139 @@
     @push('styles')
         @include('admin.form_links._alpha_styles')
         <style>
-            .form-links-page .timeline-item {
+            .form-links-page .approval-summary {
+                border-top: 3px solid var(--form-link-primary);
+            }
+
+            .form-links-page .approval-progress {
+                height: 10px;
+                overflow: hidden;
+            }
+
+            .form-links-page .approval-progress .progress-bar {
+                background: var(--form-link-primary);
+            }
+
+            .form-links-page .approval-timeline {
+                margin: 0;
+                padding: 0;
+                position: relative;
+            }
+
+            .form-links-page .approval-timeline:before {
+                background: var(--form-link-border);
+                bottom: 24px;
+                content: '';
+                left: 17px;
+                position: absolute;
+                top: 24px;
+                width: 2px;
+            }
+
+            .form-links-page .approval-step {
+                display: grid;
+                gap: 16px;
+                grid-template-columns: 36px minmax(0, 1fr);
+                margin-bottom: 16px;
+                position: relative;
+            }
+
+            .form-links-page .approval-status-dot {
+                align-items: center;
+                background: #fff;
+                border: 2px solid #a9afbd;
+                border-radius: 50%;
+                color: #73798a;
+                display: flex;
+                height: 36px;
+                justify-content: center;
+                position: relative;
+                width: 36px;
+                z-index: 1;
+            }
+
+            .form-links-page .approval-status-dot.is-approved {
+                border-color: #26845f;
+                color: #26845f;
+            }
+
+            .form-links-page .approval-status-dot.is-rejected {
+                border-color: #b84450;
+                color: #b84450;
+            }
+
+            .form-links-page .approval-status-dot.is-waiting {
+                border-color: #9a7413;
+                color: #7d5d0d;
+            }
+
+            .form-links-page .approval-step-card {
                 border: 1px solid var(--form-link-border);
                 border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(20, 20, 43, .04);
+                min-width: 0;
+                padding: 18px;
             }
 
-            .form-links-page .timeline:before {
-                background: var(--form-link-border);
+            .form-links-page .approval-step-header {
+                align-items: flex-start;
+                display: flex;
+                gap: 12px;
+                justify-content: space-between;
+                margin-bottom: 14px;
             }
 
-            .form-links-page .card.card-outline,
-            .form-links-page .card.card-primary,
-            .form-links-page .card.card-info,
-            .form-links-page .card.card-warning,
-            .form-links-page .card.card-success {
-                border-top: 3px solid var(--form-link-primary);
+            .form-links-page .approval-step-title {
+                color: #20202d;
+                font-size: 16px;
+                font-weight: 700;
+                margin: 0 0 4px;
+            }
+
+            .form-links-page .approval-step-meta {
+                color: var(--form-link-text-muted);
+                font-size: 13px;
+            }
+
+            .form-links-page .approval-state {
+                background: #f1f2f6;
+                border: 1px solid #dfe1e8;
+                border-radius: 6px;
+                color: #565d6d;
+                display: inline-flex;
+                font-size: 12px;
+                font-weight: 700;
+                padding: 5px 8px;
+                white-space: nowrap;
+            }
+
+            .form-links-page .approval-note {
+                background: #f7f7fa;
+                border-left: 3px solid #c9cbd5;
+                color: #363b49;
+                margin-top: 14px;
+                padding: 12px 14px;
+            }
+
+            .form-links-page .approval-detail-list {
+                display: grid;
+                gap: 8px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .form-links-page .approval-detail-list p {
+                margin: 0;
+                overflow-wrap: anywhere;
+            }
+
+            @media (max-width: 576px) {
+                .form-links-page .approval-step-header,
+                .form-links-page .approval-detail-list {
+                    display: block;
+                }
+
+                .form-links-page .approval-state {
+                    margin-top: 8px;
+                }
             }
         </style>
     @endpush
@@ -40,7 +157,6 @@
             </div>
         </div>
 
-        {{-- ✅ APPROVAL STATUS SECTION --}}
         @if ($company->hasApproval())
             @php
                 $approval = $company->approvalProcess;
@@ -50,60 +166,52 @@
                 $totalSteps = $approval->getTotalStepsCount();
             @endphp
 
-            <div
-                class="card card-outline {{ $approval->isApproved() ? 'card-success' : ($approval->isRejected() ? 'card-danger' : 'card-warning') }}">
+            <div class="card approval-summary">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-check-circle"></i> Approval Status
+                        <i class="fas fa-check-circle mr-1"></i> Approval Status
                     </h3>
                     <div class="card-tools">
                         @if ($approval->isPending() || $approval->isInProgress())
-                            <span class="badge badge-warning">
+                            <span class="approval-state">
                                 <i class="fas fa-clock"></i> In Progress
                             </span>
                         @elseif($approval->isApproved())
-                            <span class="badge badge-success">
+                            <span class="approval-state">
                                 <i class="fas fa-check"></i> Approved
                             </span>
                         @elseif($approval->isRejected())
-                            <span class="badge badge-danger">
+                            <span class="approval-state">
                                 <i class="fas fa-times"></i> Rejected
                             </span>
                         @endif
                     </div>
                 </div>
                 <div class="card-body">
-                    {{-- Progress Bar --}}
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Progress: {{ $completedSteps }}/{{ $totalSteps }} steps</span>
                             <span class="text-bold">{{ number_format($progress, 0) }}%</span>
                         </div>
-                        <div class="progress" style="height: 25px;">
-                            <div class="progress-bar {{ $approval->isApproved() ? 'bg-success' : ($approval->isRejected() ? 'bg-danger' : 'bg-warning') }}"
+                        <div class="progress approval-progress" aria-label="Approval progress">
+                            <div class="progress-bar"
                                 role="progressbar" style="width: {{ $progress }}%" aria-valuenow="{{ $progress }}"
-                                aria-valuemin="0" aria-valuemax="100">
-                                {{ number_format($progress, 0) }}%
-                            </div>
+                                aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
 
-                    {{-- Approval Steps Timeline --}}
                     <h5 class="mb-3">Approval Timeline</h5>
-                    <div class="timeline">
+                    <div class="approval-timeline">
                         @foreach ($approval->steps as $step)
-                            <div class="time-label">
-                                <span
-                                    class="bg-{{ $step->isApproved() ? 'success' : ($step->isRejected() ? 'danger' : ($step->isWaiting() ? 'warning' : 'secondary')) }}">
-                                    Step {{ $step->step_ordering }}
+                            <div class="approval-step">
+                                <span class="approval-status-dot {{ $step->isApproved() ? 'is-approved' : ($step->isRejected() ? 'is-rejected' : ($step->isWaiting() ? 'is-waiting' : '')) }}">
+                                    <i class="fas fa-{{ $step->isApproved() ? 'check' : ($step->isRejected() ? 'times' : ($step->isWaiting() ? 'clock' : 'circle')) }}"></i>
                                 </span>
-                            </div>
-                            <div>
-                                <i
-                                    class="fas fa-{{ $step->isApproved() ? 'check' : ($step->isRejected() ? 'times' : ($step->isWaiting() ? 'clock' : 'circle')) }}
-                                   bg-{{ $step->isApproved() ? 'success' : ($step->isRejected() ? 'danger' : ($step->isWaiting() ? 'warning' : 'secondary')) }}"></i>
-                                <div class="timeline-item">
-                                    <span class="time">
+                                <div class="approval-step-card">
+                                    <div class="approval-step-header">
+                                        <div>
+                                            <h3 class="approval-step-title">Step {{ $step->step_ordering }} · {{ $step->approver->name ?? 'Unknown' }}</h3>
+                                            <span class="approval-step-meta">
                                         @if ($step->isApproved() && $step->approved_at)
                                             <i class="fas fa-clock"></i> {{ $step->approved_at->format('d M Y H:i') }}
                                         @elseif($step->isRejected() && $step->rejected_at)
@@ -111,20 +219,19 @@
                                         @else
                                             <i class="fas fa-clock"></i> {{ $step->created_at->format('d M Y H:i') }}
                                         @endif
-                                    </span>
-                                    <h3 class="timeline-header">
-                                        <strong>{{ $step->approver->name ?? 'Unknown' }}</strong>
+                                            </span>
+                                        </div>
                                         @if ($step->isApproved())
-                                            <span class="badge badge-success">Approved</span>
+                                            <span class="approval-state">Approved</span>
                                         @elseif($step->isRejected())
-                                            <span class="badge badge-danger">Rejected</span>
+                                            <span class="approval-state">Rejected</span>
                                         @elseif($step->isWaiting())
-                                            <span class="badge badge-warning">Waiting for Approval</span>
+                                            <span class="approval-state">Waiting for Approval</span>
                                         @else
-                                            <span class="badge badge-secondary">Pending</span>
+                                            <span class="approval-state">Pending</span>
                                         @endif
-                                    </h3>
-                                    <div class="timeline-body">
+                                    </div>
+                                    <div class="approval-detail-list">
                                         <p class="mb-1">
                                             <i class="fas fa-user"></i> <strong>Approver:</strong>
                                             {{ $step->approver->name ?? 'Unknown' }}
@@ -133,36 +240,28 @@
                                             <i class="fas fa-envelope"></i> <strong>Email:</strong>
                                             {{ $step->approver->email ?? '-' }}
                                         </p>
-
-                                        @if ($step->notes)
-                                            <div class="mt-2">
-                                                <strong><i class="fas fa-comment"></i> Notes:</strong>
-                                                <div
-                                                    class="alert alert-{{ $step->isApproved() ? 'success' : 'danger' }} mt-1">
-                                                    {!! $step->notes !!}
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        {{-- Action Button for Current Approver --}}
-                                        @if ($step->isWaiting() && auth()->id() === $step->user_id)
-                                            <div class="mt-3">
-                                                <a href="{{ route('admin.approvals.step.action', $step) }}"
-                                                    class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-tasks"></i> Take Action
-                                                </a>
-                                            </div>
-                                        @endif
                                     </div>
+
+                                    @if ($step->notes)
+                                        <div class="approval-note">
+                                            <strong><i class="fas fa-comment mr-1"></i> Notes</strong>
+                                            <div class="mt-1">{!! $step->notes !!}</div>
+                                        </div>
+                                    @endif
+
+                                    @if ($step->isWaiting() && auth()->id() === $step->user_id)
+                                        <div class="mt-3">
+                                            <a href="{{ route('admin.approvals.step.action', $step) }}"
+                                                class="btn btn-primary btn-sm form-link-action">
+                                                <i class="fas fa-tasks"></i> Take Action
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
-                        <div>
-                            <i class="fas fa-clock bg-gray"></i>
-                        </div>
                     </div>
 
-                    {{-- Approval Details --}}
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <table class="table table-sm">

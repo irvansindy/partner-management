@@ -23,4 +23,18 @@ class FormLinkSubmissionsPageTest extends TestCase
         $this->assertStringContainsString('submission-actions', $view);
         $this->assertStringContainsString('aria-label="View submission details', $view);
     }
+
+    /** @test */
+    public function submission_detail_uses_a_neutral_approval_timeline_with_compact_status_accents(): void
+    {
+        $view = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/submission_detail.blade.php');
+
+        $this->assertStringContainsString('approval-summary', $view);
+        $this->assertStringContainsString('approval-step-card', $view);
+        $this->assertStringContainsString('approval-status-dot', $view);
+        $this->assertStringContainsString('approval-note', $view);
+        $this->assertStringContainsString('aria-label="Approval progress"', $view);
+        $this->assertStringNotContainsString('alert alert-{{ $step->isApproved()', $view);
+        $this->assertStringNotContainsString('class="time-label"', $view);
+    }
 }

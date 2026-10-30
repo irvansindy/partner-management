@@ -1,396 +1,192 @@
-{{-- @extends('adminlte::page')
-
-@section('title', 'Partner Management')
-
-@section('content_header')
-    <h1>@lang('messages.Form Register')</h1>
-@stop
-
-@section('content')
-    <div class="container-fluid py-4">
-        <div class="row">
-            <div class="container-fluid">
-                <form action="" method="" id="form_company">
-                    @include('cs_vendor.form.master_information')
-
-                    @include('cs_vendor.form.contact')
-
-                    @include('cs_vendor.form.address')
-
-                    @include('cs_vendor.form.bank')
-
-                    @include('cs_vendor.form.survey')
-
-                    @include('cs_vendor.form.file_upload')
-
-                    <div class="d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary" id="btn_submit_data_company">
-                            submit
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-@stop
-
-@section('css')
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ asset('css/cdn/file_input_min.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css"
-        crossorigin="anonymous">
-    <style>
-        .select2-container--default .select2-selection--single {
-            background-color: #f8fafc !important;
-        }
-
-        .select2-container .select2-selection--single {
-            height: 38px !important;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px !important;
-        }
-    </style>
-@stop
-
-@section('js')
-    <script src="{{ asset('js/cdn/data_table.js') }}"></script>
-    <script src="{{ asset('js/cdn/select2.js') }}"></script>
-    <script src="{{ asset('js/cdn/file_input.js') }}"></script>
-    <script src="{{ asset('js/cdn/file_input_sortable.js') }}"></script>
-    @include('cs_vendor.partner_js')
-@stop --}}
 @extends('layouts.main')
 
 @section('content')
     @push('styles')
+        <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
         <link rel="stylesheet" href="{{ asset('css/cdn/file_input_min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/cdn/leaflet.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/cdn/leaflet_geocoder.css') }}">
         <style>
-            .partner-entry-page {
-                --entry-ink: #202638;
-                --entry-muted: #70798b;
-                --entry-line: #e3e8ef;
-                --entry-primary: #6558d3;
-                color: var(--entry-ink);
+            .internal-partner-form {
+                --public-ink: #202638;
+                --public-muted: #70798b;
+                --public-line: #e3e8ef;
+                --public-paper: #fff;
+                --public-canvas: #f3f5f8;
+                --public-primary: #6558d3;
+                --public-primary-dark: #5043bd;
+                --public-primary-soft: #efedff;
+                --public-success: #238768;
+                margin: 0 auto;
+                max-width: 1420px;
+                padding: 26px 4px 44px;
             }
 
-            .partner-entry-heading {
-                align-items: flex-end;
-                display: flex;
-                justify-content: space-between;
-                gap: 24px;
-                margin-bottom: 24px;
+            .internal-partner-form .public-form-card {
+                background: transparent;
+                border: 0;
+                box-shadow: none;
+                padding: 0;
             }
 
-            .partner-entry-heading h1 {
-                color: var(--entry-ink);
-                font-size: 28px;
-                font-weight: 600;
-                line-height: 1.2;
-                margin: 6px 0;
-                overflow-wrap: anywhere;
-            }
-
-            .partner-entry-heading p {
-                color: var(--entry-muted);
-                margin: 0;
-            }
-
-            .partner-entry-eyebrow {
-                color: var(--entry-primary);
-                font-size: 11px;
-                font-weight: 700;
-            }
-
-            .partner-entry-type {
-                background: #e8f4ef;
-                border-radius: 999px;
-                color: #238768;
-                flex: 0 0 auto;
-                font-size: 12px;
-                font-weight: 700;
-                padding: 9px 13px;
-            }
-
-            .partner-entry-description {
-                align-items: flex-start;
+            .internal-partner-form .wizard-shell {
                 background: #fff;
-                border: 1px solid var(--entry-line);
-                border-left: 3px solid var(--entry-primary);
-                border-radius: 8px;
-                color: var(--entry-muted);
-                display: flex;
-                gap: 10px;
-                line-height: 1.5;
-                margin-bottom: 20px;
-                padding: 14px 17px;
-            }
-
-            .partner-entry-description i {
-                color: var(--entry-primary);
-                margin-top: 3px;
-            }
-
-            .partner-entry-page #form_company > .card,
-            .partner-entry-page #form_company .card {
-                background: #fff;
-                border: 1px solid var(--entry-line);
+                border: 1px solid var(--public-line);
                 border-radius: 10px;
-                box-shadow: 0 3px 14px rgba(32, 38, 56, .035);
                 margin-bottom: 20px;
-                overflow: hidden;
             }
 
-            .partner-entry-page #form_company .card-header {
-                background: #fff;
-                border-bottom: 1px solid #edf0f4;
-                color: var(--entry-ink);
-                padding: 17px 24px;
+            .internal-partner-form .wizard-step {
+                appearance: none;
+                background: transparent;
+                border: 0;
+                font: inherit;
             }
 
-            .partner-entry-page #form_company .card-title,
-            .partner-entry-page #form_company .card-header h3,
-            .partner-entry-page #form_company .card-header h5 {
-                color: var(--entry-ink);
-                font-size: 17px;
-                font-weight: 700;
-                margin: 0;
-            }
-
-            .partner-entry-page #form_company .card-header .fas,
-            .partner-entry-page #form_company .card-header .fa {
-                color: var(--entry-primary);
-                margin-right: 7px;
-            }
-
-            .partner-entry-page #form_company .card-body {
-                padding: 25px;
-            }
-
-            .partner-entry-page #form_company label {
-                color: #3b4352;
-                font-size: 13px;
-                font-weight: 600;
-                line-height: 1.35;
-                transition: color 0.2s ease;
-            }
-
-            .partner-entry-page #form_company label.active {
-                color: var(--entry-primary);
-            }
-
-            .partner-entry-page #form_company .form-control,
-            .partner-entry-page #form_company .form-select,
-            .partner-entry-page #form_company .select2-container--default .select2-selection--single {
-                background-color: #fbfcfe;
-                border: 1px solid #dce2eb;
-                border-radius: 6px;
-                color: var(--entry-ink);
-                min-height: 44px;
-                transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
-            }
-
-            .partner-entry-page #form_company textarea.form-control {
-                min-height: 92px;
-            }
-
-            .partner-entry-page #form_company .form-control:focus,
-            .partner-entry-page #form_company .form-select:focus {
-                background: #fff;
-                border-color: var(--entry-primary);
-                box-shadow: 0 0 0 3px rgba(101, 88, 211, .12);
-            }
-
-            .partner-entry-page #form_company .partner-fieldset,
-            .partner-entry-page #form_company fieldset.border {
-                background: #fcfdff;
-                border: 1px solid var(--entry-line) !important;
-                border-radius: 9px;
-                padding: 1.25rem !important;
-            }
-
-            .partner-entry-page #form_company legend {
-                background: #fff;
-                color: var(--entry-ink);
-                font-weight: 700;
-                line-height: 1.3;
-                padding: 0 .5rem;
-            }
-
-            .partner-entry-page #form_company .text-muted,
-            .partner-entry-page #form_company small {
-                color: var(--entry-muted) !important;
-                line-height: 1.4;
-            }
-
-            .partner-entry-page #form_company .btn {
-                border-radius: 7px;
-                font-weight: 600;
-                min-height: 40px;
-                white-space: nowrap;
-            }
-
-            .partner-entry-page #form_company .btn-primary {
-                background: var(--entry-primary);
-                border-color: var(--entry-primary);
-            }
-
-            .partner-entry-page #form_company .btn-primary:hover {
-                background: #5043bd;
-                border-color: #5043bd;
-            }
-
-            .partner-entry-page #form_company .form-check-input:checked {
-                background-color: var(--entry-primary);
-                border-color: var(--entry-primary);
-            }
-
-            .partner-entry-page #form_company .form-check-input:not(:checked) {
-                background-color: #fff;
-                border-color: #b8c1ce;
-            }
-
-            .partner-entry-submit {
-                display: flex;
-                justify-content: flex-end;
-                padding: 6px 0 22px;
-            }
-
-            .partner-entry-submit .btn {
-                min-width: 190px;
-                padding: 11px 22px;
-            }
-
-            .partner-entry-page #form_company .partner-map {
-                border: 1px solid var(--entry-line);
-                box-shadow: 0 4px 14px rgba(32, 38, 56, .08);
-            }
-
-            @media (max-width: 767px) {
-                .partner-entry-heading {
-                    align-items: flex-start;
-                    flex-direction: column;
-                    gap: 12px;
-                }
-
-                .partner-entry-heading h1 {
-                    font-size: 24px;
-                }
-
-                .partner-entry-page #form_company .card-body {
-                    padding: 18px 16px;
-                }
-
-                .partner-entry-page #form_company .card-header {
-                    padding: 15px 16px;
-                }
-
-                .partner-entry-page #form_company .partner-fieldset,
-                .partner-entry-page #form_company fieldset.border {
-                    padding: .9rem !important;
-                }
-
-                .partner-entry-submit {
-                    justify-content: stretch;
-                }
-
-                .partner-entry-submit .btn {
-                    width: 100%;
-                }
+            .internal-partner-form .wizard-step:focus-visible {
+                outline: 3px solid rgba(101, 88, 211, .35);
+                outline-offset: 3px;
             }
         </style>
+        @include('public.form.css')
     @endpush
 
-    <div class="container-fluid partner-entry-page">
-        <div class="partner-entry-heading">
+    <div class="internal-partner-form public-form-page">
+        <div class="public-form-heading">
             <div>
-                <div class="partner-entry-eyebrow">PARTNER REGISTRATION</div>
-                <h1>
-                    @if (isset($formLink))
-                        {{ $formLink->title }}
-                    @else
-                        @lang('messages.Form Register')
-                    @endif
-                </h1>
-                <p>Enter partner and company information using the sections below.</p>
+                <div class="public-eyebrow">PARTNER REGISTRATION</div>
+                <h1>Formulir Pendaftaran Partner</h1>
+                <p>Lengkapi informasi perusahaan secara bertahap agar data lebih mudah diperiksa.</p>
             </div>
-            @if(isset($formLink))
-                <span class="partner-entry-type">{{ ucfirst($formLink->form_type) }} application</span>
-            @endif
+            <span class="public-form-type">Internal registration</span>
         </div>
 
-        @if(isset($formLink))
-            <div class="partner-entry-description">
-                <i class="fas fa-info-circle" aria-hidden="true"></i>
-                <span>{{ $formLink->description ?: 'Please fill out the form below completely and accurately.' }}</span>
-            </div>
-        @endif
+        <div class="public-form-description">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            <span>Data bertanda bintang wajib diisi. Informasi yang sudah lengkap akan dikirim untuk proses peninjauan.</span>
+        </div>
 
-        <form action="{{ isset($formLink) ? route('public.form.submit', $formLink->token) : '' }}"
-            method="POST" id="form_company" enctype="multipart/form-data">
-            @csrf
+        <div class="public-form-card">
+            <form action="{{ route('submit-partner') }}" method="POST" id="form_company" enctype="multipart/form-data">
+                @csrf
 
-            @if(isset($formLink))
-                <input type="hidden" name="company_type" value="{{ $formLink->form_type }}">
-            @endif
+                <div class="wizard-shell">
+                    <div class="wizard-topline">
+                        <div>
+                            <span class="wizard-kicker">REGISTRATION STEPS</span>
+                            <span class="wizard-current-label" id="wizard_current_label">Master Information</span>
+                        </div>
+                        <span class="wizard-count"><span id="wizard_current_number">01</span> / 06</span>
+                    </div>
+                    <div class="wizard-stepper" id="wizard_stepper">
+                        @foreach([
+                            1 => 'Master Information',
+                            2 => 'Contact',
+                            3 => 'Address',
+                            4 => 'Bank',
+                            5 => 'Form Survey',
+                            6 => 'Form Upload',
+                        ] as $stepNumber => $stepLabel)
+                            <button type="button" class="wizard-step {{ $stepNumber === 1 ? 'active' : '' }}" data-step="{{ $stepNumber }}" aria-label="Open {{ $stepLabel }} step">
+                                <span class="wizard-step-number">{{ $stepNumber }}</span>
+                                <span class="wizard-step-text">{{ $stepLabel }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
 
-            @include('cs_vendor.form.master_information')
+                <div class="step-pane" data-step="1">@include('cs_vendor.form.master_information')</div>
+                <div class="step-pane d-none" data-step="2">@include('cs_vendor.form.contact')</div>
+                <div class="step-pane d-none" data-step="3">@include('cs_vendor.form.address')</div>
+                <div class="step-pane d-none" data-step="4">@include('cs_vendor.form.bank')</div>
+                <div class="step-pane d-none" data-step="5">@include('cs_vendor.form.survey')</div>
+                <div class="step-pane d-none" data-step="6">@include('cs_vendor.form.file_upload')</div>
 
-            @include('cs_vendor.form.contact')
-
-            @include('cs_vendor.form.address')
-
-            @include('cs_vendor.form.bank')
-
-            @if(!isset($formLink) || $formLink->form_type === 'customer')
-                @include('cs_vendor.form.survey')
-            @endif
-
-            @include('cs_vendor.form.file_upload')
-
-            <div class="partner-entry-submit">
-                <button type="button" class="btn btn-primary" id="btn_submit_data_company">
-                    <i class="fas fa-paper-plane mr-1" aria-hidden="true"></i> Submit Partner
-                </button>
-            </div>
-        </form>
+                <div class="wizard-actions d-flex justify-content-between align-items-center" id="wizard_actions">
+                    <button type="button" class="btn btn-outline-secondary d-none" id="step_prev">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i> Previous
+                    </button>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="step_next">
+                            Continue <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-success d-none" id="btn_submit_data_company">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Submit Partner
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 @endsection
 
 @push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script src="{{ asset('js/cdn/file_input.js') }}"></script>
     <script src="{{ asset('js/cdn/file_input_sortable.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ asset('js/cdn/leaflet_geocoder.js') }}"></script>
     <script>
         $(function () {
-            function syncPartnerFieldLabel($field) {
-                const field = $field.get(0);
-                if (!field) return;
+            const stepLabels = ['Master Information', 'Contact', 'Address', 'Bank', 'Form Survey', 'Form Upload'];
+            const totalSteps = stepLabels.length;
+            let currentStep = 1;
 
-                const label = field.id ? document.querySelector('#form_company label[for="' + field.id + '"]') : null;
-                if (!label) return;
-
-                const isActive = field.value !== '' || document.activeElement === field;
-                label.classList.toggle('active', isActive);
+            function requiredFieldIsEmpty(field) {
+                if (field.disabled || $(field).closest('[hidden]').length) return false;
+                if (field.type === 'radio') return !$('[name="' + field.name + '"]:checked').length;
+                if (field.type === 'checkbox') return !field.checked;
+                return !String($(field).val() || '').trim();
             }
 
-            $('#form_company').on('focusin', 'input, textarea, select', function () {
-                syncPartnerFieldLabel($(this));
+            function validateStep(step) {
+                const $pane = $('.step-pane[data-step="' + step + '"]');
+                let firstInvalid = null;
+
+                $pane.find('[required]').each(function () {
+                    const invalid = requiredFieldIsEmpty(this) || !this.checkValidity();
+                    $(this).toggleClass('is-invalid', invalid);
+                    if (invalid && !firstInvalid) firstInvalid = this;
+                });
+
+                if (!firstInvalid) return true;
+
+                if (window.Swal) {
+                    Swal.fire({ icon: 'error', title: 'Data belum lengkap', text: 'Lengkapi field wajib pada tahap ini sebelum melanjutkan.' });
+                }
+                firstInvalid.reportValidity();
+                const $target = $(firstInvalid).hasClass('select2-hidden-accessible') ? $(firstInvalid).next('.select2') : $(firstInvalid);
+                $('html, body').animate({ scrollTop: $target.offset().top - 145 }, 300);
+                return false;
+            }
+
+            function showStep(step) {
+                currentStep = Math.max(1, Math.min(totalSteps, step));
+                $('.step-pane').addClass('d-none').removeClass('active');
+                $('.step-pane[data-step="' + currentStep + '"]').removeClass('d-none').addClass('active');
+                $('#wizard_current_label').text(stepLabels[currentStep - 1]);
+                $('#wizard_current_number').text(String(currentStep).padStart(2, '0'));
+                $('#wizard_stepper .wizard-step').each(function () {
+                    const itemStep = Number($(this).data('step'));
+                    $(this).toggleClass('active', itemStep === currentStep).toggleClass('completed', itemStep < currentStep);
+                });
+                $('#step_prev').toggleClass('d-none', currentStep === 1);
+                $('#step_next').toggleClass('d-none', currentStep === totalSteps);
+                $('#btn_submit_data_company').toggleClass('d-none', currentStep !== totalSteps);
+                if (currentStep === 3) document.dispatchEvent(new Event('partner:address-step-shown'));
+                $('html, body').animate({ scrollTop: $('#form_company').offset().top - 95 }, 250);
+            }
+
+            $('#step_prev').on('click', function () { showStep(currentStep - 1); });
+            $('#step_next').on('click', function () { if (validateStep(currentStep)) showStep(currentStep + 1); });
+            $('#wizard_stepper').on('click', '.wizard-step', function () {
+                const target = Number($(this).data('step'));
+                if (target <= currentStep || validateStep(currentStep)) showStep(target);
             });
 
-            $('#form_company').on('focusout', 'input, textarea, select', function () {
-                syncPartnerFieldLabel($(this));
-            });
-
-            $('#form_company').on('input change', 'input, textarea, select', function () {
-                syncPartnerFieldLabel($(this));
-            });
-
-            $('#form_company').find('input, textarea, select').each(function () {
-                syncPartnerFieldLabel($(this));
-            });
+            showStep(1);
         });
     </script>
     @include('cs_vendor.partner_js')

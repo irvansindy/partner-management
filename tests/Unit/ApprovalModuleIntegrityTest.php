@@ -42,6 +42,18 @@ class ApprovalModuleIntegrityTest extends TestCase
     }
 
     /** @test */
+    public function approving_a_step_assigns_the_company_to_the_approver_organization_atomically(): void
+    {
+        $service = file_get_contents(dirname(__DIR__, 2).'/app/Services/ApprovalService.php');
+
+        $this->assertStringContainsString('User::whereKey($actorId)->lockForUpdate()->firstOrFail()', $service);
+        $this->assertStringContainsString("'location_id' => \$actor->office_id", $service);
+        $this->assertStringContainsString("'department_id' => \$actor->department_id", $service);
+        $this->assertStringContainsString('Approver office and department must be configured.', $service);
+        $this->assertStringContainsString("if (\$action === 'reject')", $service);
+    }
+
+    /** @test */
     public function approval_list_and_action_use_the_current_admin_layout(): void
     {
         $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/ApprovalProcessController.php');

@@ -125,7 +125,7 @@
                             <div class="approval-step__main">
                                 <strong>{{ $step->approver->name ?? 'Unknown approver' }}</strong>
                                 <small>{{ $step->approver->email ?? '-' }}</small>
-                                @if($step->notes)<div class="approval-step__notes">{!! $step->notes !! }</div>@endif
+                                @if($step->notes)<div class="approval-step__notes">{{ $step->notes }}</div>@endif
                                 @if($step->isWaiting() && auth()->id() === $step->user_id)
                                     <a href="{{ route('admin.approvals.step.action', $step) }}" class="btn btn-primary btn-sm mt-3">Review this step</a>
                                 @endif

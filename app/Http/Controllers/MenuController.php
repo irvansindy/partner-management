@@ -150,46 +150,12 @@ class MenuController extends Controller
             $oldPermission = $menu->can_permission;
             $newPermission = $request->menu_url;
 
-            /*
-            |--------------------------------------------------------------------------
-            | Cari / Rename Permission
-            |--------------------------------------------------------------------------
-            */
-
-            if ($oldPermission == $newPermission) {
-
-                $permission = Permission::firstOrCreate([
-                    'name' => $newPermission,
-                    'guard_name' => 'web'
-                ]);
-
-            } else {
-
-                $permission = Permission::where('name', $oldPermission)->first();
-
-                if ($permission) {
-
-                    $permissionExist = Permission::where('name', $newPermission)->first();
-
-                    if ($permissionExist) {
-
-                        $permission = $permissionExist;
-
-                    } else {
-
-                        $permission->update([
-                            'name' => $newPermission
-                        ]);
-                    }
-
-                } else {
-
-                    $permission = Permission::create([
-                        'name' => $newPermission,
-                        'guard_name' => 'web'
-                    ]);
-                }
-            }
+            // A menu points to a permission by name. Do not rename the old
+            // permission here because it may still be used by another menu.
+            $permission = Permission::firstOrCreate([
+                'name' => $newPermission,
+                'guard_name' => 'web',
+            ]);
 
             /*
             |--------------------------------------------------------------------------
@@ -225,6 +191,13 @@ class MenuController extends Controller
                 'type'           => $resultType,
                 'parent_id'      => $parentId,
             ]);
+
+            if ($oldPermission !== $newPermission &&
+                !Menu::where('can_permission', $oldPermission)->exists()) {
+                Permission::where('name', $oldPermission)
+                    ->where('guard_name', 'web')
+                    ->delete();
+            }
 
             /*
             |--------------------------------------------------------------------------
