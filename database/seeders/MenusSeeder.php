@@ -207,6 +207,20 @@ class MenusSeeder extends Seeder
                 'created_at' => Carbon::parse('2026-01-14 11:10:41'),
                 'updated_at' => Carbon::parse('2026-01-14 11:10:41'),
             ],
+            [
+                'id' => 15,
+                'name_text' => 'System Maintenance',
+                'url_name' => 'admin/system-maintenance',
+                'can_permission' => 'system-maintenance',
+                'icon' => 'fas fa-tools',
+                'type' => 1,
+                'description' => 'Run approved application maintenance commands.',
+                'order' => 15,
+                'parent_id' => null,
+                'is_active' => 1,
+                'created_at' => Carbon::parse('2026-10-30 00:00:00'),
+                'updated_at' => Carbon::parse('2026-10-30 00:00:00'),
+            ],
         ]);
     }
 }

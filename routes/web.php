@@ -25,6 +25,7 @@ use App\Http\Controllers\CompanyImportController;
 use App\Http\Controllers\CompanyExportController;
 use App\Http\Controllers\Admin\PostalCodeImportController;
 use App\Http\Controllers\Admin\CompanyAttachmentController;
+use App\Http\Controllers\Admin\SystemMaintenanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -91,6 +92,8 @@ Route::middleware(['auth', 'role:super-admin'])->prefix('admin')->name('admin.')
     Route::get('postal-codes/import', [PostalCodeImportController::class, 'show'])->name('postal-codes.import.form');
     Route::post('postal-codes/import', [PostalCodeImportController::class, 'store'])->name('postal-codes.import.store');
     Route::get('postal-codes/import/errors', [PostalCodeImportController::class, 'errors'])->name('postal-codes.import.errors');
+    Route::get('system-maintenance', [SystemMaintenanceController::class, 'index'])->name('system-maintenance.index');
+    Route::post('system-maintenance/execute', [SystemMaintenanceController::class, 'execute'])->name('system-maintenance.execute');
 });
 // ========================================
 // ADMIN ROUTES - Form Management
