@@ -8,6 +8,7 @@ use App\Services\ApprovalService;
 use App\Services\CompanyAttachmentService;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -30,7 +31,10 @@ class PublicFormErrorResponseTest extends TestCase
         FormLink::create(['token' => 'public-token', 'form_type' => 'vendor', 'is_active' => true]);
         $controller = new PublicFormController(Mockery::mock(ApprovalService::class), new CompanyAttachmentService());
 
-        $response = $controller->submit(Request::create('/', 'POST', $this->validPayload()), 'public-token');
+        $request = Request::create('/', 'POST', $this->validPayload(), [], [
+            'input-multiple-file' => [$this->pdf()],
+        ]);
+        $response = $controller->submit($request, 'public-token');
         $json = $response->getData(true);
         $encoded = $response->getContent();
 
@@ -56,5 +60,13 @@ class PublicFormErrorResponseTest extends TestCase
             'latitude'=>[null],'longitude'=>[null],'telephone'=>['+6512345678'],'fax'=>['+6512345678'],
             'bank_name'=>['Bank ABC 2'],'account_name'=>['Tasya'],'account_number'=>['123456'],
         ];
+    }
+
+    private function pdf(): UploadedFile
+    {
+        $path = tempnam(sys_get_temp_dir(), 'public-form-attachment-');
+        file_put_contents($path, "%PDF-1.4\n%%EOF");
+
+        return new UploadedFile($path, 'document.pdf', null, null, true);
     }
 }

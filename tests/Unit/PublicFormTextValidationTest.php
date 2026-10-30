@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Http\Controllers\PublicFormController;
 use App\Services\ApprovalService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Mockery;
@@ -67,7 +68,18 @@ class PublicFormTextValidationTest extends TestCase
         $this->assertSame(["Bank & Trust (Asia) / Unit+2, Ltd.'"], $validated['bank_name']);
     }
 
-    private function validateSubmission(array $overrides): array
+    /** @test */
+    public function it_rejects_a_submission_without_an_attachment(): void
+    {
+        try {
+            $this->validateSubmission([], false);
+            $this->fail('Validation should require at least one attachment.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('input-multiple-file', $exception->errors());
+        }
+    }
+
+    private function validateSubmission(array $overrides, bool $withAttachment = true): array
     {
         $request = Request::create('/', 'POST', array_replace([
             'idempotency_key' => '11111111-1111-4111-8111-111111111111',
@@ -99,7 +111,9 @@ class PublicFormTextValidationTest extends TestCase
             'bank_name' => ['Bank Central Asia'],
             'account_name' => ['Tasya'],
             'account_number' => ['9876456654675765'],
-        ], $overrides));
+        ], $overrides), [], $withAttachment ? [
+            'input-multiple-file' => [UploadedFile::fake()->create('document.pdf', 10, 'application/pdf')],
+        ] : []);
 
         $controller = new PublicFormController(Mockery::mock(ApprovalService::class));
         $method = new ReflectionMethod($controller, 'validateSubmission');

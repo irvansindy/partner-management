@@ -368,8 +368,8 @@ class PublicFormController extends Controller
             'account_number.*' => 'required|digits_between:1,16',
 
             // Files
-            'input-multiple-file' => 'nullable|array|max:' . config('company_attachments.max_files', 10),
-            'input-multiple-file.*' => 'nullable|file|max:' . (int) ceil(config('company_attachments.max_bytes', 5 * 1024 * 1024) / 1024),
+            'input-multiple-file' => 'required|array|min:1|max:' . config('company_attachments.max_files', 10),
+            'input-multiple-file.*' => 'required|file|max:' . (int) ceil(config('company_attachments.max_bytes', 5 * 1024 * 1024) / 1024),
         ];
 
         if ($formType === 'customer') {
@@ -411,6 +411,12 @@ class PublicFormController extends Controller
             'contact_name.*.regex' => 'Nama kontak hanya boleh berisi huruf dan spasi. | Contact name may only contain letters and spaces.',
             'bank_name.*.regex' => 'Nama bank mengandung karakter yang tidak didukung. | Bank name contains unsupported characters.',
             'account_name.*.regex' => 'Nama akun hanya boleh berisi huruf dan spasi. | Account name may only contain letters and spaces.',
+            'input-multiple-file.required' => 'Minimal satu lampiran wajib diunggah. | At least one attachment is required.',
+            'input-multiple-file.min' => 'Minimal satu lampiran wajib diunggah. | At least one attachment is required.',
+            'input-multiple-file.max' => 'Jumlah lampiran melebihi batas yang diizinkan. | The number of attachments exceeds the allowed limit.',
+            'input-multiple-file.*.required' => 'Lampiran tidak boleh kosong. | Attachment may not be empty.',
+            'input-multiple-file.*.file' => 'Lampiran harus berupa file yang valid. | Attachment must be a valid file.',
+            'input-multiple-file.*.max' => 'Ukuran setiap lampiran maksimal 5 MB. | Each attachment may not exceed 5 MB.',
             // ... (rest of messages sama)
         ];
 

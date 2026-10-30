@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Http\Controllers\PublicFormController;
 use App\Services\ApprovalService;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Mockery;
 use ReflectionMethod;
 use Tests\TestCase;
@@ -52,7 +53,9 @@ class PublicFormPhoneValidationTest extends TestCase
             'bank_name' => ['OCBC'],
             'account_name' => ['Tasya'],
             'account_number' => ['9876456654675765'],
-        ], $phones));
+        ], $phones), [], [
+            'input-multiple-file' => [UploadedFile::fake()->create('document.pdf', 10, 'application/pdf')],
+        ]);
 
         $controller = new PublicFormController(Mockery::mock(ApprovalService::class));
         $method = new ReflectionMethod($controller, 'validateSubmission');

@@ -33,6 +33,40 @@
                 background: #fff;
                 line-height: 0;
             }
+
+            .form-links-page .form-link-actions {
+                display: grid;
+                gap: 10px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .form-links-page .form-link-actions form {
+                margin: 0;
+            }
+
+            .form-links-page .form-detail-action {
+                align-items: center;
+                border-radius: 7px;
+                display: inline-flex;
+                font-weight: 600;
+                gap: 7px;
+                justify-content: center;
+                min-height: 44px;
+                padding: 10px 14px;
+                width: 100%;
+            }
+
+            .form-links-page .form-detail-action:focus-visible {
+                box-shadow: 0 0 0 3px rgba(108, 93, 211, .18);
+                outline: 2px solid var(--form-link-primary);
+                outline-offset: 2px;
+            }
+
+            @media (max-width: 575.98px) {
+                .form-links-page .form-link-actions {
+                    grid-template-columns: 1fr;
+                }
+            }
         </style>
     @endpush
 
@@ -152,23 +186,30 @@
                         <h3 class="card-title">Actions</h3>
                     </div>
                     <div class="card-body">
-                        <a href="{{ route('admin.form-links.edit', $formLink) }}" class="btn btn-warning btn-block">
-                            <i class="fas fa-edit"></i> Edit Form Link
-                        </a>
-                        <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-info btn-block">
-                            <i class="fas fa-list"></i> View Submissions ({{ $formLink->submission_count }})
-                        </a>
-                        <form action="{{ route('admin.form-links.toggle-status', $formLink) }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                class="btn btn-{{ $formLink->is_active ? 'secondary' : 'success' }} btn-block">
-                                <i class="fas fa-{{ $formLink->is_active ? 'toggle-off' : 'toggle-on' }}"></i>
-                                {{ $formLink->is_active ? 'Deactivate' : 'Activate' }} Form
-                            </button>
-                        </form>
-                        <a href="{{ $formLink->getPublicUrl() }}" target="_blank" class="btn btn-primary btn-block">
-                            <i class="fas fa-external-link-alt"></i> Open Public Form
-                        </a>
+                        <div class="form-link-actions">
+                            <a href="{{ route('admin.form-links.submissions', $formLink) }}"
+                                class="btn btn-primary form-detail-action">
+                                <i class="fas fa-list" aria-hidden="true"></i>
+                                <span>Submissions ({{ $formLink->submission_count }})</span>
+                            </a>
+                            <a href="{{ route('admin.form-links.edit', $formLink) }}"
+                                class="btn btn-outline-secondary form-detail-action">
+                                <i class="fas fa-edit" aria-hidden="true"></i>
+                                <span>Edit form</span>
+                            </a>
+                            <a href="{{ $formLink->getPublicUrl() }}" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-outline-secondary form-detail-action">
+                                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                                <span>Open public form</span>
+                            </a>
+                            <form action="{{ route('admin.form-links.toggle-status', $formLink) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-secondary form-detail-action">
+                                    <i class="fas fa-{{ $formLink->is_active ? 'toggle-off' : 'toggle-on' }}" aria-hidden="true"></i>
+                                    <span>{{ $formLink->is_active ? 'Deactivate' : 'Activate' }} form</span>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

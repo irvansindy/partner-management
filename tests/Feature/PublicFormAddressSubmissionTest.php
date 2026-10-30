@@ -9,6 +9,7 @@ use App\Models\Regencies;
 use App\Services\ApprovalService;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
@@ -102,6 +103,10 @@ class PublicFormAddressSubmissionTest extends TestCase
         $controller = new PublicFormController(Mockery::mock(ApprovalService::class));
         $method = new ReflectionMethod($controller, 'validateSubmission');
         $method->setAccessible(true);
-        return $method->invoke($controller, Request::create('/', 'POST', $data), 'vendor');
+        $request = Request::create('/', 'POST', $data, [], [
+            'input-multiple-file' => [UploadedFile::fake()->create('document.pdf', 10, 'application/pdf')],
+        ]);
+
+        return $method->invoke($controller, $request, 'vendor');
     }
 }
