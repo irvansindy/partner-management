@@ -1,11 +1,36 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    var partnerFormLocale = @json(app()->getLocale());
+    var partnerValidationCopy = {
+        title: @json(__('messages.Validation Error')),
+        summary: @json(__('messages.Validation Summary')),
+        additional: @json(__('messages.Additional Validation Errors'))
+    };
+
+    function localizeValidationMessage(message) {
+        var text = String(message || '');
+        var translations = text.split(/\s+\|\s+/);
+
+        if (translations.length < 2) {
+            return text;
+        }
+
+        return partnerFormLocale.toLowerCase().startsWith('id')
+            ? translations[0]
+            : translations[1];
+    }
+
     $('#company_type').select2({
         width: '100%'
     })
     $('#term_of_payment').select2({
         width: '100%'
+    })
+    $('#total_employee').select2({
+        width: '100%',
+        placeholder: @json(__('messages.Placeholder Total Employee')),
+        allowClear: true
     })
     $('#business_classification, .liable-position-select, select[name="province[]"], select[name="city[]"], #select_searched_address_1').select2({
         width: '100%'
@@ -127,6 +152,7 @@
     $(document).on('input', '[data-public-website]', function() {
         const sanitized = sanitizeWebsiteHost(this.value);
         if (this.value !== sanitized) this.value = sanitized;
+        this.removeAttribute('data-verified-website');
         updateWebsiteValidation(this, this.classList.contains('is-invalid'));
     });
 
@@ -134,7 +160,7 @@
         updateWebsiteValidation(this, Boolean(this.value.trim()));
     });
 
-    $(document).on('input', '#established_year, #total_employee, [data-max-digits]', function() {
+    $(document).on('input', '#established_year, [data-max-digits]', function() {
         // hapus semua karakter non-digit
         let maxDigits = $(this).data('max-digits');
         let value = this.value.replace(/\D/g, '');
@@ -263,15 +289,16 @@
         $.each(errors, function(key, value) {
             let field = getValidationField(key);
             let message = Array.isArray(value) ? value[0] : value;
+            message = localizeValidationMessage(message);
             items.push('<div><strong>' + escapeHtml(getValidationLabel(field.input, field.fieldName, field.index)) + '</strong>: ' + escapeHtml(message) + '</div>');
         });
 
         let body = items.slice(0, 6).join('');
         if (items.length > 6) {
-            body += '<div>+' + (items.length - 6) + ' error lainnya.</div>';
+            body += '<div>+' + escapeHtml(partnerValidationCopy.additional.replace(':count', items.length - 6)) + '</div>';
         }
 
-        showPartnerToast('Validation Error', body, 'danger');
+        showPartnerToast(partnerValidationCopy.title, body, 'danger');
     }
 
     $(document).ready(function() {
@@ -1327,6 +1354,7 @@
                         $.each(errors, function(key, value) {
                             var field = getValidationField(key);
                             var message = Array.isArray(value) ? value[0] : value;
+                            message = localizeValidationMessage(message);
                             var inputField = field.input;
                             var messageContainer = field.message;
 
@@ -1349,8 +1377,8 @@
 
                         Swal.fire({
                             icon: 'error',
-                            title: 'Validation Error',
-                            html: `Found ${errorCount} validation error(s). Please check your input.`,
+                            title: partnerValidationCopy.title,
+                            text: partnerValidationCopy.summary.replace(':count', errorCount),
                         });
 
                         if (firstErrorField && firstErrorField.closest('.step-pane').length) {

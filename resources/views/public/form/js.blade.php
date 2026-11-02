@@ -769,7 +769,73 @@
                 return false;
             }
 
-            function canMoveToStep(targetStep) {
+            async function validateWebsiteReachability() {
+                const $field = $('[data-public-website]').first();
+                const value = $.trim($field.val() || '');
+
+                if (!$field.length || !value) {
+                    return true;
+                }
+
+                if (!isValidWebsiteHost(value)) {
+                    return false;
+                }
+
+                if ($field.attr('data-verified-website') === value) {
+                    return true;
+                }
+
+                const $nextButton = $('#step_next');
+                const originalLabel = $nextButton.html();
+                $nextButton.prop('disabled', true).attr('aria-busy', 'true');
+                $nextButton.text(localizeValidationMessage('Memeriksa website... | Checking website...'));
+
+                try {
+                    await $.ajax({
+                        url: @json(route('public.form.validate-website', ['token' => $formLink->token])),
+                        type: 'POST',
+                        dataType: 'json',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: {
+                            website_address: 'https://' + value
+                        }
+                    });
+
+                    $field.attr('data-verified-website', value)
+                        .removeClass('is-invalid')
+                        .get(0).setCustomValidity('');
+                    getMessageContainer($field).text('');
+                    return true;
+                } catch (xhr) {
+                    const response = xhr.responseJSON || {};
+                    const fieldErrors = response.errors && response.errors.website_address;
+                    const fallback = 'Alamat website tidak dapat diakses melalui HTTPS. Periksa kembali domain yang dimasukkan. | The website cannot be reached over HTTPS. Please check the domain.';
+                    const rawMessage = fieldErrors && fieldErrors.length ? fieldErrors[0] : fallback;
+                    const message = typeof localizeValidationMessage === 'function'
+                        ? localizeValidationMessage(rawMessage)
+                        : rawMessage.split(' | ')[0];
+
+                    $field.removeAttr('data-verified-website')
+                        .addClass('is-invalid')
+                        .get(0).setCustomValidity(message);
+                    getMessageContainer($field).text(message);
+
+                    $('html, body').animate({
+                        scrollTop: $field.offset().top - 150
+                    }, 400);
+                    $field.trigger('focus');
+                    return false;
+                } finally {
+                    $nextButton.prop('disabled', false)
+                        .removeAttr('aria-busy')
+                        .html(originalLabel);
+                }
+            }
+
+            async function canMoveToStep(targetStep) {
                 if (targetStep <= currentWizardStep) {
                     return true;
                 }
@@ -780,6 +846,10 @@
                     }
 
                     if (!validateStep(step)) {
+                        return false;
+                    }
+
+                    if (step === 1 && !(await validateWebsiteReachability())) {
                         return false;
                     }
                 }
@@ -835,15 +905,15 @@
                 showStep(currentWizardStep - 1);
             });
 
-            $('#step_next').on('click', function() {
-                if (canMoveToStep(currentWizardStep + 1)) {
+            $('#step_next').on('click', async function() {
+                if (await canMoveToStep(currentWizardStep + 1)) {
                     showStep(currentWizardStep + 1);
                 }
             });
 
-            $('#wizard_stepper').on('click', '.wizard-step', function() {
+            $('#wizard_stepper').on('click', '.wizard-step', async function() {
                 const step = parseInt($(this).data('step'));
-                if (canMoveToStep(step)) {
+                if (await canMoveToStep(step)) {
                     showStep(step);
                 }
             });

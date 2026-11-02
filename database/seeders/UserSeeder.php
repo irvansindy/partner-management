@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+
 class UserSeeder extends Seeder
 {
     /**
@@ -14,36 +15,71 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $super_admin = User::create([
-            "name"=> "Irvan Muhammad Sindy",
-            "email"=> "adminsindy@gmail.com",
-            "password"=> Hash::make("pass12345"),
-            "office_id"=> 1,
-        ]);
-        $super_admin->assignRole("super-admin");
+        $users = [
+            [
+                'name' => 'Irvan Muhammad Sindy',
+                'email' => 'irvansindy@pralon.com',
+                'office_id' => 1,
+                'role' => 'super-admin',
+            ],
+            [
+                'name' => 'Advent',
+                'email' => 'advent@pralon.com',
+                'office_id' => 1,
+                'role' => 'admin',
+            ],
+            [
+                'name' => 'yohan',
+                'email' => 'yohan@pralon.com',
+                'office_id' => 1,
+                'role' => 'admin',
+            ],
+            [
+                'name' => 'Angelina Agnes',
+                'email' => 'agnes@pralon.com',
+                'office_id' => 1,
+                'role' => 'super-user',
+            ],
+            [
+                'name' => 'Harum',
+                'email' => 'harum@pralon.com',
+                'office_id' => 1,
+                'role' => 'super-user',
+            ],
+            [
+                'name' => 'Tryvena',
+                'email' => 'vena_liem@yahoo.com',
+                'office_id' => 2,
+                'role' => 'admin',
+            ],
+            [
+                'name' => 'Nisa',
+                'email' => 'nisapurchasing@pralon.com',
+                'office_id' => 2,
+                'role' => 'super-user',
+            ],
+            [
+                'name' => 'Sisi',
+                'email' => 'sisi@pralon.com',
+                'office_id' => 3,
+                'role' => 'super-user',
+            ],
+        ];
 
-        $admin = User::create([
-            "name"=> "admin 1",
-            "email"=> "admin1@gmail.com",
-            "password"=> Hash::make("pass12345"),
-            "office_id"=> 1,
-        ]);
-        $admin->assignRole("admin");
+        foreach ($users as $attributes) {
+            $role = $attributes['role'];
+            unset($attributes['role']);
 
-        $super_user = User::create([
-            "name"=> "super user 1",
-            "email"=> "super_user1@gmail.com",
-            "password"=> Hash::make("pass12345"),
-            "office_id"=> 1,
-        ]);
-        $super_user->assignRole("super-user");
+            $user = User::updateOrCreate(
+                ['email' => $attributes['email']],
+                [
+                    'name' => $attributes['name'],
+                    'password' => Hash::make('pass12345'),
+                    'office_id' => $attributes['office_id'],
+                ]
+            );
 
-        $user = User::create([
-            "name"=> "user 1",
-            "email"=> "user1@gmail.com",
-            "password"=> Hash::make("pass12345"),
-            "office_id"=> 1,
-        ]);
-        $user->assignRole("user");
+            $user->assignRole($role);
+        }
     }
 }

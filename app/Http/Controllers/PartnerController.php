@@ -27,6 +27,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Jobs\GeocodeAddressJob;
 use App\Support\CountryCatalog;
+use App\Support\EmployeeRange;
+use Illuminate\Validation\Rule;
+use App\Rules\PublicHttpsUrl;
+use App\Rules\ReachablePublicHttpsUrl;
 class PartnerController extends Controller
 {
     /**
@@ -607,8 +611,6 @@ class PartnerController extends Controller
     public function store(Request $request)
     {
         try {
-            DB::beginTransaction();
-
             if (auth()->user()->roles->pluck('name')[0] == 'user') {
                 $this->checkIfUserAlreadyRegistered();
             }
@@ -617,6 +619,8 @@ class PartnerController extends Controller
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
+
+            DB::beginTransaction();
 
             // Handle multiple file attachments upload
             $attachmentFiles = $this->handleMultipleFileUploads($request);
@@ -651,10 +655,14 @@ class PartnerController extends Controller
             );
 
         } catch (ValidationException $e) {
-            DB::rollback();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            DB::rollback();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return FormatResponseJson::error(null, $e->getMessage(), 500);
         }
     }
@@ -669,6 +677,12 @@ class PartnerController extends Controller
 
     private function validateRequest($request)
     {
+        if ($request->filled('website_address')) {
+            $request->merge([
+                'website_address' => PublicHttpsUrl::normalize($request->input('website_address')),
+            ]);
+        }
+
         // ENGLISH VERSION
         $messagesEN = [
             // Company Info
@@ -676,6 +690,7 @@ class PartnerController extends Controller
             'company_name.required' => 'Company name is required.',
             // 'established_year.integer' => 'Established year must be a number.',
             'total_employee.integer' => 'Total employee must be a number.',
+            'total_employee.in' => 'Select one of the available employee ranges.',
 
             // Liable Person
             'liable_person.0.required' => 'Liable person is required.',
@@ -742,6 +757,7 @@ class PartnerController extends Controller
             'company_name.required' => 'Nama perusahaan wajib diisi.',
             // 'established_year.integer' => 'Tahun berdiri harus berupa angka.',
             'total_employee.integer' => 'Total karyawan harus berupa angka.',
+            'total_employee.in' => 'Pilih rentang jumlah karyawan yang tersedia.',
 
             // Liable Person
             'liable_person.0.required' => 'Nama penanggung jawab wajib diisi.',
@@ -808,7 +824,7 @@ class PartnerController extends Controller
             'company_name' => 'required|string',
             'company_group_name' => 'nullable|string',
             'established_year' => 'nullable',
-            'total_employee' => 'nullable|integer',
+            'total_employee' => ['nullable', Rule::in(EmployeeRange::values())],
             'liable_person.0' => 'required|string',
             'liable_position.0' => 'required|string',
             'other_position.0' => 'nullable|string',
@@ -817,7 +833,7 @@ class PartnerController extends Controller
             'business_classification' => 'required|string',
             'business_classification_detail' => 'nullable|string',
             'register_number_as_in_tax_invoice' => 'required|string',
-            'website_address' => 'nullable|url',
+            'website_address' => ['nullable', 'string', 'max:255', new PublicHttpsUrl(), new ReachablePublicHttpsUrl()],
             'system_management' => 'nullable|string',
             'email_address' => 'nullable|email',
             'credit_limit' => 'nullable|integer',

@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 class UserManagementController extends Controller
 {
     public function __construct()
@@ -154,14 +154,17 @@ class UserManagementController extends Controller
 
             // ✅ Validasi request
             $validator = Validator::make($request->all(), [
+                'id' => 'required|integer|exists:users,id',
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'role' => 'required',
+                'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($request->id)],
+                'nik' => ['required', 'string', 'max:255', Rule::unique('users', 'nik')->ignore($request->id)],
+                'employee_id' => ['required', 'string', 'max:255', Rule::unique('users', 'employee_id')->ignore($request->id)],
+                'role' => 'required|exists:roles,name',
                 'office' => 'required|integer|exists:master_offices,id',
                 'department' => 'required|integer|exists:master_departments,id',
-                'division' => 'nullable|integer|exists:master_divisions,id',
+                'division' => 'required|integer|exists:master_divisions,id',
                 'job_title' => 'nullable|integer|exists:master_job_titles,id',
-                'parent_user' => 'nullable|integer|exists:users,id',
+                'parent_user' => ['nullable', 'integer', 'exists:users,id', Rule::notIn([$request->id])],
             ]);
 
             if ($validator->fails()) {
@@ -172,6 +175,8 @@ class UserManagementController extends Controller
             $data = [
                 'name'           => $request->name,
                 'email'          => $request->email,
+                'nik'            => $request->nik,
+                'employee_id'    => $request->employee_id,
                 'office_id'      => $request->office,
                 'department_id'  => $request->department,
                 'division_id'    => $request->division,
@@ -245,7 +250,7 @@ class UserManagementController extends Controller
         try {
             DB::beginTransaction();
             $user = User::findOrFail($request->id);
-            $user->removeRole($request->current_role);
+            $user->syncRoles([]);
             $user->delete();
             DB::commit();
             return FormatResponseJson::success($user, 'user deleted successfully');

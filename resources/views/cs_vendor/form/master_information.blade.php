@@ -68,13 +68,12 @@
 
                 <div class="col-md-6 col-sm-12">
                     <label for="total_employee">@lang('messages.Total Employee')</label>
-                    <input type="text"
-                        name="total_employee"
-                        id="total_employee"
-                        class="form-control"
-                        maxlength="7"
-                        placeholder="@lang('messages.Placeholder Total Employee')"
-                        oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)">
+                    <select name="total_employee" id="total_employee" class="form-control">
+                        <option value="">@lang('messages.Placeholder Total Employee')</option>
+                        @foreach (\App\Support\EmployeeRange::values() as $employeeRange)
+                            <option value="{{ $employeeRange }}">{{ $employeeRange }}</option>
+                        @endforeach
+                    </select>
                     <span class="text-danger message-danger" id="message_total_employee" role="alert"></span>
                 </div>
             </div>

@@ -30,6 +30,22 @@
             return typeof message === 'string' ? message : fallbackMessage;
         }
 
+        function clearUserFormErrors(formSelector) {
+            let form = $(formSelector);
+            form.find('.user-field-error').text('');
+            form.find('.is-invalid').removeClass('is-invalid');
+            form.find('.select2-selection.is-invalid').removeClass('is-invalid');
+        }
+
+        function showUserFieldError(inputSelector, messageSelector, message) {
+            let input = $(inputSelector);
+            input.addClass('is-invalid');
+            if (input.hasClass('select2-hidden-accessible')) {
+                input.next('.select2').find('.select2-selection').addClass('is-invalid');
+            }
+            $(messageSelector).text(Array.isArray(message) ? message[0] : message);
+        }
+
         function closeUserModal(selector) {
             let modal = $(selector);
 
@@ -37,34 +53,36 @@
                 return;
             }
 
-            modal.modal('hide');
+            let closed = false;
+            modal.one('hidden.bs.modal', function() {
+                closed = true;
+                $(this).removeAttr('style');
 
-            setTimeout(function() {
-                if (modal.hasClass('show') || modal.is(':visible')) {
-                    modal.removeClass('show').attr('aria-hidden', 'true').css('display', 'none');
+                if (!$('.modal.show').length) {
                     $('body').removeClass('modal-open').css('padding-right', '');
                     $('.modal-backdrop').remove();
                 }
-            }, 350);
+            });
+            modal.modal('hide');
+
+            setTimeout(function() {
+                if (!closed && (modal.hasClass('show') || modal.is(':visible'))) {
+                    modal.removeClass('show').attr('aria-hidden', 'true').css('display', 'none');
+                    $('body').removeClass('modal-open').css('padding-right', '');
+                    $('.modal-backdrop').remove();
+                    modal.trigger('hidden.bs.modal');
+                }
+            }, 500);
         }
 
         $('#user_role, #user_job_title, #user_division, #user_department, #user_office, #user_parent').select2({
             dropdownParent: $('#formCreateUser'),
-            width: '100%', // biar responsif
-            tags: "true",
-        })
-        $('#update_user_role').select2({
+            width: '100%'
+        });
+        $('#update_user_role, #update_user_job_title, #update_user_division, #update_user_department, #update_user_office, #update_user_parent').select2({
             dropdownParent: $('#formUpdateUser'),
-            width: '100%', // biar responsif
-        })
-        $('#update_user_office').select2({
-            dropdownParent: $('#formUpdateUser'),
-            width: '100%', // biar responsif
-        })
-        $('#update_user_department').select2({
-            dropdownParent: $('#formUpdateUser'),
-            width: '100%', // biar responsif
-        })
+            width: '100%'
+        });
 
         $('#user_table').DataTable({
             processing: true,
@@ -93,7 +111,35 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-user_id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_user" data-toggle="modal" data-target="#formUpdateUser">View</button> <button type="button" data-user_id="'+item.id+'" data-user_name="'+item.name+'" data-role_user="'+item.roles[0].name+'" class="btn btn-outline-danger btn-sm mt-2 delete_user" data-toggle="modal" data-target="#confirmDeleteUser">Delete</button>'
+                        let viewButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--view detail_user',
+                            html: '<i class="fas fa-eye" aria-hidden="true"></i>',
+                            title: 'View user',
+                            'aria-label': 'View ' + item.name,
+                            'data-user_id': item.id,
+                            'data-toggle': 'modal',
+                            'data-target': '#formUpdateUser'
+                        });
+                        let deleteButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--delete delete_user',
+                            html: '<i class="fas fa-trash" aria-hidden="true"></i>',
+                            title: 'Delete user',
+                            'aria-label': 'Delete ' + item.name,
+                            'data-user_id': item.id,
+                            'data-user_name': item.name,
+                            'data-toggle': 'modal',
+                            'data-target': '#confirmDeleteUser'
+                        });
+
+                        return $('<div>', {
+                            class: 'table-actions',
+                            role: 'group',
+                            'aria-label': 'Actions for ' + item.name
+                        })
+                            .append(viewButton, deleteButton)
+                            .prop('outerHTML');
                     }
                 },
             ]
@@ -102,11 +148,7 @@
         $(document).on('click', '#for_create_user', function(e) {
             e.preventDefault()
             $('#form_create_new_user')[0].reset()
-            $('.message_user_name').text('')
-            $('.message_user_email').text('')
-            $('.message_user_role').text('')
-            $('.message_user_office').text('')
-            $('.message_user_department').text('')
+            clearUserFormErrors('#form_create_new_user')
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -116,21 +158,21 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
-                    $('#user_role').empty()
+                    $('#user_role').empty().append('<option value="">Select role</option>')
                     $.each(res.data.roles, function(i, role) {
                         $('#user_role').append(`
                             <option value="${role.name}">${role.name}</option>
                         `)
                     })
 
-                    $('#user_office').empty()
+                    $('#user_office').empty().append('<option value="">Select office</option>')
                     $.each(res.data.offices, function(i, office) {
                         $('#user_office').append(`
                             <option value="${office.id}">${office.name}</option>
                         `)
                     })
                     
-                    $('#user_department').empty()
+                    $('#user_department').empty().append('<option value="">Select department</option>')
                     $.each(res.data.departments, function(i, office) {
                         $('#user_department').append(`
                             <option value="${office.id}">${office.name}</option>
@@ -138,7 +180,7 @@
                     })
 
                     // divisions
-                    $('#user_division').empty()
+                    $('#user_division').empty().append('<option value="">Select division</option>')
                     $.each(res.data.divisions, function(i, division) {
                         $('#user_division').append(`
                             <option value="${division.id}">${division.name}</option>
@@ -146,7 +188,7 @@
                     })
                     
                     // job_titles
-                    $('#user_job_title').empty()
+                    $('#user_job_title').empty().append('<option value="">Select job title</option>')
                     $.each(res.data.job_titles, function(i, job_title) {
                         $('#user_job_title').append(`
                             <option value="${job_title.id}">${job_title.name} - ${job_title.level.name}</option>
@@ -156,7 +198,7 @@
                     // parents
                     $('#user_parent').empty()
                     $('#user_parent').append(`
-                        <option value="">-- Optional --</option>
+                        <option value="">Select supervisor</option>
                     `)
                     $.each(res.data.parents, function(i, parent) {
                         $('#user_parent').append(`
@@ -175,7 +217,7 @@
             })
         })
 
-        $(document).on('click', '#save_user', function(e) {
+        $(document).on('submit', '#form_create_new_user', function(e) {
             e.preventDefault()
             let user_name = $('#user_name').val()
             let user_email = $('#user_email').val()
@@ -239,10 +281,9 @@
                             autoremove: true,
                         });
                     } else {
-                        $('.text-danger').text('')
+                        clearUserFormErrors('#form_create_new_user')
                         $.each(validationErrors, function(i, value) {
-                            // alert(value)
-                            $('#message_user_' + i).text(value)
+                            showUserFieldError('#user_' + i, '#message_user_' + i, value)
                         })
                         $(document).Toasts('create', {
                             title: 'Error',
@@ -264,13 +305,7 @@
 
             // Reset form dan error message
             $('#form_detail_current_user')[0].reset();
-            $('.message_update_user_name').text('');
-            $('.message_update_user_email').text('');
-            $('.message_update_user_nik').text('');
-            $('.message_update_user_employee_id').text('');
-            $('.message_update_user_role').text('');
-            $('.message_update_user_office').text('');
-            $('.message_update_user_department').text('');
+            clearUserFormErrors('#form_detail_current_user');
 
             $.ajax({
                 headers: {
@@ -289,7 +324,7 @@
                     $('#update_user_email').val(user.email);
                     $('#update_user_nik').val(user.nik);
                     $('#update_user_employee_id').val(user.employee_id);
-                    console.log(user.parent_user_id);
+                    $('#update_current_role').val(user.roles.length ? user.roles[0].name : '');
                     
                     // Populate dropdown Role
                     populateDropdown(
@@ -376,19 +411,26 @@
                 $(selector).select2('destroy');
             }
             $(selector).select2({
-                dropdownParent: $('#formDetailUser, #formUpdateUser'),
+                dropdownParent: $(selector).closest('.modal'),
                 width: '100%'
             });
         }
 
-        $(document).on('click', '.update_user', function () {
+        $(document).on('submit', '#form_detail_current_user', function (e) {
+            e.preventDefault();
             let update_user_id = $(this).data('update_user_id');
+
+            if (!update_user_id) {
+                update_user_id = $('#update_user').data('update_user_id');
+            }
 
             // Ambil semua data input form
             let payload = {
                 id: update_user_id,
                 name: $('#update_user_name').val(),
                 email: $('#update_user_email').val(),
+                nik: $('#update_user_nik').val(),
+                employee_id: $('#update_user_employee_id').val(),
                 current_role: $('#update_current_role').val(),
                 role: $('#update_user_role').val(),
                 office: $('#update_user_office').val(),
@@ -399,7 +441,7 @@
             };
 
             // Clear semua error message sebelumnya
-            $('.text-danger').text('');
+            clearUserFormErrors('#form_detail_current_user');
 
             $.ajax({
                 headers: {
@@ -443,7 +485,11 @@
                     } else if (message && message.errors) {
                         // Error validasi field
                         $.each(message.errors, function (field, messages) {
-                            $('#message_update_user_' + field).text(messages[0]);
+                            showUserFieldError(
+                                '#update_user_' + field,
+                                '#message_update_user_' + field,
+                                messages
+                            );
                         });
 
                         $(document).Toasts('create', {
@@ -470,19 +516,13 @@
         $(document).on('click', '.delete_user', function() {
             let delete_user_id = $(this).data('user_id')
             let delete_user_name = $(this).data('user_name')
-            let delete_role_user = $(this).data('role_user')
-            $('#delete_user_name').html('Yakin akan menghapus user '+delete_user_name+' ?')
-            $('.confirm_delete_user').removeData('delete_user_id')
-            $('.confirm_delete_user').attr('data-delete_user_id', delete_user_id)
-            $('.confirm_delete_user').removeData('delete_role_user')
-            $('.confirm_delete_user').attr('data-delete_role_user', delete_role_user)
+            $('#delete_user_name').text('Delete ' + delete_user_name + '?')
+            $('.confirm_delete_user').data('delete_user_id', delete_user_id)
         })
 
         $(document).on('click', '#confirm_delete_user', function(e) {
             e.preventDefault()
             let delete_user_id = $(this).data('delete_user_id')
-            let delete_role_user = $(this).data('delete_role_user')
-            // alert([delete_user_id, delete_role_user])
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -491,13 +531,12 @@
                 type: 'POST',
                 data: {
                     id: delete_user_id,
-                    current_role: delete_role_user,
                 },
                 dataType: 'json',
                 async: true,
                 success: function(res) {
-                    $('#user_table').DataTable().ajax.reload();
-                    $('#confirmDeleteUser').modal('toggle');
+                    closeUserModal('#confirmDeleteUser');
+                    $('#user_table').DataTable().ajax.reload(null, false);
                     $(document).Toasts('create', {
                         title: 'Success',
                         class: 'bg-success',

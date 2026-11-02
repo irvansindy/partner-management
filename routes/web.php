@@ -75,6 +75,9 @@ Route::prefix('f')->name('public.form.')->group(function () {
     Route::get('/{token}', [PublicFormController::class, 'show'])
         ->middleware('throttle:public-form-view')
         ->name('show');
+    Route::post('/{token}/validate-website', [PublicFormController::class, 'validateWebsite'])
+        ->middleware('throttle:10,1')
+        ->name('validate-website');
     Route::post('/{token}', [PublicFormController::class, 'submit'])
         ->middleware('throttle:public-form-submit')
         ->name('submit');

@@ -46,8 +46,8 @@ class PublicFormTextValidationTest extends TestCase
             'contact name with number' => ['contact_name', ['Tasya 2']],
             'bank name with unsupported symbol' => ['bank_name', ['Bank_ABC']],
             'account name with number' => ['account_name', ['Tasya 2']],
-            'employee count below minimum' => ['total_employee', 0],
-            'employee count above maximum' => ['total_employee', 1000001],
+            'employee count outside allowed ranges' => ['total_employee', '100-200'],
+            'employee count arbitrary number' => ['total_employee', 1000001],
             'company name over limit' => ['company_name', str_repeat('A', 256)],
             'address over limit' => ['address', [str_repeat('A', 1001)]],
         ];
@@ -58,13 +58,13 @@ class PublicFormTextValidationTest extends TestCase
     {
         $validated = $this->validateSubmission([
             'company_name' => 'Maju Bersama',
-            'total_employee' => 1000000,
+            'total_employee' => '10000+',
             'liable_person' => ['José Santoso'],
             'bank_name' => ["Bank & Trust (Asia) / Unit+2, Ltd.'"],
             'address' => [str_repeat('A', 1000)],
         ]);
 
-        $this->assertSame(1000000, $validated['total_employee']);
+        $this->assertSame('10000+', $validated['total_employee']);
         $this->assertSame(["Bank & Trust (Asia) / Unit+2, Ltd.'"], $validated['bank_name']);
     }
 

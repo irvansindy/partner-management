@@ -138,6 +138,284 @@
                 color: #fff !important;
             }
 
+            .user-management-modal .modal-dialog {
+                max-width: 920px;
+            }
+
+            .user-form-modal {
+                overflow: hidden !important;
+            }
+
+            .user-form-modal .modal-dialog {
+                display: flex;
+                height: calc(100vh - 32px);
+                margin: 16px auto;
+                min-height: 0;
+            }
+
+            .user-management-modal .modal-content {
+                border: 0;
+                border-radius: 12px;
+                display: flex;
+                flex-direction: column;
+                max-height: calc(100vh - 48px);
+                box-shadow: 0 18px 48px rgba(32, 32, 45, .18);
+                overflow: hidden;
+            }
+
+            .user-form-modal .modal-content {
+                height: 100%;
+                max-height: 100%;
+                min-height: 0;
+            }
+
+            .user-form-modal .modal-content > form {
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: column;
+                min-height: 0;
+                overflow: hidden;
+            }
+
+            .user-management-modal .modal-header {
+                align-items: flex-start;
+                background: #fff;
+                border-bottom: 1px solid var(--user-border);
+                flex: 0 0 auto;
+                padding: 22px 28px 20px;
+            }
+
+            .user-management-modal .modal-header .close {
+                align-items: center;
+                border-radius: 6px;
+                color: #5f6175;
+                display: inline-flex;
+                height: 36px;
+                justify-content: center;
+                margin: -4px -6px 0 16px;
+                opacity: 1;
+                padding: 0;
+                width: 36px;
+            }
+
+            .user-management-modal .modal-header .close:hover,
+            .user-management-modal .modal-header .close:focus {
+                background: #f2f2f7;
+                color: #20202d;
+                outline: none;
+            }
+
+            .user-modal-kicker {
+                color: var(--user-primary);
+                display: block;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: .08em;
+                margin-bottom: 5px;
+            }
+
+            .user-management-modal .modal-title {
+                color: #20202d;
+                font-size: 22px;
+                font-weight: 650;
+                line-height: 1.25;
+                margin: 0;
+            }
+
+            .user-modal-description {
+                color: #73758a;
+                font-size: 13px;
+                margin: 6px 0 0;
+            }
+
+            .user-management-modal .modal-body {
+                background: #f8f8fb;
+                flex: 1 1 auto;
+                min-height: 0;
+                overscroll-behavior: contain;
+                overflow-y: scroll;
+                padding: 24px 28px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .user-form-section {
+                background: #fff;
+                border: 1px solid var(--user-border);
+                border-radius: 10px;
+                padding: 20px;
+            }
+
+            .user-form-section + .user-form-section {
+                margin-top: 18px;
+            }
+
+            .user-form-section-heading {
+                border-bottom: 1px solid #eeeef4;
+                margin-bottom: 18px;
+                padding-bottom: 14px;
+            }
+
+            .user-form-section-heading h3 {
+                color: #292a3a;
+                font-size: 15px;
+                font-weight: 650;
+                margin: 0 0 4px;
+            }
+
+            .user-form-section-heading p {
+                color: #85879b;
+                font-size: 12px;
+                margin: 0;
+            }
+
+            .user-form-grid {
+                display: grid;
+                gap: 16px 20px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .user-management-modal .form-group {
+                margin: 0;
+                min-width: 0;
+            }
+
+            .user-management-modal label {
+                color: #444657;
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                margin-bottom: 7px;
+            }
+
+            .user-management-modal .required-mark {
+                color: #dc3545;
+            }
+
+            .user-management-modal .optional-label {
+                color: #8b8da0;
+                float: right;
+                font-size: 11px;
+                font-weight: 500;
+            }
+
+            .user-management-modal .form-control,
+            .user-management-modal .select2-container .select2-selection--single {
+                background: #fff;
+                border: 1px solid #d9dae5;
+                border-radius: 7px;
+                color: #303142;
+                font-size: 14px;
+                min-height: 44px;
+            }
+
+            .user-management-modal .form-control {
+                padding: 9px 12px;
+            }
+
+            .user-management-modal .form-control::placeholder {
+                color: #a1a3b1;
+            }
+
+            .user-management-modal .form-control:focus,
+            .user-management-modal .select2-container--focus .select2-selection--single,
+            .user-management-modal .select2-container--open .select2-selection--single {
+                border-color: var(--user-primary);
+                box-shadow: 0 0 0 3px rgba(108, 93, 211, .12);
+                outline: 0;
+            }
+
+            .user-management-modal .select2-container {
+                display: block;
+                width: 100% !important;
+            }
+
+            .user-management-modal .select2-selection__rendered {
+                line-height: 42px !important;
+                padding-left: 12px !important;
+                padding-right: 36px !important;
+            }
+
+            .user-management-modal .select2-selection__arrow {
+                height: 42px !important;
+                right: 8px !important;
+            }
+
+            .user-field-error {
+                color: #dc3545;
+                display: block;
+                font-size: 12px;
+                line-height: 1.35;
+                min-height: 16px;
+                padding-top: 4px;
+            }
+
+            .user-management-modal .is-invalid,
+            .user-management-modal .select2-selection.is-invalid {
+                border-color: #dc3545 !important;
+            }
+
+            .user-management-modal .modal-footer {
+                background: #fff;
+                border-top: 1px solid var(--user-border);
+                flex: 0 0 auto;
+                gap: 10px;
+                padding: 16px 28px;
+            }
+
+            .user-management-modal .modal-footer .btn {
+                align-items: center;
+                border-radius: 7px;
+                display: inline-flex;
+                font-size: 13px;
+                font-weight: 600;
+                justify-content: center;
+                min-height: 42px;
+                min-width: 112px;
+                padding: 9px 16px;
+            }
+
+            .user-management-modal .modal-footer .material-icons {
+                font-size: 17px;
+                margin-right: 7px;
+            }
+
+            .user-delete-modal .modal-dialog {
+                max-width: 480px;
+            }
+
+            .user-delete-modal .modal-body {
+                background: #fff;
+                padding: 28px;
+                text-align: center;
+            }
+
+            .delete-user-warning {
+                align-items: center;
+                background: #fff0f1;
+                border-radius: 50%;
+                color: #dc3545;
+                display: inline-flex;
+                height: 52px;
+                justify-content: center;
+                margin-bottom: 16px;
+                width: 52px;
+            }
+
+            .delete-user-title {
+                color: #292a3a;
+                font-size: 16px;
+                font-weight: 650;
+                margin: 0 0 8px;
+            }
+
+            .delete-user-description {
+                color: #77798c;
+                font-size: 13px;
+                line-height: 1.5;
+                margin: 0 auto;
+                max-width: 360px;
+            }
+
             @media (max-width: 576px) {
                 .user-page-header {
                     align-items: flex-start;
@@ -148,6 +426,38 @@
                 .user-table-card .card-body {
                     padding-left: 16px;
                     padding-right: 16px;
+                }
+
+                .user-management-modal .modal-dialog {
+                    margin: 12px;
+                }
+
+                .user-form-modal .modal-dialog {
+                    height: calc(100vh - 24px);
+                }
+
+                .user-management-modal .modal-content {
+                    max-height: calc(100vh - 24px);
+                }
+
+                .user-management-modal .modal-header,
+                .user-management-modal .modal-body,
+                .user-management-modal .modal-footer {
+                    padding-left: 18px;
+                    padding-right: 18px;
+                }
+
+                .user-form-section {
+                    padding: 16px;
+                }
+
+                .user-form-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .user-management-modal .modal-footer .btn {
+                    flex: 1 1 0;
+                    min-width: 0;
                 }
             }
         </style>

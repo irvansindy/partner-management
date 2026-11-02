@@ -17,11 +17,14 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Helpers\FormatResponseJson;
 use App\Rules\PublicHttpsUrl;
+use App\Rules\ReachablePublicHttpsUrl;
 use App\Support\CountryCatalog;
+use App\Support\EmployeeRange;
 use App\Models\Provinces;
 use App\Models\Regencies;
 use App\Models\PostalCode;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 use App\Services\CompanyAttachmentService;
 use App\Support\SecurityLogSanitizer;
 use App\Exceptions\PublicFormClosedException;
@@ -55,6 +58,30 @@ class PublicFormController extends Controller
         return view('public.form_index', [
             'formLink' => $formLink,
             'countries' => CountryCatalog::all(),
+        ]);
+    }
+
+    public function validateWebsite(Request $request, $token)
+    {
+        $formLink = FormLink::where('token', $token)->firstOrFail();
+
+        if (!$formLink->canAcceptSubmission()) {
+            abort(404);
+        }
+
+        $request->merge([
+            'website_address' => PublicHttpsUrl::normalize($request->input('website_address')),
+        ]);
+
+        $validated = $request->validate([
+            'website_address' => ['required', 'string', 'max:255', new PublicHttpsUrl(), new ReachablePublicHttpsUrl()],
+        ], [
+            'website_address.required' => 'Alamat situs web wajib diisi. | Website address is required.',
+        ]);
+
+        return response()->json([
+            'valid' => true,
+            'website_address' => $validated['website_address'],
         ]);
     }
 
@@ -302,7 +329,7 @@ class PublicFormController extends Controller
             'company_name' => 'required|string|max:255|regex:/^[\p{L} ]+$/u',
             'company_group_name' => 'nullable|string|max:255|regex:/^[\p{L} ]+$/u',
             'established_year' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'total_employee' => 'nullable|integer|min:1|max:1000000',
+            'total_employee' => ['nullable', Rule::in(EmployeeRange::values())],
 
             // Liable Persons
             'liable_person' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
@@ -317,7 +344,7 @@ class PublicFormController extends Controller
             'business_classification_other_detail' => 'required_if:business_classification,Other|nullable|string|max:255',
             'business_classification_detail' => 'nullable|string|max:1000',
             'register_number_as_in_tax_invoice' => 'required|string|max:255',
-            'website_address' => ['nullable', 'string', 'max:255', new PublicHttpsUrl()],
+            'website_address' => ['nullable', 'string', 'max:255', new PublicHttpsUrl(), new ReachablePublicHttpsUrl()],
             'system_management' => 'nullable|string|max:255',
             'email_address' => 'nullable|email|max:255',
             'credit_limit' => 'nullable|numeric|min:0',
@@ -405,6 +432,7 @@ class PublicFormController extends Controller
             'established_year.integer' => 'Tahun berdiri harus berupa empat digit angka. | Established year must be a four-digit number.',
             'established_year.min' => 'Tahun berdiri minimal 1900. | Established year must be at least 1900.',
             'established_year.max' => 'Tahun berdiri tidak boleh melebihi tahun berjalan. | Established year may not exceed the current year.',
+            'total_employee.in' => 'Pilih rentang jumlah karyawan yang tersedia. | Select one of the available employee ranges.',
             'liable_person.*.regex' => 'Nama penanggung jawab hanya boleh berisi huruf dan spasi. | Liable person name may only contain letters and spaces.',
             'contact_department.*.regex' => 'Departemen hanya boleh berisi huruf dan spasi. | Department may only contain letters and spaces.',
             'contact_position.*.regex' => 'Jabatan hanya boleh berisi huruf dan spasi. | Position may only contain letters and spaces.',

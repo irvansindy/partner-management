@@ -1,81 +1,102 @@
-<!-- Modal -->
-<div class="modal fade" id="formUpdateUser" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="formUpdateUser_label" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content ">
+<div class="modal fade user-management-modal user-form-modal" id="formUpdateUser" data-backdrop="static" data-keyboard="false"
+    tabindex="-1" role="dialog" aria-labelledby="formUpdateUserLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="formUpdateUserLabel">Detail User</h1>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="" id="form_detail_current_user">
-                <div class="modal-body row">
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                        <label for="update_user_name">Name</label>
-                        <input type="text" class="form-control" name="update_user_name" id="update_user_name">
-                        <span class="text-danger mt-2 message_update_user_name" id="message_update_user_name" role="alert"></span>
-                    </div>
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                        <label for="update_user_email">Email</label>
-                        <input type="email" class="form-control" name="update_user_email" id="update_user_email">
-                        <span class="text-danger mt-2 message_update_user_email" id="message_update_user_email" role="alert"></span>
-                    </div>
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                        <label for="update_user_nik">NIK</label>
-                        <input type="text" class="form-control" name="update_user_nik" id="update_user_nik">
-                        <span class="text-danger mt-2 message_update_user_nik" id="message_update_user_nik" role="alert"></span>
-                    </div>
-
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                        <label for="update_user_employee_id">Employee ID</label>
-                        <input type="text" class="form-control" name="update_user_employee_id" id="update_user_employee_id">
-                        <span class="text-danger mt-2 message_update_user_employee_id" id="message_update_user_employee_id" role="alert"></span>
-                    </div>
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                        <input type="hidden" class="form-control" name="update_current_role" id="update_current_role">
-                        <label for="update_user_role">Role</label>
-                        <select class="form-control" name="update_user_role" id="update_user_role" style="width: 100% !important;"></select>
-                        <span class="text-danger mt-2 message_update_user_role" id="message_update_user_role" role="alert"></span>
-                    </div>
-                    <!-- Job Title -->
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12 mb-3">
-                        <label for="update_user_job_title">Job Title</label>
-                        <select class="form-control" name="update_user_job_title" id="update_user_job_title" style="width: 100% !important;">
-                            <!-- Data job title akan diisi dari AJAX -->
-                        </select>
-                        <span class="text-danger mt-1 d-block" id="message_update_user_job_title"></span>
-                    </div>
-                    <!-- Division -->
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12 mb-3">
-                        <label for="update_user_division">Division</label>
-                        <select class="form-control" name="update_user_division" id="update_user_division" style="width: 100% !important;">
-                            <!-- Data division akan diisi dari AJAX -->
-                        </select>
-                        <span class="text-danger mt-1 d-block" id="message_update_user_division"></span>
-                    </div>
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                        <input type="hidden" class="form-control" name="update_current_department" id="update_current_department">
-                        <label for="update_user_department">Department</label>
-                        <select class="form-control" name="update_user_department" id="update_user_department" style="width: 100% !important;"></select>
-                        <span class="text-danger mt-2 message_update_user_department" id="message_update_user_department" role="alert"></span>
-                    </div>
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12">
-                        <input type="hidden" class="form-control" name="update_current_office" id="update_current_office">
-                        <label for="update_user_office">Office</label>
-                        <select class="form-control" name="update_user_office" id="update_user_office" style="width: 100% !important;"></select>
-                        <span class="text-danger mt-2 message_update_user_office" id="message_update_user_office" role="alert"></span>
-                    </div>
-                    <!-- Parent User -->
-                    <div class="form-group mb-3 col-lg-6 col-md-6 col-sm-12 mb-3">
-                        <label for="update_user_parent">Parent (Atasan)</label>
-                        <select class="form-control" name="update_user_parent" id="update_user_parent" style="width: 100% !important;">
-                            <option value="">-- Optional --</option>
-                            <!-- Data parent user akan diisi dari AJAX -->
-                        </select>
-                        <span class="text-danger mt-1 d-block" id="message_update_user_parent"></span>
-                    </div>
+                <div>
+                    <span class="user-modal-kicker">USER ACCOUNT</span>
+                    <h2 class="modal-title" id="formUpdateUserLabel">Update User</h2>
+                    <p class="user-modal-description">Review account details and organizational assignment.</p>
                 </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="form_detail_current_user" novalidate>
+                <div class="modal-body">
+                    <section class="user-form-section" aria-labelledby="update_account_heading">
+                        <div class="user-form-section-heading">
+                            <h3 id="update_account_heading">Account information</h3>
+                            <p>Keep the user's identity and contact information accurate.</p>
+                        </div>
+                        <div class="user-form-grid">
+                            <div class="form-group">
+                                <label for="update_user_name">Name <span class="required-mark">*</span></label>
+                                <input type="text" class="form-control" name="update_user_name" id="update_user_name"
+                                    placeholder="Enter full name" autocomplete="name" required>
+                                <span class="user-field-error" id="message_update_user_name" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_email">Email <span class="required-mark">*</span></label>
+                                <input type="email" class="form-control" name="update_user_email" id="update_user_email"
+                                    placeholder="name@company.com" autocomplete="email" required>
+                                <span class="user-field-error" id="message_update_user_email" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_nik">NIK <span class="required-mark">*</span></label>
+                                <input type="text" class="form-control" name="update_user_nik" id="update_user_nik"
+                                    placeholder="Enter NIK" inputmode="numeric" autocomplete="off" required>
+                                <span class="user-field-error" id="message_update_user_nik" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_employee_id">Employee ID <span class="required-mark">*</span></label>
+                                <input type="text" class="form-control" name="update_user_employee_id"
+                                    id="update_user_employee_id" placeholder="Enter employee ID" autocomplete="off" required>
+                                <span class="user-field-error" id="message_update_user_employee_id" role="alert"></span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="user-form-section" aria-labelledby="update_organization_heading">
+                        <div class="user-form-section-heading">
+                            <h3 id="update_organization_heading">Organization and access</h3>
+                            <p>Update the access level, work location, and reporting structure.</p>
+                        </div>
+                        <div class="user-form-grid">
+                            <div class="form-group">
+                                <input type="hidden" name="update_current_role" id="update_current_role">
+                                <label for="update_user_role">Role <span class="required-mark">*</span></label>
+                                <select class="form-control" name="update_user_role" id="update_user_role" required></select>
+                                <span class="user-field-error" id="message_update_user_role" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_office">Office <span class="required-mark">*</span></label>
+                                <select class="form-control" name="update_user_office" id="update_user_office" required></select>
+                                <span class="user-field-error" id="message_update_user_office" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_division">Division <span class="required-mark">*</span></label>
+                                <select class="form-control" name="update_user_division" id="update_user_division" required></select>
+                                <span class="user-field-error" id="message_update_user_division" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_department">Department <span class="required-mark">*</span></label>
+                                <select class="form-control" name="update_user_department" id="update_user_department" required></select>
+                                <span class="user-field-error" id="message_update_user_department" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_job_title">Job Title <span class="optional-label">Optional</span></label>
+                                <select class="form-control" name="update_user_job_title" id="update_user_job_title"></select>
+                                <span class="user-field-error" id="message_update_user_job_title" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_user_parent">Parent / Supervisor <span class="optional-label">Optional</span></label>
+                                <select class="form-control" name="update_user_parent" id="update_user_parent">
+                                    <option value="">Select supervisor</option>
+                                </select>
+                                <span class="user-field-error" id="message_update_user_parent" role="alert"></span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary update_user" id="update_user" data-update_user_id="">Update</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary update_user" id="update_user" data-update_user_id="">
+                        <i class="material-icons" aria-hidden="true">save</i>
+                        Save Changes
+                    </button>
                 </div>
             </form>
         </div>
