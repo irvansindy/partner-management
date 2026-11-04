@@ -35,7 +35,25 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-department_id="'+item.id+'" data-department_name="'+item.name+'" class="btn btn-outline-info btn-sm mt-2 detail_department" data-toggle="modal" data-target="#formDepartment">View</button>'
+                        let viewButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--view detail_department',
+                            html: '<i class="fas fa-eye" aria-hidden="true"></i>',
+                            title: 'View department',
+                            'aria-label': 'View department',
+                            'data-department_id': item.id,
+                            'data-department_name': item.name,
+                            'data-toggle': 'modal',
+                            'data-target': '#formDepartment'
+                        });
+
+                        return $('<div>', {
+                            class: 'table-actions',
+                            role: 'group',
+                            'aria-label': 'Department actions'
+                        })
+                            .append(viewButton)
+                            .prop('outerHTML');
                     }
                 },
             ]

@@ -21,8 +21,8 @@ class PublicAddressMarkupTest extends TestCase
         $this->assertStringContainsString('id="address_row_template"', $html);
         $this->assertStringContainsString('id="add_branch"', $html);
         $this->assertStringContainsString('data-address-country', $html);
-        $this->assertStringContainsString('Memuat kota/kabupaten', $html);
-        $this->assertStringContainsString('Kode pos belum tersedia untuk kota/kabupaten ini', $html);
+        $this->assertStringContainsString("__('messages.Public Loading Regencies')", $html);
+        $this->assertStringContainsString("__('messages.Public Postal Code Unavailable')", $html);
         $this->assertStringContainsString('data-address-map', $html);
         $this->assertStringContainsString('data-map-shell', $html);
         $this->assertStringContainsString('data-map-fullscreen', $html);
@@ -33,13 +33,13 @@ class PublicAddressMarkupTest extends TestCase
         $this->assertStringContainsString('World_Street_Map/MapServer/tile', $html);
         $this->assertStringContainsString('name="geocoded_address[]"', $html);
         $this->assertStringContainsString('payload.data.display_name', $html);
-        $this->assertStringContainsString("showPartnerToast('Pencarian Alamat', 'Alamat berhasil ditemukan.', 'success')", $html);
-        $this->assertStringContainsString("showPartnerToast('Pencarian Alamat', 'Alamat tidak ditemukan.', 'danger')", $html);
+        $this->assertStringContainsString("showPartnerToast(addressCopy.searchTitle, addressCopy.addressFound, 'success')", $html);
+        $this->assertStringContainsString("showPartnerToast(addressCopy.searchTitle, addressCopy.addressNotFound, 'danger')", $html);
         $this->assertStringContainsString('pendingLocationRestore', $html);
         $this->assertStringContainsString('data-pending-location-restore', $publicScript);
         $this->assertStringContainsString("closest('[data-address-row][hidden]')", $html);
         $this->assertStringContainsString("closest('[data-address-row][hidden]')", $publicScript);
-        $this->assertStringContainsString('Pilih kota/kabupaten terlebih dahulu', $html);
+        $this->assertStringContainsString("__('messages.Public Select Regency First')", $html);
         $this->assertStringContainsString("item.area ? item.postal_code + ' — ' + item.area : item.postal_code", $html);
         $this->assertStringNotContainsString("replaceLocationInput(row, 'zip_code', false, 'Masukkan kode pos')", $html);
         $this->assertStringContainsString("route('public.form.regencies'", $html);
@@ -53,7 +53,7 @@ class PublicAddressMarkupTest extends TestCase
         $this->assertStringContainsString("marker.on('dragend'", $html);
         $this->assertStringContainsString("map.on('click'", $html);
         $this->assertStringContainsString('hasSelection: false', $html);
-        $this->assertStringContainsString('Geser pin atau klik peta untuk memilih lokasi', $html);
+        $this->assertStringContainsString('addressCopy.pinInstruction', $html);
         $this->assertStringContainsString('requestFullscreen', $html);
         $this->assertStringContainsString('document.exitFullscreen', $html);
         $this->assertStringContainsString("document.addEventListener('fullscreenchange'", $html);
@@ -63,8 +63,8 @@ class PublicAddressMarkupTest extends TestCase
         $this->assertStringContainsString('reverseRequestSequence', $html);
         $this->assertStringContainsString('if (requestSequence !== state.reverseRequestSequence) return', $html);
         $this->assertStringContainsString('hasShownAddressGuidance', $html);
-        $this->assertStringContainsString('Cari menggunakan nama tempat umum', $html);
+        $this->assertStringContainsString('addressCopy.mapGuidance', $html);
         $this->assertStringContainsString("Swal.fire({", $html);
-        $this->assertStringContainsString('Koordinat tetap tersimpan', $html);
+        $this->assertStringContainsString('addressCopy.reverseAddressFailed', $html);
     }
 }

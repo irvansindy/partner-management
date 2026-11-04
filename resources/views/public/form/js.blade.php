@@ -1,3 +1,15 @@
+    @php
+        $publicWizardStepLabels = [
+            __('messages.Public Step Master Information'),
+            __('messages.Public Step Contact'),
+            __('messages.Public Step Address'),
+            __('messages.Public Step Bank'),
+        ];
+        if (!isset($formLink)) {
+            $publicWizardStepLabels[] = __('messages.Public Step Survey');
+        }
+        $publicWizardStepLabels[] = __('messages.Public Step Upload');
+    @endphp
     <script>
         const formToken = "{{ $formLink->token ?? '' }}";
         const STORAGE_KEY = "partner_form_" + formToken;
@@ -18,7 +30,7 @@
             if ($('[name="' + fieldName + '"]').length >= maximum) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
-                showPartnerToast('warning', 'Batas Data', 'Maksimal ' + maximum + ' baris dapat ditambahkan.');
+                showPartnerToast('warning', partnerFormCopy.dataLimit, partnerFormCopy.maximumRows.replace(':max', maximum));
             }
         });
 
@@ -231,10 +243,10 @@
 
                     if (value) {
                         $('#survey_form_container').show();
-                        $('#switch_label').text('Hide Survey');
+                        $('#switch_label').text(partnerFormCopy.hideSurvey);
                     } else {
                         $('#survey_form_container').empty().hide();
-                        $('#switch_label').text('Show Survey');
+                        $('#switch_label').text(partnerFormCopy.showSurvey);
                     }
                     continue;
                 }
@@ -398,7 +410,7 @@
                 if (isChecked) {
                     // SHOW: Append kembali survey form
                     $('#survey_form_container').html(surveyFormHTML).hide().slideDown(300);
-                    $('#switch_label').text('Hide Survey');
+                    $('#switch_label').text(partnerFormCopy.hideSurvey);
 
                     // Restore data survey dari localStorage jika ada
                     restoreSurveyData();
@@ -407,14 +419,14 @@
                 } else {
                     // HIDE: Konfirmasi dan remove survey form
                     Swal.fire({
-                        title: 'Hide Survey?',
-                        text: "Survey data will not be submitted to the server",
+                        title: partnerFormCopy.hideSurveyQuestion,
+                        text: partnerFormCopy.surveyNotSubmitted,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, hide it!',
-                        cancelButtonText: 'Cancel'
+                        confirmButtonText: partnerFormCopy.confirmHideSurvey,
+                        cancelButtonText: partnerFormCopy.cancel
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Simpan data survey sebelum dihapus
@@ -426,12 +438,12 @@
                                 // console.log('❌ Survey form removed from DOM');
                             });
 
-                            $('#switch_label').text('Show Survey');
+                            $('#switch_label').text(partnerFormCopy.showSurvey);
 
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Survey Hidden',
-                                text: 'Survey fields will not be submitted',
+                                title: partnerFormCopy.surveyHidden,
+                                text: partnerFormCopy.surveyFieldsNotSubmitted,
                                 timer: 1500,
                                 showConfirmButton: false
                             });
@@ -552,16 +564,7 @@
             setTimeout(restoreForm, 500);
 
             const totalWizardSteps = {{ isset($formLink) ? 5 : 6 }};
-            const wizardStepLabels = [
-                'Master Information',
-                'Contact',
-                'Address',
-                'Bank',
-                @unless (isset($formLink))
-                'Form Survey',
-                @endunless
-                'Form Upload'
-            ];
+            const wizardStepLabels = @json($publicWizardStepLabels);
             let currentWizardStep = 1;
 
             function getFieldLabel($field) {
@@ -643,7 +646,7 @@
                     }
 
                     let label = getFieldLabel($field);
-                    let message = label + ' wajib diisi.';
+                    let message = partnerFormCopy.requiredField.replace(':field', label);
                     errors.push({
                         field: $field,
                         label: label,
@@ -670,10 +673,10 @@
                     }
 
                     let message = field.type === 'url'
-                        ? 'Alamat website harus berupa URL yang valid.'
+                        ? partnerFormCopy.invalidWebsiteFormat
                         : isInternationalPhone
-                            ? 'Nomor telepon harus terdiri dari 2–14 digit.'
-                            : 'Format alamat email tidak valid.';
+                            ? partnerFormCopy.invalidPhoneFormat
+                            : partnerFormCopy.invalidEmailFormat;
                     let label = getFieldLabel($field);
                     errors.push({
                         field: $field,
@@ -690,7 +693,7 @@
                     let value = $.trim($field.val() || '');
                     if (!value || isValidWebsiteHost(value)) return;
 
-                    let message = 'Alamat website harus menggunakan HTTPS dan domain publik yang valid.';
+                    let message = partnerFormCopy.invalidPublicWebsite;
                     let label = getFieldLabel($field);
                     errors.push({
                         field: $field,
@@ -709,18 +712,18 @@
 
                     let message = '';
                     if ($field.is('[data-alpha-spaces]') && !/^[\p{L} ]+$/u.test(value)) {
-                        message = 'Hanya boleh berisi huruf dan spasi.';
+                        message = partnerFormCopy.alphaSpacesOnly;
                     }
 
                     if ($field.is('[data-bank-name]') && !/^[\p{L}\p{N} .,&'()\/+\-]+$/u.test(value)) {
-                        message = 'Nama bank mengandung karakter yang tidak didukung.';
+                        message = partnerFormCopy.invalidBankName;
                     }
 
                     if ($field.is('[data-year-range]')) {
                         let year = Number(value);
                         let currentYear = new Date().getFullYear();
                         if (!/^\d{4}$/.test(value) || year < 1900 || year > currentYear) {
-                            message = 'Tahun harus antara 1900 dan ' + currentYear + '.';
+                            message = partnerFormCopy.invalidYearRange.replace(':year', currentYear);
                         }
                     }
 
@@ -741,19 +744,19 @@
                 }
 
                 let toastBody = errors.slice(0, 6).map(function(error) {
-                    return '<div><strong>' + error.label + '</strong>: ' + error.message + '</div>';
+                    return '<div><strong>' + escapeHtml(error.label) + '</strong>: ' + escapeHtml(error.message) + '</div>';
                 }).join('');
 
                 if (errors.length > 6) {
-                    toastBody += '<div>+' + (errors.length - 6) + ' error lainnya.</div>';
+                    toastBody += '<div>+' + escapeHtml(partnerFormCopy.moreErrors.replace(':count', errors.length - 6)) + '</div>';
                 }
 
                 if (typeof showPartnerToast === 'function') {
-                    showPartnerToast('Mandatory Field', toastBody, 'danger');
+                    showPartnerToast(partnerFormCopy.mandatoryField, toastBody, 'danger');
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Mandatory Field',
+                        title: partnerFormCopy.mandatoryField,
                         html: toastBody
                     });
                 }
@@ -788,7 +791,7 @@
                 const $nextButton = $('#step_next');
                 const originalLabel = $nextButton.html();
                 $nextButton.prop('disabled', true).attr('aria-busy', 'true');
-                $nextButton.text(localizeValidationMessage('Memeriksa website... | Checking website...'));
+                $nextButton.text(partnerFormCopy.websiteChecking);
 
                 try {
                     await $.ajax({
@@ -812,7 +815,7 @@
                 } catch (xhr) {
                     const response = xhr.responseJSON || {};
                     const fieldErrors = response.errors && response.errors.website_address;
-                    const fallback = 'Alamat website tidak dapat diakses melalui HTTPS. Periksa kembali domain yang dimasukkan. | The website cannot be reached over HTTPS. Please check the domain.';
+                    const fallback = partnerFormCopy.websiteUnreachable;
                     const rawMessage = fieldErrors && fieldErrors.length ? fieldErrors[0] : fallback;
                     const message = typeof localizeValidationMessage === 'function'
                         ? localizeValidationMessage(rawMessage)

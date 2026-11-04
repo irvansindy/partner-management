@@ -36,7 +36,25 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-office_id="'+item.id+'" data-office_name="'+item.name+'" class="btn btn-outline-info btn-sm mt-2 detail_office" data-toggle="modal" data-target="#formOffice">View</button>'
+                        let viewButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--view detail_office',
+                            html: '<i class="fas fa-eye" aria-hidden="true"></i>',
+                            title: 'View office',
+                            'aria-label': 'View office',
+                            'data-office_id': item.id,
+                            'data-office_name': item.name,
+                            'data-toggle': 'modal',
+                            'data-target': '#formOffice'
+                        });
+
+                        return $('<div>', {
+                            class: 'table-actions',
+                            role: 'group',
+                            'aria-label': 'Office actions'
+                        })
+                            .append(viewButton)
+                            .prop('outerHTML');
                     }
                 },
             ]

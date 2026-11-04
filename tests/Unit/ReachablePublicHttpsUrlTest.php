@@ -9,6 +9,24 @@ use Tests\TestCase;
 class ReachablePublicHttpsUrlTest extends TestCase
 {
     /** @test */
+    public function it_falls_back_to_the_system_ipv4_resolver_when_dns_records_are_unavailable(): void
+    {
+        $rule = new class extends ReachablePublicHttpsUrl {
+            protected function dnsRecords(string $host)
+            {
+                return false;
+            }
+
+            protected function systemIpv4Addresses(string $host)
+            {
+                return ['93.184.216.34'];
+            }
+        };
+
+        $this->assertSame(['93.184.216.34'], $rule->resolveHost('example.com'));
+    }
+
+    /** @test */
     public function it_accepts_a_public_host_that_responds_over_https(): void
     {
         $rule = new ReachablePublicHttpsUrl(

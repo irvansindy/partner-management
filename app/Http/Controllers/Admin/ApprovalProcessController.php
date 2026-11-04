@@ -8,6 +8,7 @@ use App\Models\ApprovalProcessStep;
 use App\Services\ApprovalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ApprovalProcessController extends Controller
 {
@@ -104,8 +105,11 @@ class ApprovalProcessController extends Controller
         }
 
         $step->load(['process.company', 'process.initiator', 'process.steps.approver', 'approver']);
+        $user = Auth::user()->loadMissing(['division', 'dept']);
+        $requiresFinancialTerms = $step->process->company->type === 'customer'
+            && $user->isFatFinanceApprover();
 
-        return view('admin.approvals.action', compact('step'));
+        return view('admin.approvals.action', compact('step', 'requiresFinancialTerms'));
     }
 
     /**
@@ -113,7 +117,7 @@ class ApprovalProcessController extends Controller
      */
     public function processAction(Request $request, ApprovalProcessStep $step)
     {
-        $step->load('process');
+        $step->load('process.company');
         $this->authorizeAccess($step->process);
 
         // Check if user is the approver
@@ -121,14 +125,25 @@ class ApprovalProcessController extends Controller
             abort(403, 'Anda bukan approver untuk step ini.');
         }
 
-        $request->validate([
+        $user = Auth::user()->loadMissing(['division', 'dept']);
+        $requiresFinancialTerms = $step->process->company->type === 'customer'
+            && $user->isFatFinanceApprover();
+        $requiresFinancialTermsOnApprove = $requiresFinancialTerms && $request->input('action') === 'approve';
+
+        $validated = $request->validate([
             'action' => 'required|in:approve,reject',
             'notes' => 'nullable|required_if:action,reject|string|max:1000',
+            'term_of_payment' => [Rule::requiredIf($requiresFinancialTermsOnApprove), 'nullable', 'string', 'max:255'],
+            'credit_limit' => [Rule::requiredIf($requiresFinancialTermsOnApprove), 'nullable', 'integer', 'min:0', 'max:2147483647'],
         ], [
             'action.required' => 'Aksi harus dipilih.',
             'action.in' => 'Aksi tidak valid.',
             'notes.max' => 'Catatan maksimal 1000 karakter.',
             'notes.required_if' => 'Alasan penolakan wajib diisi.',
+            'term_of_payment.required' => 'Term of payment wajib diisi oleh PIC FAT–Finance.',
+            'credit_limit.required' => 'Credit limit wajib diisi oleh PIC FAT–Finance.',
+            'credit_limit.integer' => 'Credit limit harus berupa bilangan bulat.',
+            'credit_limit.min' => 'Credit limit tidak boleh kurang dari 0.',
         ]);
 
         try {
@@ -136,7 +151,9 @@ class ApprovalProcessController extends Controller
                 $step,
                 $request->action,
                 Auth::id(),
-                $request->notes
+                $validated['notes'] ?? null,
+                $validated['term_of_payment'] ?? null,
+                $validated['credit_limit'] ?? null
             );
 
             $message = $request->action === 'approve'
@@ -160,6 +177,10 @@ class ApprovalProcessController extends Controller
         $user = Auth::user();
         $this->ensureApprovalRole($user);
         if ($user->hasRole('super-admin')) {
+            return;
+        }
+
+        if ($approval->steps()->where('user_id', $user->id)->exists()) {
             return;
         }
 

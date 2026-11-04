@@ -41,7 +41,44 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-role_id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_role" data-toggle="modal" data-target="#formUpdateRole">View</button> <button type="button" data-role_id="'+item.id+'" class="btn btn-outline-secondary btn-sm mt-2 add_permission" data-toggle="modal" data-target="#formAddPermission">+ Permission</button> <button type="button" data-role_id="'+item.id+'" class="btn btn-outline-danger btn-sm mt-2 delete_role" data-toggle="modal" data-target="#confirmDeleteRole">Delete</button>'
+                        let viewButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--view detail_role',
+                            html: '<i class="fas fa-eye" aria-hidden="true"></i>',
+                            title: 'View role',
+                            'aria-label': 'View role',
+                            'data-role_id': item.id,
+                            'data-toggle': 'modal',
+                            'data-target': '#formUpdateRole'
+                        });
+                        let permissionButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--copy add_permission',
+                            html: '<i class="fas fa-key" aria-hidden="true"></i>',
+                            title: 'Manage permissions',
+                            'aria-label': 'Manage permissions',
+                            'data-role_id': item.id,
+                            'data-toggle': 'modal',
+                            'data-target': '#formAddPermission'
+                        });
+                        let deleteButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--delete delete_role',
+                            html: '<i class="fas fa-trash" aria-hidden="true"></i>',
+                            title: 'Delete role',
+                            'aria-label': 'Delete role',
+                            'data-role_id': item.id,
+                            'data-toggle': 'modal',
+                            'data-target': '#confirmDeleteRole'
+                        });
+
+                        return $('<div>', {
+                            class: 'table-actions',
+                            role: 'group',
+                            'aria-label': 'Role actions'
+                        })
+                            .append(viewButton, permissionButton, deleteButton)
+                            .prop('outerHTML');
                     }
                 },
             ]
@@ -70,7 +107,24 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-permission_id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_permission" data-toggle="modal" data-target="#formUpdatePermission">View</button>'
+                        let viewButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--view detail_permission',
+                            html: '<i class="fas fa-eye" aria-hidden="true"></i>',
+                            title: 'View permission',
+                            'aria-label': 'View permission',
+                            'data-permission_id': item.id,
+                            'data-toggle': 'modal',
+                            'data-target': '#formUpdatePermission'
+                        });
+
+                        return $('<div>', {
+                            class: 'table-actions',
+                            role: 'group',
+                            'aria-label': 'Permission actions'
+                        })
+                            .append(viewButton)
+                            .prop('outerHTML');
                     }
                 },
             ]

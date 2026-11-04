@@ -18,4 +18,15 @@ class FormLinkDetailActionsTest extends TestCase
         $this->assertStringNotContainsString('btn-warning btn-block', $view);
         $this->assertStringNotContainsString('btn-info btn-block', $view);
     }
+
+    /** @test */
+    public function submission_pdf_is_returned_as_a_laravel_response_without_output_buffer_assumptions(): void
+    {
+        $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
+
+        $this->assertStringNotContainsString('ob_clean()', $controller);
+        $this->assertStringContainsString("\$mpdf->Output('', 'S')", $controller);
+        $this->assertStringContainsString("'Content-Type' => 'application/pdf'", $controller);
+        $this->assertStringContainsString("'Content-Disposition' => 'inline; filename=\"'", $controller);
+    }
 }

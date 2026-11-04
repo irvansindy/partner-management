@@ -14,8 +14,8 @@ return [
         'prefix'     => 'translations',
         'middleware' => [
             'web',
-            'auth',          // minimal
-            // 'role:admin'   // atau middleware custom untuk batasi admin saja
+            'auth',
+            'role:super-admin',
         ],
     ],
 

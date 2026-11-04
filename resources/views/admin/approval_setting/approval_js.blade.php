@@ -128,20 +128,22 @@
             });
         });
 
-        function userOptions(selectedId) {
-            let options = '<option value=""></option>';
+        function userOptions(selectedIds) {
+            const selected = (selectedIds || []).map(Number);
+            let options = '';
             availableUsers.forEach(function (user) {
-                const selected = Number(user.id) === Number(selectedId) ? ' selected' : '';
-                options += '<option value="' + Number(user.id) + '"' + selected + '>' + escapeHtml(user.name) + ' (' + escapeHtml(user.email) + ')</option>';
+                const isSelected = selected.includes(Number(user.id)) ? ' selected' : '';
+                options += '<option value="' + Number(user.id) + '"' + isSelected + '>' + escapeHtml(user.name) + ' (' + escapeHtml(user.email) + ')</option>';
             });
             return options;
         }
 
-        function renderApproverRow(selectedId, removable) {
+        function renderApproverRow(selectedIds, removable) {
             return '<div class="approver-step-card" data-approver-row>' +
                 '<span class="approver-step-card__number" data-step-number></span>' +
-                '<div class="form-group"><label class="sr-only">Approver</label>' +
-                '<select class="form-control option_approval_detail" name="stagging_approval_name[]" required>' + userOptions(selectedId) + '</select></div>' +
+                '<div class="form-group"><label>PIC tahap</label>' +
+                '<select class="form-control option_approval_detail" multiple required>' + userOptions(selectedIds) + '</select>' +
+                '<small class="form-text text-muted">Pilih satu atau beberapa PIC. Cukup satu PIC untuk menyelesaikan tahap.</small></div>' +
                 (removable ? '<button type="button" class="btn btn-outline-danger approver-step-card__remove delete_stagging" aria-label="Remove approval step"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>' : '<span aria-hidden="true"></span>') +
                 '</div>';
         }
@@ -150,8 +152,10 @@
             const $rows = $('[data-approver-list] [data-approver-row]');
             $rows.each(function (index) {
                 $(this).find('[data-step-number]').text(index + 1);
-                $(this).find('label').text('Approver for step ' + (index + 1));
-                $(this).find('select').attr('aria-label', 'Approver for step ' + (index + 1));
+                $(this).find('label').text('PIC tahap ' + (index + 1));
+                $(this).find('select')
+                    .attr('name', 'approval_stages[' + index + '][user_ids][]')
+                    .attr('aria-label', 'PIC tahap ' + (index + 1));
             });
             $('#add_stagging').prop('disabled', $rows.length >= 10);
         }
@@ -161,7 +165,9 @@
                 width: '100%',
                 dropdownParent: $('#addViewApprovalDetail'),
                 dropdownCssClass: 'approval-select2-dropdown',
-                placeholder: 'Select approver'
+                placeholder: 'Pilih PIC',
+                multiple: true,
+                closeOnSelect: false
             });
         }
 
@@ -189,13 +195,13 @@
                     $('[data-template-department]').text(template.department);
                     $('[data-approval-loading]').prop('hidden', true);
 
-                    const existing = response.data.existing_approvers || [];
+                    const existing = response.data.existing_stages || [];
                     if (existing.length) {
-                        existing.forEach(function (approval, index) {
-                            $('[data-approver-list]').append(renderApproverRow(approval.user_id, index > 0));
+                        existing.forEach(function (stage, index) {
+                            $('[data-approver-list]').append(renderApproverRow(stage.user_ids || [], index > 0));
                         });
                     } else {
-                        $('[data-approver-list]').append(renderApproverRow('', false));
+                        $('[data-approver-list]').append(renderApproverRow([], false));
                     }
                     initializeApproverSelects();
                     refreshApproverRows();
@@ -211,7 +217,7 @@
         $('#add_stagging').on('click', function () {
             const count = $('[data-approver-list] [data-approver-row]').length;
             if (count >= 10) return;
-            $('[data-approver-list]').append(renderApproverRow('', true));
+            $('[data-approver-list]').append(renderApproverRow([], true));
             initializeApproverSelects();
             refreshApproverRows();
         });
@@ -249,9 +255,16 @@
         $('#data_approval_detail').on('submit', function (event) {
             event.preventDefault();
             const $form = $(this);
-            const values = $form.find('[name="stagging_approval_name[]"]').map(function () { return $(this).val(); }).get().filter(Boolean);
-            if (!values.length || new Set(values).size !== values.length) {
-                $('[data-field-error="stagging_approval_name"]').text(values.length ? 'Each approval step must use a different user.' : 'Add at least one approver.');
+            const stages = [];
+            $form.find('[data-approver-row] select').each(function () {
+                stages.push($(this).val() || []);
+            });
+            const hasEmptyStage = stages.some(function (userIds) { return userIds.length === 0; });
+            const allUserIds = stages.reduce(function (userIds, stage) { return userIds.concat(stage); }, []);
+            if (hasEmptyStage || new Set(allUserIds).size !== allUserIds.length) {
+                $('[data-field-error="approval_stages"]').text(hasEmptyStage
+                    ? 'Setiap tahap harus memiliki minimal satu PIC.'
+                    : 'PIC yang sama tidak boleh digunakan pada tahap berbeda.');
                 return;
             }
             const $button = $('#create_approval_detail_data');

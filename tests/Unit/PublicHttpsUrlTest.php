@@ -57,6 +57,6 @@ class PublicHttpsUrlTest extends TestCase
         $this->assertStringContainsString("on('blur', '[data-public-website]'", $partnerScript);
         $this->assertStringContainsString('$pane.find(\'[data-public-website]\')', $wizardScript);
         $this->assertStringContainsString('isValidWebsiteHost(value)', $wizardScript);
-        $this->assertStringContainsString('HTTPS dan domain publik yang valid', $wizardScript);
+        $this->assertStringContainsString('partnerFormCopy.invalidPublicWebsite', $wizardScript);
     }
 }

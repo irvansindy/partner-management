@@ -160,7 +160,24 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-partner_id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_partner" data-toggle="modal" data-target="#ModalDetailPartner">View</button>'
+                        let viewButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--view detail_partner',
+                            html: '<i class="fas fa-eye" aria-hidden="true"></i>',
+                            title: 'View partner',
+                            'aria-label': 'View partner',
+                            'data-partner_id': item.id,
+                            'data-toggle': 'modal',
+                            'data-target': '#ModalDetailPartner'
+                        });
+
+                        return $('<div>', {
+                            class: 'table-actions',
+                            role: 'group',
+                            'aria-label': 'Partner actions'
+                        })
+                            .append(viewButton)
+                            .prop('outerHTML');
                     }
                 },
             ]

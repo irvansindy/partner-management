@@ -59,13 +59,15 @@ class ApprovalService
                     return null;
                 }
 
+                $firstStepOrdering = $templateDetails->min('step_ordering');
+
                 // Create approval process
                 $approvalProcess = ApprovalProcess::create([
                     'company_information_id' => $company->id,
                     'user_id' => $company->user_id, // Initiator (form submitter)
                     'location_id' => $formLink->office_id,
                     'department_id' => $formLink->department_id,
-                    'step_ordering' => 1, // Start at step 1
+                    'step_ordering' => $firstStepOrdering,
                     'status' => ApprovalProcess::STATUS_PENDING,
                 ]);
 
@@ -75,9 +77,9 @@ class ApprovalService
                         'approval_id' => $approvalProcess->id,
                         'user_id' => $detail->user_id,
                         'step_ordering' => $detail->step_ordering,
-                        'status' => $detail->step_ordering === 1
-                            ? ApprovalProcessStep::STATUS_WAITING // First step is waiting
-                            : ApprovalProcessStep::STATUS_PENDING, // Others are pending
+                        'status' => $detail->step_ordering === $firstStepOrdering
+                            ? ApprovalProcessStep::STATUS_WAITING
+                            : ApprovalProcessStep::STATUS_PENDING,
                         'notes' => null,
                         'approved_at' => null,
                         'rejected_at' => null,
@@ -109,7 +111,14 @@ class ApprovalService
      * @return bool
      * @throws \Exception
      */
-    public function processApprovalAction(ApprovalProcessStep $step, string $action, int $actorId, ?string $notes = null): bool
+    public function processApprovalAction(
+        ApprovalProcessStep $step,
+        string $action,
+        int $actorId,
+        ?string $notes = null,
+        ?string $termOfPayment = null,
+        $creditLimit = null
+    ): bool
     {
         if (!in_array($action, ['approve', 'reject'], true)) {
             throw new \InvalidArgumentException("Invalid action: {$action}");
@@ -119,43 +128,71 @@ class ApprovalService
         }
 
         try {
-            return DB::transaction(function () use ($step, $action, $actorId, $notes) {
+            return DB::transaction(function () use ($step, $action, $actorId, $notes, $termOfPayment, $creditLimit) {
+                $process = ApprovalProcess::whereKey($step->approval_id)->lockForUpdate()->firstOrFail();
                 $lockedStep = ApprovalProcessStep::whereKey($step->id)->lockForUpdate()->firstOrFail();
-                $process = ApprovalProcess::whereKey($lockedStep->approval_id)->lockForUpdate()->firstOrFail();
                 $company = CompanyInformation::whereKey($process->company_information_id)->lockForUpdate()->firstOrFail();
 
                 if ($lockedStep->user_id !== $actorId) {
                     throw new \RuntimeException('You are not the approver for this step.');
                 }
-                if (!$lockedStep->isWaiting() || !$process->isInProgress()) {
+                if (!$lockedStep->isWaiting()
+                    || !$process->isInProgress()
+                    || $process->step_ordering !== $lockedStep->step_ordering) {
                     throw new \RuntimeException('This approval step has already been processed.');
                 }
 
+                $stageSteps = ApprovalProcessStep::where('approval_id', $process->id)
+                    ->where('step_ordering', $lockedStep->step_ordering)
+                    ->lockForUpdate()
+                    ->get();
+
                 if ($action === 'reject') {
                     $lockedStep->reject($notes);
+                    ApprovalProcessStep::whereIn('id', $stageSteps->where('id', '!=', $lockedStep->id)->pluck('id'))
+                        ->where('status', ApprovalProcessStep::STATUS_WAITING)
+                        ->update(['status' => ApprovalProcessStep::STATUS_SKIPPED]);
                     $process->update(['status' => ApprovalProcess::STATUS_REJECTED]);
                     $company->update(['status' => 'reject']);
                 } else {
-                    $actor = User::whereKey($actorId)->lockForUpdate()->firstOrFail();
+                    $actor = User::with(['division', 'dept'])->whereKey($actorId)->lockForUpdate()->firstOrFail();
                     if (!$actor->office_id || !$actor->department_id) {
                         throw new \RuntimeException('Approver office and department must be configured.');
                     }
 
-                    $company->update([
+                    $companyUpdates = [
                         'location_id' => $actor->office_id,
                         'department_id' => $actor->department_id,
-                    ]);
+                    ];
+
+                    if ($company->type === 'customer' && $actor->isFatFinanceApprover()) {
+                        [$normalizedTermOfPayment, $normalizedCreditLimit] = $this->validateFinancialTerms(
+                            $termOfPayment,
+                            $creditLimit
+                        );
+                        $companyUpdates['term_of_payment'] = $normalizedTermOfPayment;
+                        $companyUpdates['credit_limit'] = $normalizedCreditLimit;
+                    }
+
+                    $company->update($companyUpdates);
                     $lockedStep->approve($notes);
-                    $nextStep = ApprovalProcessStep::where('approval_id', $process->id)
+                    ApprovalProcessStep::whereIn('id', $stageSteps->where('id', '!=', $lockedStep->id)->pluck('id'))
+                        ->where('status', ApprovalProcessStep::STATUS_WAITING)
+                        ->update(['status' => ApprovalProcessStep::STATUS_SKIPPED]);
+
+                    $nextStepOrdering = ApprovalProcessStep::where('approval_id', $process->id)
                         ->where('step_ordering', '>', $lockedStep->step_ordering)
                         ->where('status', ApprovalProcessStep::STATUS_PENDING)
                         ->orderBy('step_ordering')
                         ->lockForUpdate()
-                        ->first();
+                        ->value('step_ordering');
 
-                    if ($nextStep) {
-                        $nextStep->update(['status' => ApprovalProcessStep::STATUS_WAITING]);
-                        $process->update(['step_ordering' => $nextStep->step_ordering]);
+                    if ($nextStepOrdering !== null) {
+                        ApprovalProcessStep::where('approval_id', $process->id)
+                            ->where('step_ordering', $nextStepOrdering)
+                            ->where('status', ApprovalProcessStep::STATUS_PENDING)
+                            ->update(['status' => ApprovalProcessStep::STATUS_WAITING]);
+                        $process->update(['step_ordering' => $nextStepOrdering]);
                     } else {
                         $process->update(['status' => ApprovalProcess::STATUS_APPROVED]);
                         $company->update(['status' => 'approved']);
@@ -213,5 +250,21 @@ class ApprovalService
             ->where('status', ApprovalProcessStep::STATUS_WAITING)
             ->with(['process.company', 'process.initiator'])
             ->get();
+    }
+
+    private function validateFinancialTerms(?string $termOfPayment, $creditLimit): array
+    {
+        $normalizedTermOfPayment = trim((string) $termOfPayment);
+        $normalizedCreditLimit = filter_var($creditLimit, FILTER_VALIDATE_INT);
+
+        if ($normalizedTermOfPayment === ''
+            || mb_strlen($normalizedTermOfPayment) > 255
+            || $normalizedCreditLimit === false
+            || $normalizedCreditLimit < 0
+            || $normalizedCreditLimit > 2147483647) {
+            throw new \InvalidArgumentException('Financial terms are required for FAT Finance approval.');
+        }
+
+        return [$normalizedTermOfPayment, $normalizedCreditLimit];
     }
 }

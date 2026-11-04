@@ -1,30 +1,30 @@
 <div class="card card-info">
     <div class="card-header">
         <h3 class="card-title">
-            @lang('messages.Company Information')
+            {{ __('messages.Company Information') }}
         </h3>
     </div>
     <div class="card-body">
         <div class="container-fluid">
-            <p class="mb-3 text-danger">@lang('messages.Mandatory')</p>
+            <p class="mb-3 text-danger">{{ __('messages.Mandatory') }}</p>
 
             <!-- Company Type -->
             @if (!isset($formLink))
                 <div class="row mb-4">
-                    <label class="col-md-3" for="company_type">@lang('messages.Company Type') <span class="text-danger"
+                    <label class="col-md-3" for="company_type">{{ __('messages.Company Type') }} <span class="text-danger"
                             role="alert">*</span></label>
                     <div class="col-md-9">
                         <select name="company_type" id="company_type" class="form-control" required>
-                            <option value="">@lang('messages.Select One')</option>
-                            <option value="customer">@lang('messages.Customer')</option>
-                            <option value="vendor">@lang('messages.Vendor')</option>
+                            <option value="">{{ __('messages.Select One') }}</option>
+                            <option value="customer">{{ __('messages.Customer') }}</option>
+                            <option value="vendor">{{ __('messages.Vendor') }}</option>
                         </select>
                         <span class="text-danger message-danger" id="message_company_type" role="alert"></span>
                     </div>
                 </div>
             @else
                 <div class="row mb-4">
-                    <label class="col-md-3">@lang('messages.Company Type')</label>
+                    <label class="col-md-3">{{ __('messages.Company Type') }}</label>
                     <div class="col-md-9">
                         {{-- <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}" disabled> --}}
                         <!-- field untuk ditampilkan di UI -->
@@ -37,21 +37,21 @@
             @endif
             <div class="row mb-4">
                 <div class="col-md-5 col-lg-6 col-sm-12">
-                    <label for="company_name">@lang('messages.Company Name') <span class="text-danger"
+                    <label for="company_name">{{ __('messages.Company Name') }} <span class="text-danger"
                             role="alert">*</span></label>
                     <input type="text" name="company_name" id="company_name" class="form-control"
-                        maxlength="255" placeholder="@lang('messages.Placeholder Company Name')" data-alpha-spaces required>
+                        maxlength="255" placeholder="{{ __('messages.Placeholder Company Name') }}" data-alpha-spaces required>
                     <span class="text-danger message-danger" id="message_company_name" role="alert"></span>
                 </div>
                 <div class="col-md-5 col-lg-6 col-sm-12">
-                    <label for="company_group_name">@lang('messages.Company Group Name')</label>
+                    <label for="company_group_name">{{ __('messages.Company Group Name') }}</label>
                     <input type="text" name="company_group_name" id="company_group_name" class="form-control"
-                        maxlength="255" placeholder="@lang('messages.Placeholder Company Group Name')" data-alpha-spaces>
-                    <span class="text-muted" id="company_group_name_info">@lang('messages.Company Group Name Info')</span>
+                        maxlength="255" placeholder="{{ __('messages.Placeholder Company Group Name') }}" data-alpha-spaces>
+                    <span class="text-muted" id="company_group_name_info">{{ __('messages.Company Group Name Info') }}</span>
                     <span class="text-danger message-danger" id="message_company_group_name" role="alert"></span>
                 </div>
                 <div class="col-md-6 col-sm-12">
-                    <label for="established_year">@lang('messages.Established Year')</label>
+                    <label for="established_year">{{ __('messages.Established Year') }}</label>
                     <input type="text"
                         name="established_year"
                         id="established_year"
@@ -61,15 +61,15 @@
                         data-year-range
                         data-year-min="1900"
                         data-year-max="{{ date('Y') }}"
-                        placeholder="@lang('messages.Placeholder Established Year')"
+                        placeholder="{{ __('messages.Placeholder Established Year') }}"
                         autocomplete="off">
                     <span class="text-danger message-danger" id="message_established_year" role="alert"></span>
                 </div>
 
                 <div class="col-md-6 col-sm-12">
-                    <label for="total_employee">@lang('messages.Total Employee')</label>
+                    <label for="total_employee">{{ __('messages.Total Employee') }}</label>
                     <select name="total_employee" id="total_employee" class="form-control">
-                        <option value="">@lang('messages.Placeholder Total Employee')</option>
+                        <option value="">{{ __('messages.Placeholder Total Employee') }}</option>
                         @foreach (\App\Support\EmployeeRange::values() as $employeeRange)
                             <option value="{{ $employeeRange }}">{{ $employeeRange }}</option>
                         @endforeach
@@ -78,31 +78,31 @@
                 </div>
             </div>
             <div class="row mb-4">
-                <h2>@lang('messages.Liable Person') </h2>
+                <h2>{{ __('messages.Liable Person') }} </h2>
                 <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                    <label for="liable_person_0">@lang('messages.Liable Person') <span class="text-danger"
+                    <label for="liable_person_0">{{ __('messages.Liable Person') }} <span class="text-danger"
                             role="alert">*</span></label>
                     <input type="text" name="liable_person[]" id="liable_person_0" class="form-control"
-                        maxlength="255" placeholder="@lang('messages.Placeholder Liable Person')" data-alpha-spaces required>
+                        maxlength="255" placeholder="{{ __('messages.Placeholder Liable Person') }}" data-alpha-spaces required>
                     <span class="text-danger message-danger" id="message_liable_person" role="alert"></span>
                 </div>
                 <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                    <label for="liable_position_0">@lang('messages.Liable Position') <span class="text-danger"
+                    <label for="liable_position_0">{{ __('messages.Liable Position') }} <span class="text-danger"
                             role="alert">*</span></label>
                     <select name="liable_position[]" id="liable_position_0"
                         class="form-control liable-position-select" required>
-                        <option value="">-- @lang('messages.Placeholder Position') --</option>
-                        <option value="Owner">@lang('messages.Owner')</option>
-                        <option value="Board of Directors">@lang('messages.Board of Directors')</option>
-                        <option value="Shareholders">@lang('messages.Shareholders')</option>
-                        <option value="Finance Department">@lang('messages.Finance Department')</option>
-                        <option value="Purchase/Procure Department">@lang('messages.Purchase/Procure Department')</option>
-                        <option value="Sales Department">@lang('messages.Sales Department')</option>
-                        <option value="Other">@lang('messages.Other')</option>
+                        <option value="">-- {{ __('messages.Placeholder Position') }} --</option>
+                        <option value="Owner">{{ __('messages.Owner') }}</option>
+                        <option value="Board of Directors">{{ __('messages.Board of Directors') }}</option>
+                        <option value="Shareholders">{{ __('messages.Shareholders') }}</option>
+                        <option value="Finance Department">{{ __('messages.Finance Department') }}</option>
+                        <option value="Purchase/Procure Department">{{ __('messages.Purchase/Procure Department') }}</option>
+                        <option value="Sales Department">{{ __('messages.Sales Department') }}</option>
+                        <option value="Other">{{ __('messages.Other') }}</option>
                     </select>
                     <div class="mt-2" id="other_position_container_0" style="display: none;">
                         <input type="text" name="other_position[]" id="other_position_0" class="form-control"
-                            placeholder="@lang('messages.Specify Position')">
+                            placeholder="{{ __('messages.Specify Position') }}">
                         <span class="text-danger message-danger" id="message_other_position_0" role="alert"></span>
                     </div>
                     <span class="text-danger message-danger" id="message_liable_position_0" role="alert"></span>
@@ -113,7 +113,7 @@
                         name="nik[]"
                         id="nik_0"
                         class="form-control"
-                        placeholder="@lang('messages.Placeholder NIK')"
+                        placeholder="{{ __('messages.Placeholder NIK') }}"
                         maxlength="16"
                         oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,16)"
                         required>
@@ -127,10 +127,10 @@
             </div>
             <div class="dynamic_liable_person"></div>
             <div class="row mb-4">
-                <label class="col-md-3" for="business_classification">@lang('messages.Business Classification') <span class="text-danger" role="alert">*</span></label>
+                <label class="col-md-3" for="business_classification">{{ __('messages.Business Classification') }} <span class="text-danger" role="alert">*</span></label>
                 <div class="col-md-9">
                     <select class="form-select" name="business_classification" id="business_classification" required>
-                        <option value="">-- @lang('messages.Placeholder Business Classification') --</option>
+                        <option value="">-- {{ __('messages.Placeholder Business Classification') }} --</option>
                         @foreach (\App\Models\MasterBusinessClassification::all() as $item)
                             <option value="{{ $item->name }}">{{ $item->name }}</option>
                         @endforeach
@@ -149,24 +149,24 @@
                 </div>
             </div>
             <div class="row mb-4">
-                <label class="col-md-3" for="business_classification_detail">@lang('messages.Business Classification Detail')</label>
+                <label class="col-md-3" for="business_classification_detail">{{ __('messages.Business Classification Detail') }}</label>
                 <div class="col-md-9">
                     <textarea class="form-control" name="business_classification_detail" id="business_classification_detail"
-                        rows="4" maxlength="1000" placeholder="@lang('messages.Placeholder Business Classification Detail')"></textarea>
+                        rows="4" maxlength="1000" placeholder="{{ __('messages.Placeholder Business Classification Detail') }}"></textarea>
                     <span class="text-danger message-danger" id="message_business_classification_detail"
                         role="alert"></span>
                 </div>
             </div>
             <div class="row mb-4">
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="register_number_as_in_tax_invoice">@lang('messages.Tax Register Number (As in Tax Invoice)') <span
+                    <label for="register_number_as_in_tax_invoice">{{ __('messages.Tax Register Number (As in Tax Invoice)') }} <span
                             class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="register_number_as_in_tax_invoice" data-maxLength="16" min="0" maxlength="16" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,16)" name="register_number_as_in_tax_invoice" placeholder="@lang('messages.Placeholder Tax')" required>
+                    <input type="text" class="form-control" id="register_number_as_in_tax_invoice" data-maxLength="16" min="0" maxlength="16" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,16)" name="register_number_as_in_tax_invoice" placeholder="{{ __('messages.Placeholder Tax') }}" required>
                     <span class="text-danger message-danger" id="message_register_number_as_in_tax_invoice"
                         role="alert"></span>
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="website_address">@lang('messages.Website Address')</label>
+                    <label for="website_address">{{ __('messages.Website Address') }}</label>
                     <div class="input-group website-address-group">
                         <span class="input-group-text">https://</span>
                         <input type="text" name="website_address" id="website_address" class="form-control website-host"
@@ -176,15 +176,15 @@
                     <span class="text-danger message-danger" id="message_website_address" role="alert"></span>
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="system_management">@lang('messages.Certificate Type')</label>
+                    <label for="system_management">{{ __('messages.Certificate Type') }}</label>
                     <input type="text" name="system_management" id="system_management" class="form-control"
-                        maxlength="255" placeholder="@lang('messages.Placeholder Certificate')">
+                        maxlength="255" placeholder="{{ __('messages.Placeholder Certificate') }}">
                     <span class="text-danger mt-2" id="message_system_management" role="alert"></span>
                 </div>
                 <div class="col-md-6 col-lg-6 col-sm-12 mb-2">
-                    <label for="email_address">@lang('messages.Email Address')</label>
+                    <label for="email_address">{{ __('messages.Email Address') }}</label>
                     <input type="email" name="email_address" id="email_address" class="form-control"
-                        maxlength="255" placeholder="@lang('messages.Placeholder Email')">
+                        maxlength="255" placeholder="{{ __('messages.Placeholder Email') }}">
                     <span class="text-danger mt-2" id="message_email_address" role="alert"></span>
                 </div>
             </div>

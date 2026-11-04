@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Registrasi Berhasil | Partner Management</title>
+    <title>{{ __('messages.Public Success Page Title') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('uploads/logo/icon.png') }}">
     <style>
         :root {
@@ -273,7 +273,7 @@
                 <img src="{{ asset('uploads/logo/logo.png') }}" alt="Pralon">
                 <strong>PARTNER MANAGEMENT</strong>
             </div>
-            <span class="success-header__label">SECURE REGISTRATION</span>
+            <span class="success-header__label">{{ __('messages.Public Secure Registration') }}</span>
         </div>
     </header>
 
@@ -286,41 +286,38 @@
                         <path d="M5 12.5 9.2 17 19 7"></path>
                     </svg>
                 </span>
-                REGISTRASI SELESAI
+                {{ __('messages.Public Success Kicker') }}
             </p>
-            <h1 class="success-title" id="success-title">Data registrasi telah kami terima.</h1>
-            <p class="success-lead">
-                Terima kasih telah melengkapi formulir Partner Management. Data Anda sudah masuk ke sistem dan akan
-                ditinjau oleh tim terkait.
-            </p>
-            <button class="success-close" id="close-success-page" type="button">Tutup halaman</button>
+            <h1 class="success-title" id="success-title">{{ __('messages.Public Success Title') }}</h1>
+            <p class="success-lead">{{ __('messages.Public Success Lead') }}</p>
+            <button class="success-close" id="close-success-page" type="button">{{ __('messages.Public Close Page') }}</button>
             <p class="success-close-hint" id="close-success-hint" hidden role="status">
-                Browser tidak mengizinkan halaman ini ditutup otomatis. Silakan tutup tab melalui tombol pada browser.
+                {{ __('messages.Public Close Hint') }}
             </p>
         </section>
 
         <aside class="success-panel" aria-labelledby="next-step-title">
             <div class="success-status">
-                <span class="success-status__label">Status pengajuan</span>
+                <span class="success-status__label">{{ __('messages.Public Submission Status') }}</span>
                 <span class="success-status__value">
                     <span class="success-status__dot" aria-hidden="true"></span>
-                    Terkirim
+                    {{ __('messages.Public Submitted') }}
                 </span>
             </div>
-            <h2 id="next-step-title">Proses selanjutnya</h2>
+            <h2 id="next-step-title">{{ __('messages.Public Next Process') }}</h2>
             <ol class="success-steps">
                 <li class="success-step">
                     <span class="success-step__number" aria-hidden="true">1</span>
                     <div>
-                        <strong>Peninjauan data</strong>
-                        <p>Tim kami memeriksa kelengkapan informasi dan dokumen yang dikirimkan.</p>
+                        <strong>{{ __('messages.Public Review Data') }}</strong>
+                        <p>{{ __('messages.Public Review Data Detail') }}</p>
                     </div>
                 </li>
                 <li class="success-step">
                     <span class="success-step__number" aria-hidden="true">2</span>
                     <div>
-                        <strong>Informasi lanjutan</strong>
-                        <p>PIC terkait akan menghubungi Anda jika diperlukan klarifikasi atau dokumen tambahan.</p>
+                        <strong>{{ __('messages.Public Further Information') }}</strong>
+                        <p>{{ __('messages.Public Further Information Detail') }}</p>
                     </div>
                 </li>
             </ol>
@@ -328,7 +325,7 @@
     </main>
 
     <footer class="success-footer">
-        &copy; {{ date('Y') }} Partner Management. All rights reserved.
+        &copy; {{ date('Y') }} {{ __('messages.Public Copyright') }}
     </footer>
 
     <script>

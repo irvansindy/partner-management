@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use App\Services\MenuService;
@@ -41,8 +40,6 @@ class AppServiceProvider extends ServiceProvider
             Config::set('adminlte.dashboard_url', $dashboardUrl);
         }
 
-        config(['app.locale' => 'id']);
-        Carbon::setLocale('id');
         Schema::defaultStringLength(191);
 
         $models = [

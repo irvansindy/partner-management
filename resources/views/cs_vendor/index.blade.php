@@ -55,16 +55,16 @@
     <div class="internal-partner-form public-form-page">
         <div class="public-form-heading">
             <div>
-                <div class="public-eyebrow">PARTNER REGISTRATION</div>
-                <h1>Formulir Pendaftaran Partner</h1>
-                <p>Lengkapi informasi perusahaan secara bertahap agar data lebih mudah diperiksa.</p>
+                <div class="public-eyebrow">{{ __('messages.Public Registration Eyebrow') }}</div>
+                <h1>{{ __('messages.Public Internal Title') }}</h1>
+                <p>{{ __('messages.Public Internal Subtitle') }}</p>
             </div>
-            <span class="public-form-type">Internal registration</span>
+            <span class="public-form-type">{{ __('messages.Public Internal Registration') }}</span>
         </div>
 
         <div class="public-form-description">
             <i class="fas fa-info-circle" aria-hidden="true"></i>
-            <span>Data bertanda bintang wajib diisi. Informasi yang sudah lengkap akan dikirim untuk proses peninjauan.</span>
+            <span>{{ __('messages.Public Internal Notice') }}</span>
         </div>
 
         <div class="public-form-card">
@@ -74,21 +74,21 @@
                 <div class="wizard-shell">
                     <div class="wizard-topline">
                         <div>
-                            <span class="wizard-kicker">REGISTRATION STEPS</span>
-                            <span class="wizard-current-label" id="wizard_current_label">Master Information</span>
+                            <span class="wizard-kicker">{{ __('messages.Public Registration Steps') }}</span>
+                            <span class="wizard-current-label" id="wizard_current_label">{{ __('messages.Public Step Master Information') }}</span>
                         </div>
                         <span class="wizard-count"><span id="wizard_current_number">01</span> / 06</span>
                     </div>
                     <div class="wizard-stepper" id="wizard_stepper">
                         @foreach([
-                            1 => 'Master Information',
-                            2 => 'Contact',
-                            3 => 'Address',
-                            4 => 'Bank',
-                            5 => 'Form Survey',
-                            6 => 'Form Upload',
+                            1 => __('messages.Public Step Master Information'),
+                            2 => __('messages.Public Step Contact'),
+                            3 => __('messages.Public Step Address'),
+                            4 => __('messages.Public Step Bank'),
+                            5 => __('messages.Public Step Survey'),
+                            6 => __('messages.Public Step Upload'),
                         ] as $stepNumber => $stepLabel)
-                            <button type="button" class="wizard-step {{ $stepNumber === 1 ? 'active' : '' }}" data-step="{{ $stepNumber }}" aria-label="Open {{ $stepLabel }} step">
+                            <button type="button" class="wizard-step {{ $stepNumber === 1 ? 'active' : '' }}" data-step="{{ $stepNumber }}" aria-label="{{ __('messages.Public Open Step', ['step' => $stepLabel]) }}">
                                 <span class="wizard-step-number">{{ $stepNumber }}</span>
                                 <span class="wizard-step-text">{{ $stepLabel }}</span>
                             </button>
@@ -105,14 +105,14 @@
 
                 <div class="wizard-actions d-flex justify-content-between align-items-center" id="wizard_actions">
                     <button type="button" class="btn btn-outline-secondary d-none" id="step_prev">
-                        <i class="fas fa-arrow-left" aria-hidden="true"></i> Previous
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i> {{ __('messages.Public Previous') }}
                     </button>
                     <div>
                         <button type="button" class="btn btn-primary" id="step_next">
-                            Continue <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                            {{ __('messages.Public Continue') }} <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </button>
                         <button type="button" class="btn btn-success d-none" id="btn_submit_data_company">
-                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Submit Partner
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i> {{ __('messages.Public Submit Partner') }}
                         </button>
                     </div>
                 </div>
@@ -130,7 +130,14 @@
     <script src="{{ asset('js/cdn/leaflet_geocoder.js') }}"></script>
     <script>
         $(function () {
-            const stepLabels = ['Master Information', 'Contact', 'Address', 'Bank', 'Form Survey', 'Form Upload'];
+            const stepLabels = @json([
+                __('messages.Public Step Master Information'),
+                __('messages.Public Step Contact'),
+                __('messages.Public Step Address'),
+                __('messages.Public Step Bank'),
+                __('messages.Public Step Survey'),
+                __('messages.Public Step Upload'),
+            ]);
             const totalSteps = stepLabels.length;
             let currentStep = 1;
 
@@ -154,7 +161,7 @@
                 if (!firstInvalid) return true;
 
                 if (window.Swal) {
-                    Swal.fire({ icon: 'error', title: 'Data belum lengkap', text: 'Lengkapi field wajib pada tahap ini sebelum melanjutkan.' });
+                    Swal.fire({ icon: 'error', title: partnerFormCopy.incompleteData, text: partnerFormCopy.completeRequiredStep });
                 }
                 firstInvalid.reportValidity();
                 const $target = $(firstInvalid).hasClass('select2-hidden-accessible') ? $(firstInvalid).next('.select2') : $(firstInvalid);

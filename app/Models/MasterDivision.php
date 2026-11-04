@@ -14,6 +14,12 @@ class MasterDivision extends Model
     {
         return $this->belongsTo(User::class, 'gm_user_id');
     }
+
+    public function office()
+    {
+        return $this->belongsTo(MasterOffice::class, 'office_id');
+    }
+
     public function departments()
     {
         return $this->hasMany(MasterDepartment::class, 'division_id');

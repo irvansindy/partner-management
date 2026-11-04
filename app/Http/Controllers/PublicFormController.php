@@ -265,6 +265,14 @@ class PublicFormController extends Controller
             $this->attachmentService->deleteStored($storedAttachments);
             $requestId = (string) Str::uuid();
             $request->attributes->set('request_id', $requestId);
+
+            if (app()->environment('local')) {
+                Log::error('DEBUG submit', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile() . ':' . $e->getLine(),
+                ]);
+            }
+
             Log::error(
                 'Public form submission failed',
                 app(SecurityLogSanitizer::class)->exceptionContext($e, $request)
@@ -506,14 +514,14 @@ class PublicFormController extends Controller
     private function getClosedMessage(FormLink $formLink)
     {
         if (!$formLink->is_active) {
-            return 'Form ini sudah tidak aktif.';
+            return __('messages.Public Form Inactive');
         }
         if ($formLink->isExpired()) {
-            return 'Form ini sudah kadaluarsa pada ' . $formLink->expires_at->format('d M Y H:i');
+            return __('messages.Public Form Expired', ['date' => $formLink->expires_at->format('d M Y H:i')]);
         }
         if ($formLink->hasReachedMaxSubmissions()) {
-            return 'Form ini sudah mencapai batas maksimal submission.';
+            return __('messages.Public Form Submission Limit');
         }
-        return 'Form ini sudah tidak dapat menerima submission.';
+        return __('messages.Public Form Cannot Accept Submission');
     }
 }

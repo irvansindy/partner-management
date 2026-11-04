@@ -26,32 +26,10 @@ use App\Http\Controllers\CompanyExportController;
 use App\Http\Controllers\Admin\PostalCodeImportController;
 use App\Http\Controllers\Admin\CompanyAttachmentController;
 use App\Http\Controllers\Admin\SystemMaintenanceController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|f
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 use Illuminate\Support\Facades\DB;
 
-// Route::get('/db-test', function () {
-//     try {
-//         DB::connection()->getPdo();
-//         return "Koneksi database berhasil: " . DB::connection()->getDatabaseName();
-//     } catch (\Exception $e) {
-//         return "Koneksi database gagal. Error: " . $e->getMessage();
-//     }
-// });
-
-
 Route::get('/', function () {
-    // return view('welcome');
-    // return view('login');
     return redirect()->route('login');
 })->name('/');
 Route::get('/refresh-csrf', function () {
@@ -269,6 +247,10 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('submit-department-setting', [DepartmentManagementController::class,'CreateOrUpdateDepartment'])->name('submit-department-setting');
 
     Route::get('division-setting', [DivisionManagementController::class,'index'])->name('division-setting');
+    Route::get('fetch-division', [DivisionManagementController::class,'fetchDivision'])->name('fetch-division');
+    Route::post('division-setting', [DivisionManagementController::class, 'store'])->name('division.store');
+    Route::put('division-setting/{division}', [DivisionManagementController::class, 'update'])->name('division.update');
+    Route::delete('division-setting/{division}', [DivisionManagementController::class, 'destroy'])->name('division.destroy');
 
     Route::get('office-setting', [OfficeManagementController::class,'index'])->name('office-setting');
     Route::get('fetch-office-setting', [OfficeManagementController::class,'fetchOffice'])->name('fetch-office-setting');

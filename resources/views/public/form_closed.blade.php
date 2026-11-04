@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Closed</title>
+    <title>{{ __('messages.Public Form Closed Page Title') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -30,10 +30,10 @@
                 <div class="card">
                     <div class="card-body text-center p-5">
                         <i class="fas fa-exclamation-circle text-warning" style="font-size: 80px;"></i>
-                        <h2 class="mt-4 mb-3">Form Not Available</h2>
+                        <h2 class="mt-4 mb-3">{{ __('messages.Public Form Closed') }}</h2>
                         <p class="text-muted mb-4">{{ $message }}</p>
                         <a href="/" class="btn btn-primary">
-                            <i class="fas fa-home"></i> Go to Homepage
+                            <i class="fas fa-home"></i> {{ __('messages.Public Go Home') }}
                         </a>
                     </div>
                 </div>

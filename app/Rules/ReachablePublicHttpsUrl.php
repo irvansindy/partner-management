@@ -83,7 +83,7 @@ class ReachablePublicHttpsUrl implements Rule
 
     public function resolveHost(string $host): array
     {
-        $records = dns_get_record($host, DNS_A | DNS_AAAA);
+        $records = $this->dnsRecords($host);
         $addresses = [];
 
         foreach ($records ?: [] as $record) {
@@ -95,7 +95,21 @@ class ReachablePublicHttpsUrl implements Rule
             }
         }
 
-        return $addresses;
+        if ($addresses === []) {
+            $addresses = (array) $this->systemIpv4Addresses($host);
+        }
+
+        return array_values(array_unique(array_filter($addresses, 'is_string')));
+    }
+
+    protected function dnsRecords(string $host)
+    {
+        return @dns_get_record($host, DNS_A | DNS_AAAA);
+    }
+
+    protected function systemIpv4Addresses(string $host)
+    {
+        return @gethostbynamel($host) ?: [];
     }
 
     public function requestUrl(string $url, string $ip): array

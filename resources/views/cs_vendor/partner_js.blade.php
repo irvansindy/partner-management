@@ -7,6 +7,46 @@
         summary: @json(__('messages.Validation Summary')),
         additional: @json(__('messages.Additional Validation Errors'))
     };
+    var partnerFormCopy = {
+        dataLimit: @json(__('messages.Public Data Limit')),
+        maximumRows: @json(__('messages.Public Maximum Rows')),
+        requiredField: @json(__('messages.Public Required Field')),
+        invalidWebsiteFormat: @json(__('messages.Public Invalid Website Format')),
+        invalidPhoneFormat: @json(__('messages.Public Invalid Phone Format')),
+        invalidPublicWebsite: @json(__('messages.Public Invalid Public Website')),
+        invalidBankName: @json(__('messages.Public Invalid Bank Name')),
+        invalidYearRange: @json(__('messages.Public Invalid Year Range')),
+        moreErrors: @json(__('messages.Public More Errors')),
+        mandatoryField: @json(__('messages.Public Mandatory Field')),
+        websiteChecking: @json(__('messages.Public Website Checking')),
+        websiteUnreachable: @json(__('messages.Public Website Unreachable')),
+        serverError: @json(__('messages.Public Server Error')),
+        genericError: @json(__('messages.Public Generic Error')),
+        errorTitle: @json(__('messages.Public Error Title')),
+        sessionExpired: @json(__('messages.Public Session Expired')),
+        sessionExpiredDetail: @json(__('messages.Public Session Expired Detail')),
+        refreshPage: @json(__('messages.Public Refresh Page')),
+        showSurvey: @json(__('messages.Public Show Survey')),
+        hideSurvey: @json(__('messages.Public Hide Survey')),
+        hideSurveyQuestion: @json(__('messages.Public Hide Survey Question')),
+        surveyNotSubmitted: @json(__('messages.Public Survey Not Submitted')),
+        confirmHideSurvey: @json(__('messages.Public Confirm Hide Survey')),
+        cancel: @json(__('messages.Public Cancel')),
+        surveyHidden: @json(__('messages.Public Survey Hidden')),
+        surveyFieldsNotSubmitted: @json(__('messages.Public Survey Fields Not Submitted')),
+        invalidEmailFormat: @json(__('messages.Public Invalid Email Format')),
+        alphaSpacesOnly: @json(__('messages.Public Alpha Spaces Only')),
+        sessionError: @json(__('messages.Public Session Error')),
+        csrfMissing: @json(__('messages.Public Csrf Missing')),
+        processing: @json(__('messages.Public Processing')),
+        processingDetail: @json(__('messages.Public Processing Detail')),
+        submitSuccess: @json(__('messages.Public Submit Success')),
+        dataSaved: @json(__('messages.Public Data Saved')),
+        closeCountdown: @json(__('messages.Public Close Countdown')),
+        incompleteData: @json(__('messages.Public Incomplete Data')),
+        completeRequiredStep: @json(__('messages.Public Complete Required Step')),
+        openStep: @json(__('messages.Public Open Step'))
+    };
 
     function localizeValidationMessage(message) {
         var text = String(message || '');
@@ -142,7 +182,7 @@
     function updateWebsiteValidation(input, revealError) {
         const value = input.value.trim();
         const valid = !value || isValidWebsiteHost(value);
-        const message = valid ? '' : 'Alamat website harus menggunakan HTTPS dan domain publik yang valid.';
+        const message = valid ? '' : partnerFormCopy.invalidPublicWebsite;
         input.setCustomValidity(message);
         input.classList.toggle('is-invalid', Boolean(revealError && message));
         $('#message_website_address').text(revealError ? message : '');
@@ -408,31 +448,31 @@
                 <div class="array_dynamic_liable_person">
                     <div class="row mb-4" id="liable_person_group_${index}">
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                            <label for="liable_person_${index}">@lang('messages.Liable Person') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Liable Person')" data-alpha-spaces required>
+                            <label for="liable_person_${index}">${escapeHtml(@json(__('messages.Liable Person')))} <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="liable_person[]" id="liable_person_${index}" class="form-control" maxlength="255" placeholder="${escapeHtml(@json(__('messages.Placeholder Liable Person')))}" data-alpha-spaces required>
                             <span class="text-danger message-danger" id="message_liable_person_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
-                            <label for="liable_position_${index}">@lang('messages.Liable Position') <span class="text-danger" role="alert">*</span></label>
+                            <label for="liable_position_${index}">${escapeHtml(@json(__('messages.Liable Position')))} <span class="text-danger" role="alert">*</span></label>
                             <select name="liable_position[]" id="liable_position_${index}" class="form-control liable-position-select" required>
-                                <option value="">-- @lang('messages.Placeholder Position') --</option>
-                                <option value="Owner">@lang('messages.Owner')</option>
-                                <option value="Board of Directors">@lang('messages.Board of Directors')</option>
-                                <option value="Shareholders">@lang('messages.Shareholders')</option>
-                                <option value="Finance Department">@lang('messages.Finance Department')</option>
-                                <option value="Purchase/Procure Department">@lang('messages.Purchase/Procure Department')</option>
-                                <option value="Sales Department">@lang('messages.Sales Department')</option>
-                                <option value="Other">@lang('messages.Other')</option>
+                                <option value="">-- ${escapeHtml(@json(__('messages.Placeholder Position')))} --</option>
+                                <option value="Owner">${escapeHtml(@json(__('messages.Owner')))}</option>
+                                <option value="Board of Directors">${escapeHtml(@json(__('messages.Board of Directors')))}</option>
+                                <option value="Shareholders">${escapeHtml(@json(__('messages.Shareholders')))}</option>
+                                <option value="Finance Department">${escapeHtml(@json(__('messages.Finance Department')))}</option>
+                                <option value="Purchase/Procure Department">${escapeHtml(@json(__('messages.Purchase/Procure Department')))}</option>
+                                <option value="Sales Department">${escapeHtml(@json(__('messages.Sales Department')))}</option>
+                                <option value="Other">${escapeHtml(@json(__('messages.Other')))}</option>
                             </select>
                             <span class="text-danger message-danger" id="message_liable_position_${index}" role="alert"></span>
                             <div class="mt-2" id="other_position_container_${index}" style="display: none;">
-                                <input type="text" name="other_position[]" id="other_position_${index}" class="form-control" placeholder="@lang('messages.Specify Position')">
+                                <input type="text" name="other_position[]" id="other_position_${index}" class="form-control" placeholder="${escapeHtml(@json(__('messages.Specify Position')))}">
                                 <span class="text-danger message-danger" id="message_other_position_${index}" role="alert"></span>
                             </div>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-2">
                             <label for="nik_${index}">NIK <span class="text-danger" role="alert">*</span></label>
-                            <input type="number" name="nik[]" id="nik_${index}" class="form-control" placeholder="@lang('messages.Placeholder NIK')" data-max-digits="16" min="0" required>
+                            <input type="number" name="nik[]" id="nik_${index}" class="form-control" placeholder="${escapeHtml(@json(__('messages.Placeholder NIK')))}" data-max-digits="16" min="0" required>
                             <span class="text-danger message-danger" id="message_nik_${index}" role="alert"></span>
                         </div>
                     </div>
@@ -467,18 +507,18 @@
                 <div class="array_dynamic_survey">
                     <div class="row mt-4">
                         <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
-                            <label for="product_survey_${index}">@lang('messages.Product')</label>
-                            <input type="text" name="product_survey[]" id="product_survey_${index}" class="form-control" placeholder="@lang('messages.Placeholder Survey Product')">
+                            <label for="product_survey_${index}">${escapeHtml(@json(__('messages.Product')))}</label>
+                            <input type="text" name="product_survey[]" id="product_survey_${index}" class="form-control" placeholder="${escapeHtml(@json(__('messages.Placeholder Survey Product')))}">
                             <span class="text-danger mt-2" id="message_product_survey_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
-                            <label for="merk_survey_${index}">@lang('messages.Merk')</label>
-                            <input type="text" name="merk_survey[]" id="merk_survey_${index}" class="form-control" placeholder="@lang('messages.Placeholder Survey Merk')">
+                            <label for="merk_survey_${index}">${escapeHtml(@json(__('messages.Merk')))}</label>
+                            <input type="text" name="merk_survey[]" id="merk_survey_${index}" class="form-control" placeholder="${escapeHtml(@json(__('messages.Placeholder Survey Merk')))}">
                             <span class="text-danger mt-2" id="message_merk_survey_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-3 col-lg-3 col-sm-12 mb-3">
-                            <label for="distributor_survey_${index}">@lang('messages.Distributor')</label>
-                            <input type="text" name="distributor_survey[]" id="distributor_survey_${index}" class="form-control" placeholder="@lang('messages.Placeholder Survey Distributor')">
+                            <label for="distributor_survey_${index}">${escapeHtml(@json(__('messages.Distributor')))}</label>
+                            <input type="text" name="distributor_survey[]" id="distributor_survey_${index}" class="form-control" placeholder="${escapeHtml(@json(__('messages.Placeholder Survey Distributor')))}">
                             <span class="text-danger mt-2" id="message_distributor_survey_${index}" role="alert"></span>
                         </div>
 
@@ -504,7 +544,7 @@
             if (selectedValue == 'Other') {
                 $('#other_term_of_payment_container').empty();
                 $('#other_term_of_payment_container').append(`
-                    <input type="text" name="other_term_of_payment" id="other_term_of_payment" class="form-control" placeholder="@lang('messages.Placeholder TOP Other')">
+                    <input type="text" name="other_term_of_payment" id="other_term_of_payment" class="form-control" placeholder="${escapeHtml(@json(__('messages.Placeholder TOP Other')))}">
                     <span class="text-danger message-danger" id="message_other_term_of_payment" role="alert"></span>
                 `);
                 $('#other_term_of_payment').prop('required', true);
@@ -582,28 +622,28 @@
                 <div class="array_dynamic_contact">
                     <div class="row mt-4">
                         <div class="col-12 col-md-6 col-xl-2 mb-3">
-                            <label for="contact_department_${index}">@lang('messages.Department') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Department')" data-alpha-spaces required>
+                            <label for="contact_department_${index}">${escapeHtml(@json(__('messages.Department')))} <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="contact_department[]" id="contact_department_${index}" class="form-control" maxlength="255" placeholder="${escapeHtml(@json(__('messages.Placeholder Contact Department')))}" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_department_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl-2 mb-3">
-                            <label for="contact_position_${index}">@lang('messages.Position') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Position')" data-alpha-spaces required>
+                            <label for="contact_position_${index}">${escapeHtml(@json(__('messages.Position')))} <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="contact_position[]" id="contact_position_${index}" class="form-control" maxlength="255" placeholder="${escapeHtml(@json(__('messages.Placeholder Contact Position')))}" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_position_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl-2 mb-3">
-                            <label for="contact_name_${index}">@lang('messages.Name') <span class="text-danger" role="alert">*</span></label>
-                            <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" maxlength="255" placeholder="@lang('messages.Placeholder Contact Name')" data-alpha-spaces required>
+                            <label for="contact_name_${index}">${escapeHtml(@json(__('messages.Name')))} <span class="text-danger" role="alert">*</span></label>
+                            <input type="text" name="contact_name[]" id="contact_name_${index}" class="form-control" maxlength="255" placeholder="${escapeHtml(@json(__('messages.Placeholder Contact Name')))}" data-alpha-spaces required>
                             <span class="text-danger mt-2" id="message_contact_name_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl-2 mb-3">
-                            <label for="contact_email_${index}">@lang('messages.Email') <span class="text-danger" role="alert">*</span></label>
-                            <input type="email" name="contact_email[]" id="contact_email_${index}" class="form-control" placeholder="@lang('messages.Placeholder Contact Email')" required>
+                            <label for="contact_email_${index}">${escapeHtml(@json(__('messages.Email')))} <span class="text-danger" role="alert">*</span></label>
+                            <input type="email" name="contact_email[]" id="contact_email_${index}" class="form-control" placeholder="${escapeHtml(@json(__('messages.Placeholder Contact Email')))}" required>
                             <span class="text-danger mt-2" id="message_contact_email_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl-3 mb-3 contact-phone-column">
-                            <label for="contact_telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="@lang('messages.Placeholder Contact Phone')" inputmode="numeric" autocomplete="tel-national" maxlength="14" pattern="[0-9]{2,14}" required>
+                            <label for="contact_telephone_${index}">${escapeHtml(@json(__('messages.Telephone')))} <span class="text-danger" role="alert">*</span></label>
+                            <input type="tel" name="contact_telephone[]" id="contact_telephone_${index}" class="form-control contact-phone international-phone" placeholder="${escapeHtml(@json(__('messages.Placeholder Contact Phone')))}" inputmode="numeric" autocomplete="tel-national" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2" id="message_contact_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-12 col-md-6 col-xl-1 mb-3 d-flex align-items-end justify-content-end contact-action-column">
@@ -721,22 +761,22 @@
             $('.dynamic_company_address').append(`
         <div class="array_company_address">
             <fieldset class="partner-fieldset mb-4">
-                <legend class="float-none w-auto text-bold">@lang('messages.Address Data')</legend>
+                <legend class="float-none w-auto text-bold">${escapeHtml(@json(__('messages.Address Data')))}</legend>
                 <div class="row">
                     <div class="col-12 mb-4">
-                        <label for="address_${index}">@lang('messages.Company Address (Other)') <span class="text-danger" role="alert">*</span></label>
+                        <label for="address_${index}">${escapeHtml(@json(__('messages.Company Address (Other)')))} <span class="text-danger" role="alert">*</span></label>
                         <input type="text" name="address[]" id="address_${index}" class="form-control" required>
                         <span class="text-danger mt-2 message_address" id="message_address_${index}" role="alert"></span>
                     </div>
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label for="country_${index}">@lang('messages.Country') <span class="text-danger" role="alert">*</span></label>
+                            <label for="country_${index}">${escapeHtml(@json(__('messages.Country')))} <span class="text-danger" role="alert">*</span></label>
                             <input type="text" name="country[]" id="country_${index}" class="form-control" value="Indonesia" readonly required>
                             <span class="text-danger mt-2 message_country" id="message_country_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
-                            <label for="select_option_province_${index}">@lang('messages.Province') <span class="text-danger" role="alert">*</span></label>
+                            <label for="select_option_province_${index}">${escapeHtml(@json(__('messages.Province')))} <span class="text-danger" role="alert">*</span></label>
                             <select name="province[]" id="select_option_province_${index}" class="form-control" required></select>
                             <span class="text-danger mt-2 message_province" id="message_province_${index}" role="alert"></span>
                         </div>
@@ -744,28 +784,28 @@
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label for="select_option_regency_${index}">@lang('messages.City') <span class="text-danger" role="alert">*</span></label>
+                            <label for="select_option_regency_${index}">${escapeHtml(@json(__('messages.City')))} <span class="text-danger" role="alert">*</span></label>
                             <select name="city[]" id="select_option_regency_${index}" class="form-control" required></select>
                             <span class="text-danger mt-2 message_city" id="message_city_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
-                            <label for="zip_code_${index}">@lang('messages.Postal Code') <span class="text-danger" role="alert">*</span></label>
-                            <input type="number" name="zip_code[]" id="zip_code_${index}" class="form-control" placeholder="@lang('messages.Placeholder Address Postal Code')" data-max-digits="5" min="0" required>
+                            <label for="zip_code_${index}">${escapeHtml(@json(__('messages.Postal Code')))} <span class="text-danger" role="alert">*</span></label>
+                            <input type="number" name="zip_code[]" id="zip_code_${index}" class="form-control" placeholder="${escapeHtml(@json(__('messages.Placeholder Address Postal Code')))}" data-max-digits="5" min="0" required>
                             <span class="text-danger mt-2 message_zip_code" id="message_zip_code_${index}" role="alert"></span>
                         </div>
                     </div>
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label for="telephone_${index}">@lang('messages.Telephone') <span class="text-danger" role="alert">*</span></label>
-                            <p class="fs-6 text-muted mb-2">@lang('messages.Telephone Info')</p>
-                            <input type="tel" name="telephone[]" id="telephone_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Telephone')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
+                            <label for="telephone_${index}">${escapeHtml(@json(__('messages.Telephone')))} <span class="text-danger" role="alert">*</span></label>
+                            <p class="fs-6 text-muted mb-2">${escapeHtml(@json(__('messages.Telephone Info')))}</p>
+                            <input type="tel" name="telephone[]" id="telephone_${index}" class="form-control international-phone" placeholder="${escapeHtml(@json(__('messages.Placeholder Address Telephone')))}" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2 message_telephone" id="message_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
-                            <label for="fax_${index}">@lang('messages.Fax') <span class="text-danger" role="alert">*</span></label>
-                            <p class="fs-6 text-muted mb-2">@lang('messages.Fax Info')</p>
-                            <input type="tel" name="fax[]" id="fax_${index}" class="form-control international-phone" placeholder="@lang('messages.Placeholder Address Fax')" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
+                            <label for="fax_${index}">${escapeHtml(@json(__('messages.Fax')))} <span class="text-danger" role="alert">*</span></label>
+                            <p class="fs-6 text-muted mb-2">${escapeHtml(@json(__('messages.Fax Info')))}</p>
+                            <input type="tel" name="fax[]" id="fax_${index}" class="form-control international-phone" placeholder="${escapeHtml(@json(__('messages.Placeholder Address Fax')))}" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
                             <span class="text-danger mt-2 message_fax" id="message_fax_${index}" role="alert"></span>
                         </div>
                     </div>
@@ -832,17 +872,17 @@
                         <legend class="float-none w-auto text-bold">Data Bank</legend>
                         <div class="row mt-4">
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                                <label for="bank_name_${index}">@lang('messages.Bank Name') <span class="text-danger" role="alert">*</span></label>
+                                <label for="bank_name_${index}">${escapeHtml(@json(__('messages.Bank Name')))} <span class="text-danger" role="alert">*</span></label>
                                 <input type="text" name="bank_name[]" id="bank_name_${index}" class="form-control" maxlength="255" data-bank-name required>
                                 <span class="text-danger mt-2" id="message_bank_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                                <label for="account_name_${index}">@lang('messages.Account Name') <span class="text-danger" role="alert">*</span></label>
+                                <label for="account_name_${index}">${escapeHtml(@json(__('messages.Account Name')))} <span class="text-danger" role="alert">*</span></label>
                                 <input type="text" name="account_name[]" id="account_name_${index}" class="form-control" maxlength="255" data-alpha-spaces required>
                                 <span class="text-danger mt-2" id="message_account_name_${index}" role="alert"></span>
                             </div>
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                                <label for="account_number_${index}">@lang('messages.Account Number') <span class="text-danger" role="alert">*</span></label>
+                                <label for="account_number_${index}">${escapeHtml(@json(__('messages.Account Number')))} <span class="text-danger" role="alert">*</span></label>
                                 <input type="number" name="account_number[]" id="account_number_${index}" class="form-control" data-max-digits="16" min="0" required>
                                 <span class="text-danger mt-2" id="message_account_number_${index}" role="alert"></span>
                             </div>
@@ -1232,9 +1272,9 @@
 
                 Swal.fire({
                     icon: 'error',
-                    title: 'Session Error',
-                    text: 'CSRF token not found. Please refresh the page.',
-                    confirmButtonText: 'Refresh Page'
+                    title: partnerFormCopy.sessionError,
+                    text: partnerFormCopy.csrfMissing,
+                    confirmButtonText: partnerFormCopy.refreshPage
                 }).then(() => {
                     window.location.reload();
                 });
@@ -1242,8 +1282,8 @@
             }
 
             Swal.fire({
-                title: 'Processing...',
-                text: 'Please wait while we submit your data',
+                title: partnerFormCopy.processing,
+                text: partnerFormCopy.processingDetail,
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
             });
@@ -1284,9 +1324,10 @@
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'Submit Berhasil',
-                            html: (response.meta.message || 'Data berhasil disimpan') +
-                                '<br><small>Tab akan ditutup dalam <strong id="close_countdown">5</strong> detik. Jika browser memblokirnya, halaman akan dialihkan.</small>',
+                            title: partnerFormCopy.submitSuccess,
+                            html: escapeHtml(response.meta.message || partnerFormCopy.dataSaved) +
+                                '<br><small>' + escapeHtml(partnerFormCopy.closeCountdown)
+                                    .replace(':seconds', '<strong id="close_countdown">5</strong>') + '</small>',
                             timer: 5000,
                             timerProgressBar: true,
                             showConfirmButton: false,
@@ -1310,8 +1351,8 @@
 
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error!',
-                            text: response.message || 'Something went wrong'
+                            title: partnerFormCopy.errorTitle,
+                            text: response.message || partnerFormCopy.genericError
                         });
                     }
                 },
@@ -1332,9 +1373,9 @@
                     if (xhr.status === 419) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Session Expired',
-                            html: 'Your session has expired.<br>The page will refresh to restore your session.',
-                            confirmButtonText: 'Refresh Page',
+                            title: partnerFormCopy.sessionExpired,
+                            text: partnerFormCopy.sessionExpiredDetail,
+                            confirmButtonText: partnerFormCopy.refreshPage,
                             allowOutsideClick: false
                         }).then(() => {
                             // Simpan current scroll position
@@ -1401,14 +1442,14 @@
                     if (xhr.status === 500) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Server Error',
-                            text: 'An internal server error occurred. Please contact administrator.',
+                            title: partnerFormCopy.errorTitle,
+                            text: partnerFormCopy.serverError,
                         });
                         return;
                     }
 
                     // Generic error
-                    var errorMessage = 'An error occurred';
+                    var errorMessage = partnerFormCopy.genericError;
 
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
@@ -1418,7 +1459,7 @@
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error!',
+                        title: partnerFormCopy.errorTitle,
                         text: errorMessage
                     });
                 }

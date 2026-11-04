@@ -4,9 +4,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <span class="approval-modal__eyebrow">Approval sequence</span>
-                    <h5 class="modal-title" id="addViewApprovalDetailLabel">Arrange Approvers</h5>
-                    <p class="approval-modal__subtitle">Approvals run from the first step to the last step in the order shown below.</p>
+                    <span class="approval-modal__eyebrow">Urutan approval</span>
+                    <h5 class="modal-title" id="addViewApprovalDetailLabel">Atur Tahap dan PIC</h5>
+                    <p class="approval-modal__subtitle">Tahap dijalankan berurutan dari atas ke bawah.</p>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close approver dialog">
                     <span aria-hidden="true">&times;</span>
@@ -27,11 +27,11 @@
 
                     <div class="approval-list-header">
                         <div>
-                            <h6>Approval steps</h6>
-                            <p>Select a different user for every step. Maximum 10 approvers.</p>
+                            <h6>Tahap approval</h6>
+                            <p>Satu persetujuan dari salah satu PIC akan menyelesaikan tahap tersebut.</p>
                         </div>
                         <button type="button" class="btn btn-outline-primary" id="add_stagging">
-                            <i class="fas fa-plus mr-1" aria-hidden="true"></i> Add step
+                            <i class="fas fa-plus mr-1" aria-hidden="true"></i> Tambah tahap
                         </button>
                     </div>
 
@@ -40,13 +40,13 @@
                     </div>
                     <div class="approval-modal-state approval-modal-state--error" data-approval-error role="alert" hidden></div>
                     <div class="approver-list" data-approver-list aria-live="polite"></div>
-                    <span class="invalid-feedback d-block" data-field-error="stagging_approval_name"></span>
+                    <span class="invalid-feedback d-block" data-field-error="approval_stages"></span>
                 </div>
                 <div class="modal-footer">
                     <span class="approval-modal-footer-note"><i class="fas fa-info-circle" aria-hidden="true"></i> Changes apply to new approval processes.</span>
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary" id="create_approval_detail_data">
-                        <i class="fas fa-save mr-1" aria-hidden="true"></i> Save Sequence
+                        <i class="fas fa-save mr-1" aria-hidden="true"></i> Simpan urutan
                     </button>
                 </div>
             </form>

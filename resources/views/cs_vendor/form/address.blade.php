@@ -1,18 +1,18 @@
 <div class="card card-info">
     <div class="card-header">
-        <h3 class="card-title">@lang('messages.Address Data')</h3>
+        <h3 class="card-title">{{ __('messages.Address Data') }}</h3>
     </div>
     <div class="card-body">
         <div class="address-sync-wrapper mb-4">
             <label class="address-sync-control" for="operational_same_as_legal">
                 <input class="form-check-input" type="checkbox" id="operational_same_as_legal" checked>
-                <span class="address-sync-control__text">Alamat operasional sama dengan alamat legal</span>
+                <span class="address-sync-control__text">{{ __('messages.Public Operational Same As Legal') }}</span>
             </label>
         </div>
         <div id="address_rows"></div>
         <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-primary" id="add_branch">
-                <i class="fas fa-plus" aria-hidden="true"></i> Tambah alamat cabang
+                <i class="fas fa-plus" aria-hidden="true"></i> {{ __('messages.Public Add Branch Address') }}
             </button>
         </div>
     </div>
@@ -29,12 +29,12 @@
 
             <div class="row">
                 <div class="col-12 mb-3">
-                    <label data-label="address">Alamat <span class="text-danger">*</span></label>
+                    <label data-label="address">{{ __('messages.Company Address (Other)') }} <span class="text-danger">*</span></label>
                     <input type="text" name="address[]" class="form-control" maxlength="1000" data-field="address" required>
                     <span class="text-danger mt-2 d-block" data-message="address" role="alert"></span>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label data-label="country_code">Negara <span class="text-danger">*</span></label>
+                    <label data-label="country_code">{{ __('messages.Country') }} <span class="text-danger">*</span></label>
                     <select name="country_code[]" class="form-control" data-field="country_code" data-address-country required>
                         @foreach(($countries ?? \App\Support\CountryCatalog::all()) as $country)
                             <option value="{{ $country['code'] }}" data-name="{{ $country['name'] }}" @if($country['code'] === 'ID') selected @endif>
@@ -45,28 +45,28 @@
                     <span class="text-danger mt-2 d-block" data-message="country_code" role="alert"></span>
                 </div>
                 <div class="col-md-4 mb-3" data-location-field="province">
-                    <label data-label="province">Provinsi / State <span class="text-danger">*</span></label>
+                    <label data-label="province">{{ __('messages.Province') }} <span class="text-danger">*</span></label>
                     <select name="province[]" class="form-control" data-field="province" required>
-                        <option value="">Memuat provinsi...</option>
+                        <option value="">{{ __('messages.Public Loading Provinces') }}</option>
                     </select>
                     <span class="text-danger mt-2 d-block" data-message="province" role="alert"></span>
                 </div>
                 <div class="col-md-4 mb-3" data-location-field="city">
-                    <label data-label="city">Kota / Kabupaten <span class="text-danger">*</span></label>
+                    <label data-label="city">{{ __('messages.City') }} <span class="text-danger">*</span></label>
                     <select name="city[]" class="form-control" data-field="city" disabled required>
-                        <option value="">Pilih provinsi terlebih dahulu</option>
+                        <option value="">{{ __('messages.Public Select Province First') }}</option>
                     </select>
                     <span class="text-danger mt-2 d-block" data-message="city" role="alert"></span>
                 </div>
                 <div class="col-md-4 mb-3" data-location-field="zip_code">
-                    <label data-label="zip_code">Kode Pos <span class="text-danger">*</span></label>
+                    <label data-label="zip_code">{{ __('messages.Postal Code') }} <span class="text-danger">*</span></label>
                     <select name="zip_code[]" class="form-control" data-field="zip_code" disabled required>
-                        <option value="">Pilih kota/kabupaten terlebih dahulu</option>
+                        <option value="">{{ __('messages.Public Select Regency First') }}</option>
                     </select>
                     <span class="text-danger mt-2 d-block" data-message="zip_code" role="alert"></span>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label data-label="telephone">Telepon <span class="text-danger">*</span></label>
+                    <label data-label="telephone">{{ __('messages.Telephone') }} <span class="text-danger">*</span></label>
                     <input type="tel" name="telephone[]" class="form-control international-phone" inputmode="numeric" autocomplete="tel-national" maxlength="14" pattern="[0-9]{2,14}" required>
                     <span class="text-danger mt-2 d-block" data-message="telephone" role="alert"></span>
                 </div>
@@ -76,37 +76,76 @@
                     <span class="text-danger mt-2 d-block" data-message="fax" role="alert"></span>
                 </div>
                 <div class="col-12 mb-3">
-                    <label data-label="coordinate_search">Koordinat peta (opsional)</label>
+                    <label data-label="coordinate_search">{{ __('messages.Public Map Coordinate') }}</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" data-coordinate-search maxlength="500" placeholder="Cari alamat untuk mendapatkan koordinat">
-                        <button type="button" class="btn btn-outline-secondary" data-find-coordinate>Cari</button>
+                        <input type="text" class="form-control" data-coordinate-search maxlength="500" placeholder="{{ __('messages.Public Search Coordinate Placeholder') }}">
+                        <button type="button" class="btn btn-outline-secondary" data-find-coordinate>{{ __('messages.Public Search') }}</button>
                     </div>
                     <div class="mt-2">
-                        <label data-label="geocoded_address">Alamat ditemukan</label>
-                        <input type="text" name="geocoded_address[]" class="form-control" data-field="geocoded_address" placeholder="Hasil pencarian alamat akan tampil di sini" readonly>
+                        <label data-label="geocoded_address">{{ __('messages.Public Geocoded Address') }}</label>
+                        <input type="text" name="geocoded_address[]" class="form-control" data-field="geocoded_address" placeholder="{{ __('messages.Public Geocoded Address Placeholder') }}" readonly>
                     </div>
-                    <small class="text-muted" data-coordinate-status>Pencarian peta tidak wajib untuk melanjutkan.</small>
+                    <small class="text-muted" data-coordinate-status>{{ __('messages.Public Map Optional') }}</small>
                     <div class="partner-map-shell mt-3" data-map-shell>
                         <button type="button" class="partner-map-fullscreen" data-map-fullscreen
-                            aria-label="Buka peta layar penuh" title="Buka peta layar penuh">
+                            aria-label="{{ __('messages.Public Open Fullscreen Map') }}" title="{{ __('messages.Public Open Fullscreen Map') }}">
                             <i class="fas fa-expand" aria-hidden="true"></i>
-                            <span>Layar penuh</span>
+                            <span>{{ __('messages.Public Fullscreen') }}</span>
                         </button>
-                        <div class="partner-map" data-address-map aria-label="Peta lokasi alamat"></div>
+                        <div class="partner-map" data-address-map aria-label="{{ __('messages.Public Address Map') }}"></div>
                     </div>
                 </div>
             </div>
         </fieldset>
         <div class="d-flex justify-content-end mt-2">
             <button type="button" class="btn btn-danger" data-remove-address hidden>
-                <i class="fas fa-minus" aria-hidden="true"></i> Hapus alamat
+                <i class="fas fa-minus" aria-hidden="true"></i> {{ __('messages.Public Remove Address') }}
             </button>
         </div>
     </section>
 </template>
 
+@php
+    $addressCopy = [
+        'searchTitle' => __('messages.Public Address Search'),
+        'pinUpdated' => __('messages.Public Pin Updated'),
+        'addressUpdateFailed' => __('messages.Public Address Update Failed'),
+        'enterSearch' => __('messages.Public Enter Search Address'),
+        'addressFound' => __('messages.Public Address Found'),
+        'addressNotFound' => __('messages.Public Address Not Found'),
+        'coordinateFound' => __('messages.Public Coordinate Found'),
+        'coordinateNotFound' => __('messages.Public Coordinate Not Found'),
+        'selectProvinceFirst' => __('messages.Public Select Province First'),
+        'selectRegencyFirst' => __('messages.Public Select Regency First'),
+        'selectProvince' => __('messages.Public Select Province'),
+        'selectRegency' => __('messages.Public Select Regency'),
+        'selectPostalCode' => __('messages.Public Select Postal Code'),
+        'loadingRegencies' => __('messages.Public Loading Regencies'),
+        'loadingPostalCodes' => __('messages.Public Loading Postal Codes'),
+        'provinceLoadFailed' => __('messages.Public Province Load Failed'),
+        'regencyLoadFailed' => __('messages.Public Regency Load Failed'),
+        'selectCountry' => __('messages.Public Select Country'),
+        'branchAddress' => __('messages.Public Branch Address'),
+        'legalAddress' => __('messages.Public Legal Address'),
+        'operationalAddress' => __('messages.Public Operational Address'),
+        'mapGuidance' => __('messages.Public Map Guidance'),
+        'mapGuidanceTitle' => __('messages.Public Map Guidance Title'),
+        'understand' => __('messages.Public Understand'),
+        'exitFullscreenMap' => __('messages.Public Exit Fullscreen Map'),
+        'openFullscreenMap' => __('messages.Public Open Fullscreen Map Short'),
+        'exitFullscreen' => __('messages.Public Exit Fullscreen'),
+        'fullscreen' => __('messages.Public Fullscreen'),
+        'loadingPinAddress' => __('messages.Public Loading Pin Address'),
+        'selectedCoordinate' => __('messages.Public Selected Coordinate'),
+        'loadingProvinces' => __('messages.Public Loading Provinces'),
+        'pinInstruction' => __('messages.Public Pin Instruction'),
+        'reverseAddressFailed' => __('messages.Public Reverse Address Failed'),
+        'postalCodeUnavailable' => __('messages.Public Postal Code Unavailable'),
+    ];
+@endphp
 <script>
 window.addEventListener('load', function () {
+    const addressCopy = @json($addressCopy);
     const rows = document.getElementById('address_rows');
     const template = document.getElementById('address_row_template');
     const sameAsLegal = document.getElementById('operational_same_as_legal');
@@ -157,7 +196,7 @@ window.addEventListener('load', function () {
         control.className = 'form-control';
         control.dataset.field = name;
         control.required = true;
-        if (asSelect) control.innerHTML = '<option value="">' + placeholder + '</option>';
+        if (asSelect) control.add(new Option(placeholder, ''));
         else {
             control.type = 'text';
             control.maxLength = name === 'zip_code' ? 20 : 100;
@@ -196,7 +235,7 @@ window.addEventListener('load', function () {
     }
 
     function resetLocationSelect(control, message, disabled) {
-        control.innerHTML = '<option value="">' + message + '</option>';
+        control.replaceChildren(new Option(message, ''));
         control.disabled = disabled;
         $(control).trigger('change.select2');
     }
@@ -267,7 +306,7 @@ window.addEventListener('load', function () {
         }
 
         const marker = L.marker([lat, lng], { draggable: true }).addTo(state.map);
-        marker.bindTooltip('Geser pin atau klik peta untuk memilih lokasi', { direction: 'top' });
+        marker.bindTooltip(addressCopy.pinInstruction, { direction: 'top' });
         marker.on('dragend', function () {
             const position = marker.getLatLng();
             updatePinFromSelection(row, position.lat, position.lng);
@@ -290,10 +329,10 @@ window.addEventListener('load', function () {
     function setFullscreenButtonState(shell, active) {
         const button = shell.querySelector('[data-map-fullscreen]');
         if (!button) return;
-        const label = active ? 'Keluar dari layar penuh' : 'Buka peta layar penuh';
+        const label = active ? addressCopy.exitFullscreenMap : addressCopy.openFullscreenMap;
         button.setAttribute('aria-label', label);
         button.setAttribute('title', label);
-        button.querySelector('span').textContent = active ? 'Keluar layar penuh' : 'Layar penuh';
+        button.querySelector('span').textContent = active ? addressCopy.exitFullscreen : addressCopy.fullscreen;
         button.querySelector('i').className = active ? 'fas fa-compress' : 'fas fa-expand';
     }
 
@@ -340,7 +379,7 @@ window.addEventListener('load', function () {
         const address = field(row, 'geocoded_address');
         address.value = '';
         address.dispatchEvent(new Event('input', { bubbles: true }));
-        status.textContent = 'Memuat alamat untuk posisi pin...';
+        status.textContent = addressCopy.loadingPinAddress;
 
         fetch(reverseGeocodeUrl, {
             method: 'POST',
@@ -357,12 +396,13 @@ window.addEventListener('load', function () {
             if (requestSequence !== state.reverseRequestSequence) return;
             address.value = payload.data.display_name || '';
             address.dispatchEvent(new Event('input', { bubbles: true }));
-            status.textContent = 'Koordinat dipilih: ' + field(row, 'latitude').value + ', ' + field(row, 'longitude').value;
-            showPartnerToast('Pencarian Alamat', 'Posisi pin dan alamat berhasil diperbarui.', 'success');
+            const coordinate = field(row, 'latitude').value + ', ' + field(row, 'longitude').value;
+            status.textContent = addressCopy.selectedCoordinate.replace(':coordinate', coordinate);
+            showPartnerToast(addressCopy.searchTitle, addressCopy.pinUpdated, 'success');
         }).catch(function () {
             if (requestSequence !== state.reverseRequestSequence) return;
-            status.textContent = 'Koordinat tetap tersimpan, tetapi alamat untuk posisi pin tidak dapat dimuat.';
-            showPartnerToast('Pencarian Alamat', 'Koordinat tetap tersimpan. Alamat tidak dapat diperbarui.', 'warning');
+            status.textContent = addressCopy.reverseAddressFailed;
+            showPartnerToast(addressCopy.searchTitle, addressCopy.addressUpdateFailed, 'warning');
         });
     }
 
@@ -386,41 +426,41 @@ window.addEventListener('load', function () {
     }
 
     function configureIndonesia(row) {
-        const province = replaceLocationInput(row, 'province', true, 'Memuat provinsi...');
-        const city = replaceLocationInput(row, 'city', true, 'Pilih provinsi terlebih dahulu');
-        let postal = replaceLocationInput(row, 'zip_code', true, 'Pilih kota/kabupaten terlebih dahulu');
+        const province = replaceLocationInput(row, 'province', true, addressCopy.loadingProvinces);
+        const city = replaceLocationInput(row, 'city', true, addressCopy.selectProvinceFirst);
+        let postal = replaceLocationInput(row, 'zip_code', true, addressCopy.selectRegencyFirst);
         city.disabled = true;
         postal.disabled = true;
-        select2(province, 'Pilih provinsi');
-        select2(city, 'Pilih kota/kabupaten');
-        select2(postal, 'Pilih kode pos');
+        select2(province, addressCopy.selectProvince);
+        select2(city, addressCopy.selectRegency);
+        select2(postal, addressCopy.selectPostalCode);
 
         loadJson(provincesUrl).then(function (payload) {
             populate(province, payload.data || [], 'id', function (item) { return item.name; });
             restorePendingLocation(province, true);
         }).catch(function () {
-            province.innerHTML = '<option value="">Provinsi tidak dapat dimuat</option>';
+            province.replaceChildren(new Option(addressCopy.provinceLoadFailed, ''));
         });
 
         $(province).on('change', function () {
-            resetLocationSelect(city, province.value ? 'Memuat kota/kabupaten...' : 'Pilih provinsi terlebih dahulu', true);
-            resetLocationSelect(postal, 'Pilih kota/kabupaten terlebih dahulu', true);
+            resetLocationSelect(city, province.value ? addressCopy.loadingRegencies : addressCopy.selectProvinceFirst, true);
+            resetLocationSelect(postal, addressCopy.selectRegencyFirst, true);
             if (!province.value) return;
             loadJson(regenciesUrl.replace('__PROVINCE__', encodeURIComponent(province.value))).then(function (payload) {
                 populate(city, payload.data || [], 'id', function (item) { return item.name; });
                 restorePendingLocation(city, true);
             }).catch(function () {
-                resetLocationSelect(city, 'Kota/kabupaten tidak dapat dimuat', true);
+            resetLocationSelect(city, addressCopy.regencyLoadFailed, true);
             });
         });
 
         $(city).on('change', function () {
-            resetLocationSelect(postal, city.value ? 'Memuat kode pos...' : 'Pilih kota/kabupaten terlebih dahulu', true);
+            resetLocationSelect(postal, city.value ? addressCopy.loadingPostalCodes : addressCopy.selectRegencyFirst, true);
             if (!city.value) return;
             loadJson(postalCodesUrl.replace('__REGENCY__', encodeURIComponent(city.value))).then(function (payload) {
                 const items = payload.data || [];
                 if (!items.length) {
-                    resetLocationSelect(postal, 'Kode pos belum tersedia untuk kota/kabupaten ini', true);
+                    resetLocationSelect(postal, addressCopy.postalCodeUnavailable, true);
                     return;
                 }
                 populate(postal, items, 'postal_code', function (item) {
@@ -454,7 +494,7 @@ window.addEventListener('load', function () {
         const country = field(row, 'country_code');
         $(country).select2({
             width: '100%',
-            placeholder: 'Pilih negara',
+            placeholder: addressCopy.selectCountry,
             templateResult: countryOptionMarkup,
             templateSelection: countryOptionMarkup
         });
@@ -487,7 +527,7 @@ window.addEventListener('load', function () {
         const status = row.querySelector('[data-coordinate-status]');
         if (!query) {
             status.textContent = 'Masukkan alamat yang akan dicari.';
-            showPartnerToast('Pencarian Alamat', 'Masukkan alamat yang akan dicari.', 'warning');
+            showPartnerToast(addressCopy.searchTitle, addressCopy.enterSearch, 'warning');
             return;
         }
         search.disabled = true;
@@ -503,18 +543,18 @@ window.addEventListener('load', function () {
             setCoordinateValues(row, payload.data.latitude, payload.data.longitude);
             field(row, 'geocoded_address').value = payload.data.display_name || query;
             field(row, 'geocoded_address').dispatchEvent(new Event('input', { bubbles: true }));
-            status.textContent = 'Koordinat ditemukan: ' + payload.data.latitude + ', ' + payload.data.longitude;
+            status.textContent = addressCopy.coordinateFound.replace(':coordinate', payload.data.latitude + ', ' + payload.data.longitude);
             showCoordinates(row, payload.data.latitude, payload.data.longitude);
-            showPartnerToast('Pencarian Alamat', 'Alamat berhasil ditemukan.', 'success');
+            showPartnerToast(addressCopy.searchTitle, addressCopy.addressFound, 'success');
         }).catch(function () {
             clearCoordinates(row);
-            status.textContent = 'Koordinat tidak ditemukan. Form tetap dapat dilanjutkan.';
-            showPartnerToast('Pencarian Alamat', 'Alamat tidak ditemukan.', 'danger');
+            status.textContent = addressCopy.coordinateNotFound;
+            showPartnerToast(addressCopy.searchTitle, addressCopy.addressNotFound, 'danger');
         }).finally(function () { search.disabled = false; });
     });
 
     document.getElementById('add_branch').addEventListener('click', function () {
-        addAddress('branch', 'Alamat Cabang');
+        addAddress('branch', addressCopy.branchAddress);
     });
     sameAsLegal.addEventListener('change', setOperationalVisibility);
     rows.addEventListener('partner:draft-location-ready', function (event) {
@@ -551,15 +591,15 @@ window.addEventListener('load', function () {
             hasShownAddressGuidance = true;
             Swal.fire({
                 icon: 'info',
-                title: 'Tips mencari titik alamat',
-                html: 'Cari menggunakan nama tempat umum atau alamat terdekat, lalu geser pin atau klik peta untuk menentukan lokasi yang lebih tepat.',
-                confirmButtonText: 'Mengerti',
+                title: addressCopy.mapGuidanceTitle,
+                text: addressCopy.mapGuidance,
+                confirmButtonText: addressCopy.understand,
                 confirmButtonColor: '#6558d3'
             });
         }
     });
-    addAddress('legal', 'Alamat Legal (sesuai NPWP)');
-    addAddress('operational', 'Alamat Operasional');
+    addAddress('legal', addressCopy.legalAddress);
+    addAddress('operational', addressCopy.operationalAddress);
     setOperationalVisibility();
 });
 </script>

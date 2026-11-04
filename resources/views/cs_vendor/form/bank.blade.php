@@ -1,7 +1,7 @@
 <div class="card card-info">
     <div class="card-header">
         <h3 class="card-title">
-            @lang('messages.Data Bank')
+            {{ __('messages.Data Bank') }}
         </h3>
         {{-- <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -12,20 +12,20 @@
     <div class="card-body">
         <div class="row partner-form-section">
             <fieldset class="partner-fieldset mb-4">
-                <legend class="float-none w-auto text-bold">@lang('messages.Data Bank')</legend>
+                <legend class="float-none w-auto text-bold">{{ __('messages.Data Bank') }}</legend>
                 <div class="row mt-4">
                     <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                        <label for="bank_name_0">@lang('messages.Bank Name') <span class="text-danger" role="alert">*</span></label>
+                        <label for="bank_name_0">{{ __('messages.Bank Name') }} <span class="text-danger" role="alert">*</span></label>
                         <input type="text" name="bank_name[]" id="bank_name_0" class="form-control" maxlength="255" data-bank-name required>
                         <span class="text-danger mt-2" id="message_bank_name" role="alert"></span>
                     </div>
                     <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                        <label for="account_name_0">@lang('messages.Account Name') <span class="text-danger" role="alert">*</span></label>
+                        <label for="account_name_0">{{ __('messages.Account Name') }} <span class="text-danger" role="alert">*</span></label>
                         <input type="text" name="account_name[]" id="account_name_0" class="form-control" maxlength="255" data-alpha-spaces required>
                         <span class="text-danger mt-2" id="message_account_name" role="alert"></span>
                     </div>
                     <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                        <label for="account_number_0">@lang('messages.Account Number') <span class="text-danger" role="alert">*</span></label>
+                        <label for="account_number_0">{{ __('messages.Account Number') }} <span class="text-danger" role="alert">*</span></label>
                         <input type="text"
                             name="account_number[]"
                             id="account_number_0"

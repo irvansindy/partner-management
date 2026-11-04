@@ -262,7 +262,8 @@
             }
 
             .approval-modal .form-control,
-            .approval-modal .select2-container--default .select2-selection--single {
+            .approval-modal .select2-container--default .select2-selection--single,
+            .approval-modal .select2-container--default .select2-selection--multiple {
                 border-color: #cfd2df;
                 border-radius: 7px;
                 min-height: 43px;
@@ -272,6 +273,21 @@
                 display: block;
                 max-width: 100%;
                 width: 100% !important;
+            }
+
+            .approval-modal .select2-selection--multiple {
+                border: 1px solid #cfd2df !important;
+                box-shadow: none;
+                min-height: 44px;
+                padding: 4px 8px;
+            }
+
+            .approval-modal .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                background: var(--approval-primary-soft);
+                border: 0;
+                color: #343646;
+                margin-top: 3px;
+                padding: 4px 8px;
             }
 
             .approval-modal .select2-selection--single {
@@ -427,7 +443,7 @@
 
             .approver-list { display: grid; gap: 10px; }
             .approver-step-card {
-                align-items: center;
+                align-items: start;
                 background: #fff;
                 border: 1px solid var(--approval-border);
                 border-radius: 9px;

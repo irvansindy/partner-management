@@ -54,10 +54,32 @@
                     title: 'Action',
                     wrap: true,
                     "render": function(item) {
-                        return `
-                            <button type="button" data-id="${item.id}" class="btn btn-outline-info btn-sm mt-2 edit_ip_address" data-toggle="modal" data-target="#formIpAddress">Edit</button>
-                            <button type="button" data-id="${item.id}" class="btn btn-outline-danger btn-sm mt-2 delete_ip_address">Delete</button>
-                        `;
+                        let editButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--edit edit_ip_address',
+                            html: '<i class="fas fa-pen" aria-hidden="true"></i>',
+                            title: 'Edit IP address',
+                            'aria-label': 'Edit IP address',
+                            'data-id': item.id,
+                            'data-toggle': 'modal',
+                            'data-target': '#formIpAddress'
+                        });
+                        let deleteButton = $('<button>', {
+                            type: 'button',
+                            class: 'table-action table-action--delete delete_ip_address',
+                            html: '<i class="fas fa-trash" aria-hidden="true"></i>',
+                            title: 'Delete IP address',
+                            'aria-label': 'Delete IP address',
+                            'data-id': item.id
+                        });
+
+                        return $('<div>', {
+                            class: 'table-actions',
+                            role: 'group',
+                            'aria-label': 'IP address actions'
+                        })
+                            .append(editButton, deleteButton)
+                            .prop('outerHTML');
                     }
                 }
             ],

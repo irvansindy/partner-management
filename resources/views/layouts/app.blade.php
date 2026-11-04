@@ -86,7 +86,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     @foreach (config('locales.supported') as $code => $label)
-                        <a class="dropdown-item" href="{{ route('locale.switch', $code) }}">{{ $label }}</a>
+                        <a class="dropdown-item" href="{{ route('locale.switch', ['locale' => $code, 'return_to' => request()->getRequestUri()]) }}">{{ $label }}</a>
                     @endforeach
                 </div>
             </div>

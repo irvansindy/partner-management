@@ -10,6 +10,7 @@
     @endphp
 
     @push('styles')
+        <link rel="stylesheet" href="{{ asset('vendor/sweetalert2/sweetalert2.min.css') }}">
         <style>
             .approval-action-shell { color: #292b3a; padding: 26px 0 40px; }
             .approval-action-header { align-items: flex-end; display: flex; gap: 20px; justify-content: space-between; margin-bottom: 24px; }
@@ -119,6 +120,31 @@
                                 </div>
                                 @error('action')<span class="text-danger small d-block mt-2">{{ $message }}</span>@enderror
                             </div>
+                            @if($requiresFinancialTerms)
+                                <div class="approval-guidance" role="note">
+                                    <i class="fas fa-coins" aria-hidden="true"></i>
+                                    <p>Nilai ini akan menggantikan data customer ketika Anda memilih Approve. Field tidak wajib untuk Reject.</p>
+                                </div>
+                                <div class="approval-summary">
+                                    <div class="approval-field">
+                                        <label for="term_of_payment">Term of payment <span class="text-danger">*</span></label>
+                                        <input type="text" name="term_of_payment" id="term_of_payment"
+                                            class="form-control @error('term_of_payment') is-invalid @enderror"
+                                            maxlength="255" value="{{ old('term_of_payment', $company->term_of_payment) }}"
+                                            placeholder="Contoh: 30 hari">
+                                        @error('term_of_payment')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                                    </div>
+                                    <div class="approval-field">
+                                        <label for="credit_limit">Credit limit <span class="text-danger">*</span></label>
+                                        <input type="number" name="credit_limit" id="credit_limit"
+                                            class="form-control @error('credit_limit') is-invalid @enderror"
+                                            min="0" max="2147483647" step="1"
+                                            value="{{ old('credit_limit', $company->credit_limit) }}"
+                                            placeholder="0">
+                                        @error('credit_limit')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                                    </div>
+                                </div>
+                            @endif
                             <div class="approval-field">
                                 <label for="notes">Notes / Comments <span class="text-muted font-weight-normal">(Wajib jika memilih Reject)</span></label>
                                 <textarea name="notes" id="notes" class="form-control @error('notes') is-invalid @enderror" rows="4"
@@ -172,6 +198,7 @@
                                     <td>
                                         @if($previousStep->isApproved())<span class="badge badge-success">Approved</span>
                                         @elseif($previousStep->isRejected())<span class="badge badge-danger">Rejected</span>
+                                        @elseif($previousStep->isSkipped())<span class="badge badge-secondary">Skipped</span>
                                         @else<span class="badge badge-secondary">Pending</span>@endif
                                     </td>
                                     <td>{{ $previousStep->notes }}</td>
@@ -187,22 +214,49 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script>
         $(function () {
             const $form = $('#approvalDecisionForm');
             const $notes = $('#notes');
             const $submit = $('#submitBtn');
+            const $financialFields = $('#term_of_payment, #credit_limit');
+            const requiresFinancialTerms = @json($requiresFinancialTerms);
             function syncDecision() {
                 const action = $form.find('input[name="action"]:checked').val();
                 $notes.prop('required', action === 'reject');
+                $financialFields.prop('required', requiresFinancialTerms && action === 'approve');
                 $submit.toggleClass('btn-danger', action === 'reject').toggleClass('btn-primary', action !== 'reject');
             }
             function syncCount() { $('#notesCount').text($notes.val().length); }
             $form.find('input[name="action"]').on('change', syncDecision);
             $notes.on('input', syncCount);
             $form.on('submit', function (event) {
+                event.preventDefault();
                 const action = $form.find('input[name="action"]:checked').val();
-                if (!window.confirm('Submit this ' + action + ' decision? This action cannot be undone.')) event.preventDefault();
+                const isReject = action === 'reject';
+
+                Swal.fire({
+                    title: isReject ? 'Tolak pengajuan ini?' : 'Setujui pengajuan ini?',
+                    text: isReject
+                        ? 'Pengajuan akan ditolak dan proses approval dihentikan.'
+                        : (requiresFinancialTerms
+                            ? 'Pengajuan akan disetujui dan nilai term of payment serta credit limit akan disimpan.'
+                            : 'Pengajuan akan disetujui dan dilanjutkan ke tahap berikutnya.'),
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: isReject ? 'Ya, tolak' : 'Ya, setujui',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: isReject ? '#dc3545' : '#6c5dd3',
+                    cancelButtonColor: '#6c757d',
+                    reverseButtons: true,
+                    focusCancel: true
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        $submit.prop('disabled', true);
+                        $form[0].submit();
+                    }
+                });
             });
             syncDecision();
             syncCount();

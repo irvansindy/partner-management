@@ -89,6 +89,98 @@
             font-weight: 600;
         }
 
+        .public-header-actions,
+        .public-locale {
+            align-items: center;
+            display: flex;
+        }
+
+        .public-header-actions { gap: 18px; }
+        .public-locale { gap: 8px; }
+        .public-locale__label {
+            color: var(--public-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .public-locale__control {
+            position: relative;
+            width: 5rem;
+            height: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .public-locale__input {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .public-locale__track {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 3px;
+            overflow: hidden;
+            border: 1px solid #cbd2dc;
+            border-radius: 999px;
+            background: #f0f2f6;
+            cursor: pointer;
+        }
+
+        .public-locale__track::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            bottom: 3px;
+            left: 3px;
+            width: calc(50% - 3px);
+            border-radius: 999px;
+            background: var(--public-primary);
+            box-shadow: 0 1px 3px rgba(32, 38, 56, .2);
+            transition: transform .18s ease;
+        }
+
+        .public-locale__option {
+            position: relative;
+            z-index: 1;
+            color: #596274;
+            font-size: .7rem;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            letter-spacing: .02em;
+            transition: color .18s ease;
+        }
+
+        .public-locale__input:not(:checked) + .public-locale__track .public-locale__option:first-child,
+        .public-locale__input:checked + .public-locale__track .public-locale__option:last-child {
+            color: #fff;
+        }
+
+        .public-locale__input:checked + .public-locale__track::before {
+            transform: translateX(100%);
+        }
+
+        .public-locale__input:hover + .public-locale__track {
+            border-color: #9ba5b4;
+        }
+
+        .public-locale__input:focus-visible + .public-locale__track {
+            outline: 3px solid var(--public-primary-dark);
+            outline-offset: 2px;
+        }
+
         .public-main {
             margin: 0 auto;
             max-width: 1240px;
@@ -116,12 +208,20 @@
             }
 
             .public-brand-caption,
-            .public-header-label {
+            .public-header-label,
+            .public-locale__label {
                 display: none;
             }
 
             .public-main {
                 padding: 24px 14px 36px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .public-locale__track::before,
+            .public-locale__option {
+                transition: none;
             }
         }
     </style>
@@ -133,9 +233,41 @@
             <a class="public-brand" href="/">
                 <img src="{{ asset('uploads/logo/logo.png') }}" alt="Company logo">
                 <span>PARTNER MANAGEMENT</span>
-                <span class="public-brand-caption">External Partner Portal</span>
+                <span class="public-brand-caption">{{ __('messages.Public Portal Caption') }}</span>
             </a>
-            <span class="public-header-label">SECURE REGISTRATION</span>
+            <div class="public-header-actions">
+                <span class="public-header-label">{{ __('messages.Public Secure Registration') }}</span>
+                <nav class="public-locale" aria-label="{{ __('messages.Public Language') }}">
+                    <span class="public-locale__label">{{ __('messages.Public Language') }}</span>
+                    @php
+                        $isEnglishLocale = app()->getLocale() === 'en';
+                        $indonesianLocaleUrl = route('locale.switch', [
+                            'locale' => 'id',
+                            'return_to' => request()->getRequestUri(),
+                        ]);
+                        $englishLocaleUrl = route('locale.switch', [
+                            'locale' => 'en',
+                            'return_to' => request()->getRequestUri(),
+                        ]);
+                    @endphp
+                    <div class="form-check form-switch public-locale__control">
+                        <input
+                            class="form-check-input public-locale__input"
+                            type="checkbox"
+                            role="switch"
+                            id="public_locale_switch"
+                            aria-label="{{ __('messages.Public Language') }}"
+                            data-id-url="{{ $indonesianLocaleUrl }}"
+                            data-en-url="{{ $englishLocaleUrl }}"
+                            @if($isEnglishLocale) checked @endif
+                        >
+                        <label class="public-locale__track" for="public_locale_switch">
+                            <span class="public-locale__option">ID</span>
+                            <span class="public-locale__option">EN</span>
+                        </label>
+                    </div>
+                </nav>
+            </div>
         </div>
     </header>
 
@@ -144,7 +276,7 @@
     </main>
 
     <footer class="public-footer">
-        &copy; {{ date('Y') }} Partner Management. All rights reserved.
+        &copy; {{ date('Y') }} {{ __('messages.Public Copyright') }}
     </footer>
 
     <!-- jQuery -->
@@ -170,6 +302,12 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="{{ asset('js/cdn/leaflet_geocoder.js') }}"></script>
+
+    <script>
+        document.getElementById('public_locale_switch')?.addEventListener('change', function () {
+            window.location.assign(this.checked ? this.dataset.enUrl : this.dataset.idUrl);
+        });
+    </script>
 
     @yield('js')
 </body>

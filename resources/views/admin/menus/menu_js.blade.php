@@ -112,15 +112,15 @@
             return (_, row) => {
                 const id = row.cells[0].data;
                 return gridjs.html(`
-                    <div class="d-flex justify-content-end gap-2">
+                    <div class="table-actions" role="group" aria-label="Menu actions">
                         ${showSubmenuButton ? `
-                        <button type="button" class="btn btn-outline-secondary waves-effect waves-light check_list_submenu" data-bs-toggle="modal" data-bs-target="#ModalListSubMenu" data-master_id="${id}" title="list submenu">
+                        <button type="button" class="table-action table-action--copy check_list_submenu" data-bs-toggle="modal" data-bs-target="#ModalListSubMenu" data-master_id="${id}" title="List submenus" aria-label="List submenus">
                             <i class="fa fa-list-alt" aria-hidden="true"></i>
                         </button>` : ''}
-                        <button type="button" class="btn btn-outline-info waves-effect waves-light ${showSubmenuButton ? 'detail_menu' : 'detail_submenu'}" data-bs-toggle="modal" data-bs-target="#formCreateMenu" data-detail_id="${id}" title="detail menu">
+                        <button type="button" class="table-action table-action--view ${showSubmenuButton ? 'detail_menu' : 'detail_submenu'}" data-bs-toggle="modal" data-bs-target="#formCreateMenu" data-detail_id="${id}" title="View menu" aria-label="View menu">
                             <i class="fas fa-eye" aria-hidden="true"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-danger waves-effect waves-light delete_menu" data-id="${id}" title="delete menu">
+                        <button type="button" class="table-action table-action--delete delete_menu" data-id="${id}" title="Delete menu" aria-label="Delete menu">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
                     </div>

@@ -61,6 +61,8 @@
                     <a class="nav-link right-sidebar-link" href="#"><i class="material-icons">more_vert</i></a>
                 </li>
 
+                @include('adminlte::partials.navbar.locale-switch')
+
                 {{-- User dropdown --}}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

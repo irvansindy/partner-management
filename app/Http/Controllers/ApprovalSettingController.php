@@ -34,7 +34,7 @@ class ApprovalSettingController extends Controller
                         'department_id' => $template->department_id,
                         'office' => $template->office->name ?? '-',
                         'department' => $template->department->name ?? '-',
-                        'total_steps' => $template->details->count(),
+                        'total_steps' => $template->details->pluck('step_ordering')->unique()->count(),
                         'status' => $template->isActive() ? 'Active' : 'Inactive',
                         'created_by' => $template->user->name ?? '-',
                         'created_at' => $template->created_at->format('d M Y'),
@@ -67,23 +67,30 @@ class ApprovalSettingController extends Controller
                 ->get();
                 // dd($users);
             // Ambil existing approvers
-            $existingApprovers = ApprovalTemplateDetail::forTemplate($request->master_approval_id)
+            $existingStages = ApprovalTemplateDetail::forTemplate($request->master_approval_id)
                 ->with('user:id,name,email')
                 ->get()
-                ->map(function ($detail) {
+                ->groupBy('step_ordering')
+                ->map(function ($details, $stepOrdering) {
                     return [
-                        'id' => $detail->id,
-                        'user_id' => $detail->user_id,
-                        'user_name' => optional($detail->user)->name ?? 'User tidak tersedia',
-                        'user_email' => optional($detail->user)->email ?? '-',
-                        'step_ordering' => $detail->step_ordering,
-                        'status' => $detail->status,
+                        'step_ordering' => (int) $stepOrdering,
+                        'user_ids' => $details->pluck('user_id')->values()->all(),
+                        'approvers' => $details->map(function ($detail) {
+                            return [
+                                'id' => $detail->id,
+                                'user_id' => $detail->user_id,
+                                'user_name' => optional($detail->user)->name ?? 'User tidak tersedia',
+                                'user_email' => optional($detail->user)->email ?? '-',
+                                'status' => $detail->status,
+                            ];
+                        })->values()->all(),
                     ];
-                });
+                })
+                ->values();
 
             return FormatResponseJson::success([
                 'users' => $users,
-                'existing_approvers' => $existingApprovers,
+                'existing_stages' => $existingStages,
                 'template' => [
                     'id' => $template->id,
                     'name' => $template->name,
@@ -191,36 +198,54 @@ class ApprovalSettingController extends Controller
                     'integer',
                     'exists:approval_templates,id'
                 ],
-                'stagging_approval_name' => [
+                'approval_stages' => [
                     'required',
                     'array',
-                    'min:1', // Minimal 1 approver
-                    'max:10', // Maksimal 10 approver
+                    'min:1',
+                    'max:10',
                 ],
-                'stagging_approval_name.*' => [
+                'approval_stages.*.user_ids' => [
+                    'required',
+                    'array',
+                    'min:1',
+                    'max:10',
+                ],
+                'approval_stages.*.user_ids.*' => [
                     'required',
                     'integer',
-                    'distinct', // Tidak boleh ada user yang sama
+                    'distinct',
                     'exists:users,id',
                 ],
             ], [
                 'master_approval_id.required' => 'Master Approval ID wajib diisi',
                 'master_approval_id.exists' => 'Master Approval tidak ditemukan',
 
-                'stagging_approval_name.required' => 'Minimal satu approver harus dipilih',
-                'stagging_approval_name.array' => 'Format approver tidak valid',
-                'stagging_approval_name.min' => 'Minimal harus ada 1 approver',
-                'stagging_approval_name.max' => 'Maksimal 10 approver',
-
-                'stagging_approval_name.*.distinct' => 'Tidak boleh ada approver yang sama',
-                'stagging_approval_name.*.exists' => 'Salah satu user yang dipilih tidak valid',
+                'approval_stages.required' => 'Minimal satu tahap approval harus dibuat',
+                'approval_stages.min' => 'Minimal satu tahap approval harus dibuat',
+                'approval_stages.max' => 'Maksimal 10 tahap approval',
+                'approval_stages.*.user_ids.required' => 'Setiap tahap harus memiliki minimal satu PIC',
+                'approval_stages.*.user_ids.min' => 'Setiap tahap harus memiliki minimal satu PIC',
+                'approval_stages.*.user_ids.max' => 'Maksimal 10 PIC dalam satu tahap',
+                'approval_stages.*.user_ids.*.distinct' => 'PIC yang sama tidak boleh dipilih lebih dari sekali',
+                'approval_stages.*.user_ids.*.exists' => 'Salah satu PIC yang dipilih tidak valid',
             ]);
 
         if ($validator->fails()) {
             return FormatResponseJson::error(null, ['errors' => $validator->errors()], 422);
         }
 
-        $invalidUsers = User::whereIn('id', $request->stagging_approval_name)
+        $allUserIds = collect($request->approval_stages)
+            ->flatMap(fn ($stage) => $stage['user_ids'] ?? [])
+            ->map(fn ($userId) => (int) $userId)
+            ->all();
+
+        if (count($allUserIds) !== count(array_unique($allUserIds))) {
+            return FormatResponseJson::error(null, [
+                'errors' => ['approval_stages' => ['PIC yang sama tidak boleh digunakan pada tahap berbeda.']],
+            ], 422);
+        }
+
+        $invalidUsers = User::whereIn('id', $allUserIds)
             ->whereDoesntHave('roles', function($q) {
                 $q->whereIn('name', ['admin', 'super-user']);
             })
@@ -238,21 +263,24 @@ class ApprovalSettingController extends Controller
                 ApprovalTemplate::whereKey($request->master_approval_id)->lockForUpdate()->firstOrFail();
                 ApprovalTemplateDetail::where('approval_id', $request->master_approval_id)->delete();
                 $details = [];
-                foreach ($request->stagging_approval_name as $index => $userId) {
-                    $details[] = [
-                        'approval_id' => $request->master_approval_id,
-                        'user_id' => $userId,
-                        'step_ordering' => $index + 1,
-                        'status' => 0,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
+                foreach ($request->approval_stages as $stageIndex => $stage) {
+                    foreach ($stage['user_ids'] as $userId) {
+                        $details[] = [
+                            'approval_id' => $request->master_approval_id,
+                            'user_id' => $userId,
+                            'step_ordering' => $stageIndex + 1,
+                            'status' => 0,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
                 }
                 ApprovalTemplateDetail::insert($details);
                 return $details;
             }, 3);
             return FormatResponseJson::success([
                 'total_approvers' => count($details),
+                'total_stages' => count($request->approval_stages),
             ], 'Detail approver berhasil disimpan');
         } catch (\Exception $e) {
             \Log::error('Submit Approval Detail Error', ['exception' => $e]);

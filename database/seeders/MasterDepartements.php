@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\MasterDivision;
 class MasterDepartements extends Seeder
 {
     /**
@@ -13,10 +14,13 @@ class MasterDepartements extends Seeder
      */
     public function run()
     {
-        DB::table("master_departments")->insert([
-            [
-                "name"=> "Finance",
-            ],
+        $fatDivision = MasterDivision::updateOrCreate(['name' => 'FAT'], [
+            'gm_user_id' => null,
+            'office_id' => 1,
+        ]);
+
+        $departments = [
+            ['name' => 'Finance', 'division_id' => $fatDivision->id],
             [
                 "name"=> "HRD",
             ],
@@ -56,6 +60,10 @@ class MasterDepartements extends Seeder
             [
                 "name"=> "General Affair",
             ],
-        ]);
+        ];
+
+        foreach ($departments as $department) {
+            DB::table('master_departments')->updateOrInsert(['name' => $department['name']], $department);
+        }
     }
 }

@@ -33,6 +33,7 @@ class ApprovalProcessStep extends Model
     const STATUS_WAITING = 1;
     const STATUS_APPROVED = 2;
     const STATUS_REJECTED = 3;
+    const STATUS_SKIPPED = 4;
 
     // ========== RELATIONSHIPS ==========
 
@@ -90,6 +91,11 @@ class ApprovalProcessStep extends Model
         return $this->status === self::STATUS_REJECTED;
     }
 
+    public function isSkipped(): bool
+    {
+        return $this->status === self::STATUS_SKIPPED;
+    }
+
     public function approve(string $notes = null): void
     {
         $this->update([
@@ -105,6 +111,16 @@ class ApprovalProcessStep extends Model
             'status' => self::STATUS_REJECTED,
             'notes' => $notes,
             'rejected_at' => now()
+        ]);
+    }
+
+    public function skip(): void
+    {
+        $this->update([
+            'status' => self::STATUS_SKIPPED,
+            'notes' => null,
+            'approved_at' => null,
+            'rejected_at' => null,
         ]);
     }
 }

@@ -125,7 +125,10 @@ class ApprovalProcessService extends Controller
             $this->approvalService->processApprovalAction(
                 $step,
                 $request->action,
-                $request->notes
+                Auth::id(),
+                $request->notes,
+                $request->term_of_payment,
+                $request->credit_limit
             );
 
             $message = $request->action === 'approve'

@@ -99,12 +99,17 @@ class ApprovalProcess extends Model
 
     public function getCompletedStepsCount(): int
     {
-        return $this->steps()->where('status', ApprovalProcessStep::STATUS_APPROVED)->count();
+        return $this->steps()
+            ->where('status', ApprovalProcessStep::STATUS_APPROVED)
+            ->distinct('step_ordering')
+            ->count('step_ordering');
     }
 
     public function getTotalStepsCount(): int
     {
-        return $this->steps()->count();
+        return $this->steps()
+            ->distinct('step_ordering')
+            ->count('step_ordering');
     }
 
     public function getProgressPercentage(): float

@@ -18,6 +18,7 @@ class ApprovalSettingModalUiTest extends TestCase
         $this->assertStringContainsString('required maxlength="255"', $create);
         $this->assertStringContainsString('approval-modal-context', $detail);
         $this->assertStringContainsString('data-approver-list', $detail);
+        $this->assertStringContainsString('Satu persetujuan dari salah satu PIC', $detail);
         $this->assertStringContainsString('data-approval-loading', $detail);
         $this->assertStringContainsString('aria-live="polite"', $detail);
         $this->assertStringContainsString('.approval-modal .modal-content', $index);
@@ -47,6 +48,12 @@ class ApprovalSettingModalUiTest extends TestCase
         $this->assertStringContainsString(".prop('disabled', true)", $script);
         $this->assertStringContainsString('error: function', $script);
         $this->assertStringContainsString("dropdownCssClass: 'approval-select2-dropdown'", $script);
+        $this->assertStringContainsString('multiple: true', $script);
+        $this->assertStringContainsString('approval_stages[', $script);
+        $this->assertStringContainsString('existing_stages', $script);
+        $this->assertStringContainsString('new Set(allUserIds)', $script);
+        $this->assertStringContainsString('const stages = [];', $script);
+        $this->assertStringContainsString(".each(function ()", $script);
         $this->assertStringContainsString("select(['id', 'name', 'email'])", $controller);
     }
 }

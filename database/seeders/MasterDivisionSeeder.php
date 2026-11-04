@@ -15,6 +15,11 @@ class MasterDivisionSeeder extends Seeder
     {
         $divisions = [
             [
+                'name' => 'FAT',
+                'gm_user_id' => null,
+                'office_id' => 1,
+            ],
+            [
                 'name' => 'Manufacturing',
                 'gm_user_id' => null,
                 'office_id' => 2,
@@ -32,7 +37,7 @@ class MasterDivisionSeeder extends Seeder
         ];
 
         foreach ($divisions as $division) {
-            MasterDivision::create($division);
+            MasterDivision::updateOrCreate(['name' => $division['name']], $division);
         }
     }
 }

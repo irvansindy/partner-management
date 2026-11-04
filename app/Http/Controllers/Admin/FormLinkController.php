@@ -170,8 +170,6 @@ class FormLinkController extends Controller
         $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
         $company->load(['contact', 'address', 'bank', 'liablePeople', 'attachment']);
 
-        $header = '<table width="100%"><tr><td></td></tr></table>'; // spacer, header sudah di dalam view
-
         $footer = '<hr>
         <table width="100%" style="font-size: 9px;">
             <tr>
@@ -193,9 +191,14 @@ class FormLinkController extends Controller
         $html = view('admin.form_links.export_submission_pdf', compact('company'))->render();
         $mpdf->WriteHTML($html);
 
-        ob_clean();
         $filename = 'form_penyedia_' . \Str::slug($company->name) . '_' . date('Y-m-d') . '.pdf';
-        $mpdf->Output($filename, 'I');
+        $pdf = $mpdf->Output('', 'S');
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Length' => strlen($pdf),
+        ]);
     }
 
     /**

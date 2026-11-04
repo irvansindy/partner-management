@@ -66,6 +66,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(MasterDepartment::class, 'id', 'department_id');
     }
+
+    public function isFatFinanceApprover(): bool
+    {
+        $divisionName = trim((string) optional($this->division)->name);
+        $departmentName = trim((string) optional($this->dept)->name);
+
+        return strcasecmp($divisionName, 'FAT') === 0
+            && strcasecmp($departmentName, 'Finance') === 0;
+    }
     public function jobTitle()
     {
         return $this->belongsTo(MasterJobTitles::class, 'job_title_id');

@@ -116,7 +116,7 @@
                 <div class="approval-timeline">
                     @foreach($approval->steps as $step)
                         @php
-                            $stepStatus = $step->isApproved() ? 'Approved' : ($step->isRejected() ? 'Rejected' : ($step->isWaiting() ? 'Waiting' : 'Pending'));
+                            $stepStatus = $step->isApproved() ? 'Approved' : ($step->isRejected() ? 'Rejected' : ($step->isSkipped() ? 'Skipped' : ($step->isWaiting() ? 'Waiting' : 'Pending')));
                             $stepClass = $step->isApproved() ? 'success' : ($step->isRejected() ? 'danger' : ($step->isWaiting() ? 'warning' : 'secondary'));
                             $actedAt = $step->approved_at ?? $step->rejected_at;
                         @endphp
