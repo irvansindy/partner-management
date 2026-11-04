@@ -5,6 +5,25 @@
         const regencyUrl = @json(route('fetch-regency-summary'));
         const customerUrl = @json(route('fetch-recent-customer'));
         const vendorUrl = @json(route('fetch-recent-vendor'));
+        const dashboardText = {
+            customer: @json(__('messages.Dashboard Customer')),
+            vendor: @json(__('messages.Dashboard Vendor')),
+            partner: @json(__('messages.Dashboard Partner')),
+            noPartnerData: @json(__('messages.Dashboard No Partner Data')),
+            approvedPartnersAxis: @json(__('messages.Dashboard Approved Partners Axis')),
+            distributionInProvince: @json(__('messages.Dashboard Distribution In Province', ['province' => '__PROVINCE__'])),
+            cityDistributionLoadFailed: @json(__('messages.Dashboard City Distribution Load Failed')),
+            recentPartnersEmpty: @json(__('messages.Dashboard Recent Partners Empty')),
+            loadingPartners: @json(__('messages.Dashboard Loading Partners')),
+            partnerLocationsLoadFailed: @json(__('messages.Dashboard Partner Locations Load Failed')),
+            summaryLoadFailed: @json(__('messages.Dashboard Summary Load Failed')),
+            tableSearch: @json(__('messages.Dashboard Table Search')),
+            tableInfo: @json(__('messages.Dashboard Table Info')),
+            tableInfoEmpty: @json(__('messages.Dashboard Table Info Empty')),
+            tableZeroRecords: @json(__('messages.Dashboard Table Zero Records')),
+            tablePrevious: @json(__('messages.Dashboard Table Previous')),
+            tableNext: @json(__('messages.Dashboard Table Next'))
+        };
         const $status = $('#dashboard-status');
         let regencyChartInstance = null;
 
@@ -28,11 +47,11 @@
             new ApexCharts($chart.get(0), {
                 chart: { type: 'donut', height: 300 },
                 series: [customerCount, vendorCount],
-                labels: ['Customer', 'Vendor'],
+                labels: [dashboardText.customer, dashboardText.vendor],
                 colors: ['#2f80a8', '#e0a13b'],
                 legend: { position: 'bottom' },
                 dataLabels: { enabled: true },
-                noData: { text: 'No partner data' }
+                noData: { text: dashboardText.noPartnerData }
             }).render();
         }
 
@@ -46,7 +65,7 @@
 
             if (vendorRows.length) {
                 series.push({
-                    name: 'Vendor',
+                    name: dashboardText.vendor,
                     data: provinceNames.map(function (name) {
                         const row = vendorRows.find(function (item) { return item.province === name; });
                         return row ? Number(row.total) : 0;
@@ -56,7 +75,7 @@
 
             if (customerRows.length) {
                 series.push({
-                    name: 'Customer',
+                    name: dashboardText.customer,
                     data: provinceNames.map(function (name) {
                         const row = customerRows.find(function (item) { return item.province === name; });
                         return row ? Number(row.total) : 0;
@@ -90,7 +109,7 @@
                 plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } },
                 dataLabels: { enabled: false },
                 xaxis: { categories: provinceNames, labels: { rotate: -35 } },
-                yaxis: { min: 0, forceNiceScale: true, title: { text: 'Approved partners' } },
+                yaxis: { min: 0, forceNiceScale: true, title: { text: dashboardText.approvedPartnersAxis } },
                 legend: { position: 'bottom' },
                 tooltip: { shared: true, intersect: false }
             }).render();
@@ -112,7 +131,7 @@
 
             if (vendorRows.length) {
                 series.push({
-                    name: 'Vendor',
+                    name: dashboardText.vendor,
                     data: cities.map(function (city) {
                         const row = vendorRows.find(function (item) { return item.city === city; });
                         return row ? Number(row.total) : 0;
@@ -121,7 +140,7 @@
             }
             if (customerRows.length) {
                 series.push({
-                    name: 'Customer',
+                    name: dashboardText.customer,
                     data: cities.map(function (city) {
                         const row = customerRows.find(function (item) { return item.city === city; });
                         return row ? Number(row.total) : 0;
@@ -149,7 +168,9 @@
 
         function loadRegencyChart(provinceName) {
             const $modal = $('#regencyModal');
-            $('#regencyModalLabel').text('Partner distribution in ' + provinceName);
+            $('#regencyModalLabel').text(
+                dashboardText.distributionInProvince.replace('__PROVINCE__', provinceName)
+            );
             $('#regency-chart').empty().removeClass('d-none');
             $('#regency-chart-empty').addClass('d-none');
 
@@ -171,7 +192,7 @@
                 },
                 error: function () {
                     $('#regency-chart').addClass('d-none');
-                    $('#regency-chart-empty').text('Unable to load city distribution.').removeClass('d-none');
+                    $('#regency-chart-empty').text(dashboardText.cityDistributionLoadFailed).removeClass('d-none');
                     $modal.modal('show');
                 }
             });
@@ -200,8 +221,16 @@
                     { data: 'status', defaultContent: '-', render: $.fn.dataTable.render.text() }
                 ],
                 language: {
-                    emptyTable: 'No recent partners found',
-                    processing: 'Loading partners...'
+                    emptyTable: dashboardText.recentPartnersEmpty,
+                    processing: dashboardText.loadingPartners,
+                    search: dashboardText.tableSearch,
+                    info: dashboardText.tableInfo,
+                    infoEmpty: dashboardText.tableInfoEmpty,
+                    zeroRecords: dashboardText.tableZeroRecords,
+                    paginate: {
+                        previous: dashboardText.tablePrevious,
+                        next: dashboardText.tableNext
+                    }
                 }
             });
         }
@@ -244,9 +273,9 @@
 
                         const popup = document.createElement('div');
                         const title = document.createElement('strong');
-                        title.textContent = isCustomer ? 'Customer' : 'Vendor';
+                        title.textContent = isCustomer ? dashboardText.customer : dashboardText.vendor;
                         const name = document.createElement('div');
-                        name.textContent = point.name || 'Partner';
+                        name.textContent = point.name || dashboardText.partner;
                         const address = document.createElement('div');
                         address.textContent = point.address || '';
                         popup.append(title, name, address);
@@ -262,7 +291,7 @@
                     }
                 },
                 error: function () {
-                    $('#dashboard-map-empty').text('Unable to load partner locations.').removeClass('d-none');
+                    $('#dashboard-map-empty').text(dashboardText.partnerLocationsLoadFailed).removeClass('d-none');
                 }
             });
         }
@@ -281,7 +310,7 @@
                 renderProvinceChart(data.total_partner_location || {});
             },
             error: function () {
-                showDashboardError('Dashboard summary could not be loaded. Refresh the page to try again.');
+                showDashboardError(dashboardText.summaryLoadFailed);
                 $('.dashboard-metric-value').text('—');
             }
         });

@@ -1,4 +1,47 @@
 <script>
+    const rolePermissionText = {
+        success: @json(__('messages.Role Permission Success')),
+        error: @json(__('messages.Role Permission Error')),
+        notSet: @json(__('messages.Role Permission Not Set')),
+        actions: @json(__('messages.Role Permission Actions')),
+        viewRole: @json(__('messages.Role Permission View Role')),
+        deleteRole: @json(__('messages.Role Permission Delete Role')),
+        viewPermission: @json(__('messages.Role Permission View Permission')),
+        managePermissions: @json(__('messages.Role Permission Manage Permissions')),
+        roleActions: @json(__('messages.Role Permission Role Actions')),
+        permissionActions: @json(__('messages.Role Permission Permission Actions')),
+        selectMenu: @json(__('messages.Role Permission Select Menu')),
+        deleteWarning: @json(__('messages.Role Permission Delete Warning', ['name' => ':name'])),
+        deleteSuccess: @json(__('messages.Role Permission Delete Success')),
+        role: @json(__('messages.Role Permission Role')),
+        permission: @json(__('messages.Role Permission Permission')),
+        saveSuccess: @json(__('messages.Role Permission Save Success', ['type' => ':type', 'name' => ':name'])),
+        updateSuccess: @json(__('messages.Role Permission Update Success', ['type' => ':type', 'name' => ':name'])),
+        tableEmpty: @json(__('messages.Role Permission Table Empty')),
+        tableLoading: @json(__('messages.Role Permission Table Loading')),
+        tableSearch: @json(__('messages.Role Permission Table Search')),
+        tableInfo: @json(__('messages.Role Permission Table Info')),
+        tableInfoEmpty: @json(__('messages.Role Permission Table Info Empty')),
+        tableZeroRecords: @json(__('messages.Role Permission Table Zero Records')),
+        tablePrevious: @json(__('messages.Role Permission Table Previous')),
+        tableNext: @json(__('messages.Role Permission Table Next')),
+    };
+
+    function rolePermissionMessage(template, type, name) {
+        return template.replace(':type', type).replace(':name', name);
+    }
+
+    const rolePermissionTableLanguage = {
+        emptyTable: rolePermissionText.tableEmpty,
+        loadingRecords: rolePermissionText.tableLoading,
+        processing: rolePermissionText.tableLoading,
+        search: rolePermissionText.tableSearch,
+        info: rolePermissionText.tableInfo,
+        infoEmpty: rolePermissionText.tableInfoEmpty,
+        zeroRecords: rolePermissionText.tableZeroRecords,
+        paginate: { previous: rolePermissionText.tablePrevious, next: rolePermissionText.tableNext }
+    };
+
     $(document).ready(function () {
         function closeRolePermissionModal(selector) {
             let modal = $(selector);
@@ -20,7 +63,7 @@
 
         $('#role_table').DataTable({
             processing: true,
-            // serverside: true,
+            language: rolePermissionTableLanguage,
             ajax: {
                 url: '{{ route("fetch-role") }}',
                 type: 'GET',
@@ -34,20 +77,21 @@
                 },
                 {
                     "data": "name",
-                    "defaultContent": "<i>Not set</i>"
+                    "defaultContent": rolePermissionText.notSet
                 },
                 {
                     'data': null,
-                    title: 'Action',
+                    title: rolePermissionText.actions,
                     wrap: true,
                     "render": function(item) {
                         let viewButton = $('<button>', {
                             type: 'button',
                             class: 'table-action table-action--view detail_role',
                             html: '<i class="fas fa-eye" aria-hidden="true"></i>',
-                            title: 'View role',
-                            'aria-label': 'View role',
+                            title: rolePermissionText.viewRole,
+                            'aria-label': rolePermissionText.viewRole,
                             'data-role_id': item.id,
+                            'data-role_name': item.name,
                             'data-toggle': 'modal',
                             'data-target': '#formUpdateRole'
                         });
@@ -55,8 +99,8 @@
                             type: 'button',
                             class: 'table-action table-action--copy add_permission',
                             html: '<i class="fas fa-key" aria-hidden="true"></i>',
-                            title: 'Manage permissions',
-                            'aria-label': 'Manage permissions',
+                            title: rolePermissionText.managePermissions,
+                            'aria-label': rolePermissionText.managePermissions,
                             'data-role_id': item.id,
                             'data-toggle': 'modal',
                             'data-target': '#formAddPermission'
@@ -65,9 +109,10 @@
                             type: 'button',
                             class: 'table-action table-action--delete delete_role',
                             html: '<i class="fas fa-trash" aria-hidden="true"></i>',
-                            title: 'Delete role',
-                            'aria-label': 'Delete role',
+                            title: rolePermissionText.deleteRole,
+                            'aria-label': rolePermissionText.deleteRole,
                             'data-role_id': item.id,
+                            'data-role_name': item.name,
                             'data-toggle': 'modal',
                             'data-target': '#confirmDeleteRole'
                         });
@@ -75,7 +120,7 @@
                         return $('<div>', {
                             class: 'table-actions',
                             role: 'group',
-                            'aria-label': 'Role actions'
+                            'aria-label': rolePermissionText.roleActions
                         })
                             .append(viewButton, permissionButton, deleteButton)
                             .prop('outerHTML');
@@ -86,7 +131,7 @@
         
         $('#permission_table').DataTable({
             processing: true,
-            // serverside: false,
+            language: rolePermissionTableLanguage,
             ajax: {
                 url: '{{ route("fetch-permission") }}',
                 type: 'GET',
@@ -100,19 +145,19 @@
                 },
                 {
                     "data": "name",
-                    "defaultContent": "<i>Not set</i>"
+                    "defaultContent": rolePermissionText.notSet
                 },
                 {
                     'data': null,
-                    title: 'Action',
+                    title: rolePermissionText.actions,
                     wrap: true,
                     "render": function(item) {
                         let viewButton = $('<button>', {
                             type: 'button',
                             class: 'table-action table-action--view detail_permission',
                             html: '<i class="fas fa-eye" aria-hidden="true"></i>',
-                            title: 'View permission',
-                            'aria-label': 'View permission',
+                            title: rolePermissionText.viewPermission,
+                            'aria-label': rolePermissionText.viewPermission,
                             'data-permission_id': item.id,
                             'data-toggle': 'modal',
                             'data-target': '#formUpdatePermission'
@@ -121,7 +166,7 @@
                         return $('<div>', {
                             class: 'table-actions',
                             role: 'group',
-                            'aria-label': 'Permission actions'
+                            'aria-label': rolePermissionText.permissionActions
                         })
                             .append(viewButton)
                             .prop('outerHTML');
@@ -153,15 +198,15 @@
                     closeRolePermissionModal('#formCreateRole');
                     $('#role_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: rolePermissionText.success,
                         class: 'bg-success',
-                        body: 'Role '+role_name+' berhasil dibuat.'
+                        body: rolePermissionMessage(rolePermissionText.saveSuccess, rolePermissionText.role, role_name)
                     });
                 },
                 error: function(xhr, status, error) {
                     let response_error = JSON.parse(xhr.responseText);
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -193,6 +238,7 @@
                             <div class="form-group">
                                 <label for=""></label>
                                 <select class="form-select" aria-label="select menu" id="select_list_menu">
+                                    <option value="">${rolePermissionText.selectMenu}</option>
                                 </select>
                             </div>
                         `)
@@ -206,7 +252,7 @@
                     error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -234,15 +280,15 @@
                     closeRolePermissionModal('#formCreatePermission');
                     $('#permission_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: rolePermissionText.success,
                         class: 'bg-success',
-                        body: 'Role '+permission_name+' berhasil dibuat.'
+                        body: rolePermissionMessage(rolePermissionText.saveSuccess, rolePermissionText.permission, permission_name)
                     });
                 },
                 error: function(xhr, status, error) {
                     let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -272,7 +318,7 @@
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -301,15 +347,15 @@
                     closeRolePermissionModal('#formUpdateRole');
                     $('#role_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: rolePermissionText.success,
                         class: 'bg-success',
-                        body: 'Role '+update_role_name+' berhasil diubah.'
+                        body: rolePermissionMessage(rolePermissionText.updateSuccess, rolePermissionText.role, update_role_name)
                     });
                 },
                 error: function(xhr, status, error) {
                     let response_error = JSON.parse(xhr.responseText);
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -339,7 +385,7 @@
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -368,15 +414,15 @@
                     closeRolePermissionModal('#formUpdatePermission');
                     $('#permission_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: rolePermissionText.success,
                         class: 'bg-success',
-                        body: 'Permission '+update_permission_name+' berhasil diubah.'
+                        body: rolePermissionMessage(rolePermissionText.updateSuccess, rolePermissionText.permission, update_permission_name)
                     });
                 },
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -425,7 +471,7 @@
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message
                     });
@@ -450,7 +496,7 @@
                     $('#role_table').DataTable().ajax.reload();
                     // $('#formAddPermission').modal('toggle');
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: rolePermissionText.success,
                         class: 'bg-success',
                         body: res.meta.message,
                         delay: 10000,
@@ -463,7 +509,7 @@
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: rolePermissionText.error,
                         class: 'bg-danger',
                         body: response_error.meta.message,
                         delay: 10000,
@@ -475,5 +521,41 @@
                 }
             })
         })
+
+        $(document).on('click', '.delete_role', function() {
+            const roleId = $(this).data('role_id');
+            const roleName = $(this).data('role_name');
+            $('#delete_role_id').val(roleId);
+            $('#delete_role_warning').text(rolePermissionText.deleteWarning.replace(':name', roleName));
+        });
+
+        $(document).on('click', '#confirm_delete_role', function() {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("delete-role") }}',
+                type: 'POST',
+                data: { role_id: $('#delete_role_id').val() },
+                dataType: 'json',
+                success: function() {
+                    closeRolePermissionModal('#confirmDeleteRole');
+                    $('#role_table').DataTable().ajax.reload();
+                    $(document).Toasts('create', {
+                        title: rolePermissionText.success,
+                        class: 'bg-success',
+                        body: rolePermissionText.deleteSuccess
+                    });
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    $(document).Toasts('create', {
+                        title: rolePermissionText.error,
+                        class: 'bg-danger',
+                        body: response && response.meta ? response.meta.message : rolePermissionText.error
+                    });
+                }
+            });
+        });
     });
 </script>

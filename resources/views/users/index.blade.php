@@ -466,29 +466,29 @@
     <div class="user-page">
         <div class="user-page-header">
             <div>
-                <h2>User Management</h2>
-                <p>Manage application users, roles, and organizational assignments.</p>
+                <h2>{{ __('messages.User Management Title') }}</h2>
+                <p>{{ __('messages.User Management Subtitle') }}</p>
             </div>
             <button type="button" class="btn btn-primary waves-effect" id="for_create_user" data-toggle="modal"
                 data-target="#formCreateUser">
                 <i class="material-icons align-middle mr-1">person_add</i>
-                <span>New User</span>
+                <span>{{ __('messages.User Management New User') }}</span>
             </button>
         </div>
 
         <div class="card user-table-card">
             <div class="card-header">
-                <h5>User List</h5>
+                <h5>{{ __('messages.User Management User List') }}</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="user_table" width="100%">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>#</th>
+                                <th>{{ __('messages.User Management Number') }}</th>
+                                <th>{{ __('messages.User Management Name') }}</th>
+                                <th>{{ __('messages.User Management Role') }}</th>
+                                <th>{{ __('messages.User Management Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody></tbody>

@@ -170,9 +170,9 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <h2 class="page-title">Menu Management</h2>
+                <h2 class="page-title">{{ __('messages.Menu Setting Title') }}</h2>
                 <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                    <button type="button" class="btn bg-gradient-primary" id="for_create_menu" data-toggle="modal" data-target="#formCreateMenu">+ Menu</button>
+                    <button type="button" class="btn bg-gradient-primary" id="for_create_menu" data-toggle="modal" data-target="#formCreateMenu">+ {{ __('messages.Menu Setting Add Menu') }}</button>
                 </div>
             </div>
         </div>

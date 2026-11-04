@@ -176,18 +176,18 @@
     <div class="rp-page">
         <div class="rp-page-header">
             <div>
-                <h2>Role &amp; Permission</h2>
-                <p>Manage access roles and permission assignments across the application.</p>
+                <h2>{{ __('messages.Role Permission Title') }}</h2>
+                <p>{{ __('messages.Role Permission Description') }}</p>
             </div>
         </div>
 
         <div class="rp-grid">
             <div class="rp-card">
                 <div class="card-header">
-                    <h5>Role Management</h5>
+                    <h5>{{ __('messages.Role Permission Role Management') }}</h5>
                     <button type="button" class="btn btn-primary waves-effect" id="for_create_role" data-toggle="modal" data-target="#formCreateRole">
                         <i class="material-icons align-middle mr-1">add</i>
-                        <span>Role</span>
+                        <span>{{ __('messages.Role Permission Add Role') }}</span>
                     </button>
                 </div>
                 <div class="card-body">
@@ -195,9 +195,9 @@
                         <table class="table table-hover mb-0" id="role_table">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Name</th>
-                                    <th>#</th>
+                                    <th>{{ __('messages.Role Permission Number') }}</th>
+                                    <th>{{ __('messages.Role Permission Name') }}</th>
+                                    <th>{{ __('messages.Role Permission Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -208,10 +208,10 @@
 
             <div class="rp-card">
                 <div class="card-header">
-                    <h5>Permission Management</h5>
+                    <h5>{{ __('messages.Role Permission Permission Management') }}</h5>
                     <button type="button" class="btn btn-primary waves-effect" id="for_create_permission" data-toggle="modal" data-target="#formCreatePermission">
                         <i class="material-icons align-middle mr-1">vpn_key</i>
-                        <span>Permission</span>
+                        <span>{{ __('messages.Role Permission Add Permission') }}</span>
                     </button>
                 </div>
                 <div class="card-body">
@@ -219,9 +219,9 @@
                         <table class="table table-hover mb-0" id="permission_table">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Name</th>
-                                    <th>#</th>
+                                    <th>{{ __('messages.Role Permission Number') }}</th>
+                                    <th>{{ __('messages.Role Permission Name') }}</th>
+                                    <th>{{ __('messages.Role Permission Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -236,6 +236,7 @@
         @include('admin.role_and_permission.add_permission')
         @include('admin.role_and_permission.create_permission')
         @include('admin.role_and_permission.detail_permission')
+        @include('admin.role_and_permission.delete_role')
     </div>
 @endsection
 

@@ -4,8 +4,8 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalListSubMenuLabel">List SubMenu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="ModalListSubMenuLabel">{{ __('messages.Menu Setting List Submenus') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.Menu Setting Close') }}">
                     <!-- <i class="material-icons">close</i> -->
                 </button>
             </div>
@@ -13,7 +13,7 @@
                 <div id="list_submenu_table"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.Menu Setting Close') }}</button>
             </div>
         </div>
     </div>

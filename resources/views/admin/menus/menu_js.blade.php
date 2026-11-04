@@ -1,5 +1,36 @@
 <script>
     $(document).ready(function () {
+        const menuText = {
+            createMenu: @json(__('messages.Menu Setting Create Menu')),
+            menuData: @json(__('messages.Menu Setting Menu Data')),
+            submenuData: @json(__('messages.Menu Setting Submenu Data')),
+            selectOne: @json(__('messages.Menu Setting Select One')),
+            actions: @json(__('messages.Menu Setting Actions')),
+            menuActions: @json(__('messages.Menu Setting Menu Actions')),
+            listSubmenus: @json(__('messages.Menu Setting List Submenus Action')),
+            viewMenu: @json(__('messages.Menu Setting View Menu')),
+            deleteMenu: @json(__('messages.Menu Setting Delete Menu')),
+            notSet: @json(__('messages.Menu Setting Not Set')),
+            searchPlaceholder: @json(__('messages.Menu Setting Search Placeholder')),
+            previous: @json(__('messages.Menu Setting Previous')),
+            next: @json(__('messages.Menu Setting Next')),
+            showing: @json(__('messages.Menu Setting Showing')),
+            of: @json(__('messages.Menu Setting Of')),
+            to: @json(__('messages.Menu Setting To')),
+            results: @json(__('messages.Menu Setting Results')),
+            noEntries: @json(__('messages.Menu Setting No Entries')),
+            loadFailed: @json(__('messages.Menu Setting Load Failed')),
+            errorPrefix: @json(__('messages.Menu Setting Error Prefix', ['error' => '__ERROR__'])),
+            success: @json(__('messages.Menu Setting Success')),
+            error: @json(__('messages.Menu Setting Error')),
+            saveSuccess: @json(__('messages.Menu Setting Save Success')),
+            deleteConfirmation: @json(__('messages.Menu Setting Delete Confirmation')),
+            deleteWarning: @json(__('messages.Menu Setting Delete Warning')),
+            confirmDelete: @json(__('messages.Menu Setting Confirm Delete')),
+            cancel: @json(__('messages.Menu Setting Cancel')),
+            deleteSuccess: @json(__('messages.Menu Setting Delete Success')),
+            deleteFailed: @json(__('messages.Menu Setting Delete Failed'))
+        };
 
         // ==== Bootstrap 5 modal helper ====
         // Bootstrap 5 tidak lagi punya jQuery plugin ($(el).modal()).
@@ -112,15 +143,15 @@
             return (_, row) => {
                 const id = row.cells[0].data;
                 return gridjs.html(`
-                    <div class="table-actions" role="group" aria-label="Menu actions">
+                    <div class="table-actions" role="group" aria-label="${menuText.menuActions}">
                         ${showSubmenuButton ? `
-                        <button type="button" class="table-action table-action--copy check_list_submenu" data-bs-toggle="modal" data-bs-target="#ModalListSubMenu" data-master_id="${id}" title="List submenus" aria-label="List submenus">
+                        <button type="button" class="table-action table-action--copy check_list_submenu" data-bs-toggle="modal" data-bs-target="#ModalListSubMenu" data-master_id="${id}" title="${menuText.listSubmenus}" aria-label="${menuText.listSubmenus}">
                             <i class="fa fa-list-alt" aria-hidden="true"></i>
                         </button>` : ''}
-                        <button type="button" class="table-action table-action--view ${showSubmenuButton ? 'detail_menu' : 'detail_submenu'}" data-bs-toggle="modal" data-bs-target="#formCreateMenu" data-detail_id="${id}" title="View menu" aria-label="View menu">
+                        <button type="button" class="table-action table-action--view ${showSubmenuButton ? 'detail_menu' : 'detail_submenu'}" data-bs-toggle="modal" data-bs-target="#formCreateMenu" data-detail_id="${id}" title="${menuText.viewMenu}" aria-label="${menuText.viewMenu}">
                             <i class="fas fa-eye" aria-hidden="true"></i>
                         </button>
-                        <button type="button" class="table-action table-action--delete delete_menu" data-id="${id}" title="Delete menu" aria-label="Delete menu">
+                        <button type="button" class="table-action table-action--delete delete_menu" data-id="${id}" title="${menuText.deleteMenu}" aria-label="${menuText.deleteMenu}">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -158,7 +189,7 @@
             }
             $('#roles').select2({
                 dropdownParent: $('#formCreateMenu'),
-                placeholder: 'Select One',
+                placeholder: menuText.selectOne,
                 closeOnSelect: false,
                 allowClear: true,
             });
@@ -211,9 +242,9 @@
             { name: '#', sort: false, width: '60px' },
             // sort di-set eksplisit true (bukan hanya mengandalkan default global)
             // supaya jelas kolom mana yang bisa di-klik untuk sorting.
-            { name: 'Name', sort: true },
-            { name: 'URL', sort: true },
-            { name: 'Action', sort: false, width: '160px', formatter: menuActionFormatter(showSubmenuButton) }
+            { name: @json(__('messages.Menu Setting Name')), sort: true },
+            { name: @json(__('messages.Menu Setting URL')), sort: true },
+            { name: menuText.actions, sort: false, width: '160px', formatter: menuActionFormatter(showSubmenuButton) }
         ]);
 
         fetchMenu()
@@ -233,15 +264,15 @@
                     const rows = menus.map((menu, i) => ([
                         menu.id,
                         i + 1,
-                        menu.name_text != null ? menu.name_text : 'not set',
-                        menu.url_name != null ? menu.url_name : 'not set',
+                        menu.name_text != null ? menu.name_text : menuText.notSet,
+                        menu.url_name != null ? menu.url_name : menuText.notSet,
                         null // kolom Action diisi oleh formatter, nilai mentahnya tidak dipakai
                     ]));
 
                     renderMenuGrid(rows);
                 },
                 error: function (xhr) {
-                    alert('An error occurred: ' + xhr.responseText);
+                    alert(menuText.errorPrefix.replace('__ERROR__', xhr.responseText));
                 }
             })
         }
@@ -263,17 +294,17 @@
                     table: 'table table-striped table-hover align-middle',
                 },
                 language: {
-                    search: { placeholder: 'Search...' },
+                    search: { placeholder: menuText.searchPlaceholder },
                     pagination: {
                         previous: '‹',
                         next: '›',
-                        showing: 'Showing',
-                        of: 'of',
-                        to: 'to',
-                        results: 'entries',
+                        showing: menuText.showing,
+                        of: menuText.of,
+                        to: menuText.to,
+                        results: menuText.results,
                     },
-                    noRecordsFound: 'No entries found',
-                    error: 'Gagal memuat data, silahkan hubungi admin.',
+                    noRecordsFound: menuText.noEntries,
+                    error: menuText.loadFailed,
                 },
             }).render(document.getElementById('menu_table'));
 
@@ -298,15 +329,15 @@
                     const rows = submenus.map((submenu, i) => ([
                         submenu.id,
                         i + 1,
-                        submenu.name_text != null ? submenu.name_text : 'not set',
-                        submenu.url_name != null ? submenu.url_name : 'not set',
+                        submenu.name_text != null ? submenu.name_text : menuText.notSet,
+                        submenu.url_name != null ? submenu.url_name : menuText.notSet,
                         null
                     ]));
 
                     renderSubmenuGrid(rows);
                 },
                 error: function (xhr) {
-                    alert('An error occurred: ' + xhr.responseText);
+                    alert(menuText.errorPrefix.replace('__ERROR__', xhr.responseText));
                 }
             })
         }
@@ -327,8 +358,17 @@
                     table: 'table table-striped table-hover align-middle',
                 },
                 language: {
-                    search: { placeholder: 'Search...' },
-                    noRecordsFound: 'No entries found',
+                    search: { placeholder: menuText.searchPlaceholder },
+                    pagination: {
+                        previous: menuText.previous,
+                        next: menuText.next,
+                        showing: menuText.showing,
+                        of: menuText.of,
+                        to: menuText.to,
+                        results: menuText.results
+                    },
+                    noRecordsFound: menuText.noEntries,
+                    error: menuText.loadFailed,
                 },
             }).render(document.getElementById('list_submenu_table'));
 
@@ -349,7 +389,7 @@
                     // <label for="parent_id">Parent Menu</label>
                     $('#parent_menu').html(`
                         <select class="js-states form-control" name="parent_id" id="parent_id" style="width: 100%">
-                            <option value="">Select One</option>
+                            <option value="">${menuText.selectOne}</option>
                         </select>
                     `);
 $('#parent_id').select2({
@@ -357,7 +397,7 @@ $('#parent_id').select2({
                             id: parent.id,
                             text: parent.name_text
                         })),
-                        placeholder: 'Select One',
+                        placeholder: menuText.selectOne,
                     });
 
                     if (selectedParentId) {
@@ -379,7 +419,7 @@ $('#parent_id').select2({
             e.preventDefault()
             $('#form_create_new_menu')[0].reset()
             $('#menu_id').val('')
-            $('#formCreateMenuLabel').html('Create Menu')
+            $('#formCreateMenuLabel').text(menuText.createMenu)
             $('#parent_menu').empty()
             // initialize roles select2 for multiple selection and open modal (Bootstrap5)
             initRolesSelect([]);
@@ -404,7 +444,7 @@ $('#parent_id').select2({
                 processData: false,
                 success: function (res) {
                     hideModal('formCreateMenu')
-                    showToast('Success', res.meta.message, 'success');
+                    showToast(menuText.success, menuText.saveSuccess, 'success');
                     fetchMenu()
                     if (window.current_master_id) {
                         reloadSubmenus(window.current_master_id);
@@ -414,7 +454,7 @@ $('#parent_id').select2({
                 error: function (xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     $('#submit_create_menu').prop('disabled', false)
-                    let bodyMessage = 'Gagal memuat data, silahkan hubungi admin.';
+                    let bodyMessage = menuText.loadFailed;
                     if (response_error.meta && response_error.meta.message) {
                         if (typeof response_error.meta.message === 'string') {
                             bodyMessage = response_error.meta.message;
@@ -422,7 +462,7 @@ $('#parent_id').select2({
                             bodyMessage = Object.values(response_error.meta.message.errors).flat().join('<br>');
                         }
                     }
-                    showToast('Error!', bodyMessage, 'error');
+                    showToast(menuText.error, bodyMessage, 'error');
                 }
             })
         });
@@ -432,9 +472,9 @@ $('#parent_id').select2({
             let detail_id = $(this).data('detail_id')
 
             if ($(this).hasClass('detail_menu')) {
-                $('#formCreateMenuLabel').html('Data Menu')
+                $('#formCreateMenuLabel').text(menuText.menuData)
             } else if ($(this).hasClass('detail_submenu')) {
-                $('#formCreateMenuLabel').html('Data Sub Menu')
+                $('#formCreateMenuLabel').text(menuText.submenuData)
                 hideModal('ModalListSubMenu')
             }
             $('#parent_menu').empty();
@@ -474,7 +514,7 @@ $('#parent_id').select2({
                     showModal('formCreateMenu');
                 },
                 error: function (xhr) {
-                    showToast('Error!', 'gagal memuat data, silahkan hubungi admin.', 'error');
+                    showToast(menuText.error, menuText.loadFailed, 'error');
                 }
             })
         })
@@ -531,14 +571,14 @@ $('#parent_id').select2({
             let delete_id = $(this).data('id');
 
             Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Menu yang dihapus tidak dapat dikembalikan!",
+                title: menuText.deleteConfirmation,
+                text: menuText.deleteWarning,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
+                confirmButtonText: menuText.confirmDelete,
+                cancelButtonText: menuText.cancel
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -552,14 +592,14 @@ $('#parent_id').select2({
                         },
                         success: function (res) {
                             hideModal('ModalListSubMenu');
-                            showToast('Success', res.meta.message, 'success');
+                            showToast(menuText.success, menuText.deleteSuccess, 'success');
                             fetchMenu();
                             if (window.current_master_id) {
                                 reloadSubmenus(window.current_master_id);
                             }
                         },
                         error: function (xhr) {
-                            showToast('Error!', 'Gagal menghapus menu, silahkan hubungi admin.', 'error');
+                            showToast(menuText.error, menuText.deleteFailed, 'error');
                         }
                     });
                 }

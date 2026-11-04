@@ -157,27 +157,27 @@
     <div class="setting-page">
         <div class="setting-page-header">
             <div>
-                <h2>Office Management</h2>
-                <p>Manage office master data and location assignments.</p>
+                <h2>{{ __('messages.Office Setting Title') }}</h2>
+                <p>{{ __('messages.Office Setting Description') }}</p>
             </div>
             <button type="button" class="btn btn-primary waves-effect" id="for_create_office" data-toggle="modal" data-target="#formOffice" data-backdrop="static" data-keyboard="false">
                 <i class="material-icons align-middle mr-1">add</i>
-                <span>Office</span>
+                <span>{{ __('messages.Office Setting Create') }}</span>
             </button>
         </div>
 
         <div class="card setting-table-card">
             <div class="card-header">
-                <h5>Office List</h5>
+                <h5>{{ __('messages.Office Setting List') }}</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="office_table" width="100%">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Name</th>
-                                <th>#</th>
+                                <th>{{ __('messages.Office Setting Number') }}</th>
+                                <th>{{ __('messages.Office Setting Name') }}</th>
+                                <th>{{ __('messages.Office Setting Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody></tbody>

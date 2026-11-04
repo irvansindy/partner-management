@@ -4,10 +4,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <span class="user-modal-kicker">CONFIRMATION</span>
-                    <h2 class="modal-title" id="confirmDeleteUserLabel">Delete User</h2>
+                    <span class="user-modal-kicker">{{ __('messages.User Management Confirmation') }}</span>
+                    <h2 class="modal-title" id="confirmDeleteUserLabel">{{ __('messages.User Management Delete User') }}</h2>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('messages.User Management Close') }}">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -16,14 +16,14 @@
                     <i class="material-icons">person_remove</i>
                 </div>
                 <p class="delete-user-title" id="delete_user_name"></p>
-                <p class="delete-user-description">This action removes the account and its role assignment. It cannot be undone.</p>
+                <p class="delete-user-description">{{ __('messages.User Management Delete Description') }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">{{ __('messages.User Management Cancel') }}</button>
                 <button type="button" class="btn btn-danger confirm_delete_user" id="confirm_delete_user"
                     data-delete_user_id="">
                     <i class="material-icons" aria-hidden="true">delete</i>
-                    Delete User
+                    {{ __('messages.User Management Delete User') }}
                 </button>
             </div>
         </div>

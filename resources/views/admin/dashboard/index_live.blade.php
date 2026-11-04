@@ -170,36 +170,36 @@
     <main class="dashboard-page">
         <header class="dashboard-heading">
             <div>
-                <h1>Partner Dashboard</h1>
-                <p>Current partner and approval overview for your access scope.</p>
+                <h1>{{ __('messages.Dashboard Title') }}</h1>
+                <p>{{ __('messages.Dashboard Subtitle') }}</p>
             </div>
         </header>
 
         <div id="dashboard-status" class="alert alert-warning d-none" role="status"></div>
 
-        <section class="row mb-4" aria-label="Partner summary">
+        <section class="row mb-4" aria-label="{{ __('messages.Dashboard Partner Summary') }}">
             <div class="col-xl-3 col-sm-6 mb-3">
                 <div class="dashboard-metric-card">
                     <span class="dashboard-metric-icon"><i class="material-icons">handshake</i></span>
-                    <div><span class="dashboard-metric-label">Approved Partners</span><strong id="text-total-partner" class="dashboard-metric-value">—</strong></div>
+                    <div><span class="dashboard-metric-label">{{ __('messages.Dashboard Approved Partners') }}</span><strong id="text-total-partner" class="dashboard-metric-value">—</strong></div>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6 mb-3">
                 <div class="dashboard-metric-card">
                     <span class="dashboard-metric-icon"><i class="material-icons">groups</i></span>
-                    <div><span class="dashboard-metric-label">Approved Customers</span><strong id="text-total-customer" class="dashboard-metric-value">—</strong></div>
+                    <div><span class="dashboard-metric-label">{{ __('messages.Dashboard Approved Customers') }}</span><strong id="text-total-customer" class="dashboard-metric-value">—</strong></div>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6 mb-3">
                 <div class="dashboard-metric-card">
                     <span class="dashboard-metric-icon"><i class="material-icons">storefront</i></span>
-                    <div><span class="dashboard-metric-label">Approved Vendors</span><strong id="text-total-vendor" class="dashboard-metric-value">—</strong></div>
+                    <div><span class="dashboard-metric-label">{{ __('messages.Dashboard Approved Vendors') }}</span><strong id="text-total-vendor" class="dashboard-metric-value">—</strong></div>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6 mb-3">
                 <div class="dashboard-metric-card">
                     <span class="dashboard-metric-icon"><i class="material-icons">schedule</i></span>
-                    <div><span class="dashboard-metric-label">Pending Approvals</span><strong id="pending-approval" class="dashboard-metric-value">—</strong></div>
+                    <div><span class="dashboard-metric-label">{{ __('messages.Dashboard Pending Approvals') }}</span><strong id="pending-approval" class="dashboard-metric-value">—</strong></div>
                 </div>
             </div>
         </section>
@@ -207,19 +207,19 @@
         <section class="row mb-4">
             <div class="col-lg-7 mb-3">
                 <article class="dashboard-panel">
-                    <header class="dashboard-panel-header"><h2>Approved Partners by Province</h2></header>
+                    <header class="dashboard-panel-header"><h2>{{ __('messages.Dashboard Partners By Province') }}</h2></header>
                     <div class="dashboard-panel-body">
                         <div id="province-chart" class="dashboard-chart-box"></div>
-                        <div id="province-chart-empty" class="dashboard-empty-state d-none">No province distribution is available for this access scope.</div>
+                        <div id="province-chart-empty" class="dashboard-empty-state d-none">{{ __('messages.Dashboard No Province Distribution') }}</div>
                     </div>
                 </article>
             </div>
             <div class="col-lg-5 mb-3">
                 <article class="dashboard-panel">
-                    <header class="dashboard-panel-header"><h2>Approved Partner Types</h2></header>
+                    <header class="dashboard-panel-header"><h2>{{ __('messages.Dashboard Approved Partner Types') }}</h2></header>
                     <div class="dashboard-panel-body">
                         <div id="partner-type-chart"></div>
-                        <div id="partner-type-empty" class="dashboard-empty-state d-none">No approved partner data.</div>
+                        <div id="partner-type-empty" class="dashboard-empty-state d-none">{{ __('messages.Dashboard No Approved Partner Data') }}</div>
                     </div>
                 </article>
             </div>
@@ -229,10 +229,10 @@
             @can('viewCustomer', \App\Models\CompanyInformation::class)
                 <div class="col-lg-6 mb-3">
                     <article class="dashboard-panel">
-                        <header class="dashboard-panel-header"><h2>Recent Customers</h2></header>
+                        <header class="dashboard-panel-header"><h2>{{ __('messages.Dashboard Recent Customers') }}</h2></header>
                         <div class="dashboard-panel-body table-responsive">
                             <table id="table_recent_list_customer" class="table table-hover dashboard-table">
-                                <thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Status</th></tr></thead>
+                                <thead><tr><th>{{ __('messages.Dashboard Name') }}</th><th>{{ __('messages.Dashboard Email') }}</th><th>{{ __('messages.Dashboard Contact') }}</th><th>{{ __('messages.Dashboard Status') }}</th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
@@ -242,10 +242,10 @@
             @can('viewVendor', \App\Models\CompanyInformation::class)
                 <div class="col-lg-6 mb-3">
                     <article class="dashboard-panel">
-                        <header class="dashboard-panel-header"><h2>Recent Vendors</h2></header>
+                        <header class="dashboard-panel-header"><h2>{{ __('messages.Dashboard Recent Vendors') }}</h2></header>
                         <div class="dashboard-panel-body table-responsive">
                             <table id="table_recent_list_vendor" class="table table-hover dashboard-table">
-                                <thead><tr><th>Name</th><th>Email</th><th>Contact</th><th>Status</th></tr></thead>
+                                <thead><tr><th>{{ __('messages.Dashboard Name') }}</th><th>{{ __('messages.Dashboard Email') }}</th><th>{{ __('messages.Dashboard Contact') }}</th><th>{{ __('messages.Dashboard Status') }}</th></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
@@ -257,10 +257,10 @@
         <section class="row mb-4">
             <div class="col-12">
                 <article class="dashboard-panel">
-                    <header class="dashboard-panel-header"><h2>Partner Locations</h2></header>
+                    <header class="dashboard-panel-header"><h2>{{ __('messages.Dashboard Partner Locations') }}</h2></header>
                     <div class="dashboard-panel-body">
                         <div id="dashboard-map"></div>
-                        <div id="dashboard-map-empty" class="dashboard-empty-state d-none">No partner locations with valid coordinates.</div>
+                        <div id="dashboard-map-empty" class="dashboard-empty-state d-none">{{ __('messages.Dashboard No Partner Locations') }}</div>
                     </div>
                 </article>
             </div>
@@ -270,12 +270,12 @@
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="regencyModalLabel">Partner distribution</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title" id="regencyModalLabel">{{ __('messages.Dashboard Partner Distribution') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('messages.Dashboard Close') }}"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
                         <div id="regency-chart"></div>
-                        <div id="regency-chart-empty" class="dashboard-empty-state d-none">No city distribution is available.</div>
+                        <div id="regency-chart-empty" class="dashboard-empty-state d-none">{{ __('messages.Dashboard No City Distribution') }}</div>
                     </div>
                 </div>
             </div>

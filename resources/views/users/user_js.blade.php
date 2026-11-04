@@ -1,5 +1,42 @@
 <script>
     $(document).ready(function() {
+        const userText = {
+            notSet: @json(__('messages.User Management Not Set')),
+            actions: @json(__('messages.User Management Actions')),
+            viewUser: @json(__('messages.User Management View User')),
+            deleteUser: @json(__('messages.User Management Delete User Label')),
+            actionsFor: @json(__('messages.User Management Actions For', ['name' => '__NAME__'])),
+            selectRole: @json(__('messages.User Management Select Role')),
+            selectOffice: @json(__('messages.User Management Select Office')),
+            selectDivision: @json(__('messages.User Management Select Division')),
+            selectDepartment: @json(__('messages.User Management Select Department')),
+            selectJobTitle: @json(__('messages.User Management Select Job Title')),
+            selectSupervisor: @json(__('messages.User Management Select Supervisor')),
+            success: @json(__('messages.User Management Success')),
+            error: @json(__('messages.User Management Error')),
+            validationFailed: @json(__('messages.User Management Validation Failed')),
+            supportLoadFailed: @json(__('messages.User Management Support Load Failed')),
+            createSuccess: @json(__('messages.User Management Create Success')),
+            createFailed: @json(__('messages.User Management Create Failed')),
+            completeRequired: @json(__('messages.User Management Complete Required')),
+            detailLoadFailed: @json(__('messages.User Management Detail Load Failed')),
+            updateSuccess: @json(__('messages.User Management Update Success')),
+            updateFailed: @json(__('messages.User Management Update Failed')),
+            serverError: @json(__('messages.User Management Server Error')),
+            unexpectedError: @json(__('messages.User Management Unexpected Error')),
+            deleteSuccess: @json(__('messages.User Management Delete Success')),
+            deleteFailed: @json(__('messages.User Management Delete Failed')),
+            deletePrompt: @json(__('messages.User Management Delete Prompt', ['name' => '__NAME__'])),
+            tableEmpty: @json(__('messages.User Management Table Empty')),
+            tableLoading: @json(__('messages.User Management Table Loading')),
+            tableSearch: @json(__('messages.User Management Table Search')),
+            tableInfo: @json(__('messages.User Management Table Info')),
+            tableInfoEmpty: @json(__('messages.User Management Table Info Empty')),
+            tableZeroRecords: @json(__('messages.User Management Table Zero Records')),
+            tablePrevious: @json(__('messages.User Management Table Previous')),
+            tableNext: @json(__('messages.User Management Table Next'))
+        };
+
         function parseAjaxError(xhr, fallbackMessage) {
             if (xhr && xhr.responseJSON && typeof xhr.responseJSON === 'object') {
                 return xhr.responseJSON;
@@ -100,23 +137,23 @@
                 },
                 {
                     "data": "name",
-                    "defaultContent": "<i>Not set</i>"
+                    "defaultContent": '<i>' + userText.notSet + '</i>'
                 },
                 {
                     "data": "roles[0].name",
-                    "defaultContent": "<i>Not set</i>"
+                    "defaultContent": '<i>' + userText.notSet + '</i>'
                 },
                 {
                     'data': null,
-                    title: 'Action',
+                    title: userText.actions,
                     wrap: true,
                     "render": function(item) {
                         let viewButton = $('<button>', {
                             type: 'button',
                             class: 'table-action table-action--view detail_user',
                             html: '<i class="fas fa-eye" aria-hidden="true"></i>',
-                            title: 'View user',
-                            'aria-label': 'View ' + item.name,
+                            title: userText.viewUser,
+                            'aria-label': userText.viewUser + ' ' + item.name,
                             'data-user_id': item.id,
                             'data-toggle': 'modal',
                             'data-target': '#formUpdateUser'
@@ -125,8 +162,8 @@
                             type: 'button',
                             class: 'table-action table-action--delete delete_user',
                             html: '<i class="fas fa-trash" aria-hidden="true"></i>',
-                            title: 'Delete user',
-                            'aria-label': 'Delete ' + item.name,
+                            title: userText.deleteUser,
+                            'aria-label': userText.deleteUser + ' ' + item.name,
                             'data-user_id': item.id,
                             'data-user_name': item.name,
                             'data-toggle': 'modal',
@@ -136,13 +173,25 @@
                         return $('<div>', {
                             class: 'table-actions',
                             role: 'group',
-                            'aria-label': 'Actions for ' + item.name
+                            'aria-label': userText.actionsFor.replace('__NAME__', item.name)
                         })
                             .append(viewButton, deleteButton)
                             .prop('outerHTML');
                     }
                 },
-            ]
+            ],
+            language: {
+                emptyTable: userText.tableEmpty,
+                processing: userText.tableLoading,
+                search: userText.tableSearch,
+                info: userText.tableInfo,
+                infoEmpty: userText.tableInfoEmpty,
+                zeroRecords: userText.tableZeroRecords,
+                paginate: {
+                    previous: userText.tablePrevious,
+                    next: userText.tableNext
+                }
+            }
         })
 
         $(document).on('click', '#for_create_user', function(e) {
@@ -158,21 +207,21 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
-                    $('#user_role').empty().append('<option value="">Select role</option>')
+                    $('#user_role').empty().append($('<option>', { value: '', text: userText.selectRole }))
                     $.each(res.data.roles, function(i, role) {
                         $('#user_role').append(`
                             <option value="${role.name}">${role.name}</option>
                         `)
                     })
 
-                    $('#user_office').empty().append('<option value="">Select office</option>')
+                    $('#user_office').empty().append($('<option>', { value: '', text: userText.selectOffice }))
                     $.each(res.data.offices, function(i, office) {
                         $('#user_office').append(`
                             <option value="${office.id}">${office.name}</option>
                         `)
                     })
                     
-                    $('#user_department').empty().append('<option value="">Select department</option>')
+                    $('#user_department').empty().append($('<option>', { value: '', text: userText.selectDepartment }))
                     $.each(res.data.departments, function(i, office) {
                         $('#user_department').append(`
                             <option value="${office.id}">${office.name}</option>
@@ -180,7 +229,7 @@
                     })
 
                     // divisions
-                    $('#user_division').empty().append('<option value="">Select division</option>')
+                    $('#user_division').empty().append($('<option>', { value: '', text: userText.selectDivision }))
                     $.each(res.data.divisions, function(i, division) {
                         $('#user_division').append(`
                             <option value="${division.id}">${division.name}</option>
@@ -188,7 +237,7 @@
                     })
                     
                     // job_titles
-                    $('#user_job_title').empty().append('<option value="">Select job title</option>')
+                    $('#user_job_title').empty().append($('<option>', { value: '', text: userText.selectJobTitle }))
                     $.each(res.data.job_titles, function(i, job_title) {
                         $('#user_job_title').append(`
                             <option value="${job_title.id}">${job_title.name} - ${job_title.level.name}</option>
@@ -197,9 +246,7 @@
 
                     // parents
                     $('#user_parent').empty()
-                    $('#user_parent').append(`
-                        <option value="">Select supervisor</option>
-                    `)
+                    $('#user_parent').append($('<option>', { value: '', text: userText.selectSupervisor }))
                     $.each(res.data.parents, function(i, parent) {
                         $('#user_parent').append(`
                             <option value="${parent.id}">${parent.name}</option>
@@ -207,11 +254,11 @@
                     })
                 },
                 error: function(xhr) {
-                    let response_error = parseAjaxError(xhr, 'Gagal mengambil data pendukung user. Periksa koneksi server.');
+                    let response_error = parseAjaxError(xhr, userText.supportLoadFailed);
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: userText.error,
                         class: 'bg-danger',
-                        body: getAjaxErrorMessage(response_error, 'Gagal mengambil data pendukung user. Periksa koneksi server.')
+                        body: getAjaxErrorMessage(response_error, userText.supportLoadFailed)
                     });
                 }
             })
@@ -254,9 +301,9 @@
                     closeUserModal('#formCreateUser');
                     $('#user_table').DataTable().ajax.reload();
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: userText.success,
                         class: 'bg-success',
-                        body: 'User berhasil dibuat.',
+                        body: userText.createSuccess,
                         delay: 10000,
                         autohide: true,
                         fade: true,
@@ -265,15 +312,15 @@
                     });
                 },
                 error: function(xhr, status, error) {
-                    let response_error = parseAjaxError(xhr, 'Gagal membuat user. Periksa koneksi server.');
+                    let response_error = parseAjaxError(xhr, userText.createFailed);
                     let meta = response_error.meta || {};
                     let validationErrors = meta.message && meta.message.errors;
 
                     if (meta.code === 500 || meta.code === 400 || !validationErrors) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: userText.error,
                             class: 'bg-danger',
-                            body: getAjaxErrorMessage(response_error, 'Gagal membuat user. Periksa koneksi server.'),
+                            body: getAjaxErrorMessage(response_error, userText.createFailed),
                             delay: 10000,
                             autohide: true,
                             fade: true,
@@ -286,9 +333,9 @@
                             showUserFieldError('#user_' + i, '#message_user_' + i, value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: userText.error,
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: userText.completeRequired,
                             delay: 10000,
                             autohide: true,
                             fade: true,
@@ -331,7 +378,7 @@
                         '#update_user_role',
                         res.data.roles,
                         user.roles.length ? user.roles[0].name : null,
-                        '-- Pilih Role --'
+                        userText.selectRole
                     );
 
                     // Populate dropdown Parent User
@@ -339,7 +386,7 @@
                         '#update_user_parent',
                         res.data.parents,
                         user.parent_user_id ? user.parent_user_id : null,
-                        '-- Pilih Parent User --'
+                        userText.selectSupervisor
                     );
 
                     // Populate dropdown Office
@@ -347,7 +394,7 @@
                         '#update_user_office',
                         res.data.offices,
                         user.office ? user.office.id : null,
-                        '-- Pilih Office --'
+                        userText.selectOffice
                     );
 
                     // Populate dropdown Department
@@ -355,7 +402,7 @@
                         '#update_user_department',
                         res.data.departments,
                         user.dept ? user.dept.id : null,
-                        '-- Pilih Department --'
+                        userText.selectDepartment
                     );
 
                     // Populate dropdown Division
@@ -363,7 +410,7 @@
                         '#update_user_division',
                         res.data.divisions,
                         user.division ? user.division.id : null,
-                        '-- Pilih Division --'
+                        userText.selectDivision
                     );
 
                     // Populate dropdown Job Title
@@ -371,24 +418,24 @@
                         '#update_user_job_title',
                         res.data.job_titles,
                         user.job_title ? user.job_title.id : null,
-                        '-- Pilih Job Title --'
+                        userText.selectJobTitle
                     );
 
                     // Set data attribute untuk tombol Update
                     $('.update_user').data('update_user_id', user.id);
                 },
                 error: function(xhr) {
-                    let response_error = parseAjaxError(xhr, 'Gagal mengambil detail user. Periksa koneksi server.');
+                    let response_error = parseAjaxError(xhr, userText.detailLoadFailed);
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: userText.error,
                         class: 'bg-danger',
-                        body: getAjaxErrorMessage(response_error, 'Gagal mengambil detail user. Periksa koneksi server.')
+                        body: getAjaxErrorMessage(response_error, userText.detailLoadFailed)
                     });
                 }
             });
         });
 
-        function populateDropdown(selector, dataList, selectedId = null, placeholder = '-- Pilih --') {
+        function populateDropdown(selector, dataList, selectedId = null, placeholder = '') {
             $(selector).empty();
             $(selector).append(`<option value="">${placeholder}</option>`);
 
@@ -461,24 +508,24 @@
 
                     // Tampilkan toast success
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: userText.success,
                         class: 'bg-success',
-                        body: res.meta.message ?? 'User berhasil diubah.',
+                        body: res.meta.message ?? userText.updateSuccess,
                         delay: 8000,
                         autohide: true
                     });
                 },
                 error: function (xhr) {
-                    let response_error = parseAjaxError(xhr, 'Gagal memperbarui user. Periksa koneksi server.');
+                    let response_error = parseAjaxError(xhr, userText.updateFailed);
                     let meta = response_error.meta || {};
                     let message = meta.message;
 
                     if (meta.code === 500 || meta.code === 400) {
                         // Error server
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: userText.error,
                             class: 'bg-danger',
-                            body: getAjaxErrorMessage(response_error, 'Terjadi kesalahan server.'),
+                            body: getAjaxErrorMessage(response_error, userText.serverError),
                             delay: 8000,
                             autohide: true
                         });
@@ -493,18 +540,18 @@
                         });
 
                         $(document).Toasts('create', {
-                            title: 'Validasi Gagal',
+                            title: userText.validationFailed,
                             class: 'bg-warning',
-                            body: 'Silakan lengkapi data yang masih kosong atau salah.',
+                            body: userText.completeRequired,
                             delay: 8000,
                             autohide: true
                         });
                     } else {
                         // Error tak terduga
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: userText.error,
                             class: 'bg-danger',
-                            body: 'Terjadi kesalahan tidak terduga.',
+                            body: userText.unexpectedError,
                             delay: 8000,
                             autohide: true
                         });
@@ -516,7 +563,7 @@
         $(document).on('click', '.delete_user', function() {
             let delete_user_id = $(this).data('user_id')
             let delete_user_name = $(this).data('user_name')
-            $('#delete_user_name').text('Delete ' + delete_user_name + '?')
+            $('#delete_user_name').text(userText.deletePrompt.replace('__NAME__', delete_user_name))
             $('.confirm_delete_user').data('delete_user_id', delete_user_id)
         })
 
@@ -538,16 +585,16 @@
                     closeUserModal('#confirmDeleteUser');
                     $('#user_table').DataTable().ajax.reload(null, false);
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: userText.success,
                         class: 'bg-success',
-                        body: 'User berhasil dihapus.'
+                        body: userText.deleteSuccess
                     });
                 },
                 error: function(xhr) {
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: userText.error,
                         class: 'bg-danger',
-                        body: 'gagal delete, silahkan hubungi pihak ICT.'
+                        body: userText.deleteFailed
                     });
                 }
             })
