@@ -26,6 +26,17 @@ class PublicFormPhoneValidationTest extends TestCase
         $this->assertSame('+6289876543456764', $validated['fax'][0]);
     }
 
+    /** @test */
+    public function fax_is_optional_when_the_submission_does_not_include_it(): void
+    {
+        $validated = $this->validateSubmission([
+            'contact_telephone' => ['+62289654356786543'],
+            'telephone' => ['+6287654567898658'],
+        ]);
+
+        $this->assertArrayNotHasKey('fax', $validated);
+    }
+
     private function validateSubmission(array $phones): array
     {
         $request = Request::create('/', 'POST', array_merge([

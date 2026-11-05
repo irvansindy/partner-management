@@ -803,9 +803,9 @@
                             <span class="text-danger mt-2 message_telephone" id="message_telephone_${index}" role="alert"></span>
                         </div>
                         <div class="col-md-6">
-                            <label for="fax_${index}">${escapeHtml(@json(__('messages.Fax')))} <span class="text-danger" role="alert">*</span></label>
+                            <label for="fax_${index}">${escapeHtml(@json(__('messages.Fax')))}</label>
                             <p class="fs-6 text-muted mb-2">${escapeHtml(@json(__('messages.Fax Info')))}</p>
-                            <input type="tel" name="fax[]" id="fax_${index}" class="form-control international-phone" placeholder="${escapeHtml(@json(__('messages.Placeholder Address Fax')))}" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}" required>
+                            <input type="tel" name="fax[]" id="fax_${index}" class="form-control international-phone" placeholder="${escapeHtml(@json(__('messages.Placeholder Address Fax')))}" inputmode="tel" maxlength="14" pattern="[0-9]{2,14}">
                             <span class="text-danger mt-2 message_fax" id="message_fax_${index}" role="alert"></span>
                         </div>
                     </div>

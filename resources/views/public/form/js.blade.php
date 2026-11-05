@@ -664,6 +664,9 @@
                     let $field = $(this);
                     let field = $field.get(0);
                     let isInternationalPhone = field.classList.contains('international-phone');
+                    if (isInternationalPhone && !$field.prop('required') && !$.trim($field.val() || '')) {
+                        return;
+                    }
                     let invalidFormat = isInternationalPhone
                         ? field.validity.patternMismatch
                         : field.validity.typeMismatch;

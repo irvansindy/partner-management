@@ -379,7 +379,7 @@ class PublicFormController extends Controller
             'city' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'zip_code' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
             'telephone' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
-            'fax' => 'required|array|min:1|max:' . config('public_form.max_repeat_rows', 10),
+            'fax' => 'nullable|array|max:' . config('public_form.max_repeat_rows', 10),
             'latitude' => 'nullable|array|max:' . config('public_form.max_repeat_rows', 10),
             'longitude' => 'nullable|array|max:' . config('public_form.max_repeat_rows', 10),
             'address_role.*' => 'required|in:legal,operational,branch',
@@ -390,7 +390,7 @@ class PublicFormController extends Controller
             'city.*' => 'required|string|max:100',
             'zip_code.*' => 'required|string|max:20',
             'telephone.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
-            'fax.*' => 'required|regex:/^\+[1-9][0-9]{2,16}$/',
+            'fax.*' => 'nullable|regex:/^\+[1-9][0-9]{2,16}$/',
             'latitude.*' => 'nullable|numeric|between:-90,90',
             'longitude.*' => 'nullable|numeric|between:-180,180',
 
@@ -480,7 +480,7 @@ class PublicFormController extends Controller
 
     private function normalizeAndValidateAddresses(array &$validated): void
     {
-        $fields = ['address_role', 'country_code', 'country', 'province', 'city', 'zip_code', 'latitude', 'longitude', 'telephone', 'fax'];
+        $fields = ['address_role', 'country_code', 'country', 'province', 'city', 'zip_code', 'latitude', 'longitude', 'telephone'];
         $count = count($validated['address'] ?? []);
         foreach ($fields as $field) {
             if (!isset($validated[$field]) || count($validated[$field]) !== $count) {

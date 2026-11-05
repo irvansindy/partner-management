@@ -71,8 +71,8 @@
                     <span class="text-danger mt-2 d-block" data-message="telephone" role="alert"></span>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label data-label="fax">Fax <span class="text-danger">*</span></label>
-                    <input type="tel" name="fax[]" class="form-control international-phone" inputmode="numeric" maxlength="14" pattern="[0-9]{2,14}" required>
+                    <label data-label="fax">Fax</label>
+                    <input type="tel" name="fax[]" class="form-control international-phone" inputmode="numeric" maxlength="14" pattern="[0-9]{2,14}">
                     <span class="text-danger mt-2 d-block" data-message="fax" role="alert"></span>
                 </div>
                 <div class="col-12 mb-3">
