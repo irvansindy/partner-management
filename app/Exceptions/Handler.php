@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -37,5 +39,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception): Response
+    {
+        $response = parent::render($request, $exception);
+
+        if ($request instanceof Request && $request->attributes->has('request_id')) {
+            $response->headers->set('X-Request-ID', $request->attributes->get('request_id'));
+        }
+
+        return $response;
     }
 }

@@ -67,6 +67,13 @@ return [
             'days' => 14,
         ],
 
+        'security' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/security.log'),
+            'level' => env('SECURITY_LOG_LEVEL', 'warning'),
+            'days' => env('SECURITY_LOG_DAYS', 30),
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

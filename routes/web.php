@@ -173,7 +173,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 // Route::middleware(['auth', 'role:user|admin', 'verified'])->group(function () {
 Route::middleware(['auth', 'role:user|admin'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    // Route::get('/list-partner', [PartnerController::class,'index'])->name('list-partner');
     Route::get('/user-attachment', [PartnerController::class,'viewAttachment'])->name('user-attachment');
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');
@@ -256,8 +255,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('fetch-office-setting', [OfficeManagementController::class,'fetchOffice'])->name('fetch-office-setting');
     Route::get('fetch-office-setting-by-id', [OfficeManagementController::class,'fetchOfficeById'])->name('fetch-office-setting-by-id');
     Route::post('submit-office-setting', [OfficeManagementController::class,'CreateOrUpdateOffice'])->name('submit-office-setting');
-    // Route::get('role-permission', [RolePermissionController::class,'index'])->name('role-permission');
-
 });
 
 Route::middleware(['auth', 'role:user|super-user|admin|super-admin'])->group(function () {
@@ -287,7 +284,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::get('ip-whitelist.fetch-by-id', [APIWhiteListManageController::class, 'fetchById'])->name('ip-whitelist.fetch-by-id');
     Route::post('ip-whitelist.submit', [APIWhiteListManageController::class, 'createOrUpdate'])->name('ip-whitelist.submit');
     Route::post('ip-whitelist.delete', [APIWhiteListManageController::class, 'delete'])->name('ip-whitelist.delete');
-
     Route::get('/system/clear-optimize', [SuperAdminController::class, 'clearOptimize'])->name('system.clear-optimize');
 });
 
@@ -300,5 +296,3 @@ Auth::routes([
     'reset' => false,
     'verify' => true,
 ]);
-
-// Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');

@@ -263,7 +263,7 @@ class PublicFormController extends Controller
             return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
         } catch (\Exception $e) {
             $this->attachmentService->deleteStored($storedAttachments);
-            $requestId = (string) Str::uuid();
+            $requestId = $request->attributes->get('request_id') ?: (string) Str::uuid();
             $request->attributes->set('request_id', $requestId);
 
             if (app()->environment('local')) {

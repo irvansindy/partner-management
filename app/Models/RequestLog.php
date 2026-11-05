@@ -10,7 +10,9 @@ class RequestLog extends Model
     use HasFactory;
     protected $table = "request_logs";
     protected $fillable = [
-        'type', 'ip', 'user_agent', 'url', 'extra', 'time'
+        'type', 'ip', 'user_agent', 'url', 'extra', 'time',
+        'request_id', 'user_id', 'actor_type', 'method', 'route_name',
+        'status_code', 'duration_ms', 'response_size',
     ];
 
     protected $casts = [

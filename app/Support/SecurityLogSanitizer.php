@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class SecurityLogSanitizer
@@ -16,6 +17,10 @@ class SecurityLogSanitizer
             'route' => optional($request->route())->getName(),
             'status' => $request->attributes->get('response_status'),
             'request_id' => $request->attributes->get('request_id'),
+            'user_id' => Auth::id(),
+            'actor_type' => Auth::check() ? 'user' : 'public',
+            'duration_ms' => $request->attributes->get('duration_ms'),
+            'response_size' => $request->attributes->get('response_size'),
             'ip_hash' => $this->hashIp($request->ip()),
             'user_agent' => mb_substr($userAgent, 0, 255),
         ];

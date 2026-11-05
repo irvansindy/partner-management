@@ -15,6 +15,10 @@ use App\Models\RequestLog;
 use App\Models\Notifications;
 use App\Events\SecurityAlertEvent;
 use App\Support\SecurityLogSanitizer;
+use App\Audit\AuditRedactor;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
+
 class SanitizeInputMiddleware
 {
     /**
@@ -22,6 +26,11 @@ class SanitizeInputMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $startedAt = hrtime(true);
+        if (!$request->attributes->get('request_id')) {
+            $request->attributes->set('request_id', (string) Str::uuid());
+        }
+
         $ip = $request->ip();
         $ua = $request->userAgent();
 
@@ -83,9 +92,22 @@ class SanitizeInputMiddleware
         $request->merge($sanitizedData);
 
         // 🚀 Next middleware/controller
-        $response = $next($request);
+        try {
+            $response = $next($request);
+        } catch (Throwable $error) {
+            $request->attributes->set(
+                'response_status',
+                $error instanceof HttpExceptionInterface ? $error->getStatusCode() : 500
+            );
+            $request->attributes->set('duration_ms', (int) ceil((hrtime(true) - $startedAt) / 1_000_000));
+            $request->attributes->set('response_size', 0);
+            $this->logRequest($request);
+            throw $error;
+        }
 
         $request->attributes->set('response_status', $response->getStatusCode());
+        $request->attributes->set('duration_ms', (int) ceil((hrtime(true) - $startedAt) / 1_000_000));
+        $request->attributes->set('response_size', strlen((string) $response->getContent()));
         $this->logRequest($request);
 
         // 🛡️ Security headers
@@ -104,27 +126,59 @@ class SanitizeInputMiddleware
     /**
      * Log aktivitas mencurigakan & broadcast ke super-admin.
      */
-    private function logThreat(string $type, array $extra = [])
+    private function logThreat(string $type, array $extra = []): void
     {
-        $logData = SecurityLogHelper::createLogData($type, $extra);
+        try {
+            $logData = SecurityLogHelper::createLogData($type, $extra);
+        } catch (Throwable $error) {
+            $logData = [
+                'type' => $type,
+                'ip' => request()->ip(),
+                'user_agent' => ['raw' => mb_substr((string) request()->userAgent(), 0, 255)],
+                'url' => request()->fullUrl(),
+                'extra' => $extra,
+                'time' => now(),
+            ];
+            $this->reportSecuritySinkFailure('context', $error);
+        }
 
-        // 📝 Simpan ke blocked_requests
-        BlockedRequest::create($logData);
+        $logData['extra'] = app(AuditRedactor::class)->redact($extra);
+        $logData['url'] = request()->url();
 
-        // 📂 Simpan ke storage/logs/security.log
-        Log::channel('security')->warning($type, $logData);
+        $this->safeSecuritySink('database', fn () => BlockedRequest::create($logData));
+        $this->safeSecuritySink('file', fn () => Log::channel('security')->warning($type, [
+            'request_id' => request()->attributes->get('request_id'),
+            'type' => $type,
+            'route' => optional(request()->route())->getName(),
+            'ip_hash' => hash_hmac('sha256', (string) request()->ip(), (string) config('app.key')),
+            'reason' => $extra['reason'] ?? null,
+        ]));
+        $this->safeSecuritySink('notification', fn () => Notifications::create([
+            'type' => $type,
+            'message' => "[{$type}] " . ($extra['reason'] ?? 'Security event'),
+            'is_read' => 0,
+            'icon' => 'fas fa-shield-alt text-danger',
+            'url' => $logData['url'] ?? request()->fullUrl(),
+        ]));
+        $this->safeSecuritySink('broadcast', fn () => broadcast(new SecurityAlertEvent($logData))->toOthers());
+    }
 
-        // 📢 Tambahkan ke notifications table
-        Notifications::create([
-            'type'     => $type,
-            'message'  => "[{$type}] {$logData['ip']} - {$extra['reason']}",
-            'is_read'  => 0,
-            'icon'     => 'fas fa-shield-alt text-danger',
-            'url'      => $logData['url'] ?? request()->fullUrl(),
+    private function safeSecuritySink(string $sink, callable $callback): void
+    {
+        try {
+            $callback();
+        } catch (Throwable $error) {
+            $this->reportSecuritySinkFailure($sink, $error);
+        }
+    }
+
+    private function reportSecuritySinkFailure(string $sink, Throwable $error): void
+    {
+        Log::warning('Security observability sink failed', [
+            'request_id' => request()->attributes->get('request_id'),
+            'sink' => $sink,
+            'exception' => get_class($error),
         ]);
-
-        // 📢 Broadcast ke Super Admin
-        broadcast(new SecurityAlertEvent($logData))->toOthers();
     }
 
     /**
@@ -157,6 +211,14 @@ class SanitizeInputMiddleware
                 'url' => $metadata['route'],
                 'extra' => $metadata,
                 'time' => now(),
+                'request_id' => $metadata['request_id'],
+                'user_id' => $metadata['user_id'],
+                'actor_type' => $metadata['actor_type'],
+                'method' => $metadata['method'],
+                'route_name' => $metadata['route'],
+                'status_code' => $metadata['status'],
+                'duration_ms' => $metadata['duration_ms'],
+                'response_size' => $metadata['response_size'],
             ]);
         } catch (\Throwable $error) {
             Log::warning('Request audit persistence failed', [
