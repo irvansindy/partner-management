@@ -148,9 +148,19 @@
                 <p>{{ $company->name }}</p>
             </div>
             <div class="page-actions">
-                <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-outline-secondary">
-                    <i class="material-icons align-middle mr-1">arrow_back</i> Submissions
-                </a>
+                @if ($canManageFormLink)
+                    <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-outline-secondary">
+                        <i class="material-icons align-middle mr-1">arrow_back</i> Submissions
+                    </a>
+                @elseif ($company->approvalProcess)
+                    <a href="{{ route('admin.approvals.show', $company->approvalProcess) }}" class="btn btn-outline-secondary">
+                        <i class="material-icons align-middle mr-1">arrow_back</i> Approval
+                    </a>
+                @else
+                    <a href="{{ route('admin.approvals.my') }}" class="btn btn-outline-secondary">
+                        <i class="material-icons align-middle mr-1">arrow_back</i> My Approvals
+                    </a>
+                @endif
                 <a href="{{ route('admin.form-links.submission-pdf', [$formLink, $company->id]) }}" target="_blank" class="btn btn-danger">
                     <i class="material-icons align-middle mr-1">picture_as_pdf</i> Export PDF
                 </a>

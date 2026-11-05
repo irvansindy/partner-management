@@ -221,6 +221,20 @@ class MenusSeeder extends Seeder
                 'created_at' => Carbon::parse('2026-10-30 00:00:00'),
                 'updated_at' => Carbon::parse('2026-10-30 00:00:00'),
             ],
+            [
+                'id' => 16,
+                'name_text' => 'My Approvals',
+                'url_name' => 'admin/approvals/my/pending',
+                'can_permission' => 'approval-inbox',
+                'icon' => 'fas fa-clipboard-check',
+                'type' => 1,
+                'description' => 'Submissions assigned to the current approver.',
+                'order' => 16,
+                'parent_id' => null,
+                'is_active' => 1,
+                'created_at' => Carbon::parse('2026-11-05 00:00:00'),
+                'updated_at' => Carbon::parse('2026-11-05 00:00:00'),
+            ],
         ]);
     }
 }

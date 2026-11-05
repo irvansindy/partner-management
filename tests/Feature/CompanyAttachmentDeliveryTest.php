@@ -38,7 +38,7 @@ class CompanyAttachmentDeliveryTest extends TestCase
         ]);
         $attachment->setRelation('company', $company);
         $service = Mockery::mock(FormLinkService::class);
-        $service->shouldReceive('authorizeAccess')->twice()->with($formLink);
+        $service->shouldReceive('authorizeSubmissionRead')->twice()->with($formLink, $company);
         $controller = new CompanyAttachmentController($service);
 
         $preview = $controller->show($attachment);

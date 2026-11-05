@@ -30,7 +30,10 @@ class CompanyAttachmentController extends Controller
     {
         $attachment->loadMissing('company.formLink');
         abort_unless($attachment->company && $attachment->company->formLink, 404);
-        $this->formLinkService->authorizeAccess($attachment->company->formLink);
+        $this->formLinkService->authorizeSubmissionRead(
+            $attachment->company->formLink,
+            $attachment->company
+        );
 
         $disk = $attachment->storage_disk ?: 'public';
         abort_unless(Storage::disk($disk)->exists($attachment->filepath), 404);

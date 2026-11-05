@@ -148,10 +148,9 @@ class FormLinkController extends Controller
      */
     public function submissionDetail(FormLink $formLink, $companyId)
     {
-        $this->formLinkService->authorizeAccess($formLink);
-
-        // Get company with approval process loaded
         $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
+        $this->formLinkService->authorizeSubmissionRead($formLink, $company);
+        $canManageFormLink = $this->formLinkService->canManageFormLink($formLink);
 
         // Load approval process with all relations
         $company->load([
@@ -161,13 +160,12 @@ class FormLinkController extends Controller
             'approvalProcess.office'
         ]);
 
-        return view('admin.form_links.submission_detail', compact('formLink', 'company'));
+        return view('admin.form_links.submission_detail', compact('formLink', 'company', 'canManageFormLink'));
     }
     public function exportSubmissionPdf(FormLink $formLink, $companyId)
     {
-        $this->formLinkService->authorizeAccess($formLink);
-
         $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
+        $this->formLinkService->authorizeSubmissionRead($formLink, $company);
         $company->load(['contact', 'address', 'bank', 'liablePeople', 'attachment']);
 
         $footer = '<hr>

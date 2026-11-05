@@ -177,25 +177,55 @@ class FormLinkService
      */
     public function authorizeAccess(FormLink $formLink): void
     {
-        $user = Auth::user();
-        $role = $user->roles[0]->name;
+        abort_unless(
+            $this->canManageFormLink($formLink),
+            403,
+            'Anda tidak memiliki akses ke form link ini.'
+        );
+    }
 
-        // Super admin has access to all form links
-        if ($role === 'super-admin') {
+    public function canManageFormLink(FormLink $formLink, ?User $user = null): bool
+    {
+        $user = $user ?: Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->hasRole('super-admin')) {
+            return true;
+        }
+
+        if (!$user->hasAnyRole(['admin', 'super-user'])) {
+            return false;
+        }
+
+        return (int) $formLink->department_id === (int) optional($user->dept)->id
+            && (int) $formLink->office_id === (int) optional($user->office)->id;
+    }
+
+    public function authorizeSubmissionRead(
+        FormLink $formLink,
+        CompanyInformation $company,
+        ?User $user = null
+    ): void {
+        if ((int) $company->form_link_id !== (int) $formLink->id) {
+            abort(404, 'Submission tidak ditemukan untuk form link ini.');
+        }
+
+        $user = $user ?: Auth::user();
+
+        if ($this->canManageFormLink($formLink, $user)) {
             return;
         }
 
-        // Admin and super-user can only access form links from their department and office
-        if (in_array($role, ['admin', 'super-user'])) {
-            if ($formLink->department_id !== $user->dept->id ||
-                $formLink->office_id !== $user->office->id) {
-                abort(403, 'Anda tidak memiliki akses ke form link ini.');
-            }
-            return;
-        }
+        $approvalProcess = $company->approvalProcess()->first();
+        $isAssignedApprover = $user
+            && $user->hasAnyRole(['admin', 'super-user'])
+            && $approvalProcess
+            && $approvalProcess->steps()->where('user_id', $user->id)->exists();
 
-        // Other roles are not authorized
-        abort(403, 'Anda tidak memiliki izin untuk mengakses resource ini.');
+        abort_unless($isAssignedApprover, 403, 'Anda tidak memiliki akses ke submission ini.');
     }
 
     /**

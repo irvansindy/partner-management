@@ -43,5 +43,10 @@ class PermissionsSeeder extends Seeder
             ['id'], // unique key
             ['name', 'guard_name', 'updated_at'] // fields to update
         );
+
+        DB::table('permissions')->updateOrInsert(
+            ['name' => 'approval-inbox', 'guard_name' => 'web'],
+            ['created_at' => now(), 'updated_at' => now()]
+        );
     }
 }
