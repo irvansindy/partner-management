@@ -34,7 +34,25 @@ class ObservabilityMigrationExecutionTest extends TestCase
         $this->assertTrue(Schema::hasTable('blocked_requests'));
     }
 
-    private function createLegacyTables(): void
+    /** @test */
+    public function observability_schema_can_resume_after_a_partial_run_and_existing_legacy_columns(): void
+    {
+        config(['database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
+        DB::purge('sqlite');
+        $this->createLegacyTables(true);
+
+        require_once database_path('migrations/2026_11_05_000002_expand_observability_foundation.php');
+        $migration = new \ExpandObservabilityFoundation();
+
+        $migration->up();
+        $migration->up();
+
+        $this->assertTrue(Schema::hasTable('audit_events'));
+        $this->assertTrue(Schema::hasColumn('request_logs', 'request_id'));
+        $this->assertTrue(Schema::hasColumn('blocked_requests', 'time'));
+    }
+
+    private function createLegacyTables(bool $blockedRequestHasTime = false): void
     {
         Schema::create('request_logs', function (Blueprint $table) {
             $table->id();
@@ -52,10 +70,13 @@ class ObservabilityMigrationExecutionTest extends TestCase
             $table->json('action')->nullable();
             $table->timestamps();
         });
-        Schema::create('blocked_requests', function (Blueprint $table) {
+        Schema::create('blocked_requests', function (Blueprint $table) use ($blockedRequestHasTime) {
             $table->id();
             $table->string('type');
             $table->ipAddress('ip');
+            if ($blockedRequestHasTime) {
+                $table->timestamp('time')->nullable();
+            }
             $table->timestamps();
         });
     }
