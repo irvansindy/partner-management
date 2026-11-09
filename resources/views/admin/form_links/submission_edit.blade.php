@@ -227,6 +227,10 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+        @endif
+
         <form method="POST" action="{{ route('admin.form-links.submission-update', [$formLink, $company->id]) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -589,7 +593,7 @@
             function loadCities($row, provinceId) {
                 const $city = $row.find('.address-city-select');
                 if (!$city.length || !provinceId) return;
-                $city.prop('disabled', true).html('<option value="">Loading cities...</option>').trigger('change.select2');
+                $city.prop('disabled', false);
                 $.getJSON(regenciesUrl.replace('__PROVINCE__', provinceId)).done(function (response) {
                     const current = $city.data('current');
                     $city.html('<option value="">Select city / regency</option>');
@@ -598,14 +602,14 @@
                     setCurrentOption($city, current);
                     $city.trigger('change.select2');
                 }).fail(function () {
-                    $city.html('<option value="">Unable to load cities</option>').prop('disabled', true).trigger('change.select2');
+                    $city.prop('disabled', false).trigger('change.select2');
                 });
             }
 
             function loadProvinces($row) {
                 const $province = $row.find('.address-province-select');
                 if (!$province.length) return;
-                $province.prop('disabled', true).html('<option value="">Loading provinces...</option>').trigger('change.select2');
+                $province.prop('disabled', false);
                 $.getJSON(provincesUrl).done(function (response) {
                     const current = $province.data('current');
                     $province.html('<option value="">Select province</option>');
@@ -614,7 +618,7 @@
                     if (setCurrentOption($province, current)) loadCities($row, $province.val());
                     $province.trigger('change.select2');
                 }).fail(function () {
-                    $province.html('<option value="">Unable to load provinces</option>').prop('disabled', true).trigger('change.select2');
+                    $province.prop('disabled', false).trigger('change.select2');
                 });
             }
 

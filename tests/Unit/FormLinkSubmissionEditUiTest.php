@@ -6,6 +6,16 @@ use PHPUnit\Framework\TestCase;
 
 class FormLinkSubmissionEditUiTest extends TestCase
 {
+
+    /** @test */
+    public function existing_location_values_remain_submittable_while_options_load(): void
+    {
+        $row = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/_submission_edit_row.blade.php');
+
+        $this->assertStringContainsString('<option value="{{ $value(\'province\') }}">', $row);
+        $this->assertStringContainsString('<option value="{{ $value(\'city\') }}">', $row);
+        $this->assertStringNotContainsString('required disabled><option value="">Select province first', $row);
+    }
     /** @test */
     public function controller_supplies_the_central_editability_state_to_list_and_detail(): void
     {

@@ -60,8 +60,8 @@
                     @endforeach
                 </select>
             </div>
-            <div class="edit-field col-md-4"><div class="edit-field__label">Province</div><select id="address_province_{{ $index }}" name="{{ $prefix }}[province]" class="form-control address-province-select" data-current="{{ $value('province') }}" aria-label="Province" required><option value="">Loading provinces...</option></select></div>
-            <div class="edit-field col-md-4"><div class="edit-field__label">City / Regency</div><select id="address_city_{{ $index }}" name="{{ $prefix }}[city]" class="form-control address-city-select" data-current="{{ $value('city') }}" aria-label="City or regency" required disabled><option value="">Select province first</option></select></div>
+            <div class="edit-field col-md-4"><div class="edit-field__label">Province</div><select id="address_province_{{ $index }}" name="{{ $prefix }}[province]" class="form-control address-province-select" data-current="{{ $value('province') }}" aria-label="Province" required><option value="{{ $value('province') }}">{{ $value('province') }}</option></select></div>
+            <div class="edit-field col-md-4"><div class="edit-field__label">City / Regency</div><select id="address_city_{{ $index }}" name="{{ $prefix }}[city]" class="form-control address-city-select" data-current="{{ $value('city') }}" aria-label="City or regency" required><option value="{{ $value('city') }}">{{ $value('city') }}</option></select></div>
             <div class="edit-field col-md-4"><label>Postal Code</label><input name="{{ $prefix }}[zip_code]" class="form-control" value="{{ $value('zip_code') }}" maxlength="20" required></div>
             <div class="edit-field col-md-4">
                 <label for="{{ $kind }}_telephone_{{ $index }}">Telephone</label>

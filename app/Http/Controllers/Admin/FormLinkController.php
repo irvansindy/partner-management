@@ -9,6 +9,7 @@ use App\Models\FormLink;
 use App\Models\ApprovalProcess;
 use App\Models\Provinces;
 use App\Models\Regencies;
+use App\Services\CompanyAttachmentService;
 use App\Services\FormLinkService;
 use App\Support\CountryCatalog;
 use App\Support\EmployeeRange;
@@ -19,10 +20,12 @@ use Illuminate\Validation\Rule;
 class FormLinkController extends Controller
 {
     protected $formLinkService;
+    protected $attachmentService;
 
-    public function __construct(FormLinkService $formLinkService)
+    public function __construct(FormLinkService $formLinkService, CompanyAttachmentService $attachmentService)
     {
         $this->formLinkService = $formLinkService;
+        $this->attachmentService = $attachmentService;
     }
 
     /**
@@ -320,7 +323,7 @@ class FormLinkController extends Controller
 
             // Attachments (hanya untuk upload file baru)
             'new_attachments'                   => 'nullable|array',
-            'new_attachments.*'                 => 'file|max:10240|mimes:pdf,jpg,jpeg,png',
+            'new_attachments.*'                 => 'file|max:' . ((int) config('company_attachments.max_bytes', 5242880) / 1024) . '|mimes:pdf,jpg,jpeg,png',
             'delete_attachment_ids'             => 'nullable|array',
             'delete_attachment_ids.*'           => [
                 'integer',
@@ -345,9 +348,16 @@ class FormLinkController extends Controller
             );
 
             if ($country['code'] === 'ID') {
-                $province = Provinces::find($address['province']);
+                $province = Provinces::where(function ($query) use ($address) {
+                    $query->where('id', $address['province'])
+                        ->orWhere('name', $address['province']);
+                })->first();
                 $regency = $province
-                    ? Regencies::where('province_id', $province->id)->find($address['city'])
+                    ? Regencies::where('province_id', $province->id)
+                        ->where(function ($query) use ($address) {
+                            $query->where('id', $address['city'])
+                                ->orWhere('name', $address['city']);
+                        })->first()
                     : null;
 
                 if (!$province || !$regency) {
@@ -362,8 +372,13 @@ class FormLinkController extends Controller
         }
         unset($address);
 
+        $newAttachments = collect($request->file('new_attachments', []))->values();
+        $newAttachmentMetadata = $newAttachments->map(function ($file) {
+            return $this->attachmentService->validate($file);
+        });
+
         try {
-            \DB::transaction(function () use ($company, $validated, $request) {
+            \DB::transaction(function () use ($company, $validated, $newAttachments, $newAttachmentMetadata) {
 
                 // ── 1. Update Company Information ──────────────────────────────
                 $company->update([
@@ -489,23 +504,19 @@ class FormLinkController extends Controller
                 // Hapus attachment yang ditandai untuk dihapus
                 if (!empty($validated['delete_attachment_ids'])) {
                     $toDelete = $company->attachment()->whereIn('id', $validated['delete_attachment_ids'])->get();
-                    foreach ($toDelete as $att) {
-                        \Storage::disk('public')->delete($att->filepath);
-                        $att->delete();
-                    }
+                    $this->attachmentService->deleteStored($toDelete);
+                    $company->attachment()->whereIn('id', $validated['delete_attachment_ids'])->delete();
                 }
 
                 // Upload attachment baru
-                if ($request->hasFile('new_attachments')) {
-                    foreach ($request->file('new_attachments') as $file) {
-                        $path = $file->store('attachments/' . $company->id, 'public');
-                        $company->attachment()->create([
-                            'filename' => $file->getClientOriginalName(),
-                            'filepath' => $path,
-                            'filetype' => $file->getMimeType(),
-                            'filesize' => $file->getSize(),
-                        ]);
-                    }
+                $nextSortOrder = ((int) $company->attachment()->max('sort_order')) + 1;
+                foreach ($newAttachments as $index => $file) {
+                    $this->attachmentService->store(
+                        $company,
+                        $file,
+                        $newAttachmentMetadata[$index],
+                        $nextSortOrder + $index
+                    );
                 }
             });
 

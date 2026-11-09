@@ -35,4 +35,26 @@ class FormLinkSubmissionEditControllerTest extends TestCase
 
         $this->assertStringContainsString("Rule::in(EmployeeRange::values())", $controller);
     }
+
+    /** @test */
+    public function attachment_updates_use_the_central_attachment_service(): void
+    {
+        $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
+
+        $this->assertStringContainsString('CompanyAttachmentService $attachmentService', $controller);
+        $this->assertStringContainsString('$this->attachmentService->deleteStored($toDelete);', $controller);
+        $this->assertStringContainsString('$this->attachmentService->validate($file)', $controller);
+        $this->assertStringContainsString('$this->attachmentService->store(', $controller);
+        $this->assertStringNotContainsString("Storage::disk('public')->delete", $controller);
+        $this->assertStringNotContainsString("->store('attachments/'", $controller);
+    }
+
+    /** @test */
+    public function indonesia_location_update_accepts_existing_ids_or_names(): void
+    {
+        $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
+
+        $this->assertStringContainsString("->orWhere('name', \$address['province'])", $controller);
+        $this->assertStringContainsString("->orWhere('name', \$address['city'])", $controller);
+    }
 }
