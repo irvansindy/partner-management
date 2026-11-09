@@ -388,7 +388,7 @@ class FormLinkController extends Controller
                     'total_employee'                    => $validated['total_employee'] ?? null,
                     'business_classification'           => $validated['business_classification'],
                     'business_classification_detail'    => $validated['business_classification_detail'] ?? null,
-                    'register_number_as_in_tax_invoice' => $validated['register_number_as_in_tax_invoice'] ?? null,
+                    'npwp'                              => $validated['register_number_as_in_tax_invoice'] ?? null,
                     'website_address'                   => $validated['website_address'] ?? null,
                     'system_management'                 => $validated['system_management'] ?? null,
                     'email_address'                     => $validated['email_address'] ?? null,

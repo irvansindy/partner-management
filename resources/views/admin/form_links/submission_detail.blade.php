@@ -415,7 +415,7 @@
                     </tr>
                     <tr>
                         <th>Tax Register Number</th>
-                        <td>{{ $company->register_number_as_in_tax_invoice ?? '-' }}</td>
+                        <td>{{ $company->npwp ?? '-' }}</td>
                     </tr>
                     <tr>
                         <th>Website Address</th>

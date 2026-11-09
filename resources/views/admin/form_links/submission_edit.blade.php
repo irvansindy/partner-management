@@ -270,7 +270,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="register_number_as_in_tax_invoice">Tax Register Number</label>
-                            <input id="register_number_as_in_tax_invoice" name="register_number_as_in_tax_invoice" class="form-control" value="{{ old('register_number_as_in_tax_invoice', $company->register_number_as_in_tax_invoice) }}" maxlength="100">
+                            <input id="register_number_as_in_tax_invoice" name="register_number_as_in_tax_invoice" class="form-control" value="{{ old('register_number_as_in_tax_invoice', $company->npwp) }}" maxlength="100">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="website_address">Website Address</label>

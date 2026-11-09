@@ -57,4 +57,18 @@ class FormLinkSubmissionEditControllerTest extends TestCase
         $this->assertStringContainsString("->orWhere('name', \$address['province'])", $controller);
         $this->assertStringContainsString("->orWhere('name', \$address['city'])", $controller);
     }
+
+    /** @test */
+    public function tax_register_input_is_persisted_to_the_company_npwp_column(): void
+    {
+        $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
+        $view = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/submission_edit.blade.php');
+
+        $this->assertMatchesRegularExpression(
+            "/'npwp'\\s*=>\\s*\\\$validated\\['register_number_as_in_tax_invoice'\\]\\s*\\?\\?\\s*null/",
+            $controller
+        );
+        $this->assertStringNotContainsString("'register_number_as_in_tax_invoice' => \$validated", $controller);
+        $this->assertStringContainsString("old('register_number_as_in_tax_invoice', \$company->npwp)", $view);
+    }
 }
