@@ -13,6 +13,7 @@ use App\Services\FormLinkService;
 use App\Support\CountryCatalog;
 use App\Support\EmployeeRange;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 
 class FormLinkController extends Controller
@@ -189,7 +190,11 @@ class FormLinkController extends Controller
             </tr>
         </table>';
 
+        $mpdfTempDirectory = storage_path('framework/cache/mpdf');
+        File::ensureDirectoryExists($mpdfTempDirectory, 0775, true);
+
         $mpdf = new \Mpdf\Mpdf([
+            'tempDir'       => $mpdfTempDirectory,
             'margin_left'   => 12,
             'margin_right'  => 12,
             'margin_top'    => 10,

@@ -3,6 +3,7 @@
 @push('styles')
     @include('admin.form_links._alpha_styles')
     <link rel="stylesheet" href="{{ asset('vendor/flag-icon-css/css/flag-icons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/cdn/leaflet.css') }}">
     <style>
         .submission-edit-page .section-help { color: var(--form-link-text-muted); margin: 4px 0 0; }
         .submission-edit-page .repeatable-item {
@@ -79,27 +80,101 @@
         .submission-edit-page .attachment-input:focus + .attachment-picker__button { outline: 3px solid rgba(101, 88, 211, .25); outline-offset: 2px; }
         .submission-edit-page .selected-attachment-list { color: var(--form-link-text-muted); margin: 10px 0 0; padding-left: 20px; }
         .submission-edit-page .selected-attachment-list:empty { display: none; }
-        .submission-edit-page .phone-input-group { display: flex; width: 100%; }
-        .submission-edit-page .form-group > .static-field-label {
-            color: var(--form-link-text-muted);
+        .submission-edit-page .edit-field { margin-bottom: 20px; }
+        .submission-edit-page .edit-field > label,
+        .submission-edit-page .edit-field > .edit-field__label {
+            color: #374151;
             display: block;
-            font-size: 12px;
-            left: auto;
+            font-size: 13px;
+            font-weight: 600;
             line-height: 1.25;
-            margin: 0 0 7px;
-            position: static;
-            top: auto;
-            transform: none;
+            margin: 0 0 8px;
+            min-height: 17px;
+            position: static !important;
+            transform: none !important;
         }
-        .submission-edit-page .phone-input-group > .select2-container { flex: 0 0 128px; width: 128px !important; }
-        .submission-edit-page .phone-input-group > .select2-container .select2-selection--single { background: #fbfbfd; border: 1px solid var(--form-link-border); }
-        .submission-edit-page .phone-input-group .phone-number { border-bottom-left-radius: 0; border-top-left-radius: 0; min-width: 0; }
+        .submission-edit-page .edit-field > .form-control {
+            background: #fff;
+            border: 1px solid var(--form-link-border);
+            border-radius: 7px;
+            height: 46px;
+            min-height: 46px;
+            padding: 10px 12px;
+        }
+        .submission-edit-page .edit-field > textarea.form-control {
+            height: 86px;
+            min-height: 86px;
+            resize: vertical;
+        }
+        .submission-edit-page .phone-input-group { align-items: stretch; display: flex; width: 100%; }
+        .submission-edit-page .phone-input-group > .select2-container { flex: 0 0 148px; width: 148px !important; }
+        .submission-edit-page .phone-input-group > .select2-container .select2-selection--single {
+            background: #fff;
+            border: 1px solid var(--form-link-border);
+            height: 46px !important;
+            min-height: 46px !important;
+        }
+        .submission-edit-page .phone-input-group .phone-number {
+            background: #fff;
+            border: 1px solid var(--form-link-border);
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+            height: 46px;
+            min-height: 46px;
+            min-width: 0;
+            padding: 10px 12px;
+        }
         .submission-edit-page .phone-input-group .select2-selection { border-bottom-right-radius: 0 !important; border-top-right-radius: 0 !important; }
         .submission-edit-page .select2-container { width: 100% !important; }
-        .submission-edit-page .select2-container--default .select2-selection--single { align-items: center; display: flex; min-height: 44px; }
-        .submission-edit-page .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 42px; padding-left: 12px; }
-        .submission-edit-page .select2-container--default .select2-selection--single .select2-selection__arrow { height: 42px; }
+        .submission-edit-page .edit-field > .select2-container .select2-selection--single,
+        .submission-edit-page .select2-container--default .select2-selection--single { align-items: center; display: flex; height: 46px !important; min-height: 46px !important; }
+        .submission-edit-page .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 44px !important; padding-left: 12px; }
+        .submission-edit-page .select2-container--default .select2-selection--single .select2-selection__arrow { height: 44px !important; }
         .submission-edit-page .country-option { align-items: center; display: inline-flex; gap: 8px; }
+        .submission-edit-page .address-map-search > .form-control { height: 46px; }
+        .submission-edit-page .address-map-search .btn { height: 46px; min-width: 108px; }
+        .submission-edit-page .address-map-status { display: block; margin: 8px 0 10px; }
+        .submission-edit-page .submission-map-shell {
+            background: #eef1f5;
+            border: 1px solid var(--form-link-border);
+            border-radius: 8px;
+            min-height: 380px;
+            overflow: hidden;
+            position: relative;
+        }
+        .submission-edit-page .submission-address-map { height: 380px; width: 100%; }
+        .submission-edit-page .submission-map-fullscreen {
+            align-items: center;
+            background: #fff;
+            border: 1px solid #cbd2dc;
+            border-radius: 6px;
+            color: #303746;
+            display: inline-flex;
+            gap: 7px;
+            height: 40px;
+            padding: 0 12px;
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            z-index: 500;
+        }
+        .submission-edit-page .submission-map-fullscreen:hover { background: #f7f7fa; }
+        .submission-edit-page .submission-map-fullscreen:focus-visible { outline: 3px solid rgba(101, 88, 211, .25); outline-offset: 2px; }
+        .submission-edit-page .submission-map-shell:fullscreen,
+        .submission-edit-page .submission-map-shell.is-map-fullscreen {
+            background: #fff;
+            border: 0;
+            border-radius: 0;
+            height: 100vh;
+            inset: 0;
+            position: fixed;
+            width: 100vw;
+            z-index: 9999;
+        }
+        .submission-edit-page .submission-map-shell:fullscreen .submission-address-map,
+        .submission-edit-page .submission-map-shell.is-map-fullscreen .submission-address-map { height: 100vh; }
+        body.submission-map-fullscreen-open { overflow: hidden; }
+        .submission-map-marker { background: transparent; border: 0; color: #3f78b5; font-size: 38px; text-align: center; text-shadow: 0 2px 3px rgba(0, 0, 0, .25); }
         .submission-edit-page .sticky-actions {
             align-items: center;
             display: flex;
@@ -287,11 +362,174 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/cdn/leaflet.js') }}"></script>
     <script>
         $(function () {
             const templates = @json($rowTemplates);
             const provincesUrl = @json(route('public.form.provinces'));
             const regenciesUrl = @json(route('public.form.regencies', ['province' => '__PROVINCE__']));
+            const forwardGeocodeUrl = @json(route('forward-map'));
+            const reverseGeocodeUrl = @json(route('reverse-map'));
+            const addressMaps = new WeakMap();
+
+            function mapFields($row) {
+                return {
+                    address: $row.find('textarea[name$="[address]"]').first(),
+                    latitude: $row.find('input[name$="[latitude]"]').first(),
+                    longitude: $row.find('input[name$="[longitude]"]').first(),
+                    search: $row.find('[data-coordinate-search]').first(),
+                    status: $row.find('[data-coordinate-status]').first()
+                };
+            }
+
+            function updateMapFullscreenButton(shell, active) {
+                const button = shell.querySelector('[data-map-fullscreen]');
+                if (!button) return;
+                button.querySelector('i').className = active ? 'fas fa-compress' : 'fas fa-expand';
+                button.querySelector('span').textContent = active ? 'Exit fullscreen' : 'Fullscreen';
+                button.setAttribute('aria-label', active ? 'Exit fullscreen map' : 'Open fullscreen map');
+                button.setAttribute('title', active ? 'Exit fullscreen map' : 'Open fullscreen map');
+            }
+
+            function resizeAddressMap(row) {
+                const state = addressMaps.get(row);
+                if (state) setTimeout(function () { state.map.invalidateSize(); }, 0);
+            }
+
+            function toggleAddressMapFullscreen(row) {
+                const shell = row.querySelector('[data-map-shell]');
+                if (!shell) return;
+                if (document.fullscreenElement === shell) return document.exitFullscreen();
+                if (shell.classList.contains('is-map-fullscreen')) {
+                    shell.classList.remove('is-map-fullscreen');
+                    document.body.classList.remove('submission-map-fullscreen-open');
+                    updateMapFullscreenButton(shell, false);
+                    return resizeAddressMap(row);
+                }
+                if (shell.requestFullscreen) {
+                    const request = shell.requestFullscreen();
+                    if (request && typeof request.catch === 'function') {
+                        request.catch(function () {
+                            shell.classList.add('is-map-fullscreen');
+                            document.body.classList.add('submission-map-fullscreen-open');
+                            updateMapFullscreenButton(shell, true);
+                            resizeAddressMap(row);
+                        });
+                    }
+                    return;
+                }
+                shell.classList.add('is-map-fullscreen');
+                document.body.classList.add('submission-map-fullscreen-open');
+                updateMapFullscreenButton(shell, true);
+                resizeAddressMap(row);
+            }
+
+            function setMapSelection(row, latitude, longitude, reverseLookup) {
+                const state = addressMaps.get(row);
+                const fields = mapFields($(row));
+                const lat = Number(latitude);
+                const lng = Number(longitude);
+                if (!state || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
+                fields.latitude.val(lat.toFixed(7));
+                fields.longitude.val(lng.toFixed(7));
+                state.marker.setLatLng([lat, lng]);
+                state.map.setView([lat, lng], 16);
+                resizeAddressMap(row);
+                if (reverseLookup) reverseGeocodeAddress(row, lat, lng);
+            }
+
+            function reverseGeocodeAddress(row, latitude, longitude) {
+                const fields = mapFields($(row));
+                fields.status.text('Loading address from the selected pin...');
+                fetch(reverseGeocodeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ latitude: latitude, longitude: longitude })
+                }).then(function (response) {
+                    if (!response.ok) throw new Error('Reverse geocoding failed');
+                    return response.json();
+                }).then(function (payload) {
+                    const address = payload.data && payload.data.display_name ? payload.data.display_name : '';
+                    if (address) {
+                        fields.address.val(address);
+                        fields.search.val(address);
+                    }
+                    fields.status.text('Selected coordinate: ' + fields.latitude.val() + ', ' + fields.longitude.val());
+                }).catch(function () {
+                    fields.status.text('The pin was moved, but its address could not be loaded.');
+                });
+            }
+
+            function searchAddressMap(row) {
+                const $row = $(row);
+                const fields = mapFields($row);
+                const query = String(fields.search.val() || '').trim();
+                if (!query) {
+                    fields.status.text('Enter a nearby place or complete address first.');
+                    fields.search.trigger('focus');
+                    return;
+                }
+                fields.status.text('Searching address...');
+                fetch(forwardGeocodeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        address: query,
+                        country_code: String($row.find('.address-country-select').val() || '').toLowerCase()
+                    })
+                }).then(function (response) {
+                    if (!response.ok) throw new Error('Address not found');
+                    return response.json();
+                }).then(function (payload) {
+                    const result = payload.data;
+                    fields.address.val(result.display_name || query);
+                    fields.search.val(result.display_name || query);
+                    setMapSelection(row, result.latitude, result.longitude, false);
+                    fields.status.text('Coordinate found: ' + fields.latitude.val() + ', ' + fields.longitude.val());
+                }).catch(function () {
+                    fields.status.text('Address could not be found. Try a nearby common place.');
+                });
+            }
+
+            function initializeAddressMap(row) {
+                const canvas = row.querySelector('[data-address-map]');
+                if (!canvas || typeof L === 'undefined' || addressMaps.has(row)) return;
+                const fields = mapFields($(row));
+                const storedLatitude = Number(fields.latitude.val());
+                const storedLongitude = Number(fields.longitude.val());
+                const hasStoredCoordinate = Number.isFinite(storedLatitude) && Number.isFinite(storedLongitude)
+                    && fields.latitude.val() !== '' && fields.longitude.val() !== '';
+                const initial = hasStoredCoordinate ? [storedLatitude, storedLongitude] : [-2.5, 118];
+                const map = L.map(canvas).setView(initial, hasStoredCoordinate ? 16 : 5);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles &copy; Esri',
+                    maxZoom: 19
+                }).addTo(map);
+                const icon = L.divIcon({
+                    className: 'submission-map-marker',
+                    html: '<i class="fas fa-map-marker-alt" aria-hidden="true"></i>',
+                    iconSize: [30, 40],
+                    iconAnchor: [15, 38]
+                });
+                const marker = L.marker(initial, { draggable: true, icon: icon }).addTo(map);
+                addressMaps.set(row, { map: map, marker: marker });
+                marker.on('dragend', function () {
+                    const point = marker.getLatLng();
+                    setMapSelection(row, point.lat, point.lng, true);
+                });
+                map.on('click', function (event) {
+                    setMapSelection(row, event.latlng.lat, event.latlng.lng, true);
+                });
+                resizeAddressMap(row);
+            }
 
             function countryMarkup(option) {
                 if (!option.id) return option.text;
@@ -325,6 +563,12 @@
             function replaceLocationControl($row, type, useSelect) {
                 const selector = '.address-' + type + '-select, .address-' + type + '-input';
                 const $old = $row.find(selector).first();
+                const alreadyCorrectType = useSelect
+                    ? $old.is('select.address-' + type + '-select')
+                    : $old.is('input.address-' + type + '-input');
+
+                if (alreadyCorrectType) return $old;
+
                 const name = $old.attr('name');
                 const id = $old.attr('id');
                 const current = $old.data('current') || $old.val() || '';
@@ -332,7 +576,10 @@
                 const $control = useSelect
                     ? $('<select class="form-control address-' + type + '-select" required><option value="">Select ' + type + '</option></select>')
                     : $('<input class="form-control address-' + type + '-input" maxlength="100" required>');
-                $control.attr('id', id).attr('name', name).attr('data-current', current);
+                $control.attr('id', id)
+                    .attr('name', name)
+                    .attr('aria-label', type === 'city' ? 'City or regency' : 'Province')
+                    .attr('data-current', current);
                 $old.replaceWith($control);
                 if (useSelect) $control.select2({ width: '100%' });
                 else $control.val(current);
@@ -384,6 +631,7 @@
                 const $row = $(row);
                 initializeSelects($row);
                 if ($row.find('.address-country-select').length) applyCountryMode($row);
+                initializeAddressMap(row instanceof HTMLElement ? row : $row.get(0));
             }
 
             $('.repeatable-item').each(function () { initializeRow(this); });
@@ -400,9 +648,28 @@
 
             $(document).on('change', '.address-country-select', function () { applyCountryMode($(this).closest('.repeatable-item')); });
             $(document).on('change', '.address-province-select', function () { loadCities($(this).closest('.repeatable-item'), this.value); });
+            $(document).on('click', '[data-find-coordinate]', function () { searchAddressMap($(this).closest('.repeatable-item').get(0)); });
+            $(document).on('keydown', '[data-coordinate-search]', function (event) {
+                if (event.key !== 'Enter') return;
+                event.preventDefault();
+                searchAddressMap($(this).closest('.repeatable-item').get(0));
+            });
+            $(document).on('click', '[data-map-fullscreen]', function () { toggleAddressMapFullscreen($(this).closest('.repeatable-item').get(0)); });
+
+            document.addEventListener('fullscreenchange', function () {
+                document.querySelectorAll('[data-map-shell]').forEach(function (shell) {
+                    const active = document.fullscreenElement === shell;
+                    updateMapFullscreenButton(shell, active);
+                    const row = shell.closest('.repeatable-item');
+                    if (row) resizeAddressMap(row);
+                });
+            });
 
             $(document).on('click', '[data-remove-row]', function () {
-                $(this).closest('.repeatable-item').remove();
+                const row = $(this).closest('.repeatable-item').get(0);
+                const mapState = row ? addressMaps.get(row) : null;
+                if (mapState) mapState.map.remove();
+                $(row).remove();
             });
 
             $('#new_attachments').on('change', function () {
