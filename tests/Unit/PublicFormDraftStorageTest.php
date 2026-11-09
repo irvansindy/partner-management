@@ -22,4 +22,17 @@ class PublicFormDraftStorageTest extends TestCase
         $this->assertStringContainsString("'#add_branch'", $source);
         $this->assertStringContainsString("'#add_contact'", $source);
     }
+
+    /** @test */
+    public function wizard_restores_the_last_open_step_from_session_storage(): void
+    {
+        $source = file_get_contents(resource_path('views/public/form/js.blade.php'));
+
+        $this->assertStringContainsString('const WIZARD_STEP_STORAGE_KEY = STORAGE_KEY + "_step";', $source);
+        $this->assertStringContainsString('sessionStorage.setItem(WIZARD_STEP_STORAGE_KEY', $source);
+        $this->assertStringContainsString('sessionStorage.getItem(WIZARD_STEP_STORAGE_KEY)', $source);
+        $this->assertStringContainsString('sessionStorage.removeItem(WIZARD_STEP_STORAGE_KEY)', $source);
+        $this->assertStringContainsString('showStep(restoredWizardStep);', $source);
+        $this->assertStringNotContainsString('showStep(1);', $source);
+    }
 }

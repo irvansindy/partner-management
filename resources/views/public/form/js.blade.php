@@ -13,6 +13,7 @@
     <script>
         const formToken = "{{ $formLink->token ?? '' }}";
         const STORAGE_KEY = "partner_form_" + formToken;
+        const WIZARD_STEP_STORAGE_KEY = STORAGE_KEY + "_step";
         const MAX_REPEAT_ROWS = {{ (int) config('public_form.max_repeat_rows', 10) }};
         const MAX_SURVEY_ROWS = {{ (int) config('public_form.max_survey_rows', 20) }};
         const DRAFT_EXCLUDED_FIELDS = new Set(['_token']);
@@ -387,6 +388,7 @@
         function clearSavedForm() {
             sessionStorage.removeItem(STORAGE_KEY);
             sessionStorage.removeItem(STORAGE_KEY + '_survey');
+            sessionStorage.removeItem(WIZARD_STEP_STORAGE_KEY);
             // console.log("Form draft cleared from session storage");
         }
 
@@ -871,6 +873,7 @@
                     step = totalWizardSteps;
                 }
                 currentWizardStep = step;
+                sessionStorage.setItem(WIZARD_STEP_STORAGE_KEY, String(currentWizardStep));
                 $('#wizard_current_label').text(wizardStepLabels[currentWizardStep - 1]);
                 $('#wizard_current_number').text(String(currentWizardStep).padStart(2, '0'));
 
@@ -924,7 +927,9 @@
                 }
             });
 
-            showStep(1);
+            const savedWizardStep = parseInt(sessionStorage.getItem(WIZARD_STEP_STORAGE_KEY), 10);
+            const restoredWizardStep = Number.isInteger(savedWizardStep) ? savedWizardStep : 1;
+            showStep(restoredWizardStep);
         });
     </script>
 
