@@ -67,6 +67,21 @@ class InternationalPhoneInputTest extends TestCase
     }
 
     /** @test */
+    public function dynamically_added_contact_phone_is_initialized_from_its_dom_row(): void
+    {
+        $script = $this->partnerScript();
+
+        $this->assertStringContainsString(
+            "initializeInternationalPhoneInputs($('.dynamic_contact .array_dynamic_contact').last().get(0))",
+            $script
+        );
+        $this->assertStringNotContainsString(
+            "initializeInternationalPhoneInput($('#contact_telephone_' + index))",
+            $script
+        );
+    }
+
+    /** @test */
     public function disabled_address_phone_fields_are_not_added_to_submission(): void
     {
         $script = $this->partnerScript();

@@ -128,6 +128,39 @@
                 overflow-wrap: anywhere;
             }
 
+            .form-links-page .submission-detail-actions {
+                align-items: center;
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 10px;
+            }
+
+            .form-links-page .submission-header-action {
+                align-items: center;
+                border-radius: 8px;
+                box-shadow: 0 3px 7px rgba(32, 32, 45, .18);
+                display: inline-flex;
+                font-size: 14px;
+                font-weight: 700;
+                height: 48px;
+                justify-content: center;
+                letter-spacing: .04em;
+                line-height: 1;
+                padding: 0 22px;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .form-links-page .submission-header-action .material-icons {
+                font-size: 22px;
+                line-height: 1;
+                margin-right: 7px;
+            }
+
+            .form-links-page .submission-header-action.btn-outline-secondary {
+                box-shadow: none;
+            }
+
             @media (max-width: 576px) {
                 .form-links-page .approval-step-header,
                 .form-links-page .approval-detail-list {
@@ -136,6 +169,16 @@
 
                 .form-links-page .approval-state {
                     margin-top: 8px;
+                }
+
+                .form-links-page .submission-detail-actions {
+                    align-items: stretch;
+                    flex-direction: column;
+                    width: 100%;
+                }
+
+                .form-links-page .submission-header-action {
+                    width: 100%;
                 }
             }
         </style>
@@ -147,22 +190,28 @@
                 <h2>Submission Detail</h2>
                 <p>{{ $company->name }}</p>
             </div>
-            <div class="page-actions">
+            <div class="page-actions submission-detail-actions">
                 @if ($canManageFormLink)
-                    <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-outline-secondary">
-                        <i class="material-icons align-middle mr-1">arrow_back</i> Submissions
+                    <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-outline-secondary submission-header-action">
+                        <i class="material-icons" aria-hidden="true">arrow_back</i> Submissions
                     </a>
                 @elseif ($company->approvalProcess)
-                    <a href="{{ route('admin.approvals.show', $company->approvalProcess) }}" class="btn btn-outline-secondary">
-                        <i class="material-icons align-middle mr-1">arrow_back</i> Approval
+                    <a href="{{ route('admin.approvals.show', $company->approvalProcess) }}" class="btn btn-outline-secondary submission-header-action">
+                        <i class="material-icons" aria-hidden="true">arrow_back</i> Approval
                     </a>
                 @else
-                    <a href="{{ route('admin.approvals.my') }}" class="btn btn-outline-secondary">
-                        <i class="material-icons align-middle mr-1">arrow_back</i> My Approvals
+                    <a href="{{ route('admin.approvals.my') }}" class="btn btn-outline-secondary submission-header-action">
+                        <i class="material-icons" aria-hidden="true">arrow_back</i> My Approvals
                     </a>
                 @endif
-                <a href="{{ route('admin.form-links.submission-pdf', [$formLink, $company->id]) }}" target="_blank" class="btn btn-danger">
-                    <i class="material-icons align-middle mr-1">picture_as_pdf</i> Export PDF
+                @if ($canEditSubmission)
+                    <a href="{{ route('admin.form-links.submission-edit', [$formLink, $company->id]) }}"
+                        class="btn btn-primary submission-header-action">
+                        <i class="material-icons" aria-hidden="true">edit</i> Edit Submission
+                    </a>
+                @endif
+                <a href="{{ route('admin.form-links.submission-pdf', [$formLink, $company->id]) }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger submission-header-action">
+                    <i class="material-icons" aria-hidden="true">picture_as_pdf</i> Export PDF
                 </a>
             </div>
         </div>
@@ -255,7 +304,7 @@
                                     @if ($step->notes)
                                         <div class="approval-note">
                                             <strong><i class="fas fa-comment mr-1"></i> Notes</strong>
-                                            <div class="mt-1">{!! $step->notes !!}</div>
+                                            <div class="mt-1">{{ $step->notes }}</div>
                                         </div>
                                     @endif
 

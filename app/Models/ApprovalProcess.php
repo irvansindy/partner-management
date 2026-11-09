@@ -119,4 +119,28 @@ class ApprovalProcess extends Model
 
         return ($this->getCompletedStepsCount() / $total) * 100;
     }
+
+    public function isBeforeFinalStage(): bool
+    {
+        if (!$this->isPending() && !$this->isInProgress()) {
+            return false;
+        }
+
+        $steps = $this->relationLoaded('steps')
+            ? $this->steps
+            : $this->steps()->get();
+
+        if ($steps->isEmpty()) {
+            return false;
+        }
+
+        $activeOrdering = $steps
+            ->where('status', ApprovalProcessStep::STATUS_WAITING)
+            ->min('step_ordering');
+        $finalOrdering = $steps->max('step_ordering');
+
+        return $activeOrdering !== null
+            && $finalOrdering !== null
+            && (int) $activeOrdering < (int) $finalOrdering;
+    }
 }

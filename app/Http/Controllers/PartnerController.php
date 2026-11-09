@@ -464,9 +464,13 @@ class PartnerController extends Controller
     {
         try {
             $rules = [
+                'supporting_document_type' => 'required|array|min:1|max:10',
                 'supporting_document_type.*' => 'required|string|max:255',
+                'supporting_document_business_type' => 'required|array|min:1|max:10',
                 'supporting_document_business_type.*' => 'required|string|max:255',
+                'file_supporting_document' => 'required|array|min:1|max:10',
                 'file_supporting_document.*' => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10480', // Validate file uploads
+                'supporting_document_partner_id' => 'required|integer',
             ];
 
             $validator = Validator::make($request->all(), $rules, [
@@ -480,18 +484,33 @@ class PartnerController extends Controller
                 throw new ValidationException($validator);
             }
 
-            // check file uploaded
-            if($request->file('file_supporting_document') != null) {
-                for ($i = 0; $i < count($request->file_supporting_document); $i++) {
+            $documentTypes = array_values($request->input('supporting_document_type', []));
+            $businessTypes = array_values($request->input('supporting_document_business_type', []));
+            $files = array_values($request->file('file_supporting_document', []));
+
+            if (count($documentTypes) !== count($files) || count($businessTypes) !== count($files)) {
+                throw ValidationException::withMessages([
+                    'file_supporting_document' => 'Setiap baris dokumen wajib memiliki tipe dokumen, tipe usaha, dan file.',
+                ]);
+            }
+
+            DB::beginTransaction();
+            if (!empty($files)) {
+                for ($i = 0; $i < count($files); $i++) {
                     // setup name file
-                    $explode_docx_type = explode('|', $request->supporting_document_type[$i]);
+                    $explode_docx_type = explode('|', $documentTypes[$i], 2);
+                    if (count($explode_docx_type) !== 2 || trim($explode_docx_type[1]) === '') {
+                        throw ValidationException::withMessages([
+                            "supporting_document_type.$i" => 'Tipe dokumen tidak valid.',
+                        ]);
+                    }
                     $result_docx_name = Str::slug($explode_docx_type[1], '_');
-                    $file = $request->file('file_supporting_document')[$i];
-                    $file_name = $result_docx_name.'_'.$request->supporting_document_business_type[$i].'.'.$file->getClientOriginalExtension();
-                    $path = public_path('storage/uploads/'.$request->supporting_document_business_type[$i].'/');
+                    $file = $files[$i];
+                    $file_name = $result_docx_name.'_'.$businessTypes[$i].'.'.$file->getClientOriginalExtension();
+                    $path = public_path('storage/uploads/'.$businessTypes[$i].'/');
 
                     // set name
-                    $company_doc_type = $request->supporting_document_business_type[$i];
+                    $company_doc_type = $businessTypes[$i];
                     $document_type_name = $result_docx_name.'_'.$company_doc_type;
 
                     // checking all document
@@ -501,13 +520,14 @@ class PartnerController extends Controller
                     ])->first();
 
                     if ($existing_docx) {
+                        DB::rollBack();
                         return FormatResponseJson::error(null, 'Document already exists', 400); // Send error response
                     } else {
                         // insert data to database
                         $list_docx_attachment_data = [
                             'company_id'=> $request->supporting_document_partner_id,
                             'company_doc_type' => $company_doc_type,
-                            'document' => 'storage/uploads/'.$request->supporting_document_business_type[$i].'/'.$file_name,
+                            'document' => 'storage/uploads/'.$businessTypes[$i].'/'.$file_name,
                             'document_type' => $file->getClientOriginalExtension(),
                             'document_type_name' => $document_type_name,
                         ];

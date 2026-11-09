@@ -23,13 +23,14 @@ class CrossDepartmentSubmissionAccessTest extends TestCase
     }
 
     /** @test */
-    public function management_and_edit_routes_keep_the_stricter_form_link_authorization(): void
+    public function edit_routes_use_the_dedicated_organization_and_stage_guard(): void
     {
         $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
 
         $this->assertStringContainsString('public function submissionEdit(', $controller);
         $this->assertStringContainsString('public function submissionUpdate(', $controller);
-        $this->assertGreaterThanOrEqual(8, substr_count($controller, 'authorizeAccess($formLink)'));
+        $this->assertSame(2, substr_count($controller, 'authorizeSubmissionEdit($formLink, $company)'));
+        $this->assertGreaterThanOrEqual(6, substr_count($controller, 'authorizeAccess($formLink)'));
     }
 
     /** @test */

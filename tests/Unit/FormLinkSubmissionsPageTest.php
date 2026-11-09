@@ -36,5 +36,7 @@ class FormLinkSubmissionsPageTest extends TestCase
         $this->assertStringContainsString('aria-label="Approval progress"', $view);
         $this->assertStringNotContainsString('alert alert-{{ $step->isApproved()', $view);
         $this->assertStringNotContainsString('class="time-label"', $view);
+        $this->assertStringContainsString('{{ $step->notes }}', $view);
+        $this->assertStringNotContainsString('{!! $step->notes !!}', $view);
     }
 }

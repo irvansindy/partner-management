@@ -654,7 +654,7 @@
                     </div>
                 </div>
                 `)
-            initializeInternationalPhoneInput($('#contact_telephone_' + index));
+            initializeInternationalPhoneInputs($('.dynamic_contact .array_dynamic_contact').last().get(0));
         })
 
         $(document).on('click', '.delete_contact', function(e) {

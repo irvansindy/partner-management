@@ -8,7 +8,9 @@ use App\Http\Requests\FormLinkUpdateRequest;
 use App\Models\FormLink;
 use App\Models\ApprovalProcess;
 use App\Services\FormLinkService;
+use App\Support\EmployeeRange;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class FormLinkController extends Controller
 {
@@ -125,6 +127,12 @@ class FormLinkController extends Controller
         $this->formLinkService->authorizeAccess($formLink);
 
         $companies = $this->formLinkService->getSubmissions($formLink);
+        $companies->getCollection()->each(function ($company) use ($formLink) {
+            $company->setAttribute(
+                'can_edit_submission',
+                $this->formLinkService->canEditSubmission($formLink, $company)
+            );
+        });
 
         $submissionStats = [
             'total' => $formLink->companies()->count(),
@@ -159,8 +167,9 @@ class FormLinkController extends Controller
             'approvalProcess.department',
             'approvalProcess.office'
         ]);
+        $canEditSubmission = $this->formLinkService->canEditSubmission($formLink, $company);
 
-        return view('admin.form_links.submission_detail', compact('formLink', 'company', 'canManageFormLink'));
+        return view('admin.form_links.submission_detail', compact('formLink', 'company', 'canManageFormLink', 'canEditSubmission'));
     }
     public function exportSubmissionPdf(FormLink $formLink, $companyId)
     {
@@ -201,12 +210,10 @@ class FormLinkController extends Controller
 
     /**
      * Show edit form for a submission
-     * Hanya bisa diakses jika status approval 0 (Menunggu) atau 1 (Dalam Proses)
+     * Only users in the Form Link organization may edit before the final approval stage.
      */
     public function submissionEdit(FormLink $formLink, $companyId)
     {
-        $this->formLinkService->authorizeAccess($formLink);
-
         $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
         $company->load([
             'contact',
@@ -217,40 +224,20 @@ class FormLinkController extends Controller
             'approvalProcess',
         ]);
 
-        // Cek apakah boleh diedit berdasarkan status approval
-        if ($company->hasApproval()) {
-            $status = $company->approvalProcess->status;
-            // Hanya status 0 (Menunggu) dan 1 (Dalam Proses) yang boleh diedit
-            if (!in_array($status, [0, 1])) {
-                return redirect()
-                    ->route('admin.form-links.submission-detail', [$formLink, $companyId])
-                    ->with('error', 'Data tidak dapat diedit karena proses approval sudah ' . $company->getApprovalStatus() . '.');
-            }
-        }
+        $this->formLinkService->authorizeSubmissionEdit($formLink, $company);
 
         return view('admin.form_links.submission_edit', compact('formLink', 'company'));
     }
 
     /**
      * Update submission data
-     * Hanya bisa dilakukan jika status approval 0 (Menunggu) atau 1 (Dalam Proses)
+     * Uses the same organization and approval-stage guard as the edit form.
      */
     public function submissionUpdate(Request $request, FormLink $formLink, $companyId)
     {
-        $this->formLinkService->authorizeAccess($formLink);
-
         $company = $this->formLinkService->getSubmissionDetail($formLink, $companyId);
-        $company->load(['approvalProcess']);
-
-        // Double-check: validasi status sebelum update
-        if ($company->hasApproval()) {
-            $status = $company->approvalProcess->status;
-            if (!in_array($status, [0, 1])) {
-                return redirect()
-                    ->route('admin.form-links.submission-detail', [$formLink, $companyId])
-                    ->with('error', 'Data tidak dapat diubah karena proses approval sudah ' . $company->getApprovalStatus() . '.');
-            }
-        }
+        $company->load(['approvalProcess.steps']);
+        $this->formLinkService->authorizeSubmissionEdit($formLink, $company);
 
         // Validasi input
         $validated = $request->validate([
@@ -258,7 +245,7 @@ class FormLinkController extends Controller
             'name'                              => 'required|string|max:255',
             'group_name'                        => 'nullable|string|max:255',
             'established_year'                  => 'nullable|integer|min:1900|max:' . date('Y'),
-            'total_employee'                    => 'nullable|integer|min:0',
+            'total_employee'                    => ['nullable', Rule::in(EmployeeRange::values())],
             'business_classification'           => 'required|string|max:255',
             'business_classification_detail'    => 'nullable|string|max:255',
             'register_number_as_in_tax_invoice' => 'nullable|string|max:100',
@@ -270,14 +257,22 @@ class FormLinkController extends Controller
 
             // Liable Persons
             'liable_people'                     => 'nullable|array',
-            'liable_people.*.id'                => 'nullable|integer',
+            'liable_people.*.id'                => [
+                'nullable',
+                'integer',
+                Rule::exists('company_liable_people', 'id')->where('company_id', $company->id),
+            ],
             'liable_people.*.name'              => 'required_with:liable_people|string|max:255',
             'liable_people.*.position'          => 'required_with:liable_people|string|max:255',
             'liable_people.*.nik'               => 'required_with:liable_people|string|max:50',
 
             // Contact Persons
             'contacts'                          => 'nullable|array',
-            'contacts.*.id'                     => 'nullable|integer',
+            'contacts.*.id'                     => [
+                'nullable',
+                'integer',
+                Rule::exists('company_contacts', 'id')->where('company_informations_id', $company->id),
+            ],
             'contacts.*.department'             => 'required_with:contacts|string|max:255',
             'contacts.*.position'               => 'required_with:contacts|string|max:255',
             'contacts.*.name'                   => 'required_with:contacts|string|max:255',
@@ -286,7 +281,11 @@ class FormLinkController extends Controller
 
             // Addresses
             'addresses'                         => 'nullable|array',
-            'addresses.*.id'                    => 'nullable|integer',
+            'addresses.*.id'                    => [
+                'nullable',
+                'integer',
+                Rule::exists('company_addresses', 'id')->where('company_id', $company->id),
+            ],
             'addresses.*.address'               => 'required_with:addresses|string',
             'addresses.*.country'               => 'required_with:addresses|string|max:100',
             'addresses.*.province'              => 'required_with:addresses|string|max:100',
@@ -299,7 +298,11 @@ class FormLinkController extends Controller
 
             // Banks
             'banks'                             => 'nullable|array',
-            'banks.*.id'                        => 'nullable|integer',
+            'banks.*.id'                        => [
+                'nullable',
+                'integer',
+                Rule::exists('company_banks', 'id')->where('company_id', $company->id),
+            ],
             'banks.*.name'                      => 'required_with:banks|string|max:255',
             'banks.*.account_name'              => 'required_with:banks|string|max:255',
             'banks.*.account_number'            => 'required_with:banks|string|max:100',
@@ -308,7 +311,10 @@ class FormLinkController extends Controller
             'new_attachments'                   => 'nullable|array',
             'new_attachments.*'                 => 'file|max:10240|mimes:pdf,jpg,jpeg,png',
             'delete_attachment_ids'             => 'nullable|array',
-            'delete_attachment_ids.*'           => 'integer',
+            'delete_attachment_ids.*'           => [
+                'integer',
+                Rule::exists('company_attachments', 'id')->where('company_id', $company->id),
+            ],
         ]);
 
         try {

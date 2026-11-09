@@ -126,6 +126,14 @@
                                             class="btn btn-info form-link-action" aria-label="View submission details for {{ $company->name }}" title="View details">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
+                                        @if ($company->can_edit_submission)
+                                            <a href="{{ route('admin.form-links.submission-edit', [$formLink, $company->id]) }}"
+                                                class="btn btn-outline-secondary form-link-action"
+                                                aria-label="Edit submission for {{ $company->name }}"
+                                                title="Edit submission">
+                                                <i class="fas fa-pen" aria-hidden="true"></i>
+                                            </a>
+                                        @endif
                                         @if($company->hasApproval())
                                             <a href="{{ route('admin.approvals.company.history', $company->id) }}"
                                                 class="btn btn-primary form-link-action" aria-label="View approval history for {{ $company->name }}" title="Approval history">

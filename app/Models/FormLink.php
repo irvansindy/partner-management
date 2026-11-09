@@ -46,6 +46,11 @@ class FormLink extends Model
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
+    public function department()
+    {
+        return $this->belongsTo(MasterDepartment::class, 'department_id', 'id');
+    }
+
     public function isExpired()
     {
         return $this->expires_at && $this->expires_at->isPast();

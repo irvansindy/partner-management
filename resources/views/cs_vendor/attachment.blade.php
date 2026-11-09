@@ -21,7 +21,8 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="form_submit_supporting_document" enctype="multipart/form-data">
+                        <form id="form_submit_supporting_document" method="post" enctype="multipart/form-data">
+                            @csrf
                             <div class="row row_list_supporting_document">
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -51,7 +52,7 @@
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <input type="file" name="file_supporting_document[]" id="file_supporting_document_0"
-                                            placeholder="" class="form-control" required />
+                                            class="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required />
                                         <p class="fs-6 text-info"
                                             style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen
                                         </p>
@@ -186,7 +187,7 @@
                     </div>
                     <div class="col-md-5">
                         <div class="form-group">
-                            <input type="file" name="file_supporting_document[]" id="file_supporting_document" placeholder="" class="form-control">
+                            <input type="file" name="file_supporting_document[]" id="file_supporting_document" class="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
                             <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen</p>
                             <span class="text-danger mt-2 message_file_supporting_document" id="" role="alert"></span>
                         </div>
@@ -246,16 +247,60 @@
             $(this).closest('.array_data_supporting_document').remove()
             updateIdCreateAttachment()
         })
+
+        function buildSupportingDocumentFormData() {
+            const formData = new FormData();
+            let isValid = true;
+            const rows = $('#form_submit_supporting_document .row_list_supporting_document, #form_submit_supporting_document .array_data_supporting_document');
+
+            rows.each(function(index) {
+                const row = $(this);
+                const documentType = row.find('select[name="supporting_document_type[]"]').val();
+                const businessType = row.find('select[name="supporting_document_business_type[]"]').val();
+                const fileInput = row.find('input[name="file_supporting_document[]"]').get(0);
+
+                row.find('.message_supporting_document_type').text(documentType ? '' : 'Tipe dokumen wajib dipilih.');
+                row.find('.message_supporting_document_business_type').text(businessType ? '' : 'Tipe usaha wajib dipilih.');
+                row.find('.message_file_supporting_document').text(fileInput && fileInput.files.length ? '' : 'File dokumen wajib dipilih.');
+
+                if (!documentType || !businessType || !fileInput || !fileInput.files.length) {
+                    isValid = false;
+                    return;
+                }
+
+                formData.append('supporting_document_type[]', documentType);
+                formData.append('supporting_document_business_type[]', businessType);
+                formData.append('file_supporting_document[]', fileInput.files[0]);
+            });
+
+            if (!isValid || rows.length === 0) return null;
+
+            formData.append('supporting_document_partner_id', $('#supporting_document_partner_id').val());
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+            return formData;
+        }
+
         // submit data supporting document
         $(document).on('click', '#btn_submit_supporting_document', function(e) {
+            e.preventDefault();
             // // Panggil validasi form
             // const result = secureValidator.validateForm('form_submit_supporting_document');
 
             // Reset pesan error sebelum validasi
             $('.text-danger').text('');
             
-            // Create a FormData object to handle files and form data
-            var formData = new FormData($('#form_submit_supporting_document')[0]);
+            var formData = buildSupportingDocumentFormData();
+            if (!formData) {
+                $(document).Toasts('create', {
+                    title: 'Error',
+                    class: 'bg-danger',
+                    body: 'Lengkapi tipe dokumen, tipe usaha, dan file pada setiap baris.',
+                    delay: 7000,
+                    autohide: true,
+                    close: true
+                });
+                return;
+            }
             $.ajax({
                 url: '{{ route('store-attachment') }}',
                 type: 'POST',

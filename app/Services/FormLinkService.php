@@ -228,6 +228,55 @@ class FormLinkService
         abort_unless($isAssignedApprover, 403, 'Anda tidak memiliki akses ke submission ini.');
     }
 
+    public function canEditSubmission(
+        FormLink $formLink,
+        CompanyInformation $company,
+        ?User $user = null
+    ): bool {
+        if ((int) $company->form_link_id !== (int) $formLink->id) {
+            return false;
+        }
+
+        $user = $user ?: Auth::user();
+        if (!$user) {
+            return false;
+        }
+
+        $formLink->loadMissing(['department.division', 'creator']);
+        $formDepartment = $formLink->department;
+        $formDivisionId = $formDepartment ? $formDepartment->division_id : null;
+
+        if (!$formDivisionId
+            && $formLink->creator
+            && (int) $formLink->creator->department_id === (int) $formLink->department_id) {
+            $formDivisionId = $formLink->creator->division_id;
+        }
+
+        if (!$formDepartment
+            || !$formDivisionId
+            || (int) $user->department_id !== (int) $formLink->department_id
+            || (int) $user->division_id !== (int) $formDivisionId) {
+            return false;
+        }
+
+        $company->loadMissing('approvalProcess.steps');
+
+        return $company->approvalProcess
+            && $company->approvalProcess->isBeforeFinalStage();
+    }
+
+    public function authorizeSubmissionEdit(
+        FormLink $formLink,
+        CompanyInformation $company,
+        ?User $user = null
+    ): void {
+        abort_unless(
+            $this->canEditSubmission($formLink, $company, $user),
+            403,
+            'Submission tidak dapat diedit atau tahap approval terakhir sudah aktif.'
+        );
+    }
+
     /**
      * Check if form link can accept new submissions
      */
