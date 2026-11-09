@@ -7,7 +7,10 @@ use App\Http\Requests\FormLinkStoreRequest;
 use App\Http\Requests\FormLinkUpdateRequest;
 use App\Models\FormLink;
 use App\Models\ApprovalProcess;
+use App\Models\Provinces;
+use App\Models\Regencies;
 use App\Services\FormLinkService;
+use App\Support\CountryCatalog;
 use App\Support\EmployeeRange;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -277,6 +280,7 @@ class FormLinkController extends Controller
             'contacts.*.position'               => 'required_with:contacts|string|max:255',
             'contacts.*.name'                   => 'required_with:contacts|string|max:255',
             'contacts.*.email'                  => 'required_with:contacts|email|max:255',
+            'contacts.*.telephone_country_code' => ['required_with:contacts', Rule::in(collect(CountryCatalog::all())->pluck('calling_code')->all())],
             'contacts.*.telephone'              => 'required_with:contacts|string|max:50',
 
             // Addresses
@@ -288,9 +292,11 @@ class FormLinkController extends Controller
             ],
             'addresses.*.address'               => 'required_with:addresses|string',
             'addresses.*.country'               => 'required_with:addresses|string|max:100',
+            'addresses.*.country_code'          => ['required_with:addresses', Rule::in(collect(CountryCatalog::all())->pluck('code')->all())],
             'addresses.*.province'              => 'required_with:addresses|string|max:100',
             'addresses.*.city'                  => 'required_with:addresses|string|max:100',
             'addresses.*.zip_code'              => 'required_with:addresses|string|max:20',
+            'addresses.*.telephone_country_code' => ['required_with:addresses', Rule::in(collect(CountryCatalog::all())->pluck('calling_code')->all())],
             'addresses.*.telephone'             => 'required_with:addresses|string|max:50',
             'addresses.*.fax'                   => 'nullable|string|max:50',
             'addresses.*.latitude'              => 'nullable|numeric',
@@ -316,6 +322,40 @@ class FormLinkController extends Controller
                 Rule::exists('company_attachments', 'id')->where('company_id', $company->id),
             ],
         ]);
+
+        foreach ($validated['contacts'] ?? [] as &$contact) {
+            $contact['telephone'] = $this->formatInternationalPhone(
+                $contact['telephone_country_code'],
+                $contact['telephone']
+            );
+        }
+        unset($contact);
+
+        foreach ($validated['addresses'] ?? [] as $index => &$address) {
+            $country = CountryCatalog::find($address['country_code']);
+            $address['country'] = $country['name'];
+            $address['telephone'] = $this->formatInternationalPhone(
+                $address['telephone_country_code'],
+                $address['telephone']
+            );
+
+            if ($country['code'] === 'ID') {
+                $province = Provinces::find($address['province']);
+                $regency = $province
+                    ? Regencies::where('province_id', $province->id)->find($address['city'])
+                    : null;
+
+                if (!$province || !$regency) {
+                    return back()->withInput()->withErrors([
+                        "addresses.$index.city" => 'The selected province and city/regency do not match.',
+                    ]);
+                }
+
+                $address['province'] = (string) $province->id;
+                $address['city'] = $regency->name;
+            }
+        }
+        unset($address);
 
         try {
             \DB::transaction(function () use ($company, $validated, $request) {
@@ -473,5 +513,13 @@ class FormLinkController extends Controller
                 ->withInput()
                 ->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
         }
+    }
+
+    private function formatInternationalPhone(string $callingCode, string $number): string
+    {
+        $callingDigits = preg_replace('/\D+/', '', $callingCode);
+        $nationalNumber = ltrim(preg_replace('/\D+/', '', $number), '0');
+
+        return '+' . $callingDigits . $nationalNumber;
     }
 }

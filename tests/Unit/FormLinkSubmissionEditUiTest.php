@@ -47,4 +47,27 @@ class FormLinkSubmissionEditUiTest extends TestCase
         $this->assertStringNotContainsString('btn btn-outline-danger btn-sm repeatable-item__remove', $row);
         $this->assertStringContainsString('class="repeatable-item__remove"', $row);
     }
+
+    /** @test */
+    public function edit_form_uses_country_aware_phones_cascading_locations_and_styled_attachments(): void
+    {
+        $root = dirname(__DIR__, 2).'/resources/views/admin/form_links/';
+        $page = file_get_contents($root.'submission_edit.blade.php');
+        $row = file_get_contents($root.'_submission_edit_row.blade.php');
+        $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
+
+        $this->assertStringContainsString('phone-country-code', $row);
+        $this->assertStringContainsString('[telephone_country_code]', $row);
+        $this->assertStringContainsString('[country_code]', $row);
+        $this->assertStringContainsString('address-country-select', $row);
+        $this->assertStringContainsString('address-province-select', $row);
+        $this->assertStringContainsString('address-city-select', $row);
+        $this->assertStringNotContainsString('@selected(', $row);
+        $this->assertStringContainsString('static-field-label', $row);
+        $this->assertStringContainsString('data-attachment-picker', $page);
+        $this->assertStringContainsString('selected-attachment-list', $page);
+        $this->assertStringContainsString("route('public.form.provinces')", $page);
+        $this->assertStringContainsString("'contacts.*.telephone_country_code'", $controller);
+        $this->assertStringContainsString("'addresses.*.country_code'", $controller);
+    }
 }
