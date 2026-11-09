@@ -820,3 +820,20 @@
         }
     </style>
 @endpush
+
+@if (session('success'))
+    @push('scripts')
+        <script src="{{ asset('vendor/sweetalert2/sweetalert2.all.min.js') }}"></script>
+        <script>
+            $(function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Perubahan berhasil disimpan',
+                    text: @json(session('success')),
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6558d3'
+                });
+            });
+        </script>
+    @endpush
+@endif

@@ -15,6 +15,7 @@ use App\Support\CountryCatalog;
 use App\Support\EmployeeRange;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class FormLinkController extends Controller
@@ -525,9 +526,16 @@ class FormLinkController extends Controller
                 ->with('success', 'Data submission berhasil diupdate!');
 
         } catch (\Exception $e) {
+            Log::error('Submission update failed', [
+                'form_link_id' => $formLink->id,
+                'company_id' => $company->id,
+                'user_id' => optional($request->user())->id,
+                'exception' => $e,
+            ]);
+
             return back()
                 ->withInput()
-                ->with('error', 'Gagal mengupdate data: ' . $e->getMessage());
+                ->with('error', 'Gagal menyimpan perubahan submission. Silakan periksa data dan coba kembali.');
         }
     }
 

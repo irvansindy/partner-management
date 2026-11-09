@@ -16,6 +16,23 @@ class FormLinkSubmissionEditUiTest extends TestCase
         $this->assertStringContainsString('<option value="{{ $value(\'city\') }}">', $row);
         $this->assertStringNotContainsString('required disabled><option value="">Select province first', $row);
     }
+
+    /** @test */
+    public function edit_flow_shows_loading_success_and_error_feedback(): void
+    {
+        $root = dirname(__DIR__, 2).'/resources/views/admin/form_links/';
+        $edit = file_get_contents($root.'submission_edit.blade.php');
+        $detail = file_get_contents($root.'submission_detail.blade.php');
+
+        $this->assertStringContainsString('id="submission_edit_form"', $edit);
+        $this->assertStringContainsString("$('#submission_edit_form').on('submit'", $edit);
+        $this->assertStringContainsString('Swal.showLoading()', $edit);
+        $this->assertStringContainsString("@json(\$errors->first())", $edit);
+        $this->assertStringContainsString("asset('vendor/sweetalert2/sweetalert2.all.min.js')", $edit);
+        $this->assertStringContainsString("session('success')", $detail);
+        $this->assertStringContainsString("icon: 'success'", $detail);
+        $this->assertStringContainsString("asset('vendor/sweetalert2/sweetalert2.all.min.js')", $detail);
+    }
     /** @test */
     public function controller_supplies_the_central_editability_state_to_list_and_detail(): void
     {

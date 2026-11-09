@@ -231,7 +231,7 @@
             <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
         @endif
 
-        <form method="POST" action="{{ route('admin.form-links.submission-update', [$formLink, $company->id]) }}" enctype="multipart/form-data">
+        <form id="submission_edit_form" method="POST" action="{{ route('admin.form-links.submission-update', [$formLink, $company->id]) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -366,9 +366,47 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('vendor/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/cdn/leaflet.js') }}"></script>
     <script>
         $(function () {
+            const validationError = @json($errors->first());
+            const updateError = @json(session('error'));
+            const feedbackMessage = validationError || updateError;
+
+            if (feedbackMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Data belum dapat disimpan',
+                    text: feedbackMessage,
+                    confirmButtonText: 'Periksa kembali',
+                    confirmButtonColor: '#6558d3'
+                });
+            }
+
+            $('#submission_edit_form').on('submit', function (event) {
+                if (this.dataset.submitting === 'true') {
+                    event.preventDefault();
+                    return;
+                }
+
+                this.dataset.submitting = 'true';
+                $(this).find('button[type="submit"]')
+                    .prop('disabled', true)
+                    .attr('aria-busy', 'true');
+
+                Swal.fire({
+                    title: 'Menyimpan perubahan',
+                    text: 'Mohon tunggu, data submission sedang diperbarui.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
+                    }
+                });
+            });
+
             const templates = @json($rowTemplates);
             const provincesUrl = @json(route('public.form.provinces'));
             const regenciesUrl = @json(route('public.form.regencies', ['province' => '__PROVINCE__']));

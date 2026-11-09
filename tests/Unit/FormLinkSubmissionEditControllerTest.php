@@ -71,4 +71,14 @@ class FormLinkSubmissionEditControllerTest extends TestCase
         $this->assertStringNotContainsString("'register_number_as_in_tax_invoice' => \$validated", $controller);
         $this->assertStringContainsString("old('register_number_as_in_tax_invoice', \$company->npwp)", $view);
     }
+
+    /** @test */
+    public function update_errors_are_logged_without_exposing_database_details(): void
+    {
+        $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
+
+        $this->assertStringContainsString("Log::error('Submission update failed'", $controller);
+        $this->assertStringContainsString("'Gagal menyimpan perubahan submission. Silakan periksa data dan coba kembali.'", $controller);
+        $this->assertStringNotContainsString("'Gagal mengupdate data: ' . \$e->getMessage()", $controller);
+    }
 }
