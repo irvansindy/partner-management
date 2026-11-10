@@ -178,7 +178,7 @@
                 .find("input, textarea, select")
                 .each(function() {
                     if (!this.name) return;
-                    if (this.disabled) return;
+                    if (this.disabled && !['province[]', 'city[]', 'zip_code[]'].includes(this.name)) return;
                     if (this.type === "file") return;
                     const cleanFieldName = this.name.replace('[]', '');
                     if (DRAFT_EXCLUDED_FIELDS.has(cleanFieldName)) return;
@@ -199,7 +199,7 @@
                         fieldValue = $(this).is(":checked");
                     } else if (this.type === "radio") {
                         if (!$(this).is(":checked")) return;
-                        fieldValue = $(this).val();
+                        fieldValue = this.dataset.pendingLocationRestore || $(this).val();
                     } else {
                         fieldValue = $(this).val();
                     }
@@ -268,9 +268,6 @@
 
                             if (["province", "city", "zip_code"].includes(key)) {
                                 $el.attr('data-pending-location-restore', val);
-                                $el.closest('[data-address-row]').get(0)?.dispatchEvent(
-                                    new CustomEvent('partner:draft-location-ready', { bubbles: true })
-                                );
                                 return;
                             }
 

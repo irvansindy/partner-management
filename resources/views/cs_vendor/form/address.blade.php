@@ -566,6 +566,13 @@ window.addEventListener('load', function () {
     });
     document.addEventListener('partner:draft-restored', function () {
         rows.querySelectorAll('[data-address-row]').forEach(function (row) {
+            if (field(row, 'country_code').value === 'ID') {
+                row.dispatchEvent(new CustomEvent('partner:draft-location-ready', { bubbles: true }));
+            } else {
+                ['province', 'city', 'zip_code'].forEach(function (name) {
+                    restorePendingLocation(field(row, name), false);
+                });
+            }
             showCoordinates(row, field(row, 'latitude').value, field(row, 'longitude').value);
         });
     });
