@@ -85,7 +85,7 @@
                         <label data-label="geocoded_address">{{ __('messages.Public Geocoded Address') }}</label>
                         <input type="text" name="geocoded_address[]" class="form-control" data-field="geocoded_address" placeholder="{{ __('messages.Public Geocoded Address Placeholder') }}" readonly>
                     </div>
-                    <small class="text-muted" data-coordinate-status>{{ __('messages.Public Map Optional') }}</small>
+                    <small class="text-muted" data-coordinate-status role="status" aria-live="polite">{{ __('messages.Public Map Optional') }}</small>
                     <div class="partner-map-shell mt-3" data-map-shell>
                         <button type="button" class="partner-map-fullscreen" data-map-fullscreen
                             aria-label="{{ __('messages.Public Open Fullscreen Map') }}" title="{{ __('messages.Public Open Fullscreen Map') }}">
@@ -136,6 +136,7 @@
         'exitFullscreen' => __('messages.Public Exit Fullscreen'),
         'fullscreen' => __('messages.Public Fullscreen'),
         'loadingPinAddress' => __('messages.Public Loading Pin Address'),
+        'searchingAddress' => __('messages.Public Searching Address'),
         'selectedCoordinate' => __('messages.Public Selected Coordinate'),
         'loadingProvinces' => __('messages.Public Loading Provinces'),
         'pinInstruction' => __('messages.Public Pin Instruction'),
@@ -267,6 +268,7 @@ window.addEventListener('load', function () {
         const map = L.map(canvas).setView(initialPosition, 5);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
+            maxNativeZoom: 15,
             maxZoom: 19
         }).addTo(map);
         maps.set(row, { map: map, marker: null, reverseRequestSequence: 0, hasSelection: false });
@@ -318,9 +320,10 @@ window.addEventListener('load', function () {
 
     function showCoordinates(row, latitude, longitude) {
         const state = maps.get(row);
+        if (latitude == null || longitude == null || String(latitude).trim() === '' || String(longitude).trim() === '') return;
         const lat = Number(latitude);
         const lng = Number(longitude);
-        if (!state || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
+        if (!state || !Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
         ensureDraggableMarker(row, lat, lng, true);
         state.map.setView([lat, lng], 16);
         setTimeout(function () { state.map.invalidateSize(); }, 0);
@@ -519,7 +522,7 @@ window.addEventListener('load', function () {
         if (remove) remove.closest('[data-address-row]').remove();
 
         const search = event.target.closest('[data-find-coordinate]');
-        if (!search) return;
+        if (!search || search.disabled) return;
         const row = search.closest('[data-address-row]');
         const mapState = maps.get(row);
         if (mapState) mapState.reverseRequestSequence++;
@@ -531,7 +534,13 @@ window.addEventListener('load', function () {
             return;
         }
         search.disabled = true;
-        status.textContent = 'Mencari koordinat...';
+        const originalSearchContent = search.innerHTML;
+        search.setAttribute('aria-busy', 'true');
+        const spinner = document.createElement('i');
+        spinner.className = 'fas fa-spinner fa-spin mr-2';
+        spinner.setAttribute('aria-hidden', 'true');
+        search.replaceChildren(spinner, document.createTextNode(addressCopy.searchingAddress));
+        status.textContent = addressCopy.searchingAddress;
         fetch(geocodeUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
@@ -550,7 +559,11 @@ window.addEventListener('load', function () {
             clearCoordinates(row);
             status.textContent = addressCopy.coordinateNotFound;
             showPartnerToast(addressCopy.searchTitle, addressCopy.addressNotFound, 'danger');
-        }).finally(function () { search.disabled = false; });
+        }).finally(function () {
+            search.disabled = false;
+            search.removeAttribute('aria-busy');
+            search.innerHTML = originalSearchContent;
+        });
     });
 
     document.getElementById('add_branch').addEventListener('click', function () {

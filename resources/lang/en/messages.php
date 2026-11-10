@@ -1,6 +1,9 @@
 <?php
 
 return array (
+  'Public Payload Too Large' => 'The total upload size is too large. Reduce the number or size of the files, then submit again.',
+  'Public Submission Saved' => 'Your data has been submitted successfully. Thank you.',
+  'Public Submission Failed' => 'Failed to process the form. Please try again.',
   'welcome' => 'Welcome',
   'Company Name' => 'Company Name',
   'Company Group Name' => 'Company Group Name',
@@ -219,6 +222,7 @@ return array (
   'Public Submit Success' => 'Submission Successful',
   'Public Data Saved' => 'The data was saved successfully.',
   'Public Close Countdown' => 'The tab will close in :seconds seconds. If the browser blocks it, the page will be redirected.',
+  'Public Searching Address' => 'Searching for address...',
   'Public Loading Pin Address' => 'Loading the address for the pin position...',
   'Public Selected Coordinate' => 'Selected coordinates: :coordinate',
   'Public Loading Provinces' => 'Loading provinces...',

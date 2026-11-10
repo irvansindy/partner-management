@@ -1,6 +1,9 @@
 <?php
 
 return array (
+  'Public Payload Too Large' => 'Ukuran total unggahan terlalu besar. Kurangi jumlah atau ukuran file, lalu kirim kembali.',
+  'Public Submission Saved' => 'Data berhasil dikirim! Terima kasih.',
+  'Public Submission Failed' => 'Gagal memproses formulir. Silakan coba lagi.',
   'welcome' => 'Selamat Datang',
   'Company Name' => 'Nama Perusahaan',
   'Company Group Name' => 'Nama Grup Perusahaan',
@@ -219,6 +222,7 @@ return array (
   'Public Submit Success' => 'Pengiriman Berhasil',
   'Public Data Saved' => 'Data berhasil disimpan.',
   'Public Close Countdown' => 'Tab akan ditutup dalam :seconds detik. Jika browser memblokirnya, halaman akan dialihkan.',
+  'Public Searching Address' => 'Mencari alamat...',
   'Public Loading Pin Address' => 'Memuat alamat untuk posisi pin...',
   'Public Selected Coordinate' => 'Koordinat dipilih: :coordinate',
   'Public Loading Provinces' => 'Memuat provinsi...',

@@ -218,7 +218,6 @@
             data['survey_form_switch'] = $('#survey_form_switch').is(':checked');
 
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            // console.log("📝 Form draft saved:", data);
         }
 
         /* RESTORE FORM - EXCLUDE SURVEY FIELDS */
@@ -233,7 +232,6 @@
                 sessionStorage.removeItem(STORAGE_KEY);
                 return;
             }
-            // console.log("🔄 Restoring form:", data);
 
             for (let key in data) {
                 const value = data[key];
@@ -386,7 +384,6 @@
             sessionStorage.removeItem(STORAGE_KEY);
             sessionStorage.removeItem(STORAGE_KEY + '_survey');
             sessionStorage.removeItem(WIZARD_STEP_STORAGE_KEY);
-            // console.log("Form draft cleared from session storage");
         }
 
         // ============================================
@@ -414,7 +411,6 @@
                     // Restore data survey dari localStorage jika ada
                     restoreSurveyData();
 
-                    // console.log('✅ Survey form added to DOM');
                 } else {
                     // HIDE: Konfirmasi dan remove survey form
                     Swal.fire({
@@ -434,7 +430,6 @@
                             // Remove dari DOM
                             $('#survey_form_container').slideUp(300, function() {
                                 $(this).empty();
-                                // console.log('❌ Survey form removed from DOM');
                             });
 
                             $('#switch_label').text(partnerFormCopy.showSurvey);
@@ -492,7 +487,6 @@
                 });
 
                 sessionStorage.setItem(STORAGE_KEY + '_survey', JSON.stringify(surveyData));
-                // console.log('💾 Survey data saved separately:', surveyData);
             }
 
             // Fungsi untuk restore data survey
@@ -507,7 +501,6 @@
                     sessionStorage.removeItem(STORAGE_KEY + '_survey');
                     return;
                 }
-                // console.log('🔄 Restoring survey data:', surveyData);
 
                 setTimeout(function() {
                     for (let key in surveyData) {

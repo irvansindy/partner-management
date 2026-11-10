@@ -257,10 +257,10 @@ class PublicFormController extends Controller
                 }
             );
 
-            return FormatResponseJson::success(true, 'Data berhasil dikirim! Terima kasih.');
+            return FormatResponseJson::success(true, __('messages.Public Submission Saved'));
 
         } catch (PublicFormClosedException $e) {
-            return FormatResponseJson::error(false, 'Form sudah tidak dapat menerima submission.', 503);
+            return FormatResponseJson::error(false, __('messages.Public Form Cannot Accept Submission'), 503);
         } catch (\Exception $e) {
             $this->attachmentService->deleteStored($storedAttachments);
             $requestId = $request->attributes->get('request_id') ?: (string) Str::uuid();
@@ -280,7 +280,7 @@ class PublicFormController extends Controller
 
             return FormatResponseJson::error(
                 false,
-                'Gagal memproses formulir. Silakan coba lagi. | Failed to process the form. Please try again.',
+                __('messages.Public Submission Failed'),
                 500,
                 $requestId
             );

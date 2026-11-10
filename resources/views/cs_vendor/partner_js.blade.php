@@ -42,6 +42,7 @@
         processingDetail: @json(__('messages.Public Processing Detail')),
         submitSuccess: @json(__('messages.Public Submit Success')),
         dataSaved: @json(__('messages.Public Data Saved')),
+        payloadTooLarge: @json(__('messages.Public Payload Too Large')),
         closeCountdown: @json(__('messages.Public Close Countdown')),
         incompleteData: @json(__('messages.Public Incomplete Data')),
         completeRequiredStep: @json(__('messages.Public Complete Required Step')),
@@ -1208,11 +1209,9 @@
                         // Update form input
                         $('input[name="_token"]').val(response.token);
 
-                        console.log('✅ CSRF token refreshed:', response.token);
                     }
                 },
                 error: function() {
-                    console.warn('⚠️ Failed to refresh CSRF token');
                 }
             });
         }
@@ -1297,8 +1296,6 @@
 
             var formAction = $('#form_company').attr('action');
 
-            console.log('📤 Submitting to:', formAction);
-            console.log('🔑 CSRF Token:', csrfToken);
 
             $.ajax({
                 url: formAction,
@@ -1362,12 +1359,19 @@
                     isPartnerFormSubmitting = false;
                     $submitButton.prop('disabled', false);
 
-                    console.error('❌ Submit Error:', xhr.status, xhr.statusText);
-                    console.error('Response:', xhr.responseJSON);
 
                     $('.is-invalid').removeClass('is-invalid');
                     $('.select2-selection.is-invalid').removeClass('is-invalid');
                     $('[id^="message_"]').text('');
+
+                    if (xhr.status === 413) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: partnerFormCopy.errorTitle,
+                            text: partnerFormCopy.payloadTooLarge
+                        });
+                        return;
+                    }
 
                     // Handle 419 - CSRF Token Mismatch
                     if (xhr.status === 419) {
@@ -1452,9 +1456,7 @@
                     var errorMessage = partnerFormCopy.genericError;
 
                     if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    } else if (xhr.statusText) {
-                        errorMessage = xhr.statusText;
+                        errorMessage = localizeValidationMessage(xhr.responseJSON.meta?.message || xhr.responseJSON.message);
                     }
 
                     Swal.fire({
