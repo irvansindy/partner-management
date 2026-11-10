@@ -24,6 +24,13 @@
         tableNext: @json(__('messages.Office Setting Table Next')),
     };
 
+    function syncOfficeLabels() {
+        $('#form_data_office input[type="text"], #form_data_office textarea').each(function () {
+            $(this).siblings('label[for="' + this.id + '"]')
+                .toggleClass('active', Boolean($(this).val()));
+        });
+    }
+
     function closeOfficeModal() {
         let modal = $('#formOffice');
 
@@ -99,6 +106,7 @@
         e.preventDefault();
         $('#formOfficeLabel').text(officeText.create);
         $('#form_data_office')[0].reset();
+        syncOfficeLabels();
         $('.text-danger').text('')
         $('#button_action_office').empty();
         $('#button_action_office').append(`
@@ -116,6 +124,7 @@
         $('.text-danger').text('')
         $('#office_id').val(id);
         $('#office_name').val(name);
+        syncOfficeLabels();
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -127,6 +136,7 @@
             },
             success: function(res) {
                 $('#office_address').val(res.data.address);
+                syncOfficeLabels();
             },
             error: function(xhr) {
                 let response_error = JSON.parse(xhr.responseText)

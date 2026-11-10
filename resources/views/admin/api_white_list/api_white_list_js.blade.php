@@ -19,8 +19,10 @@
         }
 
         function updateIpAddressLabel() {
-            let input = $('#ip_address');
-            $('label[for="ip_address"]').toggleClass('active', input.is(':focus') || input.val() !== '');
+            $('#data_form_ip_address input[type="text"], #data_form_ip_address textarea').each(function () {
+                $(this).siblings('label[for="' + this.id + '"]')
+                    .toggleClass('active', $(this).is(':focus') || Boolean($(this).val()));
+            });
         }
 
         $('#ip_address').on('focus input blur', updateIpAddressLabel);

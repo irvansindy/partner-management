@@ -93,7 +93,7 @@ class PartnerManagementController extends Controller
     {
         try {
             // fetch partner detail
-            $partner_detail = CompanyInformation::with(['user', 'address', 'bank', 'contact', 'AddressBaseOnMap', 'attachment'])
+            $partner_detail = CompanyInformation::with(['user', 'address', 'bank', 'contact', 'liablePeople', 'AddressBaseOnMap', 'attachment', 'salesSurvey', 'productCustomers', 'approvalProcess.steps.approver', 'approvalProcess.initiator', 'approvalProcess.department', 'approvalProcess.office'])
             ->find($request->partner_id);
 
             $is_approved = false;
@@ -134,6 +134,7 @@ class PartnerManagementController extends Controller
 
             $data = [
                 $partner_detail,
+                'detail_html' => view('admin.form_links._submission_detail_panels', ['company' => $partner_detail, 'showApproval' => false])->render(),
                 'is_approved' => $is_approved,
                 'role' => auth()->user()->roles->pluck('name')[0],
                 'office' => \auth()->user()->office_id,

@@ -108,6 +108,7 @@
                                 $process = $step->process;
                                 $company = $process->company;
                                 $progress = $process->getProgressPercentage();
+                                $completedSteps = $process->getCompletedStepsCount();
                                 $totalSteps = $process->getTotalStepsCount();
                             @endphp
                             <tr>
@@ -132,7 +133,7 @@
                                 </td>
                                 <td>
                                     <span class="badge badge-warning"><i class="fas fa-clock" aria-hidden="true"></i> Waiting for You</span>
-                                    <small class="d-block text-muted mt-1">Step {{ $step->step_ordering }}/{{ $totalSteps }}</small>
+                                    <small class="d-block text-muted mt-1">Progress {{ $completedSteps }}/{{ $totalSteps }}</small>
                                     <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
                                         <div class="progress-bar bg-warning" style="width: {{ $progress }}%"></div>
                                     </div>

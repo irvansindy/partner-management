@@ -314,6 +314,7 @@
                 success: function(res) {
                     $('#update_role_id').val(res.data.id)
                     $('#update_role_name').val(res.data.name)
+                        .prev('label').toggleClass('active', Boolean(res.data.name));
                 },
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
@@ -381,6 +382,7 @@
                 success: function(res) {
                     $('#update_permission_id').val(res.data.id)
                     $('#update_permission_name').val(res.data.name)
+                        .prev('label').toggleClass('active', Boolean(res.data.name));
                 },
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)

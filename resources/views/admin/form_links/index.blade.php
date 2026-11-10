@@ -144,15 +144,6 @@
                                                     aria-hidden="true"></i>
                                             </button>
                                         </form>
-                                        <form action="{{ route('admin.form-links.destroy', $formLink) }}" method="POST"
-                                            class="d-inline" onsubmit="return confirm('Are you sure?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="table-action table-action--delete"
-                                                title="Delete form link" aria-label="Delete {{ $formLink->title }}">
-                                                <i class="fas fa-trash" aria-hidden="true"></i>
-                                            </button>
-                                        </form>
                                     </div>
                                 </td>
                             </tr>

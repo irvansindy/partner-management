@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="formUpdateRole" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="formUpdateRole_label" aria-hidden="true">
+<div class="modal fade" id="formUpdateRole" data-backdrop="static" data-keyboard="false" tabindex="-1"  role="dialog" aria-labelledby="formUpdateRoleLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

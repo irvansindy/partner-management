@@ -68,6 +68,10 @@
         }
 
         function showModal(id) {
+            $('#' + id).find('input:not([type="hidden"]):not([type="radio"]):not([type="checkbox"]), textarea').each(function () {
+                $(this).siblings('label[for="' + this.id + '"]')
+                    .toggleClass('active', Boolean($(this).val()));
+            });
             // remove any leftover backdrops before showing
             forceRemoveBackdropsAndResetModal(id);
             var modal = getModal(id);

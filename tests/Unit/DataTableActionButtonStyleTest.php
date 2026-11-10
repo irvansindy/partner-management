@@ -48,9 +48,9 @@ class DataTableActionButtonStyleTest extends TestCase
         $this->assertStringContainsString('table-action table-action--view', $view);
         $this->assertStringContainsString('table-action table-action--edit', $view);
         $this->assertStringContainsString('table-action table-action--toggle', $view);
-        $this->assertStringContainsString('table-action table-action--delete', $view);
+        $this->assertStringNotContainsString('table-action table-action--delete', $view);
         $this->assertStringContainsString('table-action table-action--copy', $view);
-        $this->assertGreaterThanOrEqual(5, substr_count($view, 'aria-label='));
-        $this->assertGreaterThanOrEqual(5, substr_count($view, 'title='));
+        $this->assertGreaterThanOrEqual(4, substr_count($view, 'aria-label='));
+        $this->assertGreaterThanOrEqual(4, substr_count($view, 'title='));
     }
 }

@@ -372,6 +372,9 @@
                     $('#update_user_nik').val(user.nik);
                     $('#update_user_employee_id').val(user.employee_id);
                     $('#update_current_role').val(user.roles.length ? user.roles[0].name : '');
+                    $('#form_detail_current_user input:not([type="hidden"])').each(function () {
+                        $(this).prev('label').toggleClass('active', Boolean($(this).val()));
+                    });
                     
                     // Populate dropdown Role
                     populateDropdown(

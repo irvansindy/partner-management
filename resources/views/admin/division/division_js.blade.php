@@ -6,6 +6,30 @@
         const divisionUrl = @json(url('division-setting'));
         const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
+        function syncDivisionLabels() {
+            $('#division_form input[type="text"], #division_form textarea').each(function () {
+                $(this).siblings('label[for="' + this.id + '"]').toggleClass('active', Boolean($(this).val()));
+            });
+        }
+
+        function closeDivisionModal() {
+            const $modal = $('#divisionModal');
+            $modal.modal('hide');
+            window.setTimeout(function () {
+                if ($modal.hasClass('show') || $modal.is(':visible')) {
+                    $modal.removeClass('show').hide().attr('aria-hidden', 'true').removeAttr('aria-modal');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('padding-right', '');
+                }
+            }, 350);
+        }
+
+        $('#divisionModal [data-dismiss="modal"]').on('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeDivisionModal();
+        });
+
         function escapeHtml(value) {
             return String(value == null ? '' : value)
                 .replace(/&/g, '&amp;')
@@ -117,6 +141,7 @@
 
         function resetDivisionForm() {
             $('#division_form')[0].reset();
+            syncDivisionLabels();
             $('#division_id').val('');
             $('#divisionModalTitle').text('Create Division');
             $('#save_division').html('<i class="material-icons align-middle mr-1">save</i> Save Division');
@@ -135,6 +160,7 @@
             resetDivisionForm();
             $('#division_id').val(division.id);
             $('#division_name').val(division.name || '');
+            syncDivisionLabels();
             $('#division_gm_user_id').val(division.gm_user_id || '');
             $('#division_office_id').val(division.office_id || '');
             $('#divisionModalTitle').text('Edit Division');
@@ -162,7 +188,7 @@
                 data: data,
                 headers: { 'X-CSRF-TOKEN': csrfToken },
                 success: function (response) {
-                    $('#divisionModal').modal('hide');
+                    closeDivisionModal();
                     loadDivisions();
                     showMessage('success', 'Saved', response.meta && response.meta.message || 'Division saved successfully.');
                 },

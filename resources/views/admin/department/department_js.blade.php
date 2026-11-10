@@ -1,4 +1,9 @@
 <script>
+    $('#formDepartment').on('shown.bs.modal', function () {
+        $(this).find('input[type="text"], textarea').each(function () {
+            $(this).siblings('label[for="' + this.id + '"]').toggleClass('active', Boolean($(this).val()));
+        });
+    });
     function closeDepartmentModal() {
         let modal = $('#formDepartment');
 

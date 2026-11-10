@@ -507,12 +507,16 @@
 
         $(document).on('click', '.detail_partner', function(e) {
             e.preventDefault()
+            $('#partner-public-detail-content').html('<p role="status">Memuat data partner...</p>');
             let partner_id = $(this).data('partner_id')
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 url: '{{ route("fetch-partner-detail") }}',
+                error: function () {
+                    $('#partner-public-detail-content').html('<p role="alert">Data partner gagal dimuat. Tutup modal lalu coba kembali.</p>');
+                },
                 type: 'GET',
                 data: {
                     partner_id: partner_id
@@ -520,6 +524,10 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    if (res.data.detail_html) {
+                        $('#partner-public-detail-content').html(res.data.detail_html);
+                        return;
+                    }
                     $('#field_form_detail_business_other').empty()
                     $('#form_detail_company_partner')[0].reset()
                     $('#detail_company_id').val(res.data[0].id)

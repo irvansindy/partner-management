@@ -152,7 +152,9 @@ class CompanyExportController extends Controller
                 </tr>
             </table>';
 
-            $mpdf = new \Mpdf\Mpdf();
+            $tempDirectory = storage_path('framework/cache/mpdf');
+            \Illuminate\Support\Facades\File::ensureDirectoryExists($tempDirectory, 0775, true);
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => $tempDirectory]);
             $mpdf->SetHTMLHeader($header);
             $mpdf->SetHTMLFooter($footer);
             $mpdf->AddPage(
@@ -173,9 +175,11 @@ class CompanyExportController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            ob_clean();
             $filename = 'company_export_' . date('Y-m-d') . '.pdf';
-            $mpdf->Output($filename, 'I');
+            return response($mpdf->Output('', 'S'), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
 
         } catch (\Exception $e) {
             Log::error('Custom PDF Export Error: ' . $e->getMessage());

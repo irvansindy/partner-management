@@ -43,6 +43,7 @@ class ApprovalInboxCurrentLayoutTest extends TestCase
         $process->setRelation('company', $company);
         $process->setRelation('initiator', null);
         $process->shouldReceive('getProgressPercentage')->andReturn(67.0);
+        $process->shouldReceive('getCompletedStepsCount')->andReturn(2);
         $process->shouldReceive('getTotalStepsCount')->andReturn(3);
 
         $step = (new ApprovalProcessStep())->forceFill([
@@ -62,6 +63,8 @@ class ApprovalInboxCurrentLayoutTest extends TestCase
         $this->assertStringContainsString('class="container-fluid form-links-page submissions-page approval-inbox-page"', $html);
         $this->assertStringContainsString('id="pendingApprovalsTable"', $html);
         $this->assertStringContainsString('PD Jaya Ga Abadi', $html);
+        $this->assertStringContainsString('Progress 2/3', $html);
+        $this->assertStringNotContainsString('Step 3/3', $html);
         $this->assertStringContainsString(route('admin.form-links.submission-detail', [2, 14]), $html);
         $this->assertStringContainsString(route('admin.approvals.step.action', 22), $html);
         $this->assertStringNotContainsString('content-wrapper', $html);

@@ -220,7 +220,7 @@
             </div>
         </div>
 
-        @include('partner.detail_partner')
+        @include('partner.public_detail_modal')
     </div>
 @endsection
 
