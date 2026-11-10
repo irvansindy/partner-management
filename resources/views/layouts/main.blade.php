@@ -72,67 +72,12 @@
 
         <x-layout.topbar />
 
-        {{-- Quick Search Results — statis dulu, belum terhubung ke fitur
-             pencarian nyata. Tetap dipertahankan di DOM supaya alpha.min.js
-             tidak error saat mencoba toggle panel ini (form search di topbar
-             mereferensikan elemen ini). --}}
-        <div class="search-results">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="search-results-header">
-                            <h4>Quick Search Results</h4>
-                            <a href="#" id="closeSearch"><i class="material-icons">close</i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <x-layout.sidebar />
 
         <div class="page-content">
             <div class="container-fluid">
                 @yield('content')
             </div>
-        </div>
-
-        {{-- Right Sidebar (Chat & Settings) — statis/placeholder, belum
-             terhubung ke fitur chat nyata. Dipertahankan supaya tombol
-             "more_vert" di topbar (yang toggle panel ini) tidak error. --}}
-        <div class="page-right-sidebar">
-            <div class="page-right-sidebar-inner">
-                <div class="right-sidebar-header">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="chat-tab" data-toggle="tab" href="#chat-content" role="tab">Chat</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings-content" role="tab">Settings</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="tab-content">
-                    <div class="sidebar-messages tab-pane fade show active" id="chat-content" role="tabpanel">
-                        <p class="right-sidebar-heading">CHAT LIST</p>
-                        <div class="chat-list">
-                            {{-- TODO: isi dari data chat/user nyata kalau fitur ini akan dipakai --}}
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="settings-content" role="tabpanel">
-                        <p class="right-sidebar-heading">SYSTEM</p>
-                        <div class="settings-list">
-                            {{-- TODO: isi setting nyata kalau fitur ini akan dipakai --}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="chat-sidebar">
-            {{-- TODO: isi dari fitur chat nyata kalau akan dipakai.
-                 Sengaja dikosongkan dulu, elemen ini tetap ada di DOM supaya
-                 alpha.min.js tidak error saat mencoba toggle panel ini. --}}
         </div>
 
     </div><!-- App Container -->

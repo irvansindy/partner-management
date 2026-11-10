@@ -104,14 +104,24 @@
                                         @php
                                             $approval = $company->approvalProcess;
                                             $progress = $approval->getProgressPercentage();
+                                            $completedSteps = $approval->getCompletedStepsCount();
+                                            $totalSteps = $approval->getTotalStepsCount();
                                         @endphp
                                         @if($approval->isApproved())
                                             <span class="badge badge-success"><i class="fas fa-check" aria-hidden="true"></i> Approved</span>
+                                            <small class="d-block text-muted mt-1">Approved {{ $completedSteps }}/{{ $totalSteps }}</small>
+                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
+                                                <div class="progress-bar bg-success" style="width: {{ $progress }}%"></div>
+                                            </div>
                                         @elseif($approval->isRejected())
                                             <span class="badge badge-danger"><i class="fas fa-times" aria-hidden="true"></i> Rejected</span>
+                                            <small class="d-block text-muted mt-1">Rejected {{ $completedSteps }}/{{ $totalSteps }}</small>
+                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
+                                                <div class="progress-bar bg-danger" style="width: {{ $progress }}%"></div>
+                                            </div>
                                         @else
                                             <span class="badge badge-warning"><i class="fas fa-clock" aria-hidden="true"></i> In Progress</span>
-                                            <small class="d-block text-muted mt-1">Step {{ $approval->step_ordering }}/{{ $approval->getTotalStepsCount() }}</small>
+                                            <small class="d-block text-muted mt-1">Progress {{ $completedSteps }}/{{ $totalSteps }}</small>
                                             <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
                                                 <div class="progress-bar bg-warning" style="width: {{ $progress }}%"></div>
                                             </div>

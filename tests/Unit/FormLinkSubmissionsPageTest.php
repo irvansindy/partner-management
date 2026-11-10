@@ -22,6 +22,12 @@ class FormLinkSubmissionsPageTest extends TestCase
         $this->assertStringContainsString('submissions-table-wrap', $view);
         $this->assertStringContainsString('submission-actions', $view);
         $this->assertStringContainsString('aria-label="View submission details', $view);
+        $this->assertStringContainsString('$completedSteps = $approval->getCompletedStepsCount()', $view);
+        $this->assertStringContainsString('Progress {{ $completedSteps }}/{{ $totalSteps }}', $view);
+        $this->assertStringContainsString('Approved {{ $completedSteps }}/{{ $totalSteps }}', $view);
+        $this->assertStringContainsString('Rejected {{ $completedSteps }}/{{ $totalSteps }}', $view);
+        $this->assertGreaterThanOrEqual(3, substr_count($view, 'aria-label="Approval progress'));
+        $this->assertStringNotContainsString('Step {{ $approval->step_ordering }}', $view);
     }
 
     /** @test */

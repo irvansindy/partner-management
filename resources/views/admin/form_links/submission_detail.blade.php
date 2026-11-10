@@ -161,6 +161,106 @@
                 box-shadow: none;
             }
 
+            .form-links-page .submission-tabs-shell {
+                background: #fff;
+                border: 1px solid var(--form-link-border);
+                border-radius: 8px;
+                margin-bottom: 20px;
+                overflow-x: auto;
+                scrollbar-width: thin;
+            }
+
+            .form-links-page .submission-tabs {
+                border: 0;
+                display: flex;
+                flex-wrap: nowrap;
+                min-width: max-content;
+                padding: 0 12px;
+            }
+
+            .form-links-page .submission-tabs .nav-link {
+                border: 0;
+                border-bottom: 3px solid transparent;
+                border-radius: 0;
+                color: #5f6677;
+                font-weight: 700;
+                min-height: 50px;
+                padding: 15px 16px 12px;
+                white-space: nowrap;
+            }
+
+            .form-links-page .submission-tabs .nav-link:hover {
+                color: #3f35a8;
+            }
+
+            .form-links-page .submission-tabs .nav-link.active {
+                background: transparent;
+                border-bottom-color: var(--form-link-primary);
+                color: #3f35a8;
+            }
+
+            .form-links-page .submission-tabs .nav-link:focus-visible {
+                outline: 3px solid #8c82eb;
+                outline-offset: -3px;
+            }
+
+            .form-links-page .submission-tab-pane > .card {
+                margin-bottom: 0;
+            }
+
+            .form-links-page .attachment-column {
+                margin-bottom: 16px;
+            }
+
+            .form-links-page .attachment-card {
+                border: 1px solid var(--form-link-border);
+                box-shadow: none;
+                margin: 0;
+            }
+
+            .form-links-page .attachment-card-body {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                padding: 18px;
+                text-align: center;
+            }
+
+            .form-links-page .attachment-preview {
+                align-items: center;
+                display: flex;
+                height: 180px;
+                justify-content: center;
+                margin-bottom: 14px;
+                overflow: hidden;
+                width: 100%;
+            }
+
+            .form-links-page .attachment-preview img {
+                height: 100%;
+                object-fit: contain;
+                width: 100%;
+            }
+
+            .form-links-page .attachment-preview .fas {
+                font-size: 64px;
+                margin: 0;
+            }
+
+            .form-links-page .attachment-name {
+                display: -webkit-box;
+                min-height: 42px;
+                overflow: hidden;
+                overflow-wrap: anywhere;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+            }
+
+            .form-links-page .attachment-download {
+                align-self: center;
+                margin-top: auto;
+            }
+
             @media (max-width: 576px) {
                 .form-links-page .approval-step-header,
                 .form-links-page .approval-detail-list {
@@ -179,6 +279,11 @@
 
                 .form-links-page .submission-header-action {
                     width: 100%;
+                }
+
+                .form-links-page .submission-tabs .nav-link {
+                    padding-left: 13px;
+                    padding-right: 13px;
                 }
             }
         </style>
@@ -215,6 +320,33 @@
                 </a>
             </div>
         </div>
+
+        <nav class="submission-tabs-shell" aria-label="Submission detail sections">
+            <div class="nav nav-tabs submission-tabs" id="submission-detail-tabs" role="tablist">
+                <a class="nav-item nav-link active" id="approval-tab" data-toggle="tab" href="#approval-pane"
+                    role="tab" aria-controls="approval-pane" aria-selected="true">Approval</a>
+                <a class="nav-item nav-link" id="company-tab" data-toggle="tab" href="#company-pane"
+                    role="tab" aria-controls="company-pane" aria-selected="false">Company</a>
+                <a class="nav-item nav-link" id="liable-tab" data-toggle="tab" href="#liable-pane"
+                    role="tab" aria-controls="liable-pane" aria-selected="false">Liable Persons</a>
+                <a class="nav-item nav-link" id="contacts-tab" data-toggle="tab" href="#contacts-pane"
+                    role="tab" aria-controls="contacts-pane" aria-selected="false">Contact Persons</a>
+                <a class="nav-item nav-link" id="addresses-tab" data-toggle="tab" href="#addresses-pane"
+                    role="tab" aria-controls="addresses-pane" aria-selected="false">Addresses</a>
+                <a class="nav-item nav-link" id="bank-tab" data-toggle="tab" href="#bank-pane"
+                    role="tab" aria-controls="bank-pane" aria-selected="false">Bank</a>
+                @if ($company->type === 'customer' && $company->salesSurvey)
+                    <a class="nav-item nav-link" id="survey-tab" data-toggle="tab" href="#survey-pane"
+                        role="tab" aria-controls="survey-pane" aria-selected="false">Survey</a>
+                @endif
+                <a class="nav-item nav-link" id="attachments-tab" data-toggle="tab" href="#attachments-pane"
+                    role="tab" aria-controls="attachments-pane" aria-selected="false">Attachments</a>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="submission-detail-tab-content">
+            <section class="tab-pane fade show active submission-tab-pane" id="approval-pane" role="tabpanel"
+                aria-labelledby="approval-tab">
 
         @if ($company->hasApproval())
             @php
@@ -374,7 +506,11 @@
             </div>
         @endif
 
+            </section>
+
         <!-- Company Information -->
+        <section class="tab-pane fade submission-tab-pane" id="company-pane" role="tabpanel"
+            aria-labelledby="company-tab">
         <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">Company Information</h3>
@@ -451,8 +587,11 @@
                 </table>
             </div>
         </div>
+        </section>
 
         <!-- Liable Persons -->
+        <section class="tab-pane fade submission-tab-pane" id="liable-pane" role="tabpanel"
+            aria-labelledby="liable-tab">
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">Liable Persons</h3>
@@ -482,8 +621,11 @@
                 @endif
             </div>
         </div>
+        </section>
 
         <!-- Contact Persons -->
+        <section class="tab-pane fade submission-tab-pane" id="contacts-pane" role="tabpanel"
+            aria-labelledby="contacts-tab">
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">Contact Persons</h3>
@@ -517,8 +659,11 @@
                 @endif
             </div>
         </div>
+        </section>
 
         <!-- Addresses -->
+        <section class="tab-pane fade submission-tab-pane" id="addresses-pane" role="tabpanel"
+            aria-labelledby="addresses-tab">
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">Addresses</h3>
@@ -578,8 +723,11 @@
                 @endif
             </div>
         </div>
+        </section>
 
         <!-- Banks -->
+        <section class="tab-pane fade submission-tab-pane" id="bank-pane" role="tabpanel"
+            aria-labelledby="bank-tab">
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">Bank Information</h3>
@@ -609,9 +757,12 @@
                 @endif
             </div>
         </div>
+        </section>
 
         <!-- Survey Data (only for customer) -->
         @if ($company->type === 'customer' && $company->salesSurvey)
+            <section class="tab-pane fade submission-tab-pane" id="survey-pane" role="tabpanel"
+                aria-labelledby="survey-tab">
             <div class="card card-warning">
                 <div class="card-header">
                     <h3 class="card-title">Survey Data</h3>
@@ -670,9 +821,12 @@
                     @endif
                 </div>
             </div>
+            </section>
         @endif
 
         <!-- Attachments -->
+        <section class="tab-pane fade submission-tab-pane" id="attachments-pane" role="tabpanel"
+            aria-labelledby="attachments-tab">
         <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title">File Attachments</h3>
@@ -681,20 +835,23 @@
                 @if ($company->attachment->isNotEmpty())
                     <div class="row">
                         @foreach ($company->attachment as $file)
-                            <div class="col-md-3 mb-3">
-                                <div class="card">
-                                    <div class="card-body text-center">
+                            <div class="col-sm-6 col-lg-4 col-xl-3 attachment-column">
+                                <div class="card h-100 attachment-card">
+                                    <div class="card-body attachment-card-body">
+                                        <div class="attachment-preview">
                                         @if (strpos($file->mime_type ?? $file->filetype, 'image/') === 0)
                                             <img src="{{ route('admin.company-attachments.show', $file) }}"
-                                                alt="{{ $file->original_name ?? $file->filename }}" class="img-fluid mb-2"
-                                                style="max-height: 150px;">
+                                                alt="{{ $file->original_name ?? $file->filename }}">
                                         @else
-                                            <i class="fas fa-file-pdf fa-4x text-danger mb-2"></i>
+                                            <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
                                         @endif
-                                        <p class="small mb-2">{{ $file->original_name ?? $file->filename }}</p>
+                                        </div>
+                                        <p class="small mb-2 attachment-name" title="{{ $file->original_name ?? $file->filename }}">
+                                            {{ $file->original_name ?? $file->filename }}
+                                        </p>
                                         <p class="small text-muted">{{ number_format($file->filesize / 1024, 2) }} KB</p>
                                         <a href="{{ route('admin.company-attachments.download', $file) }}"
-                                            class="btn btn-sm btn-primary">
+                                            class="btn btn-sm btn-primary attachment-download">
                                             <i class="fas fa-download"></i> Download
                                         </a>
                                     </div>
@@ -706,6 +863,8 @@
                     <p class="text-muted">No attachments</p>
                 @endif
             </div>
+        </div>
+        </section>
         </div>
     </div>
 @endsection

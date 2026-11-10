@@ -2,7 +2,22 @@
 
 @section('content')
     @push('styles')
+        <link rel="stylesheet" href="{{ asset('vendor/datatables/css/dataTables.bootstrap4.min.css') }}">
         @include('admin.form_links._alpha_styles')
+        <style>
+            .form-links-page .dataTables_wrapper,
+            .form-links-page .dataTables_scroll {
+                width: 100%;
+            }
+
+            .form-links-page .dataTables_scrollBody {
+                scrollbar-width: thin;
+            }
+
+            .form-links-page #form_links_table {
+                width: 100% !important;
+            }
+        </style>
     @endpush
 
     <div class="container-fluid form-links-page">
@@ -36,13 +51,15 @@
 
         <div class="card">
             <div class="card-body">
-                <table class="table table-bordered table-striped">
+                <table id="form_links_table" class="table table-bordered table-striped nowrap" style="width: 100%">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>No.</th>
                             <th>Title</th>
                             <th>Form Type</th>
                             <th>Status</th>
+                            <th>Created By</th>
+                            <th>Created At</th>
                             <th>Submissions</th>
                             <th>Expires At</th>
                             <th>Link</th>
@@ -50,9 +67,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($formLinks as $formLink)
+                        @foreach($formLinks as $formLink)
                             <tr>
-                                <td>{{ $formLink->id }}</td>
+                                <td class="row-number"></td>
                                 <td>{{ $formLink->title }}</td>
                                 <td>
                                     <span class="badge badge-{{ $formLink->form_type === 'vendor' ? 'info' : 'success' }}">
@@ -67,6 +84,10 @@
                                     @else
                                         <span class="badge badge-secondary">Inactive</span>
                                     @endif
+                                </td>
+                                <td>{{ $formLink->creator->name ?? '-' }}</td>
+                                <td data-order="{{ $formLink->created_at->timestamp }}">
+                                    {{ $formLink->created_at->format('d M Y H:i') }}
                                 </td>
                                 <td>
                                     <span class="badge badge-primary">
@@ -135,24 +156,67 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center">No form links found</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
-
-                <div class="mt-3">
-                    {{ $formLinks->links() }}
-                </div>
             </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
     <script>
+        $(function () {
+            const formLinksTable = $('#form_links_table').DataTable({
+                scrollX: true,
+                autoWidth: false,
+                pageLength: 20,
+                lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, 'All']],
+                order: [[5, 'desc']],
+                columnDefs: [
+                    {
+                        targets: [0, 8, 9],
+                        orderable: false
+                    },
+                    {
+                        targets: [0, 9],
+                        searchable: false
+                    }
+                ],
+                drawCallback: function () {
+                    const api = this.api();
+                    const pageInfo = api.page.info();
+
+                    api.column(0, { page: 'current' }).nodes().each(function (cell, index) {
+                        cell.textContent = pageInfo.start + index + 1;
+                    });
+                },
+                language: {
+                    emptyTable: 'No form links found',
+                    zeroRecords: 'No matching form links found'
+                }
+            });
+
+            let adjustTimer;
+
+            function adjustFormLinksTable() {
+                window.requestAnimationFrame(function () {
+                    formLinksTable.columns.adjust();
+                });
+
+                window.clearTimeout(adjustTimer);
+                adjustTimer = window.setTimeout(function () {
+                    formLinksTable.columns.adjust();
+                }, 350);
+            }
+
+            $('.navigation-toggle').on('click.formLinksTable', adjustFormLinksTable);
+            $('.page-content, .page-sidebar').on('transitionend.formLinksTable', adjustFormLinksTable);
+            $(window).on('resize.formLinksTable', adjustFormLinksTable);
+        });
+
         function copyLink(elementId) {
             var copyText = document.getElementById(elementId);
             copyText.select();

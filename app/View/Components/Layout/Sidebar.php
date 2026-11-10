@@ -19,8 +19,23 @@ class Sidebar extends Component
             return false;
         }
 
-        $path = ltrim($url, '/');
+        $path = trim($url, '/');
         return request()->is($path) || request()->is($path . '/*');
+    }
+
+    public function isMenuActive(array $menu): bool
+    {
+        if ($this->isActive($menu['url'] ?? null)) {
+            return true;
+        }
+
+        foreach ($menu['children'] ?? [] as $child) {
+            if ($this->isMenuActive($child)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function render(): View

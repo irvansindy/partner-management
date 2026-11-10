@@ -16,51 +16,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="form-inline my-2 my-lg-0 search" action="{{ $searchAction ?? '' }}" method="GET">
-                <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search" aria-label="Search">
-                <label for="search" class="active"><i class="material-icons search-icon">search</i></label>
-                <a href="#" id="close-search-input"><i class="material-icons">close</i></a>
-            </form>
-
             <ul class="navbar-nav ml-auto">
-                <li class="d-md-block d-lg-none nav-item">
-                    <a class="nav-link search-link" href="#"><i class="material-icons">search</i></a>
-                </li>
-
-                {{-- Notifikasi --}}
-                <li class="nav-item dropdown d-none d-lg-block">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="material-icons">notifications_none</i>
-                        @if ($unreadNotificationCount > 0)
-                            <span class="badge">{{ $unreadNotificationCount }}</span>
-                        @endif
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-right dd-notifications" aria-labelledby="navbarDropdown">
-                        @forelse ($recentNotifications() as $notification)
-                            <li>
-                                <a href="#!">
-                                    <div class="notification">
-                                        <div class="notification-icon circle cyan">
-                                            <i class="material-icons">notifications</i>
-                                        </div>
-                                        <div class="notification-text">
-                                            <p>{{ $notification->message ?? '' }}</p>
-                                            <span>{{ $notification->created_at?->diffForHumans() ?? '' }}</span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        @empty
-                            <li class="notification-drop-title">Tidak ada notifikasi baru</li>
-                        @endforelse
-                    </ul>
-                </li>
-
-                {{-- Toggle Right Sidebar (Chat & Settings) --}}
-                <li class="nav-item">
-                    <a class="nav-link right-sidebar-link" href="#"><i class="material-icons">more_vert</i></a>
-                </li>
-
                 @include('adminlte::partials.navbar.locale-switch')
 
                 {{-- User dropdown --}}

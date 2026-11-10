@@ -22,16 +22,16 @@ class FormLinkService
     /**
      * Get form links filtered by current user's role and permissions
      */
-    public function getFormLinksForCurrentUser(): LengthAwarePaginator
+    public function getFormLinksForCurrentUser(): Collection
     {
         $user = Auth::user();
         $role = $user->roles[0]->name;
 
-        $query = FormLink::query();
+        $query = FormLink::with('creator:id,name');
 
         switch ($role) {
             case 'super-admin':
-                return $query->latest()->paginate(20);
+                return $query->latest()->get();
 
             case 'admin':
             case 'super-user':
@@ -39,11 +39,10 @@ class FormLinkService
                     ->where('department_id', $user->dept->id)
                     ->where('office_id', $user->office->id)
                     ->latest()
-                    ->paginate(20);
+                    ->get();
 
             default:
-                // Return empty paginated result for unauthorized roles
-                return $query->where('id', null)->paginate(20);
+                return $query->where('id', null)->get();
         }
     }
 
