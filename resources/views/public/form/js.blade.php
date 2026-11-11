@@ -199,9 +199,9 @@
                         fieldValue = $(this).is(":checked");
                     } else if (this.type === "radio") {
                         if (!$(this).is(":checked")) return;
-                        fieldValue = this.dataset.pendingLocationRestore || $(this).val();
-                    } else {
                         fieldValue = $(this).val();
+                    } else {
+                        fieldValue = this.dataset.pendingLocationRestore || $(this).val();
                     }
 
                     if (fieldName.includes('[]')) {

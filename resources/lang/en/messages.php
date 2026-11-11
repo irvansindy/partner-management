@@ -1,6 +1,10 @@
 <?php
 
 return array (
+  'Public Use Device Location' => 'Use my location',
+  'Public Locating Device' => 'Getting device location...',
+  'Public Device Location Failed' => 'Device location is unavailable. Enable GPS and use HTTPS, or select a point on the map.',
+  'Public Device Location Denied' => 'Location permission was denied. Allow location access in your browser or select a point on the map.',
   'Public Payload Too Large' => 'The total upload size is too large. Reduce the number or size of the files, then submit again.',
   'Public Submission Saved' => 'Your data has been submitted successfully. Thank you.',
   'Public Submission Failed' => 'Failed to process the form. Please try again.',

@@ -5,7 +5,7 @@
     <div class="card-body">
         <div class="address-sync-wrapper mb-4">
             <label class="address-sync-control" for="operational_same_as_legal">
-                <input class="form-check-input" type="checkbox" id="operational_same_as_legal" checked>
+                <input class="form-check-input" type="checkbox" name="operational_same_as_legal" id="operational_same_as_legal" checked>
                 <span class="address-sync-control__text">{{ __('messages.Public Operational Same As Legal') }}</span>
             </label>
         </div>
@@ -85,7 +85,12 @@
                         <label data-label="geocoded_address">{{ __('messages.Public Geocoded Address') }}</label>
                         <input type="text" name="geocoded_address[]" class="form-control" data-field="geocoded_address" placeholder="{{ __('messages.Public Geocoded Address Placeholder') }}" readonly>
                     </div>
-                    <small class="text-muted" data-coordinate-status role="status" aria-live="polite">{{ __('messages.Public Map Optional') }}</small>
+                    <small class="text-muted d-block mt-2" data-coordinate-status role="status" aria-live="polite">{{ __('messages.Public Map Optional') }}</small>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-primary" data-use-device-location>
+                            <i class="fas fa-location-arrow mr-1" aria-hidden="true"></i> {{ __('messages.Public Use Device Location') }}
+                        </button>
+                    </div>
                     <div class="partner-map-shell mt-3" data-map-shell>
                         <button type="button" class="partner-map-fullscreen" data-map-fullscreen
                             aria-label="{{ __('messages.Public Open Fullscreen Map') }}" title="{{ __('messages.Public Open Fullscreen Map') }}">
@@ -136,6 +141,9 @@
         'exitFullscreen' => __('messages.Public Exit Fullscreen'),
         'fullscreen' => __('messages.Public Fullscreen'),
         'loadingPinAddress' => __('messages.Public Loading Pin Address'),
+        'locatingDevice' => __('messages.Public Locating Device'),
+        'deviceLocationFailed' => __('messages.Public Device Location Failed'),
+        'deviceLocationDenied' => __('messages.Public Device Location Denied'),
         'searchingAddress' => __('messages.Public Searching Address'),
         'selectedCoordinate' => __('messages.Public Selected Coordinate'),
         'loadingProvinces' => __('messages.Public Loading Provinces'),
@@ -518,6 +526,35 @@ window.addEventListener('load', function () {
     }
 
     rows.addEventListener('click', function (event) {
+        const locate = event.target.closest('[data-use-device-location]');
+        if (locate) {
+            if (locate.disabled) return;
+            const row = locate.closest('[data-address-row]');
+            const status = row.querySelector('[data-coordinate-status]');
+            if (!navigator.geolocation) {
+                status.textContent = addressCopy.deviceLocationFailed;
+                return;
+            }
+            const originalContent = locate.innerHTML;
+            locate.disabled = true;
+            locate.setAttribute('aria-busy', 'true');
+            locate.innerHTML = '<i class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>';
+            locate.appendChild(document.createTextNode(addressCopy.locatingDevice));
+            status.textContent = addressCopy.locatingDevice;
+            function finishLocation() {
+                locate.disabled = false;
+                locate.removeAttribute('aria-busy');
+                locate.innerHTML = originalContent;
+            }
+            navigator.geolocation.getCurrentPosition(function (position) {
+                finishLocation();
+                updatePinFromSelection(row, position.coords.latitude, position.coords.longitude);
+            }, function (error) {
+                finishLocation();
+                status.textContent = error.code === 1 ? addressCopy.deviceLocationDenied : addressCopy.deviceLocationFailed;
+            }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+            return;
+        }
         const remove = event.target.closest('[data-remove-address]');
         if (remove) remove.closest('[data-address-row]').remove();
 
@@ -578,6 +615,7 @@ window.addEventListener('load', function () {
         restorePendingLocation(field(row, 'zip_code'), false);
     });
     document.addEventListener('partner:draft-restored', function () {
+        setOperationalVisibility();
         rows.querySelectorAll('[data-address-row]').forEach(function (row) {
             if (field(row, 'country_code').value === 'ID') {
                 row.dispatchEvent(new CustomEvent('partner:draft-location-ready', { bubbles: true }));

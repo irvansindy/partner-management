@@ -1,6 +1,10 @@
 <?php
 
 return array (
+  'Public Use Device Location' => 'Gunakan lokasi saya',
+  'Public Locating Device' => 'Mengambil lokasi perangkat...',
+  'Public Device Location Failed' => 'Lokasi perangkat tidak tersedia. Aktifkan GPS dan gunakan HTTPS, atau pilih titik pada peta.',
+  'Public Device Location Denied' => 'Izin lokasi ditolak. Izinkan akses lokasi pada browser atau pilih titik pada peta.',
   'Public Payload Too Large' => 'Ukuran total unggahan terlalu besar. Kurangi jumlah atau ukuran file, lalu kirim kembali.',
   'Public Submission Saved' => 'Data berhasil dikirim! Terima kasih.',
   'Public Submission Failed' => 'Gagal memproses formulir. Silakan coba lagi.',
