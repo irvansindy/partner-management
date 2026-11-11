@@ -47,6 +47,35 @@
     <link href="{{ asset('assets/css/alpha.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
     @include('layouts.partials.table_action_styles')
+    <style>
+        body:not(.loaded) .alpha-app { opacity: 1; }
+        .loader {
+            position: fixed;
+            inset: 0;
+            margin: 0;
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            background: rgba(244, 244, 248, .9);
+            color: #343047;
+            font-size: 15px;
+        }
+        .loader__figure {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #dcd8f4;
+            border-top-color: #6558d3;
+            border-radius: 50%;
+            animation: admin-loading-spin .8s linear infinite;
+        }
+        @keyframes admin-loading-spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) {
+            .loader__figure { animation-duration: 2s; }
+        }
+    </style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -60,8 +89,9 @@
 <body>
 
     {{-- Loader — tampil sebentar saat halaman pertama kali load --}}
-    <div class="loader">
-        <div class="loader__figure"></div>
+    <div class="loader" role="status" aria-live="polite">
+        <div class="loader__figure" aria-hidden="true"></div>
+        <span>{{ app()->getLocale() === 'id' ? 'Memuat halaman, mohon tunggu...' : 'Loading page, please wait...' }}</span>
     </div>
 
     {{-- App Container — struktur utama dari template Alpha.
