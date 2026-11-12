@@ -33,21 +33,21 @@
     <div class="maintenance-page">
         <header class="maintenance-heading">
             <div>
-                <h2>System Maintenance</h2>
-                <p>Run approved Laravel maintenance operations without terminal access.</p>
+                <h2>{{ __('tools.System Maintenance') }}</h2>
+                <p>{{ __('tools.Run approved Laravel maintenance operations without terminal access.') }}</p>
             </div>
         </header>
 
         <div class="maintenance-notice">
             <i class="fas fa-shield-alt mr-1" aria-hidden="true"></i>
-            Only predefined commands can run. Every execution is locked and written to the application log.
+            {{ __('tools.Only predefined commands can run. Every execution is locked and written to the application log.') }}
         </div>
 
         @if ($result)
             <section class="maintenance-result" aria-live="polite" aria-label="Last command result">
                 <div class="maintenance-result__header">
                     <strong><i class="fas {{ $result['success'] ? 'fa-check-circle' : 'fa-exclamation-circle' }} mr-1" aria-hidden="true"></i>{{ $result['label'] }}</strong>
-                    <span class="maintenance-result__status">{{ $result['success'] ? 'Completed' : (($result['busy'] ?? false) ? 'Already running' : 'Failed') }}</span>
+                    <span class="maintenance-result__status">{{ $result['success'] ? __('tools.Completed') : (($result['busy'] ?? false) ? __('tools.Already running') : __('tools.Failed')) }}</span>
                 </div>
                 <pre class="maintenance-output">{{ $result['output'] }}</pre>
             </section>
@@ -98,11 +98,11 @@
                     event.preventDefault();
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Run maintenance command?',
-                        text: form.dataset.commandLabel + ' may temporarily affect application performance.',
+                        title: @json(__('tools.Run maintenance command?')),
+                        text: form.dataset.commandLabel + @json(__('tools. may temporarily affect application performance.')),
                         showCancelButton: true,
-                        confirmButtonText: 'Run command',
-                        cancelButtonText: 'Cancel',
+                        confirmButtonText: @json(__('tools.Run command')),
+                        cancelButtonText: @json(__('tools.Cancel')),
                         confirmButtonColor: '#6558d3'
                     }).then(function (result) {
                         if (!result.isConfirmed) return;

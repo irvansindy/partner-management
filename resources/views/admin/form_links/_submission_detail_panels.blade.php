@@ -283,28 +283,28 @@
             }
         </style>
 <div class="form-links-page">
-        <nav class="submission-tabs-shell" aria-label="Submission detail sections">
+        <nav class="submission-tabs-shell" aria-label="{{ __('form_links_remaining.Submission detail sections') }}">
             <div class="nav nav-tabs submission-tabs" id="submission-detail-tabs" role="tablist">
                 @if ($showApproval ?? true)
                 <a class="nav-item nav-link active" id="approval-tab" data-toggle="tab" href="#approval-pane"
-                    role="tab" aria-controls="approval-pane" aria-selected="true">Approval</a>
+                    role="tab" aria-controls="approval-pane" aria-selected="true">{{ __('admin.Approval') }}</a>
                 @endif
                 <a class="nav-item nav-link {{ ($showApproval ?? true) ? '' : 'active' }}" id="company-tab" data-toggle="tab" href="#company-pane"
-                    role="tab" aria-controls="company-pane" aria-selected="{{ ($showApproval ?? true) ? 'false' : 'true' }}">Company</a>
+                    role="tab" aria-controls="company-pane" aria-selected="{{ ($showApproval ?? true) ? 'false' : 'true' }}">{{ __('admin.Company') }}</a>
                 <a class="nav-item nav-link" id="liable-tab" data-toggle="tab" href="#liable-pane"
-                    role="tab" aria-controls="liable-pane" aria-selected="false">Liable Persons</a>
+                    role="tab" aria-controls="liable-pane" aria-selected="false">{{ __('admin.Liable Persons') }}</a>
                 <a class="nav-item nav-link" id="contacts-tab" data-toggle="tab" href="#contacts-pane"
-                    role="tab" aria-controls="contacts-pane" aria-selected="false">Contact Persons</a>
+                    role="tab" aria-controls="contacts-pane" aria-selected="false">{{ __('admin.Contact Persons') }}</a>
                 <a class="nav-item nav-link" id="addresses-tab" data-toggle="tab" href="#addresses-pane"
-                    role="tab" aria-controls="addresses-pane" aria-selected="false">Addresses</a>
+                    role="tab" aria-controls="addresses-pane" aria-selected="false">{{ __('admin.Addresses') }}</a>
                 <a class="nav-item nav-link" id="bank-tab" data-toggle="tab" href="#bank-pane"
-                    role="tab" aria-controls="bank-pane" aria-selected="false">Bank</a>
+                    role="tab" aria-controls="bank-pane" aria-selected="false">{{ __('admin.Bank') }}</a>
                 @if ($company->type === 'customer' && $company->salesSurvey)
                     <a class="nav-item nav-link" id="survey-tab" data-toggle="tab" href="#survey-pane"
-                        role="tab" aria-controls="survey-pane" aria-selected="false">Survey</a>
+                        role="tab" aria-controls="survey-pane" aria-selected="false">{{ __('admin.Survey') }}</a>
                 @endif
                 <a class="nav-item nav-link" id="attachments-tab" data-toggle="tab" href="#attachments-pane"
-                    role="tab" aria-controls="attachments-pane" aria-selected="false">Attachments</a>
+                    role="tab" aria-controls="attachments-pane" aria-selected="false">{{ __('admin.Attachments') }}</a>
             </div>
         </nav>
 
@@ -346,17 +346,17 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Progress: {{ $completedSteps }}/{{ $totalSteps }} steps</span>
+                            <span class="text-muted">{{ __('form_links.progress', ['done' => $completedSteps, 'total' => $totalSteps]) }}</span>
                             <span class="text-bold">{{ number_format($progress, 0) }}%</span>
                         </div>
-                        <div class="progress approval-progress" aria-label="Approval progress">
+                        <div class="progress approval-progress" aria-label="{{ __('form_links_remaining.Approval progress') }}">
                             <div class="progress-bar"
                                 role="progressbar" style="width: {{ $progress }}%" aria-valuenow="{{ $progress }}"
                                 aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
 
-                    <h5 class="mb-3">Approval Timeline</h5>
+                    <h5 class="mb-3">{{ __('admin.Approval Timeline') }}</h5>
                     <div class="approval-timeline">
                         @foreach ($approval->steps as $step)
                             <div class="approval-step">
@@ -366,31 +366,31 @@
                                 <div class="approval-step-card">
                                     <div class="approval-step-header">
                                         <div>
-                                            <h3 class="approval-step-title">Step {{ $step->step_ordering }} · {{ $step->approver->name ?? 'Unknown' }}</h3>
+                                            <h3 class="approval-step-title">{{ __('form_links_remaining.Step') }} {{ $step->step_ordering }} · {{ $step->approver->name ?? __('form_links_remaining.Unknown') }}</h3>
                                             <span class="approval-step-meta">
                                         @if ($step->isApproved() && $step->approved_at)
-                                            <i class="fas fa-clock"></i> {{ $step->approved_at->format('d M Y H:i') }}
+                                            <i class="fas fa-clock"></i> {{ $step->approved_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}
                                         @elseif($step->isRejected() && $step->rejected_at)
-                                            <i class="fas fa-clock"></i> {{ $step->rejected_at->format('d M Y H:i') }}
+                                            <i class="fas fa-clock"></i> {{ $step->rejected_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}
                                         @else
-                                            <i class="fas fa-clock"></i> {{ $step->created_at->format('d M Y H:i') }}
+                                            <i class="fas fa-clock"></i> {{ $step->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}
                                         @endif
                                             </span>
                                         </div>
                                         @if ($step->isApproved())
-                                            <span class="approval-state">Approved</span>
+                                            <span class="approval-state">{{ __('admin.Approved') }}</span>
                                         @elseif($step->isRejected())
-                                            <span class="approval-state">Rejected</span>
+                                            <span class="approval-state">{{ __('admin.Rejected') }}</span>
                                         @elseif($step->isWaiting())
-                                            <span class="approval-state">Waiting for Approval</span>
+                                            <span class="approval-state">{{ __('admin.Waiting for Approval') }}</span>
                                         @else
-                                            <span class="approval-state">Pending</span>
+                                            <span class="approval-state">{{ __('admin.Pending') }}</span>
                                         @endif
                                     </div>
                                     <div class="approval-detail-list">
                                         <p class="mb-1">
-                                            <i class="fas fa-user"></i> <strong>Approver:</strong>
-                                            {{ $step->approver->name ?? 'Unknown' }}
+                                            <i class="fas fa-user"></i> <strong>{{ __('submission.Approver:') }}</strong>
+                                            {{ $step->approver->name ?? __('form_links_remaining.Unknown') }}
                                         </p>
                                         <p class="mb-1">
                                             <i class="fas fa-envelope"></i> <strong>Email:</strong>
@@ -401,7 +401,7 @@
                                     @if ($step->notes)
                                         <div class="approval-note">
                                             <strong><i class="fas fa-comment mr-1"></i> Notes</strong>
-                                            <div class="mt-1">{{ $step->notes }}</div>
+                                            <div class="mt-1">{!! $step->notes !!}</div>
                                         </div>
                                     @endif
 
@@ -422,15 +422,15 @@
                         <div class="col-md-6">
                             <table class="table table-sm">
                                 <tr>
-                                    <th width="40%">Submitted By:</th>
+                                    <th width="40%">{{ __('submission.Submitted By:') }}</th>
                                     <td>{{ $approval->initiator->name ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Department:</th>
+                                    <th>{{ __('submission.Department:') }}</th>
                                     <td>{{ $approval->department->name ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Office:</th>
+                                    <th>{{ __('submission.Office:') }}</th>
                                     <td>{{ $approval->office->name ?? '-' }}</td>
                                 </tr>
                             </table>
@@ -438,22 +438,22 @@
                         <div class="col-md-6">
                             <table class="table table-sm">
                                 <tr>
-                                    <th width="40%">Current Step:</th>
+                                    <th width="40%">{{ __('submission.Current Step:') }}</th>
                                     <td>
                                         @if ($currentStep)
-                                            Step {{ $currentStep->step_ordering }} - {{ $currentStep->approver->name }}
+                                            {{ __('form_links_remaining.Step') }} {{ $currentStep->step_ordering }} - {{ $currentStep->approver->name }}
                                         @else
-                                            {{ $approval->isApproved() ? 'Completed' : 'N/A' }}
+                                            {{ $approval->isApproved() ? __('form_links_remaining.Completed') : '-' }}
                                         @endif
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Started At:</th>
-                                    <td>{{ $approval->created_at->format('d M Y H:i') }}</td>
+                                    <th>{{ __('submission.Started At:') }}</th>
+                                    <td>{{ $approval->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Last Updated:</th>
-                                    <td>{{ $approval->updated_at->format('d M Y H:i') }}</td>
+                                    <th>{{ __('submission.Last Updated:') }}</th>
+                                    <td>{{ $approval->updated_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -464,9 +464,9 @@
             {{-- No Approval Process --}}
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i>
-                <strong>No Approval Process</strong> - This submission does not have an approval process yet.
+                <strong>{{ __('submission.No Approval Process') }}</strong> - {{ __('form_links_remaining.This submission does not have an approval process yet.') }}
                 @if (auth()->user()->hasRole('super-admin'))
-                    This might be because there's no approval template configured for this office and department.
+                    {{ __('form_links_remaining.This might be because there\'s no approval template configured for this office and department.') }}
                 @endif
             </div>
         @endif
@@ -479,12 +479,12 @@
             aria-labelledby="company-tab">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Company Information</h3>
+                <h3 class="card-title">{{ __('admin.Company Information') }}</h3>
             </div>
             <div class="card-body">
                 <table class="table table-bordered">
                     <tr>
-                        <th width="30%">Company Type</th>
+                        <th width="30%">{{ __('admin.Company Type') }}</th>
                         <td>
                             <span class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">
                                 {{ ucfirst($company->type) }}
@@ -492,35 +492,35 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Company Name</th>
+                        <th>{{ __('admin.Company Name') }}</th>
                         <td>{{ $company->name }}</td>
                     </tr>
                     <tr>
-                        <th>Company Group Name</th>
+                        <th>{{ __('admin.Company Group Name') }}</th>
                         <td>{{ $company->group_name ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Established Year</th>
+                        <th>{{ __('admin.Established Year') }}</th>
                         <td>{{ $company->established_year ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Total Employee</th>
+                        <th>{{ __('admin.Total Employee') }}</th>
                         <td>{{ $company->total_employee ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Business Classification</th>
+                        <th>{{ __('admin.Business Classification') }}</th>
                         <td>{{ $company->business_classification }}</td>
                     </tr>
                     <tr>
-                        <th>Business Classification Detail</th>
+                        <th>{{ __('admin.Business Classification Detail') }}</th>
                         <td>{{ $company->business_classification_detail ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Tax Register Number</th>
+                        <th>{{ __('admin.Tax Register Number') }}</th>
                         <td>{{ $company->npwp ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Website Address</th>
+                        <th>{{ __('admin.Website Address') }}</th>
                         <td>
                             @if ($company->website_address)
                                 <a href="{{ $company->website_address }}"
@@ -531,24 +531,24 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Certificate Type</th>
+                        <th>{{ __('admin.Certificate Type') }}</th>
                         <td>{{ $company->system_management ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Email Address</th>
+                        <th>{{ __('admin.Email Address') }}</th>
                         <td>{{ $company->email_address ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Credit Limit</th>
+                        <th>{{ __('admin.Credit Limit') }}</th>
                         <td>{{ $company->credit_limit ? number_format($company->credit_limit, 2) : '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Term of Payment</th>
+                        <th>{{ __('admin.Term of Payment') }}</th>
                         <td>{{ $company->term_of_payment ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Submitted At</th>
-                        <td>{{ $company->created_at->format('d M Y H:i:s') }}</td>
+                        <th>{{ __('admin.Submitted At') }}</th>
+                        <td>{{ $company->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i:s') }}</td>
                     </tr>
                 </table>
             </div>
@@ -560,15 +560,15 @@
             aria-labelledby="liable-tab">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Liable Persons</h3>
+                <h3 class="card-title">{{ __('admin.Liable Persons') }}</h3>
             </div>
             <div class="card-body">
                 @if ($company->liablePeople->isNotEmpty())
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Position</th>
+                                <th>{{ __('admin.Name') }}</th>
+                                <th>{{ __('admin.Position') }}</th>
                                 <th>NIK</th>
                             </tr>
                         </thead>
@@ -583,7 +583,7 @@
                         </tbody>
                     </table>
                 @else
-                    <p class="text-muted">No liable persons recorded</p>
+                    <p class="text-muted">{{ __('admin.No liable persons recorded') }}</p>
                 @endif
             </div>
         </div>
@@ -594,18 +594,18 @@
             aria-labelledby="contacts-tab">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Contact Persons</h3>
+                <h3 class="card-title">{{ __('admin.Contact Persons') }}</h3>
             </div>
             <div class="card-body">
                 @if ($company->contact->isNotEmpty())
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Department</th>
-                                <th>Position</th>
-                                <th>Name</th>
+                                <th>{{ __('admin.Department') }}</th>
+                                <th>{{ __('admin.Position') }}</th>
+                                <th>{{ __('admin.Name') }}</th>
                                 <th>Email</th>
-                                <th>Telephone</th>
+                                <th>{{ __('admin.Telephone') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -621,7 +621,7 @@
                         </tbody>
                     </table>
                 @else
-                    <p class="text-muted">No contacts recorded</p>
+                    <p class="text-muted">{{ __('admin.No contacts recorded') }}</p>
                 @endif
             </div>
         </div>
@@ -632,7 +632,7 @@
             aria-labelledby="addresses-tab">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Addresses</h3>
+                <h3 class="card-title">{{ __('admin.Addresses') }}</h3>
             </div>
             <div class="card-body">
                 @if ($company->address->isNotEmpty())
@@ -641,27 +641,27 @@
                             <h5>Address {{ $index + 1 }}</h5>
                             <table class="table table-bordered">
                                 <tr>
-                                    <th width="30%">Address</th>
+                                    <th width="30%">{{ __('admin.Address') }}</th>
                                     <td>{{ $address->address }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Country</th>
+                                    <th>{{ __('admin.Country') }}</th>
                                     <td>{{ $address->country }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Province</th>
+                                    <th>{{ __('admin.Province') }}</th>
                                     <td>{{ $address->province }}</td>
                                 </tr>
                                 <tr>
-                                    <th>City</th>
+                                    <th>{{ __('admin.City') }}</th>
                                     <td>{{ $address->city }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Postal Code</th>
+                                    <th>{{ __('admin.Postal Code') }}</th>
                                     <td>{{ $address->zip_code }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Telephone</th>
+                                    <th>{{ __('admin.Telephone') }}</th>
                                     <td>{{ $address->telephone }}</td>
                                 </tr>
                                 <tr>
@@ -670,7 +670,7 @@
                                 </tr>
                                 @if ($address->latitude && $address->longitude)
                                     <tr>
-                                        <th>Coordinates</th>
+                                        <th>{{ __('submission.Coordinates') }}</th>
                                         <td>
                                             Lat: {{ $address->latitude }}, Long: {{ $address->longitude }}
                                             <br>
@@ -685,7 +685,7 @@
                         </div>
                     @endforeach
                 @else
-                    <p class="text-muted">No addresses recorded</p>
+                    <p class="text-muted">{{ __('admin.No addresses recorded') }}</p>
                 @endif
             </div>
         </div>
@@ -696,16 +696,16 @@
             aria-labelledby="bank-tab">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Bank Information</h3>
+                <h3 class="card-title">{{ __('admin.Bank Information') }}</h3>
             </div>
             <div class="card-body">
                 @if ($company->bank->isNotEmpty())
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Bank Name</th>
-                                <th>Account Name</th>
-                                <th>Account Number</th>
+                                <th>{{ __('admin.Bank Name') }}</th>
+                                <th>{{ __('admin.Account Name') }}</th>
+                                <th>{{ __('admin.Account Number') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -719,7 +719,7 @@
                         </tbody>
                     </table>
                 @else
-                    <p class="text-muted">No bank information recorded</p>
+                    <p class="text-muted">{{ __('admin.No bank information recorded') }}</p>
                 @endif
             </div>
         </div>
@@ -731,12 +731,12 @@
                 aria-labelledby="survey-tab">
             <div class="card card-warning">
                 <div class="card-header">
-                    <h3 class="card-title">Survey Data</h3>
+                    <h3 class="card-title">{{ __('admin.Survey Data') }}</h3>
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered">
                         <tr>
-                            <th width="30%">Ownership Status</th>
+                            <th width="30%">{{ __('admin.Ownership Status') }}</th>
                             <td>
                                 @if ($company->salesSurvey->ownership_status)
                                     <span
@@ -750,7 +750,7 @@
                         </tr>
                         @if ($company->salesSurvey->rental_year)
                             <tr>
-                                <th>Rental Year</th>
+                                <th>{{ __('admin.Rental Year') }}</th>
                                 <td>{{ $company->salesSurvey->rental_year }}</td>
                             </tr>
                         @endif
@@ -765,11 +765,11 @@
                     </table>
 
                     @if ($company->productCustomers->isNotEmpty())
-                        <h5 class="mt-4">Products</h5>
+                        <h5 class="mt-4">{{ __('admin.Products') }}</h5>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Product</th>
+                                    <th>{{ __('admin.Product') }}</th>
                                     <th>Merk</th>
                                     <th>Distributor</th>
                                 </tr>
@@ -795,7 +795,7 @@
             aria-labelledby="attachments-tab">
         <div class="card card-success">
             <div class="card-header">
-                <h3 class="card-title">File Attachments</h3>
+                <h3 class="card-title">{{ __('admin.File Attachments') }}</h3>
             </div>
             <div class="card-body">
                 @if ($company->attachment->isNotEmpty())
@@ -826,7 +826,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-muted">No attachments</p>
+                    <p class="text-muted">{{ __('admin.No attachments') }}</p>
                 @endif
             </div>
         </div>

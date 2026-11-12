@@ -52,14 +52,14 @@
     <div class="container-fluid form-links-page submissions-page approval-inbox-page">
         <div class="page-heading">
             <div>
-                <h2>My Pending Approvals</h2>
-                <p>Review partner submissions currently waiting for your decision.</p>
+                <h2>{{ __('admin.My Pending Approvals') }}</h2>
+                <p>{{ __('admin.Review partner submissions currently waiting for your decision.') }}</p>
             </div>
         </div>
 
         <div class="form-link-stats" aria-label="Pending approval summary">
             <div class="stat-card stat-total">
-                <div><h3>{{ $pendingSteps->count() }}</h3><span class="stat-card__label">Pending Actions</span></div>
+                <div><h3>{{ $pendingSteps->count() }}</h3><span class="stat-card__label">{{ __('admin.Pending Actions') }}</span></div>
                 <i class="material-icons" aria-hidden="true">assignment_late</i>
             </div>
             <div class="stat-card stat-approved">
@@ -71,14 +71,14 @@
                 <i class="material-icons" aria-hidden="true">storefront</i>
             </div>
             <div class="stat-card stat-companies">
-                <div><h3>{{ $companyCount }}</h3><span class="stat-card__label">Companies</span></div>
+                <div><h3>{{ $companyCount }}</h3><span class="stat-card__label">{{ __('admin.Companies') }}</span></div>
                 <i class="material-icons" aria-hidden="true">business</i>
             </div>
         </div>
 
         <div class="card">
             <div class="card-header inbox-card-header">
-                <h3 class="card-title">Assigned Submissions</h3>
+                <h3 class="card-title">{{ __('admin.Assigned Submissions') }}</h3>
                 <div class="input-group input-group-sm inbox-search">
                     <input type="search" id="approvalSearchInput" class="form-control"
                         placeholder="Search company or type" aria-label="Search pending approvals">
@@ -93,13 +93,13 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Company Name</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Business Classification</th>
-                            <th scope="col">Submitted At</th>
-                            <th scope="col">Approval Status</th>
-                            <th scope="col">Waiting Since</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col">{{ __('admin.Company Name') }}</th>
+                            <th scope="col">{{ __('admin.Type') }}</th>
+                            <th scope="col">{{ __('admin.Business Classification') }}</th>
+                            <th scope="col">{{ __('admin.Submitted At') }}</th>
+                            <th scope="col">{{ __('admin.Approval Status') }}</th>
+                            <th scope="col">{{ __('admin.Waiting Since') }}</th>
+                            <th scope="col">{{ __('admin.Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -132,7 +132,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <span class="badge badge-warning"><i class="fas fa-clock" aria-hidden="true"></i> Waiting for You</span>
+                                    <span class="badge badge-warning"><i class="fas fa-clock" aria-hidden="true"></i> {{ __('admin.Waiting for You') }}</span>
                                     <small class="d-block text-muted mt-1">Progress {{ $completedSteps }}/{{ $totalSteps }}</small>
                                     <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
                                         <div class="progress-bar bg-warning" style="width: {{ $progress }}%"></div>
@@ -163,7 +163,7 @@
                             <tr>
                                 <td colspan="8" class="text-center text-muted empty-inbox">
                                     <i class="material-icons d-block mb-2" aria-hidden="true">task_alt</i>
-                                    <strong>No pending approvals</strong>
+                                    <strong>{{ __('admin.No pending approvals') }}</strong>
                                     <p class="mb-0 mt-1">New submissions assigned to you will appear here.</p>
                                 </td>
                             </tr>

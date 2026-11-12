@@ -72,8 +72,8 @@
         $('.text-danger').text('')
         $('#button_action_department').empty();
         $('#button_action_department').append(`
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="submit_department">Submit</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>
+            <button type="button" class="btn btn-primary" id="submit_department">{{ __('admin.Submit') }}</button>
         `);
     });
 
@@ -88,8 +88,8 @@
         $('#department_name').val(name);
         $('#button_action_department').empty();
         $('#button_action_department').append(`
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="update_department">Submit</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>
+            <button type="button" class="btn btn-primary" id="update_department">{{ __('admin.Submit') }}</button>
         `);
     });
 

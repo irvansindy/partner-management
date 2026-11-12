@@ -42,11 +42,15 @@ class DashboardController extends Controller
      */
     private function filterCompanyQueryByUser($query)
     {
-        if (!$this->user) return $query;
+        if (!$this->user) return $query->whereRaw('1 = 0');
 
-        // Super-admin & super-user: bisa lihat semua
-        if ($this->user->hasRole('super-admin') || $this->user->hasRole('super-user')) {
+        // Only super-admin can access all organizations.
+        if ($this->user->hasRole('super-admin')) {
             return $query;
+        }
+
+        if (!$this->user->department_id || !$this->user->office_id) {
+            return $query->whereRaw('1 = 0');
         }
 
         // Admin: batasi berdasarkan department dan location
@@ -365,24 +369,25 @@ class DashboardController extends Controller
                 CompanyInformation::with(['address' => function($q) {
                     $q->whereNotNull('latitude')
                     ->whereNotNull('longitude')
-                    ->whereRaw("latitude::text != ''")
-                    ->whereRaw("longitude::text != ''");
-                }])->where('type', 'vendor')
+                    ->where('latitude', '<>', '')
+                    ->where('longitude', '<>', '');
+                }])->where('type', 'vendor')->where('status', 'approved')
             )->get();
 
             $customers = $this->filterCompanyQueryByUser(
                 CompanyInformation::with(['address' => function($q) {
                     $q->whereNotNull('latitude')
                     ->whereNotNull('longitude')
-                    ->whereRaw("latitude::text != ''")
-                    ->whereRaw("longitude::text != ''");
-                }])->where('type', 'customer')
+                    ->where('latitude', '<>', '')
+                    ->where('longitude', '<>', '');
+                }])->where('type', 'customer')->where('status', 'approved')
             )->get();
 
             $map_points = collect();
 
             foreach ($vendors as $v) {
                 foreach ($v->address as $a) {
+                    if (!is_numeric($a->latitude) || !is_numeric($a->longitude)) continue;
                     $lat = (float) $a->latitude;
                     $lng = (float) $a->longitude;
 
@@ -402,6 +407,7 @@ class DashboardController extends Controller
 
             foreach ($customers as $c) {
                 foreach ($c->address as $a) {
+                    if (!is_numeric($a->latitude) || !is_numeric($a->longitude)) continue;
                     $lat = (float) $a->latitude;
                     $lng = (float) $a->longitude;
 

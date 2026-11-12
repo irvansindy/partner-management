@@ -58,7 +58,7 @@ class FormLinkController extends Controller
 
         return redirect()
             ->route('admin.form-links.show', $formLink)
-            ->with('success', 'Form link berhasil dibuat!');
+            ->with('success', __('form_links.Form link berhasil dibuat!'));
     }
 
     /**
@@ -94,7 +94,7 @@ class FormLinkController extends Controller
 
         return redirect()
             ->route('admin.form-links.show', $formLink)
-            ->with('success', 'Form link berhasil diupdate!');
+            ->with('success', __('form_links.Form link berhasil diupdate!'));
     }
 
     /**
@@ -106,7 +106,7 @@ class FormLinkController extends Controller
 
         $status = $this->formLinkService->toggleStatus($formLink);
 
-        return back()->with('success', "Form berhasil {$status}!");
+        return back()->with('success', $formLink->is_active ? __('form_links.enabled') : __('form_links.disabled'));
     }
 
     /**
@@ -121,7 +121,7 @@ class FormLinkController extends Controller
 
             return redirect()
                 ->route('admin.form-links.index')
-                ->with('success', 'Form link berhasil dihapus!');
+                ->with('success', __('form_links.Form link berhasil dihapus!'));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -330,7 +330,7 @@ class FormLinkController extends Controller
                 'integer',
                 Rule::exists('company_attachments', 'id')->where('company_id', $company->id),
             ],
-        ]);
+        ], __('submission_validation.messages'), __('submission_validation.attributes'));
 
         foreach ($validated['contacts'] ?? [] as &$contact) {
             $contact['telephone'] = $this->formatInternationalPhone(
@@ -363,7 +363,7 @@ class FormLinkController extends Controller
 
                 if (!$province || !$regency) {
                     return back()->withInput()->withErrors([
-                        "addresses.$index.city" => 'The selected province and city/regency do not match.',
+                        "addresses.$index.city" => __('form_links.location_mismatch'),
                     ]);
                 }
 
@@ -523,7 +523,7 @@ class FormLinkController extends Controller
 
             return redirect()
                 ->route('admin.form-links.submission-detail', [$company->formLink, $company->id])
-                ->with('success', 'Data submission berhasil diupdate!');
+                ->with('success', __('form_links.Data submission berhasil diupdate!'));
 
         } catch (\Exception $e) {
             Log::error('Submission update failed', [
@@ -535,7 +535,7 @@ class FormLinkController extends Controller
 
             return back()
                 ->withInput()
-                ->with('error', 'Gagal menyimpan perubahan submission. Silakan periksa data dan coba kembali.');
+                ->with('error', __('form_links.Gagal menyimpan perubahan submission. Silakan periksa data dan coba kembali.'));
         }
     }
 

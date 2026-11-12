@@ -92,8 +92,8 @@
 <div class="container-fluid company-tools-page">
     <div class="page-heading">
         <div>
-            <h2>Import Data Perusahaan</h2>
-            <p>Upload file Excel sesuai template untuk menambahkan data perusahaan.</p>
+            <h2>{{ __('tools.Import Data Perusahaan') }}</h2>
+            <p>{{ __('tools.Upload file Excel sesuai template untuk menambahkan data perusahaan.') }}</p>
         </div>
         <div class="page-actions">
             <button type="button" class="btn btn-outline-primary" data-toggle="modal"
@@ -153,7 +153,7 @@
                                 <i class="fas fa-download"></i> Download Template Excel
                             </a>
                             <small class="text-muted d-block mt-2 text-center">
-                                Template kosong untuk import data baru
+                                {{ __('tools.Template kosong untuk import data baru') }}
                             </small>
                         </div>
 
@@ -163,7 +163,7 @@
                                 <i class="fas fa-file-export"></i> Export Semua Data
                             </a>
                             <small class="text-muted d-block mt-2 text-center">
-                                Export semua data existing
+                                {{ __('tools.Export semua data existing') }}
                             </small>
                         </div>
 
@@ -173,7 +173,7 @@
                                 <i class="fas fa-tasks"></i> Export Custom
                             </a>
                             <small class="text-muted d-block mt-2 text-center">
-                                Pilih field yang ingin di-export
+                                {{ __('tools.Pilih field yang ingin di-export') }}
                             </small>
                         </div>
                     </div>
@@ -190,7 +190,7 @@
                             </label>
                             <div class="custom-file">
                                 <input type="file" name="file" class="custom-file-input" id="file" required accept=".xlsx,.xls">
-                                <label class="custom-file-label" for="file">Pilih file...</label>
+                                <label class="custom-file-label" for="file">{{ __('tools.Pilih file...') }}</label>
                             </div>
                             <small class="form-text text-muted">
                                 Format: .xlsx atau .xls | Max: 50MB
@@ -245,7 +245,7 @@
                     </ol>
 
                     <div class="import-guidance import-guidance--warning">
-                        <h5><i class="fas fa-exclamation-triangle"></i> Perhatian:</h5>
+                        <h5><i class="fas fa-exclamation-triangle"></i> {{ __('tools.Perhatian:') }}</h5>
                         <ul class="mb-0">
                             <li>Kolom <strong class="text-danger">nama_perusahaan</strong> wajib diisi (header berwarna merah)</li>
                             <li>Format email harus valid (contoh: email@domain.com)</li>
@@ -256,7 +256,7 @@
                     </div>
 
                     <div class="import-guidance import-guidance--tip">
-                        <h5><i class="fas fa-lightbulb"></i> Tips:</h5>
+                        <h5><i class="fas fa-lightbulb"></i> {{ __('tools.Tips:') }}</h5>
                         <ul class="mb-0">
                             <li>Hover mouse di header kolom template untuk melihat catatan detail</li>
                             <li>Kolom dengan header tosca bisa diisi multiple data dengan separator <code>|</code></li>
@@ -265,7 +265,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('tools.Tutup') }}</button>
                 </div>
             </div>
         </div>

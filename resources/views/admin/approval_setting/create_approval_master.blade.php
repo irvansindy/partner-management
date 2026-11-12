@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{ __('admin.Cancel') }}</button>
                     <button type="submit" class="btn btn-primary" id="create_approval_master_data">
                         <i class="fas fa-save mr-1" aria-hidden="true"></i> Create Template
                     </button>

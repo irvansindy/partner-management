@@ -97,8 +97,8 @@
             $('#button-ip_address').empty();
             $('.text-danger').text('');
             $('#button-ip_address').append(`
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="create_ip_address">Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>
+                <button type="button" class="btn btn-primary" id="create_ip_address">{{ __('admin.Submit') }}</button>
             `);
         });
 
@@ -110,8 +110,8 @@
             $('.text-danger').text('');
             $('#button-ip_address').empty();
             $('#button-ip_address').append(`
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="update_ip_address">Update</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>
+                <button type="button" class="btn btn-primary" id="update_ip_address">{{ __('admin.Update') }}</button>
             `);
 
             $.ajax({

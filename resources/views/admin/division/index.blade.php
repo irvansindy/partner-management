@@ -233,8 +233,8 @@
                     @csrf
                     <input type="hidden" id="division_id" name="division_id">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="divisionModalTitle">Create Division</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title" id="divisionModalTitle">{{ __('admin.Create Division') }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -245,7 +245,7 @@
                             <span class="text-danger small" id="division_name_error"></span>
                         </div>
                         <div class="form-group">
-                            <label for="division_gm_user_id">General Manager</label>
+                            <label for="division_gm_user_id">{{ __('admin.General Manager') }}</label>
                             <select class="form-control" id="division_gm_user_id" name="gm_user_id">
                                 <option value="">Not assigned</option>
                                 @foreach ($generalManagers as $generalManager)
@@ -255,7 +255,7 @@
                             <span class="text-danger small" id="division_gm_user_id_error"></span>
                         </div>
                         <div class="form-group mb-0">
-                            <label for="division_office_id">Office</label>
+                            <label for="division_office_id">{{ __('admin.Office') }}</label>
                             <select class="form-control" id="division_office_id" name="office_id">
                                 <option value="">Not assigned</option>
                                 @foreach ($offices as $office)
@@ -266,7 +266,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ __('admin.Cancel') }}</button>
                         <button type="submit" class="btn btn-primary" id="save_division">
                             <i class="material-icons align-middle mr-1">save</i> Save Division
                         </button>

@@ -162,7 +162,7 @@
             </div>
             <button type="button" class="btn btn-primary waves-effect" id="for_create_department" data-toggle="modal" data-target="#formDepartment" data-backdrop="static" data-keyboard="false">
                 <i class="material-icons align-middle mr-1">add</i>
-                <span>Department</span>
+                <span>{{ __('admin.Department') }}</span>
             </button>
         </div>
 
@@ -176,7 +176,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Name</th>
+                                <th>{{ __('admin.Name') }}</th>
                                 <th>#</th>
                             </tr>
                         </thead>

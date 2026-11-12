@@ -208,8 +208,8 @@
     <div class="container-fluid form-links-page submission-edit-page">
         <div class="page-heading">
             <div>
-                <h2>Edit Submission</h2>
-                <p>{{ $company->name }} · Perubahan masih memungkinkan sebelum tahap approval terakhir aktif.</p>
+                <h2>{{ __('admin.Edit Submission') }}</h2>
+                <p>{{ $company->name }} · {{ __('submission.editable_notice') }}</p>
             </div>
             <div class="page-actions">
                 <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}" class="btn btn-outline-secondary">
@@ -220,7 +220,7 @@
 
         @if ($errors->any())
             <div class="alert alert-danger" role="alert">
-                <strong>Periksa kembali data berikut:</strong>
+                <strong>{{ __('form_links.Periksa kembali data berikut:') }}</strong>
                 <ul class="mb-0 mt-2">
                     @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
                 </ul>
@@ -236,92 +236,92 @@
             @method('PUT')
 
             <div class="card">
-                <div class="card-header"><h3 class="card-title">Company Information</h3></div>
+                <div class="card-header"><h3 class="card-title">{{ __('admin.Company Information') }}</h3></div>
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label for="name">Company Name <span class="text-danger">*</span></label>
+                            <label for="name">{{ __('admin.Company Name') }} <span class="text-danger">*</span></label>
                             <input id="name" name="name" class="form-control" value="{{ old('name', $company->name) }}" maxlength="255" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="group_name">Company Group Name</label>
+                            <label for="group_name">{{ __('admin.Company Group Name') }}</label>
                             <input id="group_name" name="group_name" class="form-control" value="{{ old('group_name', $company->group_name) }}" maxlength="255">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="established_year">Established Year</label>
+                            <label for="established_year">{{ __('admin.Established Year') }}</label>
                             <input id="established_year" name="established_year" type="number" class="form-control" value="{{ old('established_year', $company->established_year) }}" min="1900" max="{{ date('Y') }}">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="total_employee">Total Employee</label>
+                            <label for="total_employee">{{ __('admin.Total Employee') }}</label>
                             <select id="total_employee" name="total_employee" class="form-control">
-                                <option value="">Select employee range</option>
+                                <option value="">{{ __('submission.Select employee range') }}</option>
                                 @foreach (\App\Support\EmployeeRange::values() as $range)
                                     <option value="{{ $range }}" @selected(old('total_employee', $company->total_employee) === $range)>{{ $range }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="business_classification">Business Classification <span class="text-danger">*</span></label>
+                            <label for="business_classification">{{ __('admin.Business Classification') }} <span class="text-danger">*</span></label>
                             <input id="business_classification" name="business_classification" class="form-control" value="{{ old('business_classification', $company->business_classification) }}" maxlength="255" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="business_classification_detail">Classification Detail</label>
+                            <label for="business_classification_detail">{{ __('submission.Classification Detail') }}</label>
                             <input id="business_classification_detail" name="business_classification_detail" class="form-control" value="{{ old('business_classification_detail', $company->business_classification_detail) }}" maxlength="255">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="register_number_as_in_tax_invoice">Tax Register Number</label>
+                            <label for="register_number_as_in_tax_invoice">{{ __('admin.Tax Register Number') }}</label>
                             <input id="register_number_as_in_tax_invoice" name="register_number_as_in_tax_invoice" class="form-control" value="{{ old('register_number_as_in_tax_invoice', $company->npwp) }}" maxlength="100">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="website_address">Website Address</label>
+                            <label for="website_address">{{ __('admin.Website Address') }}</label>
                             <input id="website_address" name="website_address" type="url" class="form-control" value="{{ old('website_address', $company->website_address) }}" maxlength="255" placeholder="https://example.com">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="system_management">Certificate Type</label>
+                            <label for="system_management">{{ __('admin.Certificate Type') }}</label>
                             <input id="system_management" name="system_management" class="form-control" value="{{ old('system_management', $company->system_management) }}" maxlength="255">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="email_address">Correspondence Email</label>
+                            <label for="email_address">{{ __('submission.Correspondence Email') }}</label>
                             <input id="email_address" name="email_address" type="email" class="form-control" value="{{ old('email_address', $company->email_address) }}" maxlength="255">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="credit_limit">Credit Limit</label>
+                            <label for="credit_limit">{{ __('admin.Credit Limit') }}</label>
                             <input id="credit_limit" name="credit_limit" type="number" class="form-control" value="{{ old('credit_limit', $company->credit_limit) }}" min="0" step="0.01">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="term_of_payment">Term of Payment</label>
+                            <label for="term_of_payment">{{ __('admin.Term of Payment') }}</label>
                             <input id="term_of_payment" name="term_of_payment" class="form-control" value="{{ old('term_of_payment', $company->term_of_payment) }}" maxlength="100">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <x-submission-repeatable-section title="Liable Persons" container="liable-people" add-label="Add liable person">
+            <x-submission-repeatable-section title="{{ __('admin.Liable Persons') }}" container="liable-people" add-label="{{ __('form_links_remaining.Add liable person') }}">
                 @foreach ($liablePeople as $index => $person)
                     @include('admin.form_links._submission_edit_row', ['kind' => 'liable_people', 'index' => $index, 'data' => $person])
                 @endforeach
             </x-submission-repeatable-section>
 
-            <x-submission-repeatable-section title="Contact Persons" container="contacts" add-label="Add contact person">
+            <x-submission-repeatable-section title="{{ __('admin.Contact Persons') }}" container="contacts" add-label="{{ __('form_links_remaining.Add contact person') }}">
                 @foreach ($contacts as $index => $contact)
                     @include('admin.form_links._submission_edit_row', ['kind' => 'contacts', 'index' => $index, 'data' => $contact])
                 @endforeach
             </x-submission-repeatable-section>
 
-            <x-submission-repeatable-section title="Addresses" container="addresses" add-label="Add address">
+            <x-submission-repeatable-section title="{{ __('admin.Addresses') }}" container="addresses" add-label="{{ __('form_links_remaining.Add address') }}">
                 @foreach ($addresses as $index => $address)
                     @include('admin.form_links._submission_edit_row', ['kind' => 'addresses', 'index' => $index, 'data' => $address])
                 @endforeach
             </x-submission-repeatable-section>
 
-            <x-submission-repeatable-section title="Bank Information" container="banks" add-label="Add bank account">
+            <x-submission-repeatable-section title="{{ __('admin.Bank Information') }}" container="banks" add-label="{{ __('form_links_remaining.Add bank account') }}">
                 @foreach ($banks as $index => $bank)
                     @include('admin.form_links._submission_edit_row', ['kind' => 'banks', 'index' => $index, 'data' => $bank])
                 @endforeach
             </x-submission-repeatable-section>
 
             <div class="card">
-                <div class="card-header"><h3 class="card-title">File Attachments</h3></div>
+                <div class="card-header"><h3 class="card-title">{{ __('admin.File Attachments') }}</h3></div>
                 <div class="card-body">
                     @forelse ($company->attachment as $attachment)
                         <div class="attachment-row">
@@ -331,16 +331,16 @@
                             </div>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="delete_attachment_{{ $attachment->id }}" name="delete_attachment_ids[]" value="{{ $attachment->id }}">
-                                <label class="custom-control-label text-danger" for="delete_attachment_{{ $attachment->id }}">Remove</label>
+                                <label class="custom-control-label text-danger" for="delete_attachment_{{ $attachment->id }}">{{ __('submission.Remove') }}</label>
                             </div>
                         </div>
                     @empty
-                        <p class="text-muted">No current attachments.</p>
+                        <p class="text-muted">{{ __('submission.No current attachments.') }}</p>
                     @endforelse
                     <div class="attachment-picker" data-attachment-picker>
                         <div class="attachment-picker__copy">
-                            <strong>Add attachments</strong>
-                            <small class="text-muted">PDF, JPG, JPEG, or PNG. Maximum 10 MB per file.</small>
+                            <strong>{{ __('submission.Add attachments') }}</strong>
+                            <small class="text-muted">{{ __('submission.PDF, JPG, JPEG, or PNG. Maximum 10 MB per file.') }}</small>
                             <ul class="selected-attachment-list" data-selected-attachments aria-live="polite"></ul>
                         </div>
                         <div>
@@ -355,7 +355,7 @@
 
             <div class="card">
                 <div class="card-footer sticky-actions">
-                    <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}" class="btn btn-outline-secondary">{{ __('admin.Cancel') }}</a>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save mr-1" aria-hidden="true"></i> Save Changes
                     </button>
@@ -377,9 +377,9 @@
             if (feedbackMessage) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Data belum dapat disimpan',
+                    title: @json(__('form_links.Data belum dapat disimpan')),
                     text: feedbackMessage,
-                    confirmButtonText: 'Periksa kembali',
+                    confirmButtonText: @json(__('submission.recheck')),
                     confirmButtonColor: '#6558d3'
                 });
             }
@@ -396,8 +396,8 @@
                     .attr('aria-busy', 'true');
 
                 Swal.fire({
-                    title: 'Menyimpan perubahan',
-                    text: 'Mohon tunggu, data submission sedang diperbarui.',
+                    title: @json(__('form_links.Menyimpan perubahan')),
+                    text: @json(__('form_links.Mohon tunggu, data submission sedang diperbarui.')),
                     allowOutsideClick: false,
                     allowEscapeKey: false,
                     showConfirmButton: false,
@@ -482,7 +482,7 @@
 
             function reverseGeocodeAddress(row, latitude, longitude) {
                 const fields = mapFields($(row));
-                fields.status.text('Loading address from the selected pin...');
+                fields.status.text(@json(__('submission.loading_pin')));
                 fetch(reverseGeocodeUrl, {
                     method: 'POST',
                     headers: {
@@ -500,9 +500,9 @@
                         fields.address.val(address);
                         fields.search.val(address);
                     }
-                    fields.status.text('Selected coordinate: ' + fields.latitude.val() + ', ' + fields.longitude.val());
+                    fields.status.text(@json(__('submission.selected_coordinate')) + fields.latitude.val() + ', ' + fields.longitude.val());
                 }).catch(function () {
-                    fields.status.text('The pin was moved, but its address could not be loaded.');
+                    fields.status.text(@json(__('submission.pin_address_failed')));
                 });
             }
 
@@ -511,11 +511,11 @@
                 const fields = mapFields($row);
                 const query = String(fields.search.val() || '').trim();
                 if (!query) {
-                    fields.status.text('Enter a nearby place or complete address first.');
+                    fields.status.text(@json(__('submission.enter_address')));
                     fields.search.trigger('focus');
                     return;
                 }
-                fields.status.text('Searching address...');
+                fields.status.text(@json(__('submission.searching_address')));
                 fetch(forwardGeocodeUrl, {
                     method: 'POST',
                     headers: {
@@ -535,9 +535,9 @@
                     fields.address.val(result.display_name || query);
                     fields.search.val(result.display_name || query);
                     setMapSelection(row, result.latitude, result.longitude, false);
-                    fields.status.text('Coordinate found: ' + fields.latitude.val() + ', ' + fields.longitude.val());
+                    fields.status.text(@json(__('submission.coordinate_found')) + fields.latitude.val() + ', ' + fields.longitude.val());
                 }).catch(function () {
-                    fields.status.text('Address could not be found. Try a nearby common place.');
+                    fields.status.text(@json(__('submission.address_not_found')));
                 });
             }
 
@@ -616,7 +616,7 @@
                 const current = $old.data('current') || $old.val() || '';
                 if ($old.hasClass('select2-hidden-accessible')) $old.select2('destroy');
                 const $control = useSelect
-                    ? $('<select class="form-control address-' + type + '-select" required><option value="">Select ' + type + '</option></select>')
+                    ? $('<select class="form-control address-' + type + '-select" required></select>').append($('<option>', { value: '', text: type === 'province' ? @json(__('submission.select_province')) : @json(__('submission.select_city')) }))
                     : $('<input class="form-control address-' + type + '-input" maxlength="100" required>');
                 $control.attr('id', id)
                     .attr('name', name)
@@ -634,7 +634,7 @@
                 $city.prop('disabled', false);
                 $.getJSON(regenciesUrl.replace('__PROVINCE__', provinceId)).done(function (response) {
                     const current = $city.data('current');
-                    $city.html('<option value="">Select city / regency</option>');
+                    $city.empty().append($('<option>', { value: '', text: @json(__('submission.select_city')) }));
                     (response.data || []).forEach(function (item) { $city.append(new Option(item.name, item.id)); });
                     $city.prop('disabled', false);
                     setCurrentOption($city, current);
@@ -650,7 +650,7 @@
                 $province.prop('disabled', false);
                 $.getJSON(provincesUrl).done(function (response) {
                     const current = $province.data('current');
-                    $province.html('<option value="">Select province</option>');
+                    $province.empty().append($('<option>', { value: '', text: @json(__('submission.select_province')) }));
                     (response.data || []).forEach(function (item) { $province.append(new Option(item.name, item.id)); });
                     $province.prop('disabled', false);
                     if (setCurrentOption($province, current)) loadCities($row, $province.val());

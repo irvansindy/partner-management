@@ -21,8 +21,8 @@
                             <span class="approval-modal-context__label">Template</span>
                             <strong id="master_approval_name">-</strong>
                         </div>
-                        <div><span>Office</span><strong data-template-office>-</strong></div>
-                        <div><span>Department</span><strong data-template-department>-</strong></div>
+                        <div><span>{{ __('admin.Office') }}</span><strong data-template-office>-</strong></div>
+                        <div><span>{{ __('admin.Department') }}</span><strong data-template-department>-</strong></div>
                     </div>
 
                     <div class="approval-list-header">
@@ -44,7 +44,7 @@
                 </div>
                 <div class="modal-footer">
                     <span class="approval-modal-footer-note"><i class="fas fa-info-circle" aria-hidden="true"></i> Changes apply to new approval processes.</span>
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{ __('admin.Cancel') }}</button>
                     <button type="submit" class="btn btn-primary" id="create_approval_detail_data">
                         <i class="fas fa-save mr-1" aria-hidden="true"></i> Simpan urutan
                     </button>

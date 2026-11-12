@@ -208,9 +208,9 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Company Name</th>
+                                <th>{{ __('admin.Company Name') }}</th>
                                 <th>Group Name</th>
-                                <th>Status</th>
+                                <th>{{ __('admin.Status') }}</th>
                                 <th>#</th>
                             </tr>
                         </thead>

@@ -264,7 +264,7 @@
                         const isCustomer = point.type === 'customer';
                         const marker = L.marker([latitude, longitude], {
                             icon: L.divIcon({
-                                html: '<span class="dashboard-map-marker ' + (isCustomer ? 'customer' : 'vendor') + '"><i class="fas ' + (isCustomer ? 'fa-user' : 'fa-house') + '"></i></span>',
+                                html: '<span class="dashboard-map-marker ' + (isCustomer ? 'customer' : 'vendor') + '"><i class="fas ' + (isCustomer ? 'fa-user' : 'fa-store') + '" aria-hidden="true"></i></span>',
                                 className: '',
                                 iconSize: [34, 34],
                                 iconAnchor: [17, 34]

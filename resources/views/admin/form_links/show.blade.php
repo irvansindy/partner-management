@@ -73,8 +73,8 @@
     <div class="container-fluid form-links-page">
         <div class="page-heading">
             <div>
-                <h2>Form Link Details</h2>
-                <p>Review configuration, public access, and recent submissions.</p>
+                <h2>{{ __('form_links.Form Link Details') }}</h2>
+                <p>{{ __('submission.Review configuration, public access, and recent submissions.') }}</p>
             </div>
             <div class="page-actions">
                 <a href="{{ route('admin.form-links.index') }}" class="btn btn-outline-secondary">
@@ -93,16 +93,16 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Form Information</h3>
+                        <h3 class="card-title">{{ __('submission.Form Information') }}</h3>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
                             <tr>
-                                <th width="30%">Title</th>
+                                <th width="30%">{{ __('admin.Title') }}</th>
                                 <td>{{ $formLink->title }}</td>
                             </tr>
                             <tr>
-                                <th>Form Type</th>
+                                <th>{{ __('admin.Form Type') }}</th>
                                 <td>
                                     <span class="badge badge-{{ $formLink->form_type === 'vendor' ? 'info' : 'success' }}">
                                         {{ ucfirst($formLink->form_type) }}
@@ -110,23 +110,23 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Status</th>
+                                <th>{{ __('admin.Status') }}</th>
                                 <td>
                                     @if ($formLink->is_active && !$formLink->isExpired())
-                                        <span class="badge badge-success">Active</span>
+                                        <span class="badge badge-success">{{ __('admin.Active') }}</span>
                                     @elseif($formLink->isExpired())
-                                        <span class="badge badge-warning">Expired</span>
+                                        <span class="badge badge-warning">{{ __('admin.Expired') }}</span>
                                     @else
-                                        <span class="badge badge-secondary">Inactive</span>
+                                        <span class="badge badge-secondary">{{ __('admin.Inactive') }}</span>
                                     @endif
                                 </td>
                             </tr>
                             <tr>
-                                <th>Description</th>
+                                <th>{{ __('admin.Description') }}</th>
                                 <td>{{ $formLink->description ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <th>Submissions</th>
+                                <th>{{ __('admin.Submissions') }}</th>
                                 <td>
                                     <strong>{{ $formLink->submission_count }}</strong>
                                     @if ($formLink->max_submissions)
@@ -135,18 +135,18 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Expires At</th>
+                                <th>{{ __('admin.Expires At') }}</th>
                                 <td>
                                     @if ($formLink->expires_at)
-                                        {{ $formLink->expires_at->format('d M Y H:i') }}
+                                        {{ $formLink->expires_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}
                                     @else
-                                        <span class="text-muted">No expiration</span>
+                                        <span class="text-muted">{{ __('submission.No expiration') }}</span>
                                     @endif
                                 </td>
                             </tr>
                             <tr>
-                                <th>Created At</th>
-                                <td>{{ $formLink->created_at->format('d M Y H:i') }}</td>
+                                <th>{{ __('admin.Created At') }}</th>
+                                <td>{{ $formLink->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}</td>
                             </tr>
                         </table>
                     </div>
@@ -156,11 +156,11 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Public Link</h3>
+                        <h3 class="card-title">{{ __('submission.Public Link') }}</h3>
                     </div>
                     <div class="card-body">
                         <div class="form-group public-link-field">
-                            <label for="public-link">Share this link with recipients:</label>
+                            <label for="public-link">{{ __('submission.Share this link with recipients:') }}</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" value="{{ $formLink->getPublicUrl() }}"
                                     id="public-link" readonly>
@@ -173,7 +173,7 @@
                         </div>
 
                         <div class="form-group qr-code-field">
-                            <label>QR Code:</label>
+                            <label>{{ __('submission.QR Code:') }}</label>
                             <div class="text-center">
                                 <div id="qrcode"></div>
                             </div>
@@ -183,14 +183,14 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Actions</h3>
+                        <h3 class="card-title">{{ __('admin.Actions') }}</h3>
                     </div>
                     <div class="card-body">
                         <div class="form-link-actions">
                             <a href="{{ route('admin.form-links.submissions', $formLink) }}"
                                 class="btn btn-primary form-detail-action">
                                 <i class="fas fa-list" aria-hidden="true"></i>
-                                <span>Submissions ({{ $formLink->submission_count }})</span>
+                                <span>{{ __('admin.Submissions') }} ({{ $formLink->submission_count }})</span>
                             </a>
                             <a href="{{ route('admin.form-links.edit', $formLink) }}"
                                 class="btn btn-outline-secondary form-detail-action">
@@ -206,7 +206,7 @@
                                 @csrf
                                 <button type="submit" class="btn btn-outline-secondary form-detail-action">
                                     <i class="fas fa-{{ $formLink->is_active ? 'toggle-off' : 'toggle-on' }}" aria-hidden="true"></i>
-                                    <span>{{ $formLink->is_active ? 'Deactivate' : 'Activate' }} form</span>
+                                    <span>{{ __($formLink->is_active ? 'form_links.deactivate_named' : 'form_links.activate_named', ['name' => $formLink->title]) }}</span>
                                 </button>
                             </form>
                         </div>
@@ -219,17 +219,17 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Recent Submissions</h3>
+                        <h3 class="card-title">{{ __('submission.Recent Submissions') }}</h3>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Company Name</th>
-                                    <th>Type</th>
+                                    <th>{{ __('admin.Company Name') }}</th>
+                                    <th>{{ __('admin.Type') }}</th>
                                     <th>Email</th>
-                                    <th>Submitted At</th>
-                                    <th>Actions</th>
+                                    <th>{{ __('admin.Submitted At') }}</th>
+                                    <th>{{ __('admin.Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -243,7 +243,7 @@
                                             </span>
                                         </td>
                                         <td>{{ $company->email_address }}</td>
-                                        <td>{{ $company->created_at->format('d M Y H:i') }}</td>
+                                        <td>{{ $company->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}</td>
                                         <td>
                                             <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}"
                                                 class="btn btn-sm btn-info">
@@ -253,7 +253,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center">No submissions yet</td>
+                                        <td colspan="5" class="text-center">{{ __('submission.No submissions yet') }}</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -275,7 +275,7 @@
             copyText.setSelectionRange(0, 99999);
             document.execCommand("copy");
 
-            toastr.success('Link copied to clipboard!');
+            toastr.success(@json(__('form_links.Link copied to clipboard!')));
         }
 
         // Generate QR Code

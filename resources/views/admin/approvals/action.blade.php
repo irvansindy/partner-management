@@ -81,7 +81,7 @@
                     </div>
                     <div class="approval-panel__body">
                         <dl class="approval-summary">
-                            <div><dt>Company</dt><dd>{{ $company->name ?? '-' }}</dd></div>
+                            <div><dt>{{ __('admin.Company') }}</dt><dd>{{ $company->name ?? '-' }}</dd></div>
                             <div><dt>Business classification</dt><dd>{{ $company->business_classification ?? '-' }}</dd></div>
                             <div><dt>Submitted by</dt><dd>{{ $process->initiator->name ?? '-' }}</dd></div>
                             <div><dt>Submitted at</dt><dd>{{ optional($company->created_at)->format('d M Y, H:i') ?? '-' }}</dd></div>
@@ -157,7 +157,7 @@
                                 <span>I confirm that I have reviewed the submission and this decision is final.</span>
                             </label>
                             <div class="approval-actions">
-                                <a href="{{ route('admin.approvals.show', $step->approval_id) }}" class="btn btn-light">Cancel</a>
+                                <a href="{{ route('admin.approvals.show', $step->approval_id) }}" class="btn btn-light">{{ __('admin.Cancel') }}</a>
                                 <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane mr-1"></i> Submit decision</button>
                             </div>
                         </div>
@@ -189,17 +189,17 @@
                 <div class="approval-panel__header"><h5>Previous approval steps</h5></div>
                 <div class="table-responsive">
                     <table class="table approval-history">
-                        <thead><tr><th>Step</th><th>Approver</th><th>Status</th><th>Notes</th><th>Date</th></tr></thead>
+                        <thead><tr><th>Step</th><th>Approver</th><th>{{ __('admin.Status') }}</th><th>Notes</th><th>Date</th></tr></thead>
                         <tbody>
                             @foreach($process->steps->where('step_ordering', '<', $step->step_ordering) as $previousStep)
                                 <tr>
                                     <td>{{ $previousStep->step_ordering }}</td>
                                     <td>{{ $previousStep->approver->name ?? '-' }}</td>
                                     <td>
-                                        @if($previousStep->isApproved())<span class="badge badge-success">Approved</span>
-                                        @elseif($previousStep->isRejected())<span class="badge badge-danger">Rejected</span>
+                                        @if($previousStep->isApproved())<span class="badge badge-success">{{ __('admin.Approved') }}</span>
+                                        @elseif($previousStep->isRejected())<span class="badge badge-danger">{{ __('admin.Rejected') }}</span>
                                         @elseif($previousStep->isSkipped())<span class="badge badge-secondary">Skipped</span>
-                                        @else<span class="badge badge-secondary">Pending</span>@endif
+                                        @else<span class="badge badge-secondary">{{ __('admin.Pending') }}</span>@endif
                                     </td>
                                     <td>{{ $previousStep->notes }}</td>
                                     <td>{{ optional($previousStep->approved_at ?? $previousStep->rejected_at)->format('d M Y, H:i') ?? '-' }}</td>

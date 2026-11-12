@@ -4,7 +4,7 @@
         <div class="modal-content ">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="AddOrEditEULALabel">End User License Agreements</h1>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}"></button>
             </div>
             <form action="" id="form_end_user_license_agreements">
                 <div class="modal-body">
@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="end_user_license_agreements_name">Name</label>
+                                <label for="end_user_license_agreements_name">{{ __('admin.Name') }}</label>
                                 <input type="text" class="form-control" id="end_user_license_agreements_name">
                             </div>
                         </div>
@@ -33,8 +33,8 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submit_end_user_license_agreements">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>
+                    <button type="button" class="btn btn-primary" id="submit_end_user_license_agreements">{{ __('admin.Submit') }}</button>
                 </div>
             </form>
         </div>

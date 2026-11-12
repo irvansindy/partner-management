@@ -91,8 +91,8 @@
             <section class="approval-detail-card">
                 <div class="approval-detail-card__header"><h5>Partner information</h5></div>
                 <div class="approval-detail-card__body"><dl class="approval-facts">
-                    <div><dt>Company</dt><dd>{{ $company->name ?? '-' }}</dd></div>
-                    <div><dt>Type</dt><dd>{{ ucfirst($company->type ?? 'Partner') }}</dd></div>
+                    <div><dt>{{ __('admin.Company') }}</dt><dd>{{ $company->name ?? '-' }}</dd></div>
+                    <div><dt>{{ __('admin.Type') }}</dt><dd>{{ ucfirst($company->type ?? 'Partner') }}</dd></div>
                     <div><dt>Business classification</dt><dd>{{ $company->business_classification ?? '-' }}</dd></div>
                     <div><dt>Email</dt><dd>{{ $company->email_address ?? '-' }}</dd></div>
                     <div><dt>Submitted at</dt><dd>{{ optional($company->created_at)->format('d M Y, H:i') ?? '-' }}</dd></div>
@@ -103,8 +103,8 @@
                 <div class="approval-detail-card__body"><dl class="approval-facts">
                     <div><dt>Submitted by</dt><dd>{{ $approval->initiator->name ?? '-' }}</dd></div>
                     <div><dt>Email</dt><dd>{{ $approval->initiator->email ?? '-' }}</dd></div>
-                    <div><dt>Department</dt><dd>{{ $approval->department->name ?? '-' }}</dd></div>
-                    <div><dt>Office</dt><dd>{{ $approval->office->name ?? '-' }}</dd></div>
+                    <div><dt>{{ __('admin.Department') }}</dt><dd>{{ $approval->department->name ?? '-' }}</dd></div>
+                    <div><dt>{{ __('admin.Office') }}</dt><dd>{{ $approval->office->name ?? '-' }}</dd></div>
                     <div><dt>Form</dt><dd>{{ $company->formLink->title ?? '-' }}</dd></div>
                 </dl></div>
             </section>

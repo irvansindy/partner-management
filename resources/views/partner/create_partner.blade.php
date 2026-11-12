@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalCreatePartnerLabel">Create Partner</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -28,8 +28,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn_create_partner">Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>
+                <button type="button" class="btn btn-primary" id="btn_create_partner">{{ __('admin.Submit') }}</button>
             </div>
         </div>
     </div>

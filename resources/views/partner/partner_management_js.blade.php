@@ -1345,10 +1345,10 @@
                     })
 
                     $('#button-for-approval').empty()
-                    $('#button-for-approval').append(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
+                    $('#button-for-approval').append(`<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>`)
 
                     if(res.data.is_approved == true) {
-                        $('#button-for-approval').append(`<button type="button" class="btn btn-danger" id="partner_reject">Reject</button><button type="button" class="btn btn-primary" id="partner_approved">Approved</button>`)
+                        $('#button-for-approval').append(`<button type="button" class="btn btn-danger" id="partner_reject">Reject</button><button type="button" class="btn btn-primary" id="partner_approved">{{ __('admin.Approved') }}</button>`)
                     }
                 }
             })

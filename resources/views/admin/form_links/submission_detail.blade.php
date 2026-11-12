@@ -292,7 +292,7 @@
     <div class="container-fluid form-links-page">
         <div class="page-heading">
             <div>
-                <h2>Submission Detail</h2>
+                <h2>{{ __('admin.Submission Detail') }}</h2>
                 <p>{{ $company->name }}</p>
             </div>
             <div class="page-actions submission-detail-actions">
@@ -443,7 +443,7 @@
             $(function () {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Perubahan berhasil disimpan',
+                    title: @json(__('form_links.Perubahan berhasil disimpan')),
                     text: @json(session('success')),
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#6558d3'

@@ -63,13 +63,13 @@
         <div class="approval-filter">
             <form method="GET" action="{{ route('admin.approvals.index') }}">
                 <div class="form-group">
-                    <label for="approval_status">Status</label>
+                    <label for="approval_status">{{ __('admin.Status') }}</label>
                     <select id="approval_status" name="status" class="form-control">
                         <option value="">All statuses</option>
-                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Pending</option>
+                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>{{ __('admin.Pending') }}</option>
                         <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>In progress</option>
-                        <option value="2" {{ request('status') === '2' ? 'selected' : '' }}>Approved</option>
-                        <option value="3" {{ request('status') === '3' ? 'selected' : '' }}>Rejected</option>
+                        <option value="2" {{ request('status') === '2' ? 'selected' : '' }}>{{ __('admin.Approved') }}</option>
+                        <option value="3" {{ request('status') === '3' ? 'selected' : '' }}>{{ __('admin.Rejected') }}</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary"><i class="fas fa-filter mr-1"></i> Apply</button>
@@ -81,7 +81,7 @@
             <div class="approval-list-card__header"><h5>All approval processes</h5><span class="approval-meta">{{ $approvals->total() }} records</span></div>
             <div class="table-responsive">
                 <table class="table table-hover">
-                    <thead><tr><th>#</th><th>Company</th><th>Department / Office</th><th>Submitted by</th><th>Progress</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>#</th><th>{{ __('admin.Company') }}</th><th>Department / Office</th><th>Submitted by</th><th>Progress</th><th>{{ __('admin.Status') }}</th><th>Updated</th><th>{{ __('admin.Actions') }}</th></tr></thead>
                     <tbody>
                         @forelse($approvals as $index => $approval)
                             @php
@@ -95,16 +95,16 @@
                                 <td>{{ $approval->initiator->name ?? '-' }}<br><small class="approval-meta">{{ $approval->initiator->email ?? '-' }}</small></td>
                                 <td><div class="approval-table-progress"><span style="width: {{ $progress }}%"></span></div><small>{{ $approval->getCompletedStepsCount() }}/{{ $approval->getTotalStepsCount() }} steps</small></td>
                                 <td>
-                                    @if($approval->isApproved())<span class="badge badge-success">Approved</span>
-                                    @elseif($approval->isRejected())<span class="badge badge-danger">Rejected</span>
+                                    @if($approval->isApproved())<span class="badge badge-success">{{ __('admin.Approved') }}</span>
+                                    @elseif($approval->isRejected())<span class="badge badge-danger">{{ __('admin.Rejected') }}</span>
                                     @elseif($approval->isInProgress())<span class="badge badge-warning">In progress</span>
-                                    @else<span class="badge badge-secondary">Pending</span>@endif
+                                    @else<span class="badge badge-secondary">{{ __('admin.Pending') }}</span>@endif
                                 </td>
                                 <td>{{ optional($approval->updated_at)->format('d M Y') }}<br><small class="approval-meta">{{ optional($approval->updated_at)->format('H:i') }}</small></td>
                                 <td><div class="approval-actions-cell">
                                     <a href="{{ route('admin.approvals.show', $approval) }}" class="btn btn-outline-primary btn-sm" aria-label="View {{ $approval->company->name ?? 'approval' }}"><i class="fas fa-eye"></i></a>
                                     @if($currentStep && $currentStep->user_id === auth()->id())
-                                        <a href="{{ route('admin.approvals.step.action', $currentStep) }}" class="btn btn-primary btn-sm"><i class="fas fa-tasks mr-1"></i> Review</a>
+                                        <a href="{{ route('admin.approvals.step.action', $currentStep) }}" class="btn btn-primary btn-sm"><i class="fas fa-tasks mr-1"></i> {{ __('admin.Review') }}</a>
                                     @endif
                                 </div></td>
                             </tr>

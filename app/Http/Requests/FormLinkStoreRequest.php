@@ -35,13 +35,13 @@ class FormLinkStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'form_type.required' => 'Tipe form harus dipilih.',
-            'form_type.in' => 'Tipe form harus vendor atau customer.',
-            'title.required' => 'Judul form harus diisi.',
-            'title.max' => 'Judul form maksimal 255 karakter.',
-            'expires_at.after' => 'Tanggal kadaluarsa harus setelah hari ini.',
-            'max_submissions.min' => 'Maksimal submission minimal 1.',
-            'user_form.exists' => 'User yang dipilih tidak valid.',
+            'form_type.required' => __('form_links.type_required'),
+            'form_type.in' => __('form_links.type_invalid'),
+            'title.required' => __('form_links.title_required'),
+            'title.max' => __('form_links.title_max'),
+            'expires_at.after' => __('form_links.expiry_after'),
+            'max_submissions.min' => __('form_links.limit_min'),
+            'user_form.exists' => __('form_links.user_invalid'),
         ];
     }
 
@@ -51,11 +51,11 @@ class FormLinkStoreRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'form_type' => 'tipe form',
-            'title' => 'judul',
-            'description' => 'deskripsi',
-            'expires_at' => 'tanggal kadaluarsa',
-            'max_submissions' => 'maksimal submission',
+            'form_type' => __('admin.Form Type'),
+            'title' => __('admin.Title'),
+            'description' => __('admin.Description'),
+            'expires_at' => __('admin.Expires At'),
+            'max_submissions' => __('admin.Submissions'),
             'user_form' => 'user',
         ];
     }

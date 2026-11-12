@@ -33,9 +33,9 @@ class FormLinkUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'Judul form harus diisi.',
-            'title.max' => 'Judul form maksimal 255 karakter.',
-            'max_submissions.min' => 'Maksimal submission minimal 1.',
+            'title.required' => __('form_links.title_required'),
+            'title.max' => __('form_links.title_max'),
+            'max_submissions.min' => __('form_links.limit_min'),
         ];
     }
 
@@ -45,10 +45,10 @@ class FormLinkUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'title' => 'judul',
-            'description' => 'deskripsi',
-            'expires_at' => 'tanggal kadaluarsa',
-            'max_submissions' => 'maksimal submission',
+            'title' => __('admin.Title'),
+            'description' => __('admin.Description'),
+            'expires_at' => __('admin.Expires At'),
+            'max_submissions' => __('admin.Submissions'),
         ];
     }
 }

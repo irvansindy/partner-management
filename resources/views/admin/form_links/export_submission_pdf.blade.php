@@ -353,7 +353,7 @@
     {{-- ═══════════════════════════════════════════════════
      FORM TITLE
 ══════════════════════════════════════════════════════ --}}
-    <div class="form-title">Form Data Penyedia Eksternal</div>
+    <div class="form-title">{{ __('submission.Form Data Penyedia Eksternal') }}</div>
 
     {{-- ═══════════════════════════════════════════════════
      KATEGORI & MATERIAL
@@ -378,16 +378,16 @@
     <table class="kategori-table">
         <tr>
             <td style="width:60%;">
-                <strong>Kategori :</strong>&nbsp;&nbsp;
-                <span class="kategori-box {{ $isLama ? 'checked' : '' }}">Lama</span>
-                <span class="kategori-box {{ $isBaru ? 'checked' : '' }}">Baru</span>
-                <span class="kategori-box {{ $isPerubahan ? 'checked' : '' }}">Perubahan</span>
+                <strong>{{ __('submission.Kategori :') }}</strong>&nbsp;&nbsp;
+                <span class="kategori-box {{ $isLama ? 'checked' : '' }}">{{ __('submission.Lama') }}</span>
+                <span class="kategori-box {{ $isBaru ? 'checked' : '' }}">{{ __('submission.Baru') }}</span>
+                <span class="kategori-box {{ $isPerubahan ? 'checked' : '' }}">{{ __('submission.Perubahan') }}</span>
                 &nbsp;&nbsp;&nbsp;
                 <span class="kategori-box {{ $isPKP ? 'checked' : '' }}">PKP</span>
                 <span class="kategori-box {{ $isNonPKP ? 'checked' : '' }}">Non PKP</span>
             </td>
             <td style="width:40%; vertical-align:top;">
-                <strong>Material :</strong><br>
+                <strong>{{ __('form_links_remaining.Material :') }}</strong><br>
                 @foreach ($materialCategories as $label => $active)
                     <span class="material-box {{ $active ? 'checked' : '' }}">{{ $label }}</span>
                 @endforeach
@@ -402,34 +402,34 @@
      SECTION 1 — IDENTITAS PERUSAHAAN
 ══════════════════════════════════════════════════════ --}}
     <div class="outer-border">
-        <div class="sec-header">1 &nbsp; Nama &amp; Identitas Perusahaan</div>
+        <div class="sec-header">{{ __('submission.identity_heading') }}</div>
         <table class="data-table">
             <tr>
-                <td class="label">Nama Perusahaan</td>
+                <td class="label">{{ __('form_links_remaining.Nama Perusahaan') }}</td>
                 <td class="colon">:</td>
                 <td class="value"><strong>{{ $company->name ?? '' }}</strong></td>
                 <td style="width:2%;"></td>
-                <td class="label" style="width:22%;">Tahun Pendirian</td>
+                <td class="label" style="width:22%;">{{ __('submission.Tahun Pendirian') }}</td>
                 <td class="colon">:</td>
                 <td class="value" style="width:18%;">{{ $company->established_year ?? '' }}</td>
             </tr>
             <tr>
-                <td class="label">Jenis Usaha</td>
+                <td class="label">{{ __('submission.Jenis Usaha') }}</td>
                 <td class="colon">:</td>
                 <td class="value">{{ ucfirst($company->type ?? '') }} &nbsp;|&nbsp;
                     {{ $company->business_classification ?? '' }}</td>
                 <td></td>
-                <td class="label">Jumlah Karyawan</td>
+                <td class="label">{{ __('form_links_remaining.Jumlah Karyawan') }}</td>
                 <td class="colon">:</td>
                 <td class="value">{{ $company->total_employee ?? '' }}</td>
             </tr>
             <tr>
-                <td class="label">Detail / Bidang Usaha</td>
+                <td class="label">{{ __('submission.Detail / Bidang Usaha') }}</td>
                 <td class="colon">:</td>
                 <td class="value" colspan="5">{{ $company->business_classification_detail ?? '' }}</td>
             </tr>
             <tr>
-                <td class="label">Email Koresponden</td>
+                <td class="label">{{ __('form_links_remaining.Email Koresponden') }}</td>
                 <td class="colon">:</td>
                 <td class="value">{{ $company->email_address ?? '' }}</td>
                 <td></td>
@@ -445,24 +445,24 @@
 ══════════════════════════════════════════════════════ --}}
     @php $addr1 = $company->address->first(); @endphp
     <div class="outer-border">
-        <div class="sec-header">2 &nbsp; Alamat Kantor</div>
+        <div class="sec-header">{{ __('submission.office_heading') }}</div>
         <table class="data-table">
             <tr>
-                <td class="label">Alamat</td>
+                <td class="label">{{ __('submission.Alamat') }}</td>
                 <td class="colon">:</td>
                 <td class="value-block" colspan="5">{{ optional($addr1)->address ?? '' }}</td>
             </tr>
             <tr>
-                <td class="label">Kota</td>
+                <td class="label">{{ __('submission.Kota') }}</td>
                 <td class="colon">:</td>
                 <td class="value">{{ optional($addr1)->city ?? '' }}</td>
                 <td></td>
-                <td class="label" style="width:22%;">Kode Pos</td>
+                <td class="label" style="width:22%;">{{ __('submission.Kode Pos') }}</td>
                 <td class="colon">:</td>
                 <td class="value" style="width:18%;">{{ optional($addr1)->zip_code ?? '' }}</td>
             </tr>
             <tr>
-                <td class="label">No Telp / Fax</td>
+                <td class="label">{{ __('submission.No Telp / Fax') }}</td>
                 <td class="colon">:</td>
                 <td class="value">{{ optional($addr1)->telephone ?? '' }} &nbsp; / &nbsp;
                     {{ optional($addr1)->fax ?? '' }}</td>
@@ -476,26 +476,26 @@
 ══════════════════════════════════════════════════════ --}}
     @php $otherAddresses = $company->address->skip(1); @endphp
     <div class="outer-border">
-        <div class="sec-header">3 &nbsp; Alamat Lain (Surat Menyurat)</div>
+        <div class="sec-header">{{ __('submission.other_address_heading') }}</div>
         @if ($otherAddresses->isNotEmpty())
             @foreach ($otherAddresses as $idx => $addr)
                 <table class="data-table" style="{{ $idx > 0 ? 'margin-top:5px;border-top:1px dashed #ccc;' : '' }}">
                     <tr>
-                        <td class="label">Alamat</td>
+                        <td class="label">{{ __('submission.Alamat') }}</td>
                         <td class="colon">:</td>
                         <td class="value-block" colspan="5">{{ $addr->address ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td class="label">Kota</td>
+                        <td class="label">{{ __('submission.Kota') }}</td>
                         <td class="colon">:</td>
                         <td class="value">{{ $addr->city ?? '' }}</td>
                         <td></td>
-                        <td class="label" style="width:22%;">Kode Pos</td>
+                        <td class="label" style="width:22%;">{{ __('submission.Kode Pos') }}</td>
                         <td class="colon">:</td>
                         <td class="value" style="width:18%;">{{ $addr->zip_code ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td class="label">No Telp / Fax</td>
+                        <td class="label">{{ __('submission.No Telp / Fax') }}</td>
                         <td class="colon">:</td>
                         <td class="value">{{ $addr->telephone ?? '' }} &nbsp; / &nbsp; {{ $addr->fax ?? '' }}</td>
                         <td colspan="4"></td>
@@ -505,21 +505,21 @@
         @else
             <table class="data-table">
                 <tr>
-                    <td class="label">Alamat</td>
+                    <td class="label">{{ __('submission.Alamat') }}</td>
                     <td class="colon">:</td>
                     <td class="value-block" colspan="5"></td>
                 </tr>
                 <tr>
-                    <td class="label">Kota</td>
+                    <td class="label">{{ __('submission.Kota') }}</td>
                     <td class="colon">:</td>
                     <td class="value"></td>
                     <td></td>
-                    <td class="label" style="width:22%;">Kode Pos</td>
+                    <td class="label" style="width:22%;">{{ __('submission.Kode Pos') }}</td>
                     <td class="colon">:</td>
                     <td class="value" style="width:18%;"></td>
                 </tr>
                 <tr>
-                    <td class="label">No Telp / Fax</td>
+                    <td class="label">{{ __('submission.No Telp / Fax') }}</td>
                     <td class="colon">:</td>
                     <td class="value"></td>
                     <td colspan="4"></td>
@@ -532,13 +532,13 @@
      SECTION 4 — CONTACT PERSON / PIC
 ══════════════════════════════════════════════════════ --}}
     <div class="outer-border">
-        <div class="sec-header">4 &nbsp; Contact Person / PIC</div>
+        <div class="sec-header">{{ __('submission.contact_heading') }}</div>
         <table class="contact-table">
             <thead>
                 <tr>
-                    <th style="width:20%;">Dept / Bag</th>
-                    <th style="width:25%;">Nama</th>
-                    <th style="width:25%;">Telp / Ext / HP</th>
+                    <th style="width:20%;">{{ __('submission.Dept / Bag') }}</th>
+                    <th style="width:25%;">{{ __('submission.Nama') }}</th>
+                    <th style="width:25%;">{{ __('submission.Telp / Ext / HP') }}</th>
                     <th style="width:30%;">Email</th>
                 </tr>
             </thead>
@@ -574,35 +574,35 @@
      SECTION 5 — DATA PERUSAHAAN (NPWP)
 ══════════════════════════════════════════════════════ --}}
     <div class="outer-border">
-        <div class="sec-header">5 &nbsp; Data Perusahaan</div>
+        <div class="sec-header">{{ __('submission.tax_heading') }}</div>
         <table class="half-table">
             <tr>
                 <td class="half-l">
                     <table class="data-table">
                         <tr>
-                            <td class="label">No Pengukuhan PKP</td>
+                            <td class="label">{{ __('submission.No Pengukuhan PKP') }}</td>
                             <td class="colon">:</td>
                             <td class="value">{{ $company->register_number_as_in_tax_invoice ?? '' }}</td>
                         </tr>
                         <tr>
-                            <td class="label">No NPWP</td>
+                            <td class="label">{{ __('submission.No NPWP') }}</td>
                             <td class="colon">:</td>
                             <td class="value">{{ $company->npwp ?? '' }}</td>
                         </tr>
                         <tr>
-                            <td class="label">Nama NPWP</td>
+                            <td class="label">{{ __('submission.Nama NPWP') }}</td>
                             <td class="colon">:</td>
                             <td class="value">{{ $company->name ?? '' }}</td>
                         </tr>
                         <tr>
-                            <td class="label">Alamat NPWP</td>
+                            <td class="label">{{ __('submission.Alamat NPWP') }}</td>
                             <td class="colon">:</td>
                             <td class="value-block">{{ optional($addr1)->address ?? '' }}</td>
                         </tr>
                     </table>
                 </td>
                 <td class="half-r" style="vertical-align:top; font-size:8pt;">
-                    <strong>Copy dok. yang harus dilampirkan :</strong><br><br>
+                    <strong>{{ __('submission.Copy dok. yang harus dilampirkan :') }}</strong><br><br>
                     @php
                         $docs = $company->attachment ?? collect();
                         $docNames = $docs->pluck('filename')->toArray();
@@ -639,7 +639,7 @@
      SECTION 6 — KELENGKAPAN ISO
 ══════════════════════════════════════════════════════ --}}
     <div class="outer-border">
-        <div class="sec-header">6 &nbsp; Kelengkapan ISO</div>
+        <div class="sec-header">{{ __('submission.iso_heading') }}</div>
         @php
             $isoRaw = strtolower($company->system_management ?? '');
             $isoMap = [
@@ -677,13 +677,13 @@
      SECTION 7 — PAYMENT
 ══════════════════════════════════════════════════════ --}}
     <div class="outer-border">
-        <div class="sec-header">7 &nbsp; Payment</div>
+        <div class="sec-header">{{ __('submission.payment_heading') }}</div>
         <table class="bank-table">
             <thead>
                 <tr>
-                    <th style="width:30%;">Nama Bank</th>
-                    <th style="width:35%;">Nama Akun / Atas Nama</th>
-                    <th style="width:35%;">Nomor Rekening</th>
+                    <th style="width:30%;">{{ __('form_links_remaining.Nama Bank') }}</th>
+                    <th style="width:35%;">{{ __('submission.Nama Akun / Atas Nama') }}</th>
+                    <th style="width:35%;">{{ __('submission.Nomor Rekening') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -704,11 +704,11 @@
         </table>
         <table class="data-table" style="margin-top:5px;">
             <tr>
-                <td class="label" style="width:22%;">Term of Payment</td>
+                <td class="label" style="width:22%;">{{ __('admin.Term of Payment') }}</td>
                 <td class="colon">:</td>
-                <td class="value">{{ $company->term_of_payment ?? '' }} hari</td>
+                <td class="value">{{ $company->term_of_payment ?? '' }} {{ __('submission.days') }}</td>
                 <td style="width:2%;"></td>
-                <td class="label" style="width:22%;">Batas Kredit</td>
+                <td class="label" style="width:22%;">{{ __('form_links_remaining.Batas Kredit') }}</td>
                 <td class="colon">:</td>
                 <td class="value">
                     {{ $company->credit_limit ? 'Rp ' . number_format($company->credit_limit, 0, ',', '.') : '' }}</td>
@@ -720,14 +720,9 @@
      PERNYATAAN
 ══════════════════════════════════════════════════════ --}}
     <div class="statement">
-        Dengan ini saya menyatakan bahwa informasi yang saya berikan di atas adalah benar, apabila dikemudian hari
-        ditemukan
-        dan terjadi penyimpangan dalam penggunaannya, maka saya bersedia menyelesaikan sesuai dengan hukum yang
-        berlaku.<br><br>
-        Dan saya sebagai Penyedia Eksternal menyatakan kesediaan mengikuti aturan administrasi yang telah ditentukan dan
-        berlaku di PT Pralon.<br><br>
-        Demikian surat pernyataan ini saya buat dengan sadar dan tanpa paksaan untuk dapat dipergunakan sebagaimana
-        mestinya.
+        {{ __('submission.statement_one') }}<br><br>
+        {{ __('submission.statement_two') }}<br><br>
+        {{ __('submission.statement_three') }}
     </div>
 
     {{-- ═══════════════════════════════════════════════════
@@ -744,10 +739,10 @@
                     .......................,
                     {{ \Carbon\Carbon::parse($company->created_at)->locale('id')->isoFormat('D MMMM Y') }}
                 </div>
-                <div style="font-size:8pt; margin-top:2px;">Nama Perusahaan</div>
+                <div style="font-size:8pt; margin-top:2px;">{{ __('form_links_remaining.Nama Perusahaan') }}</div>
                 <div
                     style="height:55px; border: 1px solid #aaa; margin: 4px 0; display:flex; align-items:flex-end; justify-content:center; padding-bottom:3px;">
-                    <span style="font-size:7.5pt; color:#aaa;">(ttd + stempel)</span>
+                    <span style="font-size:7.5pt; color:#aaa;">{{ __('submission.(ttd + stempel)') }}</span>
                 </div>
                 <div class="sig-name-line"></div>
                 <div style="font-size:8.5pt; font-weight:bold;">

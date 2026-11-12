@@ -529,10 +529,10 @@
                                 <th>No</th>
                                 <th>Approval Name</th>
                                 <th>Lokasi</th>
-                                <th>Department</th>
+                                <th>{{ __('admin.Department') }}</th>
                                 <th>Steps</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>{{ __('admin.Status') }}</th>
+                                <th>{{ __('admin.Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody></tbody>

@@ -5,7 +5,7 @@
         <div class="modal-content ">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="modal_create_tender_vendor_label">Create New Tender</h1>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}"></button>
             </div>
             <form action="" id="form_create_tender_vendor">
                 <div class="modal-body">
@@ -109,7 +109,7 @@
                                     <thead>
                                         <tr>
                                             <th><input type="checkbox" id="checkAll"></th>
-                                            <th><label for="checkAll">Name</label></th>
+                                            <th><label for="checkAll">{{ __('admin.Name') }}</label></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -121,8 +121,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submit_create_tender_vendor">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.Close') }}</button>
+                    <button type="button" class="btn btn-primary" id="submit_create_tender_vendor">{{ __('admin.Submit') }}</button>
                 </div>
             </form>
         </div>

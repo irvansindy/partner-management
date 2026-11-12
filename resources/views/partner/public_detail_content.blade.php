@@ -45,7 +45,7 @@
         @forelse ($company->attachment as $file)
             <div class="col-md-4 mb-3"><div class="border rounded p-3 h-100 d-flex flex-column">
                 <p style="overflow-wrap:anywhere">{{ $file->original_name ?? $file->filename }}</p>
-                <a class="btn btn-outline-primary mt-auto" href="{{ route('admin.company-attachments.download', $file) }}">Download</a>
+                <a class="btn btn-outline-primary mt-auto" href="{{ route('admin.company-attachments.download', $file) }}">{{ __('admin.Download') }}</a>
             </div></div>
         @empty
             <div class="col-12 text-muted">Belum ada lampiran.</div>

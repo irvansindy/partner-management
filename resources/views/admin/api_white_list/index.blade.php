@@ -166,7 +166,7 @@
             <button type="button" class="btn btn-primary waves-effect" id="for_create_ip_address"
                 data-toggle="modal" data-target="#formIpAddress">
                 <i class="material-icons align-middle mr-1">add</i>
-                <span>IP Address</span>
+                <span>{{ __('admin.IP Address') }}</span>
             </button>
         </div>
 
@@ -180,8 +180,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>IP Address</th>
-                                <th>Description</th>
+                                <th>{{ __('admin.IP Address') }}</th>
+                                <th>{{ __('admin.Description') }}</th>
                                 <th>#</th>
                             </tr>
                         </thead>

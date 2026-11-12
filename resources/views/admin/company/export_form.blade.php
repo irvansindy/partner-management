@@ -8,8 +8,8 @@
     <div class="container-fluid company-tools-page">
         <div class="page-heading">
             <div>
-                <h2>Export Data Perusahaan</h2>
-                <p>Pilih field yang dibutuhkan untuk menghasilkan file Excel atau PDF.</p>
+                <h2>{{ __('tools.Export Data Perusahaan') }}</h2>
+                <p>{{ __('tools.Pilih field yang dibutuhkan untuk menghasilkan file Excel atau PDF.') }}</p>
             </div>
         </div>
         <div class="row">
@@ -26,7 +26,7 @@
                         <div class="card-body">
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle"></i>
-                                Pilih kolom yang ingin Anda export ke Excel. Minimal pilih 1 kolom.
+                                {{ __('tools.Pilih kolom yang ingin Anda export ke Excel. Minimal pilih 1 kolom.') }}
                             </div>
 
                             <!-- Buttons untuk Select All / Deselect All -->
@@ -76,21 +76,21 @@
                                                 <input class="form-check-input field-checkbox company-field" type="checkbox"
                                                     name="fields[]" value="type" id="field_type">
                                                 <label class="form-check-label" for="field_type">
-                                                    Jenis (Vendor/Customer)
+                                                    {{ __('tools.Jenis (Vendor/Customer)') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input field-checkbox company-field" type="checkbox"
                                                     name="fields[]" value="established_year" id="field_established_year">
                                                 <label class="form-check-label" for="field_established_year">
-                                                    Tahun Berdiri
+                                                    {{ __('tools.Tahun Berdiri') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input field-checkbox company-field" type="checkbox"
                                                     name="fields[]" value="total_employee" id="field_total_employee">
                                                 <label class="form-check-label" for="field_total_employee">
-                                                    Jumlah Karyawan
+                                                    {{ __('tools.Jumlah Karyawan') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -98,7 +98,7 @@
                                                     name="fields[]" value="business_classification"
                                                     id="field_business_classification">
                                                 <label class="form-check-label" for="field_business_classification">
-                                                    Klasifikasi Bisnis
+                                                    {{ __('tools.Klasifikasi Bisnis') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -106,14 +106,14 @@
                                                     name="fields[]" value="business_classification_detail"
                                                     id="field_business_classification_detail">
                                                 <label class="form-check-label" for="field_business_classification_detail">
-                                                    Detail Bisnis
+                                                    {{ __('tools.Detail Bisnis') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input field-checkbox company-field" type="checkbox"
                                                     name="fields[]" value="other_business" id="field_other_business">
                                                 <label class="form-check-label" for="field_other_business">
-                                                    Bisnis Lainnya
+                                                    {{ __('tools.Bisnis Lainnya') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -136,7 +136,7 @@
                                                     type="checkbox" name="fields[]" value="system_management"
                                                     id="field_system_management">
                                                 <label class="form-check-label" for="field_system_management">
-                                                    Jenis Sertifikat
+                                                    {{ __('tools.Jenis Sertifikat') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -144,7 +144,7 @@
                                                     type="checkbox" name="fields[]" value="email_address"
                                                     id="field_email_address">
                                                 <label class="form-check-label" for="field_email_address">
-                                                    Email Koresponden
+                                                    {{ __('tools.Email Koresponden') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -152,7 +152,7 @@
                                                     type="checkbox" name="fields[]" value="credit_limit"
                                                     id="field_credit_limit">
                                                 <label class="form-check-label" for="field_credit_limit">
-                                                    Batas Kredit
+                                                    {{ __('tools.Batas Kredit') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -187,7 +187,7 @@
                                                     type="checkbox" name="fields[]" value="contact_name"
                                                     id="field_contact_name">
                                                 <label class="form-check-label" for="field_contact_name">
-                                                    Nama Kontak
+                                                    {{ __('tools.Nama Kontak') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -195,7 +195,7 @@
                                                     type="checkbox" name="fields[]" value="contact_position"
                                                     id="field_contact_position">
                                                 <label class="form-check-label" for="field_contact_position">
-                                                    Jabatan Kontak
+                                                    {{ __('tools.Jabatan Kontak') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -203,7 +203,7 @@
                                                     type="checkbox" name="fields[]" value="contact_department"
                                                     id="field_contact_department">
                                                 <label class="form-check-label" for="field_contact_department">
-                                                    Departemen Kontak
+                                                    {{ __('tools.Departemen Kontak') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -211,7 +211,7 @@
                                                     type="checkbox" name="fields[]" value="contact_email"
                                                     id="field_contact_email">
                                                 <label class="form-check-label" for="field_contact_email">
-                                                    Email Kontak
+                                                    {{ __('tools.Email Kontak') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -219,7 +219,7 @@
                                                     type="checkbox" name="fields[]" value="contact_telephone"
                                                     id="field_contact_telephone">
                                                 <label class="form-check-label" for="field_contact_telephone">
-                                                    Telepon Kontak
+                                                    {{ __('tools.Telepon Kontak') }}
                                                 </label>
                                             </div>
                                         </div>
@@ -292,21 +292,21 @@
                                                 <input class="form-check-input field-checkbox bank-field" type="checkbox"
                                                     name="fields[]" value="bank_name" id="field_bank_name">
                                                 <label class="form-check-label" for="field_bank_name">
-                                                    Nama Bank
+                                                    {{ __('tools.Nama Bank') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input field-checkbox bank-field" type="checkbox"
                                                     name="fields[]" value="account_name" id="field_account_name">
                                                 <label class="form-check-label" for="field_account_name">
-                                                    Nama Akun
+                                                    {{ __('tools.Nama Akun') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input field-checkbox bank-field" type="checkbox"
                                                     name="fields[]" value="account_number" id="field_account_number">
                                                 <label class="form-check-label" for="field_account_number">
-                                                    Nomor Akun
+                                                    {{ __('tools.Nomor Akun') }}
                                                 </label>
                                             </div>
                                         </div>
@@ -333,7 +333,7 @@
                                                     type="checkbox" name="fields[]" value="liable_name"
                                                     id="field_liable_name">
                                                 <label class="form-check-label" for="field_liable_name">
-                                                    Nama Penanggung Jawab
+                                                    {{ __('tools.Nama Penanggung Jawab') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -341,7 +341,7 @@
                                                     type="checkbox" name="fields[]" value="liable_nik"
                                                     id="field_liable_nik">
                                                 <label class="form-check-label" for="field_liable_nik">
-                                                    NIK Penanggung Jawab
+                                                    {{ __('tools.NIK Penanggung Jawab') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -349,7 +349,7 @@
                                                     type="checkbox" name="fields[]" value="liable_position"
                                                     id="field_liable_position">
                                                 <label class="form-check-label" for="field_liable_position">
-                                                    Jabatan Penanggung Jawab
+                                                    {{ __('tools.Jabatan Penanggung Jawab') }}
                                                 </label>
                                             </div>
                                         </div>
