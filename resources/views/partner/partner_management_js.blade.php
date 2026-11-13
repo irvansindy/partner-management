@@ -1,5 +1,6 @@
 <script>
     $(document).ready(function() {
+        const partnerStatusLabels = @json(__('partner.statuses'));
         var currentYear = new Date().getFullYear();
         $("#year-current").text(currentYear);
         $("#year_prev_1, #bs_year_minus_1, #fr_year_minus_1").text(currentYear - 1);
@@ -135,6 +136,23 @@
             ajax: {
                 url: '{{ route("fetch-partner-list") }}',
                 type: 'GET',
+                error: function () {
+                    $('#partner-list-error').text(@json(__('partner.Unable to load partner data.'))).removeClass('d-none');
+                    $('#partner_table_processing').hide();
+                },
+            },
+            language: {
+                search: @json(__('form_links.search')),
+                lengthMenu: @json(__('form_links.length')),
+                info: @json(__('form_links.info')),
+                infoEmpty: @json(__('form_links.info_empty')),
+                infoFiltered: @json(__('form_links.filtered')),
+                emptyTable: @json(__('partner.No partners found')),
+                zeroRecords: @json(__('partner.No matching partners found')),
+                processing: @json(__('partner.Loading partner data...')),
+                loadingRecords: @json(__('partner.Loading partner data...')),
+                paginate: { previous: @json(__('form_links.previous')), next: @json(__('form_links.next')), first: @json(__('partner.first')), last: @json(__('partner.last')) },
+                aria: { sortAscending: @json(__('partner.sort_ascending')), sortDescending: @json(__('partner.sort_descending')) }
             },
             columns: [
                 {
@@ -145,27 +163,33 @@
                 },
                 {
                     "data": "name",
-                    "defaultContent": "<i>Not set</i>"
+                    "render": $.fn.dataTable.render.text(),
+                    "defaultContent": @json(__('partner.Not set'))
                 },
                 {
                     "data": "group_name",
-                    "defaultContent": "<i>Not set</i>"
+                    "render": $.fn.dataTable.render.text(),
+                    "defaultContent": @json(__('partner.Not set'))
                 },
                 {
                     "data": "status",
-                    "defaultContent": "<i>Not set</i>"
+                    "render": function (data, type) {
+                        const label = Object.prototype.hasOwnProperty.call(partnerStatusLabels, data) ? partnerStatusLabels[data] : (data || @json(__('partner.Not set')));
+                        return type === 'display' ? $('<span>').text(label).prop('outerHTML') : label;
+                    },
+                    "defaultContent": @json(__('partner.Not set'))
                 },
                 {
                     'data': null,
-                    title: 'Action',
+                    title: @json(__('partner.Action')),
                     wrap: true,
                     "render": function(item) {
                         let viewButton = $('<button>', {
                             type: 'button',
                             class: 'table-action table-action--view detail_partner',
                             html: '<i class="fas fa-eye" aria-hidden="true"></i>',
-                            title: 'View partner',
-                            'aria-label': 'View partner',
+                            title: @json(__('partner.View partner')),
+                            'aria-label': @json(__('partner.view_named')).replace(':name', item.name || '-'),
                             'data-partner_id': item.id,
                             'data-toggle': 'modal',
                             'data-target': '#ModalDetailPartner'
@@ -174,7 +198,7 @@
                         return $('<div>', {
                             class: 'table-actions',
                             role: 'group',
-                            'aria-label': 'Partner actions'
+                            'aria-label': @json(__('partner.actions_named')).replace(':name', item.name || '-')
                         })
                             .append(viewButton)
                             .prop('outerHTML');
@@ -507,7 +531,7 @@
 
         $(document).on('click', '.detail_partner', function(e) {
             e.preventDefault()
-            $('#partner-public-detail-content').html('<p role="status">Memuat data partner...</p>');
+            $('#partner-public-detail-content').empty().append($('<p>', { role: 'status', text: @json(__('partner.Memuat data partner...')) }));
             let partner_id = $(this).data('partner_id')
             $.ajax({
                 headers: {
@@ -515,7 +539,7 @@
                 },
                 url: '{{ route("fetch-partner-detail") }}',
                 error: function () {
-                    $('#partner-public-detail-content').html('<p role="alert">Data partner gagal dimuat. Tutup modal lalu coba kembali.</p>');
+                    $('#partner-public-detail-content').empty().append($('<p>', { role: 'alert', text: @json(__('partner.Data partner gagal dimuat. Tutup modal lalu coba kembali.')) }));
                 },
                 type: 'GET',
                 data: {
@@ -524,6 +548,10 @@
                 dataType: 'json',
                 async: true,
                 success: function(res) {
+                    if (!res.data || !res.data.detail_html) {
+                        $('#partner-public-detail-content').empty().append($('<p>', { role: 'alert', text: @json(__('partner.Data partner gagal dimuat. Tutup modal lalu coba kembali.')) }));
+                        return;
+                    }
                     if (res.data.detail_html) {
                         $('#partner-public-detail-content').html(res.data.detail_html);
                         return;

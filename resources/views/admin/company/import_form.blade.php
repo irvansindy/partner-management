@@ -99,7 +99,7 @@
             <button type="button" class="btn btn-outline-primary" data-toggle="modal"
                 data-target="#importInstructionsModal" aria-controls="importInstructionsModal"
                 aria-haspopup="dialog">
-                <i class="fas fa-question-circle mr-1" aria-hidden="true"></i> Petunjuk Import
+                <i class="fas fa-question-circle mr-1" aria-hidden="true"></i> {{ __('tools.Petunjuk Import') }}
             </button>
         </div>
     </div>
@@ -108,13 +108,13 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="material-icons align-middle mr-1">upload_file</i> Import Data Perusahaan
+                        <i class="material-icons align-middle mr-1">upload_file</i> {{ __('tools.Import Data Perusahaan') }}
                     </h3>
                 </div>
                 <div class="card-body">
                     <p class="text-muted">
                         <i class="fas fa-info-circle"></i>
-                        Silakan upload file Excel (.xlsx) sesuai template untuk import data perusahaan.
+                        {{ __('data_tools.Silakan upload file Excel (.xlsx) sesuai template untuk import data perusahaan.') }}
                     </p>
 
                     @if (session('success'))
@@ -133,7 +133,7 @@
 
                     @if ($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show">
-                            <h5><i class="fas fa-exclamation-triangle"></i> Terjadi Error:</h5>
+                            <h5><i class="fas fa-exclamation-triangle"></i> {{ __('data_tools.Terjadi Error:') }}</h5>
                             <ul class="mb-0">
                                 @foreach ($errors->all() as $e)
                                     <li>{{ $e }}</li>
@@ -150,7 +150,7 @@
                         <!-- Button Download Template -->
                         <div>
                             <a href="{{ route('admin.company.export.template') }}" class="btn btn-info btn-block btn-lg">
-                                <i class="fas fa-download"></i> Download Template Excel
+                                <i class="fas fa-download"></i> {{ __('tools.Download Template Excel') }}
                             </a>
                             <small class="text-muted d-block mt-2 text-center">
                                 {{ __('tools.Template kosong untuk import data baru') }}
@@ -160,7 +160,7 @@
                         <!-- Button Export All -->
                         <div>
                             <a href="{{ route('admin.company.export.all') }}" class="btn btn-success btn-block btn-lg">
-                                <i class="fas fa-file-export"></i> Export Semua Data
+                                <i class="fas fa-file-export"></i> {{ __('tools.Export Semua Data') }}
                             </a>
                             <small class="text-muted d-block mt-2 text-center">
                                 {{ __('tools.Export semua data existing') }}
@@ -170,7 +170,7 @@
                         <!-- Button Export Custom -->
                         <div>
                             <a href="{{ route('admin.company.export.form') }}" class="btn btn-primary btn-block btn-lg">
-                                <i class="fas fa-tasks"></i> Export Custom
+                                <i class="fas fa-tasks"></i> {{ __('tools.Export Custom') }}
                             </a>
                             <small class="text-muted d-block mt-2 text-center">
                                 {{ __('tools.Pilih field yang ingin di-export') }}
@@ -186,22 +186,22 @@
 
                         <div class="form-group">
                             <label for="file">
-                                <i class="fas fa-file-excel"></i> Upload File Excel
+                                <i class="fas fa-file-excel"></i> {{ __('tools.Upload File Excel') }}
                             </label>
                             <div class="custom-file">
                                 <input type="file" name="file" class="custom-file-input" id="file" required accept=".xlsx,.xls">
                                 <label class="custom-file-label" for="file">{{ __('tools.Pilih file...') }}</label>
                             </div>
                             <small class="form-text text-muted">
-                                Format: .xlsx atau .xls | Max: 50MB
+                                {{ __('data_tools.Format: .xlsx atau .xls | Max: 50MB') }}
                             </small>
                         </div>
 
                         <button class="btn btn-primary btn-lg" type="submit">
-                            <i class="fas fa-search"></i> Preview Data
+                            <i class="fas fa-search"></i> {{ __('tools.Preview Data') }}
                         </button>
                         <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-arrow-left"></i> Kembali
+                            <i class="fas fa-arrow-left"></i> {{ __('tools.Kembali') }}
                         </a>
                     </form>
                 </div>
@@ -215,52 +215,30 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title" id="importInstructionsModalLabel">
-                        <i class="fas fa-question-circle mr-1" aria-hidden="true"></i> Petunjuk Import
+                        <i class="fas fa-question-circle mr-1" aria-hidden="true"></i> {{ __('tools.Petunjuk Import') }}
                     </h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Tutup petunjuk import">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('data_tools.Tutup petunjuk import') }}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <ol class="instruction-list">
-                        <li>
-                            <strong>Download Template</strong> - Klik tombol
-                            <span class="instruction-action-example">
-                                <i class="fas fa-download"></i> Download Template Excel
-                            </span>
-                            untuk mendapatkan format yang benar
-                        </li>
-                        <li><strong>Baca Petunjuk</strong> - Buka sheet "📋 PETUNJUK" di file template</li>
-                        <li><strong>Lihat Contoh</strong> - Lihat contoh data di row 2, lalu hapus sebelum isi data real</li>
-                        <li><strong>Isi Data</strong> - Lengkapi data perusahaan sesuai kolom yang tersedia</li>
-                        <li>
-                            <strong>Multiple Values</strong> - Untuk address & bank yang lebih dari 1, gunakan separator
-                            <code>|</code> (pipe)
-                            <br>
-                            Contoh: <code>Bank BCA | Bank Mandiri</code>
-                        </li>
-                        <li><strong>Upload File</strong> - Pilih file yang sudah diisi dan klik "Preview Data"</li>
-                        <li><strong>Validasi</strong> - Review data di halaman preview sebelum import final</li>
-                        <li><strong>Import</strong> - Klik "Import Data" untuk menyimpan ke database</li>
+                        @foreach (__('data_tools.import_instructions') as $instruction)
+                            <li>{{ $instruction }} @if ($loop->first)<span class="instruction-action-example">{{ __('tools.Download Template Excel') }}</span>@endif</li>
+                        @endforeach
                     </ol>
 
                     <div class="import-guidance import-guidance--warning">
                         <h5><i class="fas fa-exclamation-triangle"></i> {{ __('tools.Perhatian:') }}</h5>
                         <ul class="mb-0">
-                            <li>Kolom <strong class="text-danger">nama_perusahaan</strong> wajib diisi (header berwarna merah)</li>
-                            <li>Format email harus valid (contoh: email@domain.com)</li>
-                            <li>Tahun berdiri harus berupa angka (contoh: 2020)</li>
-                            <li>Jenis perusahaan hanya boleh: <code>vendor</code> atau <code>customer</code></li>
-                            <li>Pastikan hanya sheet pertama yang berisi data</li>
+                            @foreach (__('data_tools.warnings') as $line)<li>{{ $line }}</li>@endforeach
                         </ul>
                     </div>
 
                     <div class="import-guidance import-guidance--tip">
                         <h5><i class="fas fa-lightbulb"></i> {{ __('tools.Tips:') }}</h5>
                         <ul class="mb-0">
-                            <li>Hover mouse di header kolom template untuk melihat catatan detail</li>
-                            <li>Kolom dengan header tosca bisa diisi multiple data dengan separator <code>|</code></li>
-                            <li>Gunakan fitur dropdown di kolom "jenis_perusahaan_vendorcustomer"</li>
+                            @foreach (__('data_tools.tips') as $line)<li>{{ $line }}</li>@endforeach
                         </ul>
                     </div>
                 </div>
@@ -279,7 +257,7 @@
     // Show filename when file selected
     $('.custom-file-input').on('change', function() {
         var fileName = $(this).val().split('\\').pop();
-        $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
+        $(this).siblings('.custom-file-label').addClass('selected').text(fileName);
     });
 </script>
 @endpush

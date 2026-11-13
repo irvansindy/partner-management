@@ -200,24 +200,24 @@
     <main class="container-fluid division-page">
         <header class="division-heading">
             <div>
-                <h1>Division Management</h1>
-                <p>Browse and search the registered divisions.</p>
+                <h1>{{ __('settings.Division Management') }}</h1>
+                <p>{{ __('settings.Browse and search the registered divisions.') }}</p>
             </div>
             <div class="division-heading-actions">
                 <button type="button" class="btn btn-primary division-refresh waves-effect" id="create_division" data-toggle="modal" data-target="#divisionModal">
                     <i class="material-icons" aria-hidden="true">add</i>
-                    <span>Division</span>
+                    <span>{{ __('settings.Division') }}</span>
                 </button>
-                <button type="button" class="btn btn-outline-secondary division-refresh waves-effect" id="refresh_divisions" title="Refresh divisions">
+                <button type="button" class="btn btn-outline-secondary division-refresh waves-effect" id="refresh_divisions" title="{{ __('settings.Refresh divisions') }}">
                     <i class="material-icons" aria-hidden="true">refresh</i>
-                    <span>Refresh</span>
+                    <span>{{ __('settings.Refresh') }}</span>
                 </button>
             </div>
         </header>
 
         <section class="division-list-panel" aria-labelledby="division-list-title">
             <header class="division-list-header">
-                <h2 id="division-list-title">Division List</h2>
+                <h2 id="division-list-title">{{ __('settings.Division List') }}</h2>
             </header>
             <div class="division-list-body">
                 <div id="division_status" class="alert alert-info py-2 d-none" role="status" aria-live="polite"></div>
@@ -240,14 +240,14 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="division_name">Division Name <span class="text-danger">*</span></label>
+                            <label for="division_name">{{ __('settings.Division Name') }} <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="division_name" name="name" maxlength="255" required>
                             <span class="text-danger small" id="division_name_error"></span>
                         </div>
                         <div class="form-group">
                             <label for="division_gm_user_id">{{ __('admin.General Manager') }}</label>
                             <select class="form-control" id="division_gm_user_id" name="gm_user_id">
-                                <option value="">Not assigned</option>
+                                <option value="">{{ __('settings.Not assigned') }}</option>
                                 @foreach ($generalManagers as $generalManager)
                                     <option value="{{ $generalManager->id }}">{{ $generalManager->name }}</option>
                                 @endforeach
@@ -257,7 +257,7 @@
                         <div class="form-group mb-0">
                             <label for="division_office_id">{{ __('admin.Office') }}</label>
                             <select class="form-control" id="division_office_id" name="office_id">
-                                <option value="">Not assigned</option>
+                                <option value="">{{ __('settings.Not assigned') }}</option>
                                 @foreach ($offices as $office)
                                     <option value="{{ $office->id }}">{{ $office->name }}</option>
                                 @endforeach
@@ -268,7 +268,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ __('admin.Cancel') }}</button>
                         <button type="submit" class="btn btn-primary" id="save_division">
-                            <i class="material-icons align-middle mr-1">save</i> Save Division
+                            <i class="material-icons align-middle mr-1">save</i> {{ __('settings.Save Division') }}
                         </button>
                     </div>
                 </form>

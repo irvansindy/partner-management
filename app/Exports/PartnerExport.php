@@ -17,19 +17,22 @@ class PartnerExport implements FromCollection, WithHeadings
         $data_vendor = DB::select('
             SELECT a.name, a.group_name, a.type, a.established_year, a.total_employee, a.owner_name, a.email_address, a.website_address FROM company_informations a
         ');
-        return collect($data_vendor);
+        return collect($data_vendor)->map(function ($partner) {
+            $partner->type = __('messages.Dashboard ' . ucfirst($partner->type));
+            return $partner;
+        });
     }
     public function headings(): array
     {
         return [
-            'Nama Perusahaan',
-            'Nama Grup',
-            'Tipe',
-            'Tahun Berdiri',
-            'Jumlah Karyawan',
-            'Pemilik Perusahaan',
-            'Email Perusahaan',
-            'No. Tlp',
+            __('partner.Nama Perusahaan'),
+            __('partner.Nama Grup'),
+            __('partner.Tipe'),
+            __('partner.Tahun Berdiri'),
+            __('partner.Jumlah Karyawan'),
+            __('partner.Pemilik Perusahaan'),
+            __('partner.Email Perusahaan'),
+            __('partner.Website'),
         ];
     }
 }

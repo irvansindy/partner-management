@@ -27,7 +27,8 @@ class DivisionManagementController extends Controller
         try {
             return FormatResponseJson::success($this->divisionService->getDivisions());
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 
@@ -36,9 +37,10 @@ class DivisionManagementController extends Controller
         try {
             $division = $this->divisionService->create($request->validated());
 
-            return FormatResponseJson::success($division, 'Division created successfully.');
+            return FormatResponseJson::success($division, __('settings.Division created successfully.'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 
@@ -47,9 +49,10 @@ class DivisionManagementController extends Controller
         try {
             $division = $this->divisionService->update($division, $request->validated());
 
-            return FormatResponseJson::success($division, 'Division updated successfully.');
+            return FormatResponseJson::success($division, __('settings.Division updated successfully.'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 
@@ -59,14 +62,15 @@ class DivisionManagementController extends Controller
             if (!$this->divisionService->delete($division)) {
                 return FormatResponseJson::error(
                     null,
-                    'This division cannot be deleted while departments are assigned to it.',
+                    __('settings.This division cannot be deleted while departments are assigned to it.'),
                     409
                 );
             }
 
-            return FormatResponseJson::success(null, 'Division deleted successfully.');
+            return FormatResponseJson::success(null, __('settings.Division deleted successfully.'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 }

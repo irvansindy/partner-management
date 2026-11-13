@@ -671,7 +671,7 @@ class PartnerController extends Controller
             $fileCount = count($attachmentFiles);
             return FormatResponseJson::success(
                 'success',
-                "Partner profile created successfully with {$fileCount} file attachment(s)"
+                __('public_form.saved_attachments', ['count' => $fileCount])
             );
 
         } catch (ValidationException $e) {
@@ -683,7 +683,8 @@ class PartnerController extends Controller
             if (DB::transactionLevel() > 0) {
                 DB::rollBack();
             }
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('messages.Public Submission Failed'), 500);
         }
     }
 
@@ -691,7 +692,7 @@ class PartnerController extends Controller
     {
         $existing = CompanyInformation::where('user_id', auth()->id())->first();
         if ($existing) {
-            throw new \Exception('Anda sudah mendaftar.', 400);
+            throw new \Exception(__('public_form.Anda sudah mendaftar.'), 400);
         }
     }
 
@@ -704,141 +705,7 @@ class PartnerController extends Controller
         }
 
         // ENGLISH VERSION
-        $messagesEN = [
-            // Company Info
-            'company_type.required' => 'Company type is required.',
-            'company_name.required' => 'Company name is required.',
-            // 'established_year.integer' => 'Established year must be a number.',
-            'total_employee.integer' => 'Total employee must be a number.',
-            'total_employee.in' => 'Select one of the available employee ranges.',
-
-            // Liable Person
-            'liable_person.0.required' => 'Liable person is required.',
-            'liable_position.0.required' => 'Liable position is required.',
-            'nik.0.required' => 'NIK is required.',
-
-            // Owner & Business
-            'owner_name.required' => 'Owner name is required.',
-            'business_classification.required' => 'Business classification is required.',
-            'register_number_as_in_tax_invoice.required' => 'Tax invoice register number is required.',
-            'website_address.url' => 'Website address must be a valid URL.',
-            'email_address.email' => 'Email address format is invalid.',
-            'credit_limit.integer' => 'Credit limit must be a number.',
-
-            // Contact
-            'contact_department.0.required' => 'Contact department is required.',
-            'contact_position.0.required' => 'Contact position is required.',
-            'contact_name.0.required' => 'Contact name is required.',
-            'contact_email.*.required' => 'Contact email is required.',
-            'contact_email.*.email' => 'Contact email format is invalid.',
-            'contact_telephone.*.required' => 'Contact telephone is required.',
-            'contact_telephone.*.regex' => 'Contact telephone must include a country code, e.g. +62896232332423.',
-            'telephone.*.regex' => 'Telephone must include a country code, e.g. +62896232332423.',
-            'fax.*.regex' => 'Fax must include a country code, e.g. +62856676654.',
-
-            // Address 1 (NPWP)
-            'address.0.required' => 'Company address (according to NPWP) is required.',
-            'city.0.required' => 'City is required.',
-            'country.0.required' => 'Country is required.',
-            'province.0.required' => 'Province is required.',
-            'zip_code.0.required' => 'Postal code is required.',
-            'zip_code.0.integer' => 'Postal code must be a number.',
-            'telephone.0.required' => 'Telephone is required.',
-
-            // Address 2 (Other)
-            'address.1.required' => 'Company address (other) is required.',
-            'city.1.required' => 'City is required.',
-            'country.1.required' => 'Country is required.',
-            'province.1.required' => 'Province is required.',
-            'zip_code.1.required' => 'Postal code is required.',
-            'zip_code.1.integer' => 'Postal code must be a number.',
-            'telephone.1.required' => 'Telephone is required.',
-
-            // Bank
-            'bank_name.0.required' => 'Bank name is required.',
-            'account_name.0.required' => 'Account name is required.',
-            'account_number.0.required' => 'Account number is required.',
-
-            // Survey
-            'survey_pick_up.integer' => 'Pick up quantity must be a number.',
-            'survey_truck.integer' => 'Truck quantity must be a number.',
-
-            // File Attachments
-            'input-multiple-file.array' => 'File attachments must be an array.',
-            'input-multiple-file.*.file' => 'Each attachment must be a valid file.',
-            'input-multiple-file.*.mimes' => 'File must be: jpg, jpeg, png, pdf, doc, docx, or webp.',
-            'input-multiple-file.*.max' => 'File size must not exceed 5MB.',
-        ];
-
-        // INDONESIAN VERSION
-        $messagesID = [
-            // Company Info
-            'company_type.required' => 'Tipe perusahaan wajib diisi.',
-            'company_name.required' => 'Nama perusahaan wajib diisi.',
-            // 'established_year.integer' => 'Tahun berdiri harus berupa angka.',
-            'total_employee.integer' => 'Total karyawan harus berupa angka.',
-            'total_employee.in' => 'Pilih rentang jumlah karyawan yang tersedia.',
-
-            // Liable Person
-            'liable_person.0.required' => 'Nama penanggung jawab wajib diisi.',
-            'liable_position.0.required' => 'Posisi penanggung jawab wajib diisi.',
-            'nik.0.required' => 'NIK wajib diisi.',
-
-            // Owner & Business
-            'owner_name.required' => 'Nama pemilik wajib diisi.',
-            'business_classification.required' => 'Klasifikasi bisnis wajib diisi.',
-            'register_number_as_in_tax_invoice.required' => 'Nomor registrasi sesuai faktur pajak wajib diisi.',
-            'website_address.url' => 'Alamat website harus berupa URL yang valid.',
-            'email_address.email' => 'Format alamat email tidak valid.',
-            'credit_limit.integer' => 'Limit kredit harus berupa angka.',
-
-            // Contact
-            'contact_department.0.required' => 'Departemen kontak wajib diisi.',
-            'contact_position.0.required' => 'Posisi kontak wajib diisi.',
-            'contact_name.0.required' => 'Nama kontak wajib diisi.',
-            'contact_email.*.required' => 'Email kontak wajib diisi.',
-            'contact_email.*.email' => 'Format email kontak tidak valid.',
-            'contact_telephone.*.required' => 'Telepon kontak wajib diisi.',
-            'contact_telephone.*.regex' => 'Nomor telepon kontak harus menggunakan kode negara, contoh +62896232332423.',
-            'telephone.*.regex' => 'Nomor telepon harus menggunakan kode negara, contoh +62896232332423.',
-            'fax.*.regex' => 'Nomor fax harus menggunakan kode negara, contoh +62856676654.',
-
-            // Address 1 (NPWP)
-            'address.0.required' => 'Alamat perusahaan (sesuai NPWP) wajib diisi.',
-            'city.0.required' => 'Kota wajib diisi.',
-            'country.0.required' => 'Negara wajib diisi.',
-            'province.0.required' => 'Provinsi wajib diisi.',
-            'zip_code.0.required' => 'Kode pos wajib diisi.',
-            'zip_code.0.integer' => 'Kode pos harus berupa angka.',
-            'telephone.0.required' => 'Telepon wajib diisi.',
-
-            // Address 2 (Other)
-            'address.1.required' => 'Alamat perusahaan (lainnya) wajib diisi.',
-            'city.1.required' => 'Kota wajib diisi.',
-            'country.1.required' => 'Negara wajib diisi.',
-            'province.1.required' => 'Provinsi wajib diisi.',
-            'zip_code.1.required' => 'Kode pos wajib diisi.',
-            'zip_code.1.integer' => 'Kode pos harus berupa angka.',
-            'telephone.1.required' => 'Telepon wajib diisi.',
-
-            // Bank
-            'bank_name.0.required' => 'Nama bank wajib diisi.',
-            'account_name.0.required' => 'Nama akun wajib diisi.',
-            'account_number.0.required' => 'Nomor rekening wajib diisi.',
-
-            // Survey
-            'survey_pick_up.integer' => 'Jumlah pick up harus berupa angka.',
-            'survey_truck.integer' => 'Jumlah truck harus berupa angka.',
-
-            // File Attachments
-            'input-multiple-file.array' => 'Lampiran file harus berupa array.',
-            'input-multiple-file.*.file' => 'Setiap lampiran harus berupa file yang valid.',
-            'input-multiple-file.*.mimes' => 'File harus berformat: jpg, jpeg, png, pdf, doc, docx, atau webp.',
-            'input-multiple-file.*.max' => 'Ukuran file tidak boleh melebihi 5MB.',
-        ];
-
-        // USAGE - Gunakan salah satu sesuai bahasa yang diinginkan
-        $messages = app()->getLocale() == 'id' ? $messagesID : $messagesEN;
+        $messages = array_merge(__('public_validation.messages'), __('public_validation.internal'));
         $validator = Validator::make($request->all(), [
             'company_type' => 'required|string',
             'company_name' => 'required|string',
@@ -900,34 +767,26 @@ class PartnerController extends Controller
             // Validasi file attachments
             'input-multiple-file' => 'nullable|array',
             'input-multiple-file.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx,webp|max:5120'
-        ], $messages);
-
-        $locale = app()->getLocale();
+        ], $messages, __('public_validation.attributes'));
 
         if ($request->has('liable_position.0') && $request->liable_position[0] === 'Other' && empty($request->other_position[0])) {
-            $validator->after(function ($validator) use ($locale) {
-                $errorMessage = $locale === 'id'
-            ? 'Posisi penanggung jawab wajib diisi ketika memilih "Lainnya".'
-            : 'Liable position is required when selecting "Other".';
+            $validator->after(function ($validator) {
+                $errorMessage = __('public_form.other_position_required');
                 $validator->errors()->add('other_position.0', $errorMessage);
             });
         }
 
         if ($request->business_classification === 'Other' && empty($request->business_classification_other_detail)) {
-            $validator->after(function ($validator) use ($locale) {
-                $errorMessage = $locale === 'id'
-            ? 'Detail klasifikasi bisnis wajib diisi ketika memilih "Lainnya".'
-            : 'Business classification detail is required when selecting "Other".';
+            $validator->after(function ($validator) {
+                $errorMessage = __('public_form.other_business_required');
                 $validator->errors()->add('business_classification_other_detail', $errorMessage);
             });
         }
 
         if ($request->term_of_payment == 'Other' && empty($request->other_term_of_payment)) {
             // dd($request->other_term_of_payment);
-            $validator->after(function ($validator) use ($locale) {
-                $errorMessage = $locale === 'id'
-            ? 'Detail term of payment wajib diisi ketika memilih "Lainnya".'
-            : 'Term of payment detail is required when selecting "Other".';
+            $validator->after(function ($validator) {
+                $errorMessage = __('public_form.other_payment_required');
                 $validator->errors()->add('other_term_of_payment', $errorMessage);
             });
         }

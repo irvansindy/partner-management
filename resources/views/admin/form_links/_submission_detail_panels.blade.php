@@ -325,20 +325,20 @@
             <div class="card approval-summary">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-check-circle mr-1"></i> Approval Status
+                        <i class="fas fa-check-circle mr-1"></i> {{ __('admin.Approval Status') }}
                     </h3>
                     <div class="card-tools">
                         @if ($approval->isPending() || $approval->isInProgress())
                             <span class="approval-state">
-                                <i class="fas fa-clock"></i> In Progress
+                                <i class="fas fa-clock"></i> {{ __('admin.In Progress') }}
                             </span>
                         @elseif($approval->isApproved())
                             <span class="approval-state">
-                                <i class="fas fa-check"></i> Approved
+                                <i class="fas fa-check"></i> {{ __('admin.Approved') }}
                             </span>
                         @elseif($approval->isRejected())
                             <span class="approval-state">
-                                <i class="fas fa-times"></i> Rejected
+                                <i class="fas fa-times"></i> {{ __('admin.Rejected') }}
                             </span>
                         @endif
                     </div>
@@ -400,8 +400,8 @@
 
                                     @if ($step->notes)
                                         <div class="approval-note">
-                                            <strong><i class="fas fa-comment mr-1"></i> Notes</strong>
-                                            <div class="mt-1">{!! $step->notes !!}</div>
+                                            <strong><i class="fas fa-comment mr-1"></i> {{ __('submission.Notes') }}</strong>
+                                            <div class="mt-1">{{ $step->notes }}</div>
                                         </div>
                                     @endif
 
@@ -409,7 +409,7 @@
                                         <div class="mt-3">
                                             <a href="{{ route('admin.approvals.step.action', $step) }}"
                                                 class="btn btn-primary btn-sm form-link-action">
-                                                <i class="fas fa-tasks"></i> Take Action
+                                                <i class="fas fa-tasks"></i> {{ __('admin.Take Action') }}
                                             </a>
                                         </div>
                                     @endif
@@ -487,7 +487,7 @@
                         <th width="30%">{{ __('admin.Company Type') }}</th>
                         <td>
                             <span class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">
-                                {{ ucfirst($company->type) }}
+                                {{ __('admin.' . ucfirst($company->type ?? '')) }}
                             </span>
                         </td>
                     </tr>
@@ -540,7 +540,7 @@
                     </tr>
                     <tr>
                         <th>{{ __('admin.Credit Limit') }}</th>
-                        <td>{{ $company->credit_limit ? number_format($company->credit_limit, 2) : '-' }}</td>
+                        <td>{{ $company->credit_limit ? number_format($company->credit_limit, 2, app()->getLocale() === 'id' ? ',' : '.', app()->getLocale() === 'id' ? '.' : ',') : '-' }}</td>
                     </tr>
                     <tr>
                         <th>{{ __('admin.Term of Payment') }}</th>
@@ -638,7 +638,7 @@
                 @if ($company->address->isNotEmpty())
                     @foreach ($company->address as $index => $address)
                         <div class="mb-4">
-                            <h5>Address {{ $index + 1 }}</h5>
+                            <h5>{{ __('admin.Address') }} {{ $index + 1 }}</h5>
                             <table class="table table-bordered">
                                 <tr>
                                     <th width="30%">{{ __('admin.Address') }}</th>
@@ -672,11 +672,11 @@
                                     <tr>
                                         <th>{{ __('submission.Coordinates') }}</th>
                                         <td>
-                                            Lat: {{ $address->latitude }}, Long: {{ $address->longitude }}
+                                            {{ __('form_links_audit.Latitude') }}: {{ $address->latitude }}, {{ __('form_links_audit.Longitude') }}: {{ $address->longitude }}
                                             <br>
                                             <a href="https://www.google.com/maps?q={{ $address->latitude }},{{ $address->longitude }}"
                                                 target="_blank" class="btn btn-sm btn-primary mt-2">
-                                                <i class="fas fa-map-marker-alt"></i> View on Map
+                                                <i class="fas fa-map-marker-alt"></i> {{ __('submission.View on Map') }}
                                             </a>
                                         </td>
                                     </tr>
@@ -741,7 +741,7 @@
                                 @if ($company->salesSurvey->ownership_status)
                                     <span
                                         class="badge badge-{{ $company->salesSurvey->ownership_status === 'own' ? 'success' : 'info' }}">
-                                        {{ ucfirst($company->salesSurvey->ownership_status) }}
+                                        {{ trans()->has('form_links_audit.' . $company->salesSurvey->ownership_status) ? __('form_links_audit.' . $company->salesSurvey->ownership_status) : $company->salesSurvey->ownership_status }}
                                     </span>
                                 @else
                                     -
@@ -755,11 +755,11 @@
                             </tr>
                         @endif
                         <tr>
-                            <th>Pick Up</th>
+                            <th>{{ __('submission.Pick Up') }}</th>
                             <td>{{ $company->salesSurvey->pick_up ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <th>Truck</th>
+                            <th>{{ __('submission.Truck') }}</th>
                             <td>{{ $company->salesSurvey->truck ?? '-' }}</td>
                         </tr>
                     </table>
@@ -770,8 +770,8 @@
                             <thead>
                                 <tr>
                                     <th>{{ __('admin.Product') }}</th>
-                                    <th>Merk</th>
-                                    <th>Distributor</th>
+                                    <th>{{ __('submission.Merk') }}</th>
+                                    <th>{{ __('submission.Distributor') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -815,10 +815,10 @@
                                         <p class="small mb-2 attachment-name" title="{{ $file->original_name ?? $file->filename }}">
                                             {{ $file->original_name ?? $file->filename }}
                                         </p>
-                                        <p class="small text-muted">{{ number_format($file->filesize / 1024, 2) }} KB</p>
+                                        <p class="small text-muted">{{ number_format($file->filesize / 1024, 2, app()->getLocale() === 'id' ? ',' : '.', app()->getLocale() === 'id' ? '.' : ',') }} KB</p>
                                         <a href="{{ route('admin.company-attachments.download', $file) }}"
                                             class="btn btn-sm btn-primary attachment-download">
-                                            <i class="fas fa-download"></i> Download
+                                            <i class="fas fa-download"></i> {{ __('admin.Download') }}
                                         </a>
                                     </div>
                                 </div>

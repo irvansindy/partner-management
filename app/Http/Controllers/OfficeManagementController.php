@@ -22,9 +22,10 @@ class OfficeManagementController extends Controller
     {
         try {
             $offices = MasterOffice::all();
-            return FormatResponseJson::success($offices, 'office fetched successfully');
+            return FormatResponseJson::success($offices, __('settings.office fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 500);
         }
     }
     public function fetchOfficeById(Request $request)
@@ -32,11 +33,12 @@ class OfficeManagementController extends Controller
         try {
             $office = MasterOffice::find($request->id);
             if (!$office) {
-                return FormatResponseJson::error(null, 'Office not found', 404);
+                return FormatResponseJson::error(null, __('settings.Office not found'), 404);
             }
-            return FormatResponseJson::success($office, 'office fetched successfully');
+            return FormatResponseJson::success($office, __('settings.office fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 500);
         }
     }
     public function CreateOrUpdateOffice(Request $request)
@@ -46,10 +48,10 @@ class OfficeManagementController extends Controller
             $validator = Validator::make($request->all(), [
                 'office_name' => 'required|string',
                 'office_address' => 'required|string',
-            ], [
-                'office_name.required'=> 'Nama Office tidak boleh kosong',
-                'office_address.required'=> 'Alamat Office tidak boleh kosong',
-            ]);
+            ], array_merge(__('settings_validation.messages'), [
+                'office_name.required'=> __('settings.Nama Office tidak boleh kosong'),
+                'office_address.required'=> __('settings.Alamat Office tidak boleh kosong'),
+            ]), __('settings_validation.attributes'));
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
@@ -61,13 +63,14 @@ class OfficeManagementController extends Controller
                 ]
             );
             DB::commit();
-            return FormatResponseJson::success($office, 'Office created/updated successfully');
+            return FormatResponseJson::success($office, __('settings.Office created/updated successfully'));
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null,$e->getMessage(), 400);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 400);
         }
     }
 }

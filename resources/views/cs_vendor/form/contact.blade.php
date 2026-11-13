@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-12 col-md-6 col-xl-1 mb-3 d-flex align-items-end justify-content-end contact-action-column">
                             <div class="d-flex justify-content-end mb-1">
-                                <button type="button" class="btn btn-primary" id="add_contact" aria-label="Tambah narahubung"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                                <button type="button" class="btn btn-primary" id="add_contact" aria-label="{{ __('public_form.Tambah narahubung') }}"><i class="fa fa-plus" aria-hidden="true"></i></button>
                             </div>
                         </div>
                     </div>

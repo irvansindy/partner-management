@@ -56,62 +56,62 @@
 
     <div class="approval-detail-shell">
         <header class="approval-detail-header">
-            <div><h2>Approval Detail</h2><p>{{ $company->name ?? 'Partner submission' }} · Review status and approval history.</p></div>
+            <div><h2>{{ __('approval.Approval Detail') }}</h2><p>{{ $company->name ?? __('approval.Partner submission') }} · {{ __('approval.Review status and approval history.') }}</p></div>
             <div class="approval-detail-actions">
-                <a href="{{ route('admin.approvals.index') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left mr-1"></i> Back to list</a>
+                <a href="{{ route('admin.approvals.index') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left mr-1"></i> {{ __('approval.Back to list') }}</a>
                 @if($company && $company->form_link_id)
-                    <a href="{{ route('admin.form-links.submission-detail', [$company->form_link_id, $company->id]) }}" class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt mr-1"></i> View submission</a>
+                    <a href="{{ route('admin.form-links.submission-detail', [$company->form_link_id, $company->id]) }}" class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt mr-1"></i> {{ __('approval.View submission') }}</a>
                 @endif
                 @if($currentStep && $currentStep->user_id === auth()->id())
-                    <a href="{{ route('admin.approvals.step.action', $currentStep) }}" class="btn btn-primary"><i class="fas fa-tasks mr-1"></i> Review now</a>
+                    <a href="{{ route('admin.approvals.step.action', $currentStep) }}" class="btn btn-primary"><i class="fas fa-tasks mr-1"></i> {{ __('approval.Review now') }}</a>
                 @endif
             </div>
         </header>
 
         <section class="approval-detail-card">
             <div class="approval-detail-card__header">
-                <h5>Status and progress</h5>
-                <span class="approval-status approval-status--{{ $statusClass }}">{{ $statusLabel }}</span>
+                <h5>{{ __('approval.Status and progress') }}</h5>
+                <span class="approval-status approval-status--{{ $statusClass }}">{{ __('approval.' . $statusLabel) }}</span>
             </div>
             <div class="approval-detail-card__body approval-progress-grid">
                 <div>
-                    <div class="approval-progress-meta"><span>{{ $completedSteps }} of {{ $totalSteps }} steps completed</span><strong>{{ number_format($progress, 0) }}%</strong></div>
-                    <div class="approval-progress-track" role="progressbar" aria-label="Approval progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ number_format($progress, 0) }}"><span style="width: {{ $progress }}%"></span></div>
+                    <div class="approval-progress-meta"><span>{{ __('approval.completed_steps', ['done' => $completedSteps, 'total' => $totalSteps]) }}</span><strong>{{ number_format($progress, 0) }}%</strong></div>
+                    <div class="approval-progress-track" role="progressbar" aria-label="{{ __('approval.Approval progress') }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ number_format($progress, 0) }}"><span style="width: {{ $progress }}%"></span></div>
                 </div>
                 <dl class="approval-facts">
-                    <div><dt>Current step</dt><dd>{{ $currentStep ? 'Step '.$currentStep->step_ordering.' · '.($currentStep->approver->name ?? 'Approver') : ($approval->isApproved() ? 'Completed' : 'Not available') }}</dd></div>
-                    <div><dt>Duration</dt><dd>{{ $approval->created_at->diffForHumans($approval->updated_at, true) }}</dd></div>
-                    <div><dt>Started</dt><dd>{{ $approval->created_at->format('d M Y, H:i') }}</dd></div>
-                    <div><dt>Updated</dt><dd>{{ $approval->updated_at->format('d M Y, H:i') }}</dd></div>
+                    <div><dt>{{ __('approval.Current step') }}</dt><dd>{{ $currentStep ? __('approval.current_stage', ['number' => $currentStep->step_ordering]).' · '.($currentStep->approver->name ?? __('approval.Approver')) : ($approval->isApproved() ? __('approval.Completed') : __('approval.Not available')) }}</dd></div>
+                    <div><dt>{{ __('approval.Duration') }}</dt><dd>{{ $approval->created_at->locale(app()->getLocale())->diffForHumans($approval->updated_at, true) }}</dd></div>
+                    <div><dt>{{ __('approval.Started') }}</dt><dd>{{ $approval->created_at->locale(app()->getLocale())->translatedFormat('d M Y, H:i') }}</dd></div>
+                    <div><dt>{{ __('approval.Updated') }}</dt><dd>{{ $approval->updated_at->locale(app()->getLocale())->translatedFormat('d M Y, H:i') }}</dd></div>
                 </dl>
             </div>
         </section>
 
         <div class="approval-info-grid">
             <section class="approval-detail-card">
-                <div class="approval-detail-card__header"><h5>Partner information</h5></div>
+                <div class="approval-detail-card__header"><h5>{{ __('approval.Partner information') }}</h5></div>
                 <div class="approval-detail-card__body"><dl class="approval-facts">
                     <div><dt>{{ __('admin.Company') }}</dt><dd>{{ $company->name ?? '-' }}</dd></div>
-                    <div><dt>{{ __('admin.Type') }}</dt><dd>{{ ucfirst($company->type ?? 'Partner') }}</dd></div>
-                    <div><dt>Business classification</dt><dd>{{ $company->business_classification ?? '-' }}</dd></div>
+                    <div><dt>{{ __('admin.Type') }}</dt><dd>{{ ucfirst($company->type ?? __('approval.Partner')) }}</dd></div>
+                    <div><dt>{{ __('approval.Business classification') }}</dt><dd>{{ $company->business_classification ?? '-' }}</dd></div>
                     <div><dt>Email</dt><dd>{{ $company->email_address ?? '-' }}</dd></div>
-                    <div><dt>Submitted at</dt><dd>{{ optional($company->created_at)->format('d M Y, H:i') ?? '-' }}</dd></div>
+                    <div><dt>{{ __('approval.Submitted at') }}</dt><dd>{{ optional($company->created_at)->locale(app()->getLocale())->translatedFormat('d M Y, H:i') ?? '-' }}</dd></div>
                 </dl></div>
             </section>
             <section class="approval-detail-card">
-                <div class="approval-detail-card__header"><h5>Submission information</h5></div>
+                <div class="approval-detail-card__header"><h5>{{ __('approval.Submission information') }}</h5></div>
                 <div class="approval-detail-card__body"><dl class="approval-facts">
-                    <div><dt>Submitted by</dt><dd>{{ $approval->initiator->name ?? '-' }}</dd></div>
+                    <div><dt>{{ __('approval.Submitted by') }}</dt><dd>{{ $approval->initiator->name ?? '-' }}</dd></div>
                     <div><dt>Email</dt><dd>{{ $approval->initiator->email ?? '-' }}</dd></div>
                     <div><dt>{{ __('admin.Department') }}</dt><dd>{{ $approval->department->name ?? '-' }}</dd></div>
                     <div><dt>{{ __('admin.Office') }}</dt><dd>{{ $approval->office->name ?? '-' }}</dd></div>
-                    <div><dt>Form</dt><dd>{{ $company->formLink->title ?? '-' }}</dd></div>
+                    <div><dt>{{ __('approval.Form') }}</dt><dd>{{ $company->formLink->title ?? '-' }}</dd></div>
                 </dl></div>
             </section>
         </div>
 
         <section class="approval-detail-card">
-            <div class="approval-detail-card__header"><h5>Approval timeline</h5><span class="text-muted small">{{ $totalSteps }} steps</span></div>
+            <div class="approval-detail-card__header"><h5>{{ __('approval.Approval timeline') }}</h5><span class="text-muted small">{{ __('approval.steps_count', ['count' => $totalSteps]) }}</span></div>
             <div class="approval-detail-card__body">
                 <div class="approval-timeline">
                     @foreach($approval->steps as $step)
@@ -123,16 +123,16 @@
                         <article class="approval-step">
                             <span class="approval-step__number">{{ $step->step_ordering }}</span>
                             <div class="approval-step__main">
-                                <strong>{{ $step->approver->name ?? 'Unknown approver' }}</strong>
+                                <strong>{{ $step->approver->name ?? __('approval.Unknown approver') }}</strong>
                                 <small>{{ $step->approver->email ?? '-' }}</small>
-                                @if($step->notes)<div class="approval-step__notes">{!! $step->notes !!}</div>@endif
+                                @if($step->notes)<div class="approval-step__notes">{{ $step->notes }}</div>@endif
                                 @if($step->isWaiting() && auth()->id() === $step->user_id)
-                                    <a href="{{ route('admin.approvals.step.action', $step) }}" class="btn btn-primary btn-sm mt-3">Review this step</a>
+                                    <a href="{{ route('admin.approvals.step.action', $step) }}" class="btn btn-primary btn-sm mt-3">{{ __('approval.Review this step') }}</a>
                                 @endif
                             </div>
                             <div class="approval-step__aside">
-                                <span class="badge badge-{{ $stepClass }}">{{ $stepStatus }}</span>
-                                <small>{{ $actedAt ? $actedAt->format('d M Y, H:i') : 'Awaiting action' }}</small>
+                                <span class="badge badge-{{ $stepClass }}">{{ __('approval.' . $stepStatus) }}</span>
+                                <small>{{ $actedAt ? $actedAt->locale(app()->getLocale())->translatedFormat('d M Y, H:i') : __('approval.Awaiting action') }}</small>
                             </div>
                         </article>
                     @endforeach

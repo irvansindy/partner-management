@@ -24,7 +24,7 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="form_type">{{ __('admin.Form Type') }}</label>
-                                <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}"
+                                <input type="text" class="form-control" value="{{ __('admin.' . ucfirst($formLink->form_type ?? '')) }}"
                                     disabled>
                                 <small class="form-text text-muted">{{ __('submission.Form type cannot be changed') }}</small>
                             </div>
@@ -71,10 +71,10 @@
 
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Update Form Link
+                                <i class="fas fa-save"></i> {{ __('submission.Update Form Link') }}
                             </button>
                             <a href="{{ route('admin.form-links.show', $formLink) }}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Cancel
+                                <i class="fas fa-times"></i> {{ __('admin.Cancel') }}
                             </a>
                         </div>
                     </form>

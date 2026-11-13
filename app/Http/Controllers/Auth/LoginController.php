@@ -55,4 +55,9 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    protected function validateLogin(\Illuminate\Http\Request $request)
+    {
+        $request->validate([$this->username() => 'required|string', 'password' => 'required|string'], array_merge(__('public_validation.messages'), __('public_validation.auth')), __('public_validation.attributes'));
+    }
 }

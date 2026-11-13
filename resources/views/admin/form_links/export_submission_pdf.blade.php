@@ -389,7 +389,7 @@
             <td style="width:40%; vertical-align:top;">
                 <strong>{{ __('form_links_remaining.Material :') }}</strong><br>
                 @foreach ($materialCategories as $label => $active)
-                    <span class="material-box {{ $active ? 'checked' : '' }}">{{ $label }}</span>
+                    <span class="material-box {{ $active ? 'checked' : '' }}">{{ trans()->has('form_links_audit.'.$label) ? __('form_links_audit.'.$label) : $label }}</span>
                 @endforeach
             </td>
         </tr>
@@ -416,7 +416,7 @@
             <tr>
                 <td class="label">{{ __('submission.Jenis Usaha') }}</td>
                 <td class="colon">:</td>
-                <td class="value">{{ ucfirst($company->type ?? '') }} &nbsp;|&nbsp;
+                <td class="value">{{ __('admin.' . ucfirst($company->type ?? '')) }} &nbsp;|&nbsp;
                     {{ $company->business_classification ?? '' }}</td>
                 <td></td>
                 <td class="label">{{ __('form_links_remaining.Jumlah Karyawan') }}</td>
@@ -620,11 +620,11 @@
                             );
                         @endphp
                         <span class="cb {{ $hasDoc ? 'checked' : '' }}">{{ $hasDoc ? '✓' : '' }}</span>
-                        {{ $doc }}<br>
+                        {{ trans()->has('form_links_audit.'.$doc) ? __('form_links_audit.'.$doc) : $doc }}<br>
                     @endforeach
                     @if ($docs->isNotEmpty())
                         <div style="margin-top:6px; font-size:7.5pt; color:#333;">
-                            <em>Lampiran ({{ $docs->count() }} file):</em><br>
+                            <em>{{ __('form_links_audit.files', ['count' => $docs->count()]) }}:</em><br>
                             @foreach ($docs as $doc)
                                 • {{ $doc->filename }}<br>
                             @endforeach
@@ -657,13 +657,13 @@
         <table class="iso-table">
             @foreach ($isoMap as $isoName => $active)
                 <tr>
-                    <td class="iso-label">{{ $isoName }}</td>
+                    <td class="iso-label">{{ $isoName === 'Other' ? __('form_links_audit.Other') : $isoName }}</td>
                     <td class="colon">:</td>
                     <td class="iso-opts">
-                        <span class="cb {{ $active ? 'checked' : '' }}">{{ $active ? '✓' : '' }}</span> Diterapkan
+                        <span class="cb {{ $active ? 'checked' : '' }}">{{ $active ? '✓' : '' }}</span> {{ __('form_links_remaining.Diterapkan') }}
                         &nbsp;&nbsp;
                         <span class="cb {{ $active ? 'checked' : '' }}">{{ $active ? '✓' : '' }}</span>
-                        Tersertifikasi
+                        {{ __('form_links_audit.Tersertifikasi') }}
                         @if ($isoName === 'Other' && $otherIso)
                             &nbsp;&nbsp; ISO : <u>{{ $otherIso }}</u>
                         @endif
@@ -711,7 +711,7 @@
                 <td class="label" style="width:22%;">{{ __('form_links_remaining.Batas Kredit') }}</td>
                 <td class="colon">:</td>
                 <td class="value">
-                    {{ $company->credit_limit ? 'Rp ' . number_format($company->credit_limit, 0, ',', '.') : '' }}</td>
+                    {{ $company->credit_limit ? 'Rp ' . number_format($company->credit_limit, 0, app()->getLocale() === 'id' ? ',' : '.', app()->getLocale() === 'id' ? '.' : ',') : '' }}</td>
             </tr>
         </table>
     </div>
@@ -737,7 +737,7 @@
             <td style="width:30%; text-align:center;">
                 <div style="font-size:8pt;">
                     .......................,
-                    {{ \Carbon\Carbon::parse($company->created_at)->locale('id')->isoFormat('D MMMM Y') }}
+                    {{ \Carbon\Carbon::parse($company->created_at)->locale(app()->getLocale())->isoFormat('D MMMM Y') }}
                 </div>
                 <div style="font-size:8pt; margin-top:2px;">{{ __('form_links_remaining.Nama Perusahaan') }}</div>
                 <div

@@ -20,13 +20,18 @@ class StoreDivisionRequest extends FormRequest
         ];
     }
 
+    public function attributes(): array
+    {
+        return __('settings_validation.attributes');
+    }
+
     public function messages(): array
     {
-        return [
-            'name.required' => 'Division name is required.',
-            'name.unique' => 'A division with this name already exists.',
-            'gm_user_id.exists' => 'Selected General Manager does not exist.',
-            'office_id.exists' => 'Selected office does not exist.',
-        ];
+        return array_merge(__('settings_validation.messages'), [
+            'name.required' => __('settings.Division name is required.'),
+            'name.unique' => __('settings.A division with this name already exists.'),
+            'gm_user_id.exists' => __('settings.Selected General Manager does not exist.'),
+            'office_id.exists' => __('settings.Selected office does not exist.'),
+        ]);
     }
 }

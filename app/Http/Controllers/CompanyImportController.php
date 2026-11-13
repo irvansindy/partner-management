@@ -61,7 +61,10 @@ class CompanyImportController extends Controller
             Log::error("Preview error: " . $e->getMessage());
             Log::error($e->getTraceAsString());
 
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            if (isset($importer) && $importer->getErrors()) {
+                return view('admin.company.import_preview', ['rows' => collect(), 'errorsList' => $importer->getErrors(), 'filePath' => null]);
+            }
+            return back()->with('error', __('data_tools.preview_failed'));
         }
     }
 
@@ -76,14 +79,14 @@ class CompanyImportController extends Controller
 
             if (!$filePath) {
                 Log::warning("Import confirm: No file path in session");
-                return back()->with('error', 'Session expired. Silakan upload ulang file.');
+                return back()->with('error', __('data_tools.Session expired. Silakan upload ulang file.'));
             }
 
             // Cek apakah file masih ada
             if (!Storage::exists($filePath)) {
                 session()->forget('import_file_path');
                 Log::warning("Import confirm: File not found - $filePath");
-                return back()->with('error', 'File tidak ditemukan. Silakan upload ulang.');
+                return back()->with('error', __('data_tools.File tidak ditemukan. Silakan upload ulang.'));
             }
 
             $fullPath = storage_path('app/' . $filePath);
@@ -102,7 +105,7 @@ class CompanyImportController extends Controller
                 Log::error("Import errors: " . implode(', ', $importer->getErrors()));
 
                 return back()->withErrors([
-                    'import' => 'Import gagal: ' . implode(', ', $importer->getErrors())
+                    'import' => __('data_tools.import_errors', ['errors' => implode(', ', $importer->getErrors())])
                 ]);
             }
 
@@ -113,7 +116,7 @@ class CompanyImportController extends Controller
             Log::info("Import completed successfully");
 
             return redirect()->route('admin.company.import.form')
-                ->with('success', 'Import berhasil disimpan!');
+                ->with('success', __('data_tools.Import berhasil disimpan!'));
 
         } catch (\Exception $e) {
             // Log error untuk debugging
@@ -126,7 +129,10 @@ class CompanyImportController extends Controller
                 session()->forget('import_file_path');
             }
 
-            return back()->with('error', 'Import gagal: ' . $e->getMessage());
+            if (isset($importer) && $importer->getErrors()) {
+                return back()->withErrors(['import' => __('data_tools.import_errors', ['errors' => implode(', ', $importer->getErrors())])]);
+            }
+            return back()->with('error', __('data_tools.import_failed'));
         }
     }
 

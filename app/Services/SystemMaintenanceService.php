@@ -54,7 +54,7 @@ class SystemMaintenanceService
     {
         $commands = $this->commands();
         if (!isset($commands[$key])) {
-            throw new InvalidArgumentException('Unknown maintenance command.');
+            throw new InvalidArgumentException(__('maintenance.unknown'));
         }
 
         $definition = $commands[$key];
@@ -68,12 +68,14 @@ class SystemMaintenanceService
                 }
 
                 $exitCode = Artisan::call($definition['command']);
+                $output = $this->sanitizeOutput(Artisan::output());
                 $result = [
                     'success' => $exitCode === 0,
                     'key' => $key,
                     'label' => $definition['label'],
                     'exit_code' => $exitCode,
-                    'output' => $this->sanitizeOutput(Artisan::output()),
+                    'output' => $output === '' ? __('maintenance.no_output') : $output,
+                    'output_key' => $output === '' ? 'no_output' : null,
                     'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
                 ];
 
@@ -97,7 +99,8 @@ class SystemMaintenanceService
                     'key' => $key,
                     'label' => $definition['label'],
                     'exit_code' => 1,
-                    'output' => 'Command failed. Review the application log for details.',
+                    'output' => __('maintenance.failed'),
+                    'output_key' => 'failed',
                     'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
                 ];
             }
@@ -110,7 +113,8 @@ class SystemMaintenanceService
                 'key' => $key,
                 'label' => $definition['label'],
                 'exit_code' => null,
-                'output' => 'This command is already running. Please wait and try again.',
+                'output' => __('maintenance.busy'),
+                'output_key' => 'busy',
                 'duration_ms' => 0,
             ];
         }
@@ -128,9 +132,9 @@ class SystemMaintenanceService
     ): array {
         return [
             'command' => $command,
-            'label' => $label,
-            'description' => $description,
-            'group' => $group,
+            'label' => __('maintenance.' . $label),
+            'description' => __('maintenance.' . $description),
+            'group' => __('maintenance.' . $group),
             'confirmation' => $confirmation,
             'long_running' => $longRunning,
         ];
@@ -141,10 +145,6 @@ class SystemMaintenanceService
         $output = preg_replace('/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -\/]*[@-~])/', '', $output) ?? '';
         $output = preg_replace('/[^\P{C}\n\t]/u', '', $output) ?? '';
         $output = trim($output);
-
-        if ($output === '') {
-            $output = 'Command completed without output.';
-        }
 
         return mb_substr($output, 0, self::OUTPUT_LIMIT);
     }

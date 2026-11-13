@@ -29,12 +29,12 @@
                             <span class="text-danger mt-2" id="message_survey_ownership_status" role="alert"></span>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                            <label for="survey_pick_up">Pickup</label>
+                            <label for="survey_pick_up">{{ __('public_form.Pickup') }}</label>
                             <input class="form-control" type="text" name="survey_pick_up" id="survey_pick_up" value="" placeholder="{{ __('messages.Placeholder Survey Pickup') }}">
                             <span class="text-danger mt-2" id="message_survey_pick_up" role="alert"></span>
                         </div>
                         <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
-                            <label for="survey_truck">Truck</label>
+                            <label for="survey_truck">{{ __('public_form.Truck') }}</label>
                             <input class="form-control" type="text" name="survey_truck" id="survey_truck" value="" placeholder="{{ __('messages.Placeholder Survey Truck') }}">
                             <span class="text-danger mt-2" id="message_survey_truck" role="alert"></span>
                         </div>

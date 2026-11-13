@@ -28,7 +28,7 @@ class ApprovalProcessController extends Controller
         $this->ensureApprovalRole($user);
         $validated = $request->validate([
             'status' => 'nullable|integer|in:0,1,2,3',
-        ]);
+        ], __('approval_validation.messages'), __('approval_validation.attributes'));
         $baseQuery = ApprovalProcess::query();
         $this->scopeAccessibleApprovals($baseQuery, $user);
 
@@ -96,12 +96,12 @@ class ApprovalProcessController extends Controller
 
         // Check if user is the approver for this step
         if ($step->user_id !== Auth::id()) {
-            abort(403, 'Anda bukan approver untuk step ini.');
+            abort(403, __('approval.Anda bukan approver untuk step ini.'));
         }
 
         // Check if step is waiting for approval
         if (!$step->isWaiting()) {
-            return back()->with('error', 'Step ini tidak dalam status menunggu approval.');
+            return back()->with('error', __('approval.Step ini tidak dalam status menunggu approval.'));
         }
 
         $step->load(['process.company', 'process.initiator', 'process.steps.approver', 'approver']);
@@ -122,7 +122,7 @@ class ApprovalProcessController extends Controller
 
         // Check if user is the approver
         if ($step->user_id !== Auth::id()) {
-            abort(403, 'Anda bukan approver untuk step ini.');
+            abort(403, __('approval.Anda bukan approver untuk step ini.'));
         }
 
         $user = Auth::user()->loadMissing(['division', 'dept']);
@@ -135,16 +135,16 @@ class ApprovalProcessController extends Controller
             'notes' => 'nullable|required_if:action,reject|string|max:1000',
             'term_of_payment' => [Rule::requiredIf($requiresFinancialTermsOnApprove), 'nullable', 'string', 'max:255'],
             'credit_limit' => [Rule::requiredIf($requiresFinancialTermsOnApprove), 'nullable', 'integer', 'min:0', 'max:2147483647'],
-        ], [
-            'action.required' => 'Aksi harus dipilih.',
-            'action.in' => 'Aksi tidak valid.',
-            'notes.max' => 'Catatan maksimal 1000 karakter.',
-            'notes.required_if' => 'Alasan penolakan wajib diisi.',
-            'term_of_payment.required' => 'Term of payment wajib diisi oleh PIC FAT–Finance.',
-            'credit_limit.required' => 'Credit limit wajib diisi oleh PIC FAT–Finance.',
-            'credit_limit.integer' => 'Credit limit harus berupa bilangan bulat.',
-            'credit_limit.min' => 'Credit limit tidak boleh kurang dari 0.',
-        ]);
+        ], array_merge(__('approval_validation.messages'), [
+            'action.required' => __('approval.Aksi harus dipilih.'),
+            'action.in' => __('approval.Aksi tidak valid.'),
+            'notes.max' => __('approval.Catatan maksimal 1000 karakter.'),
+            'notes.required_if' => __('approval.Alasan penolakan wajib diisi.'),
+            'term_of_payment.required' => __('approval.Term of payment wajib diisi oleh PIC FAT–Finance.'),
+            'credit_limit.required' => __('approval.Credit limit wajib diisi oleh PIC FAT–Finance.'),
+            'credit_limit.integer' => __('approval.Credit limit harus berupa bilangan bulat.'),
+            'credit_limit.min' => __('approval.Credit limit tidak boleh kurang dari 0.'),
+        ]), __('approval_validation.attributes'));
 
         try {
             $this->approvalService->processApprovalAction(
@@ -157,15 +157,16 @@ class ApprovalProcessController extends Controller
             );
 
             $message = $request->action === 'approve'
-                ? 'Data berhasil disetujui!'
-                : 'Data berhasil ditolak!';
+                ? __('approval.Data berhasil disetujui!')
+                : __('approval.Data berhasil ditolak!');
 
             return redirect()
                 ->route('admin.approvals.show', $step->approval_id)
                 ->with('success', $message);
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            report($e);
+            return back()->withInput()->with('error', __('approval.action_failed'));
         }
     }
 
@@ -187,14 +188,14 @@ class ApprovalProcessController extends Controller
         if (!$user->office || !$user->dept ||
             $approval->department_id !== $user->dept->id ||
             $approval->location_id !== $user->office->id) {
-            abort(403, 'Anda tidak memiliki akses ke approval ini.');
+            abort(403, __('approval.Anda tidak memiliki akses ke approval ini.'));
         }
     }
 
     protected function ensureApprovalRole($user): void
     {
         if (!$user || !$user->hasAnyRole(['super-admin', 'admin', 'super-user'])) {
-            abort(403, 'Anda tidak memiliki izin untuk mengakses approval.');
+            abort(403, __('approval.Anda tidak memiliki izin untuk mengakses approval.'));
         }
     }
 
@@ -204,7 +205,7 @@ class ApprovalProcessController extends Controller
             return;
         }
         if (!$user->office || !$user->dept) {
-            abort(403, 'Office dan department pengguna belum dikonfigurasi.');
+            abort(403, __('approval.Office dan department pengguna belum dikonfigurasi.'));
         }
         $query->where('location_id', $user->office->id)
             ->where('department_id', $user->dept->id);
@@ -218,7 +219,7 @@ class ApprovalProcessController extends Controller
         $approval = $this->approvalService->getApprovalProcess($companyId);
 
         if (!$approval) {
-            return back()->with('error', 'Tidak ada riwayat approval untuk data ini.');
+            return back()->with('error', __('approval.Tidak ada riwayat approval untuk data ini.'));
         }
 
         $this->authorizeAccess($approval);

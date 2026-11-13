@@ -213,7 +213,7 @@
             </div>
             <div class="page-actions">
                 <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}" class="btn btn-outline-secondary">
-                    <i class="material-icons align-middle mr-1" aria-hidden="true">arrow_back</i> Detail
+                    <i class="material-icons align-middle mr-1" aria-hidden="true">arrow_back</i> {{ __('submission.Detail') }}
                 </a>
             </div>
         </div>
@@ -346,7 +346,7 @@
                         <div>
                             <input id="new_attachments" type="file" name="new_attachments[]" class="attachment-input" accept=".pdf,.jpg,.jpeg,.png" multiple>
                             <label for="new_attachments" class="btn btn-outline-primary attachment-picker__button mb-0">
-                                <i class="fas fa-upload mr-1" aria-hidden="true"></i> Choose files
+                                <i class="fas fa-upload mr-1" aria-hidden="true"></i> {{ __('submission.Choose files') }}
                             </label>
                         </div>
                     </div>
@@ -357,7 +357,7 @@
                 <div class="card-footer sticky-actions">
                     <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}" class="btn btn-outline-secondary">{{ __('admin.Cancel') }}</a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save mr-1" aria-hidden="true"></i> Save Changes
+                        <i class="fas fa-save mr-1" aria-hidden="true"></i> {{ __('admin.Save Changes') }}
                     </button>
                 </div>
             </div>
@@ -428,9 +428,9 @@
                 const button = shell.querySelector('[data-map-fullscreen]');
                 if (!button) return;
                 button.querySelector('i').className = active ? 'fas fa-compress' : 'fas fa-expand';
-                button.querySelector('span').textContent = active ? 'Exit fullscreen' : 'Fullscreen';
-                button.setAttribute('aria-label', active ? 'Exit fullscreen map' : 'Open fullscreen map');
-                button.setAttribute('title', active ? 'Exit fullscreen map' : 'Open fullscreen map');
+                button.querySelector('span').textContent = active ? @json(__('form_links_audit.Exit fullscreen')) : @json(__('form_links_audit.Fullscreen'));
+                button.setAttribute('aria-label', active ? @json(__('form_links_audit.Exit fullscreen map')) : @json(__('form_links_remaining.Open fullscreen map')));
+                button.setAttribute('title', active ? @json(__('form_links_audit.Exit fullscreen map')) : @json(__('form_links_remaining.Open fullscreen map')));
             }
 
             function resizeAddressMap(row) {
@@ -620,7 +620,7 @@
                     : $('<input class="form-control address-' + type + '-input" maxlength="100" required>');
                 $control.attr('id', id)
                     .attr('name', name)
-                    .attr('aria-label', type === 'city' ? 'City or regency' : 'Province')
+                    .attr('aria-label', type === 'city' ? @json(__('form_links_remaining.City or regency')) : @json(__('form_links_remaining.Province')))
                     .attr('data-current', current);
                 $old.replaceWith($control);
                 if (useSelect) $control.select2({ width: '100%' });

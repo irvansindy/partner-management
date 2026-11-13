@@ -10,6 +10,8 @@ class FormLinkSubmissionDetailTabsTest extends TestCase
     {
         $view = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/submission_detail.blade.php');
 
+        $view .= file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/_submission_detail_panels.blade.php');
+
         $this->assertStringContainsString('id="submission-detail-tabs"', $view);
         $this->assertStringContainsString('role="tablist"', $view);
         $this->assertStringContainsString('id="approval-pane"', $view);

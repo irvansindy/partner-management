@@ -27,4 +27,9 @@ class ResetPasswordController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+
+    protected function validationErrorMessages()
+    {
+        return array_merge(__('public_validation.messages'), __('public_validation.auth'));
+    }
 }

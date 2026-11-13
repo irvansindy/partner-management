@@ -40,7 +40,7 @@
             </div>
             <div class="page-actions">
                 <a href="{{ route('admin.form-links.show', $formLink) }}" class="btn btn-outline-secondary">
-                    <i class="material-icons align-middle mr-1" aria-hidden="true">arrow_back</i> Form Link
+                    <i class="material-icons align-middle mr-1" aria-hidden="true">arrow_back</i> {{ __('form_links_audit.Form Link') }}
                 </a>
             </div>
         </div>
@@ -95,7 +95,7 @@
                                     <span class="company-name">{{ $company->name }}</span>
                                     @if($company->group_name)<br><small class="text-muted">{{ $company->group_name }}</small>@endif
                                 </td>
-                                <td><span class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">{{ ucfirst($company->type) }}</span></td>
+                                <td><span class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">{{ __('admin.' . ucfirst($company->type ?? '')) }}</span></td>
                                 <td>{{ Str::limit($company->business_classification, 30) }}</td>
                                 <td>{{ $company->email_address ?? '-' }}</td>
                                 <td>{{ $company->created_at->locale(app()->getLocale())->translatedFormat('d M Y') }}<br><small class="text-muted">{{ $company->created_at->format('H:i') }}</small></td>
@@ -110,19 +110,19 @@
                                         @if($approval->isApproved())
                                             <span class="badge badge-success"><i class="fas fa-check" aria-hidden="true"></i> {{ __('admin.Approved') }}</span>
                                             <small class="d-block text-muted mt-1">{{ __('form_links.approved_count', ['done' => $completedSteps, 'total' => $totalSteps]) }}</small>
-                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
+                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="{{ __('form_links_remaining.Approval progress') }} {{ round($progress) }}%">
                                                 <div class="progress-bar bg-success" style="width: {{ $progress }}%"></div>
                                             </div>
                                         @elseif($approval->isRejected())
                                             <span class="badge badge-danger"><i class="fas fa-times" aria-hidden="true"></i> {{ __('admin.Rejected') }}</span>
                                             <small class="d-block text-muted mt-1">{{ __('form_links.rejected_count', ['done' => $completedSteps, 'total' => $totalSteps]) }}</small>
-                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
+                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="{{ __('form_links_remaining.Approval progress') }} {{ round($progress) }}%">
                                                 <div class="progress-bar bg-danger" style="width: {{ $progress }}%"></div>
                                             </div>
                                         @else
                                             <span class="badge badge-warning"><i class="fas fa-clock" aria-hidden="true"></i> {{ __('admin.In Progress') }}</span>
                                             <small class="d-block text-muted mt-1">{{ __('form_links.progress', ['done' => $completedSteps, 'total' => $totalSteps]) }}</small>
-                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
+                                            <div class="progress progress-xs mt-1 approval-progress" aria-label="{{ __('form_links_remaining.Approval progress') }} {{ round($progress) }}%">
                                                 <div class="progress-bar bg-warning" style="width: {{ $progress }}%"></div>
                                             </div>
                                         @endif
@@ -133,20 +133,20 @@
                                 <td>
                                     <div class="submission-actions">
                                         <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}"
-                                            class="btn btn-info form-link-action" aria-label="View submission details for {{ $company->name }}" title="{{ __('form_links_remaining.View details') }}">
+                                            class="btn btn-info form-link-action" aria-label="{{ __('form_links_remaining.View submission details for :name', ['name' => $company->name]) }}" title="{{ __('form_links_remaining.View details') }}">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
                                         @if ($company->can_edit_submission)
                                             <a href="{{ route('admin.form-links.submission-edit', [$formLink, $company->id]) }}"
                                                 class="btn btn-outline-secondary form-link-action"
-                                                aria-label="Edit submission for {{ $company->name }}"
+                                                aria-label="{{ __('form_links_remaining.Edit submission for :name', ['name' => $company->name]) }}"
                                                 title="{{ __('form_links_remaining.Edit submission') }}">
                                                 <i class="fas fa-pen" aria-hidden="true"></i>
                                             </a>
                                         @endif
                                         @if($company->hasApproval())
                                             <a href="{{ route('admin.approvals.company.history', $company->id) }}"
-                                                class="btn btn-primary form-link-action" aria-label="View approval history for {{ $company->name }}" title="{{ __('form_links_remaining.Approval history') }}">
+                                                class="btn btn-primary form-link-action" aria-label="{{ __('form_links_remaining.View approval history for :name', ['name' => $company->name]) }}" title="{{ __('form_links_remaining.Approval history') }}">
                                                 <i class="fas fa-history" aria-hidden="true"></i>
                                             </a>
                                         @endif

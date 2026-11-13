@@ -78,7 +78,7 @@
             </div>
             <div class="page-actions">
                 <a href="{{ route('admin.form-links.index') }}" class="btn btn-outline-secondary">
-                    <i class="material-icons align-middle mr-1">arrow_back</i> Form Links
+                    <i class="material-icons align-middle mr-1">arrow_back</i> {{ __('submission.Form Links') }}
                 </a>
             </div>
         </div>
@@ -105,7 +105,7 @@
                                 <th>{{ __('admin.Form Type') }}</th>
                                 <td>
                                     <span class="badge badge-{{ $formLink->form_type === 'vendor' ? 'info' : 'success' }}">
-                                        {{ ucfirst($formLink->form_type) }}
+                                        {{ __('admin.' . ucfirst($formLink->form_type ?? '')) }}
                                     </span>
                                 </td>
                             </tr>
@@ -166,7 +166,7 @@
                                     id="public-link" readonly>
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" type="button" onclick="copyPublicLink()">
-                                        <i class="fas fa-copy"></i> Copy
+                                        <i class="fas fa-copy"></i> {{ __('submission.Copy') }}
                                     </button>
                                 </div>
                             </div>
@@ -195,12 +195,12 @@
                             <a href="{{ route('admin.form-links.edit', $formLink) }}"
                                 class="btn btn-outline-secondary form-detail-action">
                                 <i class="fas fa-edit" aria-hidden="true"></i>
-                                <span>Edit form</span>
+                                <span>{{ __('submission.Edit form') }}</span>
                             </a>
                             <a href="{{ $formLink->getPublicUrl() }}" target="_blank" rel="noopener noreferrer"
                                 class="btn btn-outline-secondary form-detail-action">
                                 <i class="fas fa-external-link-alt" aria-hidden="true"></i>
-                                <span>Open public form</span>
+                                <span>{{ __('submission.Open public form') }}</span>
                             </a>
                             <form action="{{ route('admin.form-links.toggle-status', $formLink) }}" method="POST">
                                 @csrf
@@ -239,7 +239,7 @@
                                         <td>
                                             <span
                                                 class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">
-                                                {{ ucfirst($company->type) }}
+                                                {{ __('admin.' . ucfirst($company->type ?? '')) }}
                                             </span>
                                         </td>
                                         <td>{{ $company->email_address }}</td>
@@ -247,7 +247,7 @@
                                         <td>
                                             <a href="{{ route('admin.form-links.submission-detail', [$formLink, $company->id]) }}"
                                                 class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i> View
+                                                <i class="fas fa-eye"></i> {{ __('submission.View') }}
                                             </a>
                                         </td>
                                     </tr>

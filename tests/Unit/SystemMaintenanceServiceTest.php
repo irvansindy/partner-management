@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Services\SystemMaintenanceService;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class SystemMaintenanceServiceTest extends TestCase
 {

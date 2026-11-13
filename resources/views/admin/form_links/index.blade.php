@@ -29,7 +29,7 @@
             @if (\Auth::user()->roles[0]->name == 'admin' || \Auth::user()->roles[0]->name == 'super-user')
                 <div class="page-actions">
                     <a href="{{ route('admin.form-links.create') }}" class="btn btn-primary waves-effect">
-                        <i class="material-icons align-middle mr-1">add_link</i> Create Form Link
+                        <i class="material-icons align-middle mr-1">add_link</i> {{ __('admin.Create Form Link') }}
                     </a>
                 </div>
             @endif
@@ -73,7 +73,7 @@
                                 <td>{{ $formLink->title }}</td>
                                 <td>
                                     <span class="badge badge-{{ $formLink->form_type === 'vendor' ? 'info' : 'success' }}">
-                                        {{ ucfirst($formLink->form_type) }}
+                                        {{ __('admin.' . ucfirst($formLink->form_type ?? '')) }}
                                     </span>
                                 </td>
                                 <td>

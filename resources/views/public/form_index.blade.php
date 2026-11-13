@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', isset($formLink) ? $formLink->title : 'Partner Registration')
+@section('title', isset($formLink) ? $formLink->title : __('public_form.Partner Registration'))
 
 @section('content')
     <div class="public-form-page">
@@ -17,7 +17,7 @@
                 <p>{{ __('messages.Public Registration Subtitle') }}</p>
             </div>
             @if (isset($formLink))
-                <span class="public-form-type">{{ __('messages.Public Application', ['type' => ucfirst($formLink->form_type)]) }}</span>
+                <span class="public-form-type">{{ __('messages.Public Application', ['type' => __('messages.Dashboard ' . ucfirst($formLink->form_type))]) }}</span>
             @endif
         </div>
 
@@ -99,7 +99,7 @@
                                                 <i class="fas fa-clipboard-check"></i> {{ __('messages.Survey Result') }}
                                             </h5>
                                             <small class="text-muted">
-                                                Survey data membantu kami memahami kebutuhan bisnis Anda lebih baik
+                                                {{ __('public_form.Survey data membantu kami memahami kebutuhan bisnis Anda lebih baik') }}
                                             </small>
                                         </div>
                                         <div class="form-check form-switch">
@@ -108,7 +108,7 @@
                                                 {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="survey_form_switch">
                                                 <span id="switch_label">
-                                                    {{ !isset($formLink) || $formLink->form_type === 'customer' ? 'Hide Survey' : 'Show Survey' }}
+                                                    {{ !isset($formLink) || $formLink->form_type === 'customer' ? __('messages.Public Hide Survey') : __('messages.Public Show Survey') }}
                                                 </span>
                                             </label>
                                         </div>

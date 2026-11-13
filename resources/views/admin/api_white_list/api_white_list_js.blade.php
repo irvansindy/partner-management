@@ -29,6 +29,7 @@
 
         var table = $('#ip_address_table').DataTable({
             processing: true,
+            language: @json(__('settings.datatable')),
             // serverSide: true,
             ajax: {
                 url: "{{ route('ip-whitelist.fetch') }}",
@@ -42,26 +43,26 @@
                 },
                 {
                     "data": "ip_address",
-                    "defaultContent": "<i>Not set</i>"
+                    "defaultContent": @json(__('settings.Not set'))
                 },
                 {
                     "data": "description",
-                    "defaultContent": "<i>Not set</i>",
+                    "defaultContent": @json(__('settings.Not set')),
                     "render": function(data) {
-                        return stripHtml(data) || '<i>Not set</i>';
+                        return stripHtml(data) || @json(__('settings.Not set'));
                     }
                 },
                 {
                     'data': null,
-                    title: 'Action',
+                    title: @json(__('settings.Action')),
                     wrap: true,
                     "render": function(item) {
                         let editButton = $('<button>', {
                             type: 'button',
                             class: 'table-action table-action--edit edit_ip_address',
                             html: '<i class="fas fa-pen" aria-hidden="true"></i>',
-                            title: 'Edit IP address',
-                            'aria-label': 'Edit IP address',
+                            title: @json(__('settings.Edit IP address')),
+                            'aria-label': @json(__('settings.Edit IP address')),
                             'data-id': item.id,
                             'data-toggle': 'modal',
                             'data-target': '#formIpAddress'
@@ -70,15 +71,15 @@
                             type: 'button',
                             class: 'table-action table-action--delete delete_ip_address',
                             html: '<i class="fas fa-trash" aria-hidden="true"></i>',
-                            title: 'Delete IP address',
-                            'aria-label': 'Delete IP address',
+                            title: @json(__('settings.Delete IP address')),
+                            'aria-label': @json(__('settings.Delete IP address')),
                             'data-id': item.id
                         });
 
                         return $('<div>', {
                             class: 'table-actions',
                             role: 'group',
-                            'aria-label': 'IP address actions'
+                            'aria-label': @json(__('settings.IP address actions'))
                         })
                             .append(editButton, deleteButton)
                             .prop('outerHTML');
@@ -132,8 +133,8 @@
                     var response = xhr.responseJSON || {};
                     var message = response.meta && response.meta.message
                         ? response.meta.message
-                        : 'Gagal mengambil detail IP address.';
-                    toastr.error(message, 'Error');
+                        : @json(__('settings.Gagal mengambil detail IP address.'));
+                    toastr.error(message, @json(__('settings.Error')));
                 }
             });
         });
@@ -143,7 +144,7 @@
 
             var id = $(this).data('id');
             var ipAddress = $(this).closest('tr').find('td').eq(1).text().trim();
-            $('#delete_ip_address_message').text('Yakin akan menghapus IP address ' + ipAddress + ' ?');
+            $('#delete_ip_address_message').text(@json(__('settings.delete_ip_named')).replace(':ip', ipAddress));
             $('#confirm_delete_ip_address').attr('data-delete_ip_id', id);
             $('#confirmDeleteIpAddress').modal('show');
         });
@@ -165,15 +166,15 @@
                     table.ajax.reload(null, false);
                     var successMessage = res.meta && res.meta.message
                         ? res.meta.message
-                        : 'IP address berhasil dihapus.';
-                    toastr.success(successMessage, 'Success');
+                        : @json(__('settings.IP address berhasil dihapus.'));
+                    toastr.success(successMessage, @json(__('settings.Success')));
                 },
                 error: function(xhr) {
                     var response = xhr.responseJSON || {};
                     var errorMessage = response.meta && response.meta.message
                         ? response.meta.message
-                        : 'Gagal menghapus IP address.';
-                    toastr.error(errorMessage, 'Error');
+                        : @json(__('settings.Gagal menghapus IP address.'));
+                    toastr.error(errorMessage, @json(__('settings.Error')));
                 }
             });
         });
@@ -195,15 +196,15 @@
                     table.ajax.reload();
                     let successMessage = res.meta && res.meta.message
                         ? res.meta.message
-                        : 'IP address berhasil disimpan.';
-                    toastr.success(successMessage, 'Success');
+                        : @json(__('settings.IP address berhasil disimpan.'));
+                    toastr.success(successMessage, @json(__('settings.Success')));
                 },
                 error: function(xhr) {
                     let response_error = JSON.parse(xhr.responseText)
                     if (response_error.meta.code === 500 || response_error.meta.code ===
                         400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('settings.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -219,9 +220,9 @@
                             $('#message_' + i).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('settings.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('settings.Harap isi data yang masih kosong')),
                             delay: 10000,
                             autohide: true,
                             fade: true,

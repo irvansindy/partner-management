@@ -49,7 +49,7 @@ class PublicAddressMarkupTest extends TestCase
         $this->assertStringContainsString('templateResult: countryOptionMarkup', $html);
         $this->assertStringContainsString('templateSelection: countryOptionMarkup', $html);
         $this->assertStringContainsString("route('reverse-map')", $html);
-        $this->assertStringContainsString('{ draggable: true }', $html);
+        $this->assertStringContainsString('draggable: true', $html);
         $this->assertStringContainsString("marker.on('dragend'", $html);
         $this->assertStringContainsString("map.on('click'", $html);
         $this->assertStringContainsString('hasSelection: false', $html);

@@ -37,4 +37,9 @@ class ConfirmPasswordController extends Controller
     {
         $this->middleware('auth');
     }
+
+    protected function validationErrorMessages()
+    {
+        return array_merge(__('public_validation.messages'), __('public_validation.auth'));
+    }
 }

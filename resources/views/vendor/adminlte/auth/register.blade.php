@@ -53,7 +53,7 @@
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
-            <span class="form-text text-muted" style="font-size: 10px !important;">Gunakan minimal 8 karakter, termasuk huruf besar, huruf kecil, angka, dan simbol.</span>
+            <span class="form-text text-muted" style="font-size: 10px !important;">{{ __('public_form.password_help') }}</span>
             @error('password')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>

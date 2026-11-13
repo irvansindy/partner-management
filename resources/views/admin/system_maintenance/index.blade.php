@@ -44,7 +44,7 @@
         </div>
 
         @if ($result)
-            <section class="maintenance-result" aria-live="polite" aria-label="Last command result">
+            <section class="maintenance-result" aria-live="polite" aria-label="{{ __('maintenance.Last command result') }}">
                 <div class="maintenance-result__header">
                     <strong><i class="fas {{ $result['success'] ? 'fa-check-circle' : 'fa-exclamation-circle' }} mr-1" aria-hidden="true"></i>{{ $result['label'] }}</strong>
                     <span class="maintenance-result__status">{{ $result['success'] ? __('tools.Completed') : (($result['busy'] ?? false) ? __('tools.Already running') : __('tools.Failed')) }}</span>
@@ -69,7 +69,7 @@
                                 @csrf
                                 <input type="hidden" name="command" value="{{ $key }}">
                                 <button type="submit" class="btn {{ $command['confirmation'] ? 'btn-primary' : 'btn-outline-primary' }}">
-                                    <i class="fas fa-play mr-1" aria-hidden="true"></i> Run
+                                    <i class="fas fa-play mr-1" aria-hidden="true"></i> {{ __('tools.Run') }}
                                 </button>
                             </form>
                         </article>
@@ -99,7 +99,7 @@
                     Swal.fire({
                         icon: 'warning',
                         title: @json(__('tools.Run maintenance command?')),
-                        text: form.dataset.commandLabel + @json(__('tools. may temporarily affect application performance.')),
+                        text: @json(__('maintenance.confirm_effect')).replace(':label', form.dataset.commandLabel),
                         showCancelButton: true,
                         confirmButtonText: @json(__('tools.Run command')),
                         cancelButtonText: @json(__('tools.Cancel')),

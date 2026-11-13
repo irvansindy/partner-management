@@ -40,7 +40,7 @@
 </style>
 
 <h3>Data Export Perusahaan</h3>
-<p class="sub">Tanggal Export: {{ date('d-m-Y H:i:s') }}</p>
+<p class="sub">{{ __('data_tools.export_date', ['date' => now()->locale(app()->getLocale())->translatedFormat('d M Y H:i:s')]) }}</p>
 
 <table>
     <thead>
@@ -71,39 +71,39 @@
 @php
     // Label mapping: field value → label tampil di header
     $fieldLabels = [
-        'name'                          => 'Nama Perusahaan',
-        'group_name'                    => 'Group Perusahaan',
-        'type'                          => 'Jenis',
-        'established_year'              => 'Tahun Berdiri',
-        'total_employee'                => 'Jumlah Karyawan',
-        'business_classification'       => 'Klasifikasi Bisnis',
-        'business_classification_detail'=> 'Detail Bisnis',
-        'other_business'                => 'Bisnis Lainnya',
+        'name'                          => __('tools.Nama Perusahaan'),
+        'group_name'                    => __('data_tools.Group Perusahaan'),
+        'type'                          => __('data_tools.Jenis'),
+        'established_year'              => __('tools.Tahun Berdiri'),
+        'total_employee'                => __('tools.Jumlah Karyawan'),
+        'business_classification'       => __('tools.Klasifikasi Bisnis'),
+        'business_classification_detail'=> __('tools.Detail Bisnis'),
+        'other_business'                => __('tools.Bisnis Lainnya'),
         'npwp'                          => 'NPWP',
-        'website_address'               => 'Website',
-        'system_management'             => 'Jenis Sertifikat',
+        'website_address'               => __('partner.Website'),
+        'system_management'             => __('tools.Jenis Sertifikat'),
         'email_address'                 => 'Email',
-        'credit_limit'                  => 'Batas Kredit',
-        'term_of_payment'               => 'Jangka Waktu',
+        'credit_limit'                  => __('tools.Batas Kredit'),
+        'term_of_payment'               => __('data_tools.Jangka Waktu'),
         // Contact
-        'contact_name'                  => 'Nama Kontak',
-        'contact_position'              => 'Jabatan Kontak',
-        'contact_department'            => 'Dept. Kontak',
-        'contact_email'                 => 'Email Kontak',
-        'contact_telephone'             => 'Telepon Kontak',
+        'contact_name'                  => __('tools.Nama Kontak'),
+        'contact_position'              => __('tools.Jabatan Kontak'),
+        'contact_department'            => __('data_tools.Dept. Kontak'),
+        'contact_email'                 => __('tools.Email Kontak'),
+        'contact_telephone'             => __('tools.Telepon Kontak'),
         // Address
-        'address'                       => 'Alamat',
-        'zip_code'                      => 'Kode Pos',
-        'telephone_address'             => 'Telepon Alamat',
+        'address'                       => __('data_tools.Alamat'),
+        'zip_code'                      => __('data_tools.Kode Pos'),
+        'telephone_address'             => __('data_tools.Telepon Alamat'),
         'fax'                           => 'Fax',
         // Bank
-        'bank_name'                     => 'Nama Bank',
-        'account_name'                  => 'Nama Akun',
-        'account_number'                => 'Nomor Akun',
+        'bank_name'                     => __('tools.Nama Bank'),
+        'account_name'                  => __('data_tools.Nama Akun'),
+        'account_number'                => __('data_tools.Nomor Akun'),
         // Liable
-        'liable_name'                   => 'Nama Penanggung Jawab',
-        'liable_nik'                    => 'NIK Penanggung Jawab',
-        'liable_position'               => 'Jabatan Penanggung Jawab',
+        'liable_name'                   => __('tools.Nama Penanggung Jawab'),
+        'liable_nik'                    => __('tools.NIK Penanggung Jawab'),
+        'liable_position'               => __('tools.Jabatan Penanggung Jawab'),
     ];
 
     // Kelompokkan field berdasarkan sumber datanya
@@ -150,8 +150,8 @@
     .no-data    { text-align: center; color: #888; font-style: italic; }
 </style>
 
-<h3>Data Export Perusahaan</h3>
-<p class="sub">Tanggal Export: {{ date('d-m-Y H:i:s') }}</p>
+<h3>{{ __('data_tools.Data Export Perusahaan') }}</h3>
+<p class="sub">{{ __('data_tools.export_date', ['date' => now()->locale(app()->getLocale())->translatedFormat('d M Y H:i:s')]) }}</p>
 
 <table>
     <thead>
@@ -206,6 +206,8 @@
                         @elseif (in_array($field, $liableFields))
                             {{ $liableData[$field] ?: '-' }}
 
+                        @elseif ($field === 'type')
+                            {{ __('messages.Dashboard ' . ucfirst($company->type)) }}
                         @else
                             {{ $company->{$field} ?? '-' }}
                         @endif
@@ -215,7 +217,7 @@
         @empty
             <tr>
                 <td colspan="{{ count($selectedFields) + 1 }}" class="no-data">
-                    Tidak ada data
+                    {{ __('data_tools.Tidak ada data') }}
                 </td>
             </tr>
         @endforelse

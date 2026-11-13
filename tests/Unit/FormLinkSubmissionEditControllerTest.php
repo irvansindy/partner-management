@@ -78,7 +78,7 @@ class FormLinkSubmissionEditControllerTest extends TestCase
         $controller = file_get_contents(dirname(__DIR__, 2).'/app/Http/Controllers/Admin/FormLinkController.php');
 
         $this->assertStringContainsString("Log::error('Submission update failed'", $controller);
-        $this->assertStringContainsString("'Gagal menyimpan perubahan submission. Silakan periksa data dan coba kembali.'", $controller);
+        $this->assertStringContainsString("__('form_links.Gagal menyimpan perubahan submission. Silakan periksa data dan coba kembali.')", $controller);
         $this->assertStringNotContainsString("'Gagal mengupdate data: ' . \$e->getMessage()", $controller);
     }
 }

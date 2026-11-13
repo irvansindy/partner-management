@@ -175,32 +175,33 @@
     <div class="partner-page">
         <div class="partner-page-header">
             <div>
-                <h2>Partner Management</h2>
-                <p>Review partner records, approval status, and company details.</p>
+                <h2>{{ __('partner.Partner Management') }}</h2>
+                <p>{{ __('partner.Review partner records, approval status, and company details.') }}</p>
             </div>
             <div class="partner-actions">
                 @if (in_array(auth()->user()->roles->pluck('name')[0], ['super-admin', 'admin', 'super-user']))
-                    <a href="{{ route('export-excel') }}" class="btn btn-outline-success waves-effect" target="_blank" title="Export Excel">
+                    <a href="{{ route('export-excel') }}" class="btn btn-outline-success waves-effect" target="_blank" title="{{ __('partner.Export Excel') }}">
                         <i class="material-icons">description</i>
                         <span class="d-none d-md-inline">Excel</span>
                     </a>
-                    <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger waves-effect" target="_blank" title="Export PDF">
+                    <a href="{{ route('export-pdf') }}" class="btn btn-outline-danger waves-effect" target="_blank" title="{{ __('partner.Export PDF') }}">
                         <i class="material-icons">picture_as_pdf</i>
                         <span class="d-none d-md-inline">PDF</span>
                     </a>
                 @endif
                 @if (auth()->user()->roles->pluck('name')[0] === 'super-user')
-                    <a href="{{ route('create-partner') }}" class="btn btn-primary waves-effect" target="_blank" title="Create partner">
+                    <a href="{{ route('create-partner') }}" class="btn btn-primary waves-effect" target="_blank" title="{{ __('partner.Create partner') }}">
                         <i class="material-icons">add</i>
-                        <span class="d-none d-md-inline">Partner</span>
+                        <span class="d-none d-md-inline">{{ __('partner.Partner') }}</span>
                     </a>
                 @endif
             </div>
         </div>
 
+        <div id="partner-list-error" class="alert alert-danger d-none" role="alert"></div>
         <div class="card partner-table-card">
             <div class="card-header">
-                <h5>Partner List</h5>
+                <h5>{{ __('partner.Partner List') }}</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -209,7 +210,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>{{ __('admin.Company Name') }}</th>
-                                <th>Group Name</th>
+                                <th>{{ __('partner.Group Name') }}</th>
                                 <th>{{ __('admin.Status') }}</th>
                                 <th>#</th>
                             </tr>

@@ -5,13 +5,13 @@ Tanggal inventaris: 12 November 2026. Bahasa: Indonesia (`id`) dan Inggris (`en`
 ## Status task
 
 - [x] Task 1: inventaris route, kelompok tampilan, pesan JavaScript, dan respons backend.
-- [ ] Task 2: Form Links dan Submission.
-- [ ] Task 3: Approval dan pengaturan approval.
-- [ ] Task 4: Dashboard dan Partner List.
-- [ ] Task 5: pengaturan pengguna, menu, role/permission, organisasi dan IP whitelist.
-- [ ] Task 6: export/import, preview, PDF, template spreadsheet dan impor kode pos.
-- [ ] Task 7: System Maintenance.
-- [ ] Task 8: form public, create partner internal, success/closed dan autentikasi.
+- [x] Task 2: Form Links dan Submission (implementasi selesai; QA browser lanjutan pada Task 10).
+- [x] Task 3: Approval dan pengaturan approval (implementasi selesai; QA browser lanjutan pada Task 10).
+- [x] Task 4: Dashboard dan Partner List (implementasi selesai; QA browser lanjutan pada Task 10).
+- [x] Task 5: pengaturan pengguna, menu, role/permission, organisasi dan IP whitelist (implementasi selesai; QA browser lanjutan pada Task 10).
+- [x] Task 6: export/import, preview, PDF, template spreadsheet dan impor kode pos (implementasi selesai; QA browser lanjutan pada Task 10).
+- [x] Task 7: System Maintenance (implementasi selesai; QA browser lanjutan pada Task 10).
+- [x] Task 8: form public, create partner internal, success/closed dan autentikasi (implementasi selesai; QA browser lanjutan pada Task 10).
 - [ ] Task 9: tender, EULA, home dan supporting documents.
 - [ ] Task 10: audit sisa teks, kesamaan key, tes render dan pemeriksaan browser ID/EN.
 
@@ -25,8 +25,8 @@ Task 1 selesai berarti sumber dan kategori pekerjaan telah dipetakan, bukan selu
 | 2 | submission list/detail/edit/PDF | `submissions`, `submission_detail`, `_submission_detail_panels`, `submission_edit`, `_submission_edit_row`, `export_submission_pdf` pada folder di atas | Search company/email; label Progress/Approved/Rejected dengan angka; judul loading `Menyimpan perubahan`, pesan error/success; atribut aksesibilitas; status/pesan kosong; PDF mengikuti locale. Panel juga digunakan Partner List. |
 | 3 | `/admin/approvals`, `/my/pending`, detail, action, history | `resources/views/admin/approvals/{index,my_approvals,show,action}.blade.php`; `Admin/ApprovalProcessController`; `ApprovalService` | Placeholder `Search company or type`, `Add supporting notes or a rejection reason`, `Contoh: 30 hari`; tanggal relatif; current step, notes, progress; pesan keputusan/otorisasi/validasi. |
 | 3 | `/approval-setting` | `resources/views/admin/approval_setting/*`; `ApprovalSettingController` | Status Active/Inactive dari backend, pengaturan parallel stage, tombol dinamis, dialog hapus, Select2 dan validation response. |
-| 4 | `/dashboard` dan endpoint data | `resources/views/admin/dashboard/{index_live,live_js}.blade.php`; `DashboardController` | Audit popup pin Vendor/Customer, grafik, empty/error state dan DataTable. Sebagian besar copy dashboard sudah memakai `messages.*`. |
-| 4 | `/partner-list` dan detail/export | `resources/views/partner/{index,partner_management_js,public_detail_modal}.blade.php`; panel submission bersama; `PartnerManagementController` | Header/deskripsi, title/aria-label tombol dinamis, loading/error detail, judul modal/Close, ekspor Excel/PDF. |
+| 4 | `/dashboard` dan endpoint data | `resources/views/admin/dashboard/{index_live,live_js}.blade.php`; `DashboardController` | Implementasi selesai: status API, pesan backend, grafik, popup/kontrol peta, empty/error state dan DataTable ID/EN. Lihat audit Task 4. |
+| 4 | `/partner-list` dan detail/export | `resources/views/partner/{index,partner_management_js,public_detail_modal,export_pdf}.blade.php`; panel submission bersama; `PartnerManagementController`; `PartnerExport` | Implementasi selesai: header, modal detail tanpa approval, aksesibilitas, loading/error, DataTable dan ekspor Excel/PDF ID/EN. QA browser pada Task 10. |
 | 5 | `/user-manage`, `/role-permission`, `/menu-setting`, `/office-setting` | `resources/views/users/*`, `admin/role_and_permission/*`, `admin/menus/*`, `admin/office/*`; controller masing-masing | Copy utama sudah diterjemahkan; audit respons CRUD, validator default, DataTable length/info/search, tooltip, label dinamis dan fallback error. |
 | 5 | `/department-setting`, `/division-setting`, `/ip-whitelist` | `admin/{department,division,api_white_list}/*`; `DepartmentManagementController`, `DivisionManagementController`, `APIWhiteListManageController` | JS `Action`, `Success`, `Error`, `Delete Division?`; backend `Division created/updated/deleted successfully.` dan `department created/updated successfully`; placeholder Description. |
 | 5 | sidebar dan topbar | `components/layout/{sidebar,sidebar-menu-item,topbar}`; `MenuService` | Nama menu berasal dari `menus.name_text`; butuh pemetaan display name yang mempertahankan URL, role dan permission. Logout dan fallback user juga diperiksa. |
@@ -77,23 +77,12 @@ Task 1 selesai berarti sumber dan kategori pekerjaan telah dipetakan, bukan selu
 
 ## Progres Task 2
 
-Status: berjalan, belum selesai.
+Status implementasi: selesai, 13 November 2026. Temuan T2-01–T2-12 ditangani; rincian dan bukti ada di `docs/task-2-multilanguage-audit.md`.
 
-Audit kode akhir tersedia di `docs/task-2-multilanguage-audit.md`. Audit selesai; terdapat 12 kelompok temuan terbuka yang perlu diperbaiki sebelum implementasi Task 2 dapat ditutup.
-
-- [x] Kamus `form_links.php` ID/EN untuk create, placeholder, pencarian, notifikasi salin tautan dan pesan simpan.
-- [x] Label statis tambahan pada halaman Form Links, Submission dan panel detail bersama menggunakan terjemahan.
-- [x] Flash create/update/delete form link dan update submission pada `FormLinkController` menggunakan locale.
-- [x] Judul notifikasi loading/error/success edit submission menggunakan terjemahan.
-- [x] Kompilasi Blade, sintaks controller dan diff diperiksa.
-- [ ] Teks interpolasi status/progress dan tanggal (rasio status dan flash active/inactive sudah diterjemahkan; format tanggal masih perlu diperiksa).
-- [ ] Seluruh tooltip/aria-label dinamis (kontrol DataTable ID/EN sudah diterjemahkan).
-- [ ] Validasi FormLinkStoreRequest/FormLinkUpdateRequest dan validasi nested submission.
-- [ ] Teks bantuan panjang dan dokumen PDF.
-- [ ] Pemeriksaan render dan browser kedua bahasa.
-
-Lanjutan Task 2: pesan custom validasi create/update Form Link dan nama atribut utama sudah menggunakan locale. Validasi nested submission dan PDF masih tersisa. Kompilasi Blade dan sintaks kedua FormRequest berhasil; key `form_links.php` ID/EN cocok.
-
-Pembaruan berikutnya: validasi nested submission (kontak/alamat/PIC/bank/lampiran), judul bagian PDF, pernyataan PDF dan satuan hari sudah memakai terjemahan. Key kamus `form_links`, `submission`, `submission_validation` ID/EN cocok dan Blade terkompilasi. Task tetap terbuka sampai audit sisa teks dan pengujian render/browser selesai; jangan menganggap catatan kompilasi sebagai bukti seluruh tampilan sudah bilingual.
-
-Audit lanjutan: pesan pencarian dan reverse-geocode pada edit submission serta keterangan batas waktu edit sudah diterjemahkan. Pemeriksaan runtime Laravel untuk progres, pencarian alamat dan validasi required dilakukan dalam ID/EN. Masih ditemukan literal pada dropdown wilayah dinamis, aksi detail form, heading PDF lain, dan beberapa tooltip; Task 2 belum memenuhi kriteria selesai.
+- [x] Label halaman, aksi, status/progres, tanggal, tooltip, aria-label dan JavaScript menggunakan locale aktif.
+- [x] Flash/notifikasi dan pesan akses service diterjemahkan.
+- [x] Validasi FormRequest dan nested submission menggunakan pesan dan nama atribut lokal.
+- [x] PDF, kategori/dokumen, jumlah lampiran, tanggal dan angka mengikuti ID/EN.
+- [x] Kesamaan key/placeholder rekursif, render row/panel bersama dan pembuatan PDF mPDF diuji ID/EN.
+- [x] 35 tes terkait lulus; Blade terkompilasi dan diff bersih.
+- [ ] QA interaksi browser ID/EN dan layout PDF secara visual diteruskan ke Task 10. Belum ada klaim pengujian browser atau submit pada database server.

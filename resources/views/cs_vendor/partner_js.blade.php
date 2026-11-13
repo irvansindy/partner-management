@@ -1,6 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    function escapePartnerHtml(value) { return $('<div>').text(value).html(); }
     var partnerFormLocale = @json(app()->getLocale());
     var partnerValidationCopy = {
         title: @json(__('messages.Validation Error')),
@@ -63,17 +64,21 @@
     }
 
     $('#company_type').select2({
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
         width: '100%'
     })
     $('#term_of_payment').select2({
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
         width: '100%'
     })
     $('#total_employee').select2({
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
         width: '100%',
         placeholder: @json(__('messages.Placeholder Total Employee')),
         allowClear: true
     })
     $('#business_classification, .liable-position-select, select[name="province[]"], select[name="city[]"], #select_searched_address_1').select2({
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
         width: '100%'
     })
 
@@ -236,7 +241,7 @@
             <div id="${toastId}" class="toast ${toastClass}" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
                     <strong class="me-auto">${escapeHtml(title)}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="${escapePartnerHtml(@json(__('public_form.Close')))}"></button>
                 </div>
                 <div class="toast-body">${body}</div>
             </div>
@@ -351,6 +356,7 @@
         $("#year_prev_2, #bs_year_minus_2, #fr_year_minus_2").text(currentYear - 2);
 
         $("#input-multiple-file").fileinput({
+            ...@json(__('public_form.fileinput')),
             uploadUrl: false,
             maxFileCount: 10,
             maxFileSize: 5120,
@@ -389,6 +395,7 @@
                 enctype: 'multipart/form-data',
             },
             fileActionSettings: {
+                ...@json(__('public_form.file_actions')),
                 showDrag: true, // Display the drag handle
                 // showZoom: true,
                 showUpload: false, // Tambahkan ini juga di file action settings
@@ -486,6 +493,7 @@
             `;
             $('.dynamic_liable_person').append(newField);
             $('#liable_position_' + index).select2({
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
                 width: '100%'
             });
         });
@@ -649,7 +657,7 @@
                         </div>
                         <div class="col-12 col-md-6 col-xl-1 mb-3 d-flex align-items-end justify-content-end contact-action-column">
                             <div class="d-flex justify-content-end mb-1">
-                                <button type="button" class="btn btn-danger delete_contact" aria-label="Hapus narahubung"><i class="fa fa-minus" aria-hidden="true"></i></button>
+                                <button type="button" class="btn btn-danger delete_contact" aria-label="${escapePartnerHtml(@json(__('public_form.Hapus narahubung')))}"><i class="fa fa-minus" aria-hidden="true"></i></button>
                             </div>
                         </div>
                     </div>
@@ -681,7 +689,8 @@
                     });
                     $provinceSelect.prop('disabled', false);
                     $provinceSelect.select2({
-                        placeholder: 'Select Province',
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
+                        placeholder: @json(__('public_form.Select Province')),
                         width: '100%'
                     });
                 }
@@ -705,7 +714,8 @@
                     });
                     $regencySelect.prop('disabled', false);
                     $regencySelect.select2({
-                        placeholder: 'Select Regency',
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
+                        placeholder: @json(__('public_form.Select Regency')),
                         width: '100%'
                     });
 
@@ -828,7 +838,8 @@
 
             // Disable regency select initially
             $('#select_option_regency_' + index).prop('disabled', true).select2({
-                placeholder: 'Select Regency',
+        language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
+                placeholder: @json(__('public_form.Select Regency')),
                 width: '100%'
             });
         });
@@ -870,7 +881,7 @@
             $('.dynamic_bank').append(`
                 <div class="array_dymanic_bank">
                     <fieldset class="partner-fieldset mb-4">
-                        <legend class="float-none w-auto text-bold">Data Bank</legend>
+                        <legend class="float-none w-auto text-bold">${escapePartnerHtml(@json(__('public_form.Data Bank')))}</legend>
                         <div class="row mt-4">
                             <div class="col-md-4 col-lg-4 col-sm-12 mb-3">
                                 <label for="bank_name_${index}">${escapeHtml(@json(__('messages.Bank Name')))} <span class="text-danger" role="alert">*</span></label>
@@ -908,9 +919,9 @@
             $('.dynamic_add_info').append(`
                 <div class="input-group mb-4 array_add_info">
                     <div class="col-md-2">
-                        <label for="address_add_info">Another Company Address *</label>
+                        <label for="address_add_info">${escapePartnerHtml(@json(__('public_form.Another Company Address *')))}</label>
                         <br>
-                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Alamat Perusahaan lainnya:</p>
+                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${escapePartnerHtml(@json(__('public_form.Alamat Perusahaan lainnya:')))}</p>
                     </div>
                     <div class="col-md-10">
                         <div class="row">
@@ -920,9 +931,9 @@
                             <div class="col-md-auto">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="city_add_info">City *</label>
+                                        <label for="city_add_info">${escapePartnerHtml(@json(__('public_form.City *')))}</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Kota</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${escapePartnerHtml(@json(__('public_form.Kota')))}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="city_add_info[]" id="city_add_info" placeholder="" class="form-control">
@@ -934,9 +945,9 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="country_add_info">Country *</label>
+                                        <label for="country_add_info">${escapePartnerHtml(@json(__('public_form.Country *')))}</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Negara</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${escapePartnerHtml(@json(__('public_form.Negara')))}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="country_add_info[]" id="country_add_info" placeholder="" class="form-control">
@@ -946,9 +957,9 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="province_add_info">Province *</label>
+                                        <label for="province_add_info">${escapePartnerHtml(@json(__('public_form.Province *')))}</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Provinsi</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${escapePartnerHtml(@json(__('public_form.Provinsi')))}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="province_add_info[]" id="province_add_info" placeholder="" class="form-control">
@@ -958,9 +969,9 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="zip_code_add_info">Zip Code *</label>
+                                        <label for="zip_code_add_info">${escapePartnerHtml(@json(__('public_form.Zip Code *')))}</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Kode Pos</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${escapePartnerHtml(@json(__('public_form.Kode Pos')))}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="zip_code_add_info[]" id="zip_code_add_info" placeholder="" class="form-control">
@@ -970,7 +981,7 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="telephone_add_info">Telephone *</label>
+                                        <label for="telephone_add_info">${escapePartnerHtml(@json(__('public_form.Telephone *')))}</label>
                                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area Code] [No.]
                                             Telepon <br>+ [Negara-Area] [No.]</p>
                                     </div>
@@ -982,7 +993,7 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="fax_add_info">Fax *</label>
+                                        <label for="fax_add_info">${escapePartnerHtml(@json(__('public_form.Fax *')))}</label>
                                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area Code] [No.]
                                             Fax <br>+ [Negara-Area] [No.]</p>
                                     </div>
@@ -1020,7 +1031,7 @@
                 $(document).Toasts('create', {
                     title: 'Error',
                     class: 'bg-danger',
-                    body: 'Harap isi data INCOME STATEMENT dan BALANCE SHEET!.',
+                    body: @json(__('public_form.income_required')),
                     delay: 10000,
                     autohide: true,
                     fade: true,
@@ -1034,7 +1045,7 @@
 
                 $('#action_button_confirm_currency').empty()
                 $('#action_button_confirm_currency').html(`
-                    <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
+                    <button type="button" class="btn btn-success" id="confirm_currency">${escapePartnerHtml(@json(__('public_form.Confirm')))}</button>
                 `)
             } else {
                 // Jika semua terisi, buat readonly
@@ -1067,7 +1078,7 @@
                 $('#total_financial_ratio').empty()
                 $('#total_financial_ratio').append(`
                     <div class="card py-2">
-                        <strong><h4>FINANCIAL RATIO</h4></strong>
+                        <strong><h4>${escapePartnerHtml(@json(__('public_form.FINANCIAL RATIO')))}</h4></strong>
                         <table class="table table-bordered mt-3">
                             <thead class="table-light">
                                 <tr>
@@ -1078,42 +1089,42 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Working Capital Ratio</td>
+                                    <td>${escapePartnerHtml(@json(__('public_form.Working Capital Ratio')))}</td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="wc_ratio_" name="wc_ratio_"></td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="wc_ratio_" name="wc_ratio_"></td>
                                 </tr>
                                 <tr>
-                                    <td>Cash Flow Coverage Ratio</td>
+                                    <td>${escapePartnerHtml(@json(__('public_form.Cash Flow Coverage Ratio')))}</td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="cf_coverage_" name="cf_coverage_"></td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="cf_coverage_" name="cf_coverage_"></td>
                                 </tr>
                                 <tr>
-                                    <td>Time Interest Earned Ratio</td>
+                                    <td>${escapePartnerHtml(@json(__('public_form.Time Interest Earned Ratio')))}</td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="tie_ratio_" name="tie_ratio_"></td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="tie_ratio_" name="tie_ratio_"></td>
                                 </tr>
                                 <tr>
-                                    <td>Debt to Asset Ratio</td>
+                                    <td>${escapePartnerHtml(@json(__('public_form.Debt to Asset Ratio')))}</td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="debt_asset_" name="debt_asset_"></td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="debt_asset_" name="debt_asset_"></td>
                                 </tr>
                                 <tr>
-                                    <td>Debt to Asset Ratio</td>
+                                    <td>${escapePartnerHtml(@json(__('public_form.Debt to Asset Ratio')))}</td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="account_receivable_turn_over_" name="account_receivable_turn_over_"></td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="account_receivable_turn_over_" name="account_receivable_turn_over_"></td>
                                 </tr>
                                 <tr>
-                                    <td>Net Profit Margin</td>
+                                    <td>${escapePartnerHtml(@json(__('public_form.Net Profit Margin')))}</td>
                                     <td><input type="number" step="0.01" class="form-control percent"
                                             id="net_profit_margin_" name="net_profit_margin_"></td>
                                     <td><input type="number" step="0.01" class="form-control percent"
@@ -1174,7 +1185,7 @@
 
                 $('#action_button_confirm_currency').empty()
                 $('#action_button_confirm_currency').html(`
-                    <button type="button" class="btn btn-danger" id="reset_currency">Reset</button>
+                    <button type="button" class="btn btn-danger" id="reset_currency">${escapePartnerHtml(@json(__('public_form.Reset')))}</button>
                 `)
             }
         })
@@ -1190,7 +1201,7 @@
             $('#total_financial_ratio').empty()
             $('#action_button_confirm_currency').empty()
             $('#action_button_confirm_currency').html(`
-                <button type="button" class="btn btn-success" id="confirm_currency">Confirm</button>
+                <button type="button" class="btn btn-success" id="confirm_currency">${escapePartnerHtml(@json(__('public_form.Confirm')))}</button>
             `)
         })
 

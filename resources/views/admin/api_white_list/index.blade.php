@@ -160,8 +160,8 @@
     <div class="whitelist-page">
         <div class="whitelist-page-header">
             <div>
-                <h2>IP Address Management</h2>
-                <p>Manage trusted IP addresses allowed to access the API.</p>
+                <h2>{{ __('settings.IP Address Management') }}</h2>
+                <p>{{ __('settings.Manage trusted IP addresses allowed to access the API.') }}</p>
             </div>
             <button type="button" class="btn btn-primary waves-effect" id="for_create_ip_address"
                 data-toggle="modal" data-target="#formIpAddress">
@@ -172,7 +172,7 @@
 
         <div class="card whitelist-table-card">
             <div class="card-header">
-                <h5>List IP Address</h5>
+                <h5>{{ __('settings.List IP Address') }}</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

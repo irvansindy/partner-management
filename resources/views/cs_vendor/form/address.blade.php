@@ -217,7 +217,9 @@ window.addEventListener('load', function () {
     }
 
     function select2(control, placeholder) {
-        $(control).select2({ width: '100%', placeholder: placeholder });
+        $(control).select2({ width: '100%', placeholder: placeholder,
+            language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } }
+        });
     }
 
     function countryOptionMarkup(option) {
@@ -273,7 +275,8 @@ window.addEventListener('load', function () {
         const canvas = row.querySelector('[data-address-map]');
         if (!canvas || typeof L === 'undefined') return;
         const initialPosition = [-2.5, 118];
-        const map = L.map(canvas).setView(initialPosition, 5);
+        const map = L.map(canvas, { zoomControl: false }).setView(initialPosition, 5);
+        L.control.zoom({ zoomInTitle: @json(__('public_form.zoom_in')), zoomOutTitle: @json(__('public_form.zoom_out')) }).addTo(map);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri',
             maxNativeZoom: 15,
@@ -315,7 +318,7 @@ window.addEventListener('load', function () {
             return state.marker;
         }
 
-        const marker = L.marker([lat, lng], { draggable: true }).addTo(state.map);
+        const marker = L.marker([lat, lng], { draggable: true, alt: @json(__('public_form.map_pin')) }).addTo(state.map);
         marker.bindTooltip(addressCopy.pinInstruction, { direction: 'top' });
         marker.on('dragend', function () {
             const position = marker.getLatLng();
@@ -504,6 +507,7 @@ window.addEventListener('load', function () {
         rows.appendChild(row);
         const country = field(row, 'country_code');
         $(country).select2({
+            language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
             width: '100%',
             placeholder: addressCopy.selectCountry,
             templateResult: countryOptionMarkup,

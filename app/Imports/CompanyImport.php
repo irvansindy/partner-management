@@ -227,7 +227,7 @@ class CompanyImport implements ToCollection, WithHeadingRow, WithMultipleSheets
                     }
 
                 } catch (\Exception $e) {
-                    $this->errors[] = "Row $rowNumber: Database error - " . $e->getMessage();
+                    $this->errors[] = __('data_tools.row_database', ['row' => $rowNumber]);
                     Log::error("Row $rowNumber: ❌ Failed to insert - " . $e->getMessage());
                     Log::error($e->getTraceAsString());
                 }
@@ -269,19 +269,19 @@ class CompanyImport implements ToCollection, WithHeadingRow, WithMultipleSheets
     private function validateRow($row, $rowNumber)
     {
         if (empty($row['name'])) {
-            $this->errors[] = "Baris $rowNumber: Kolom 'nama_perusahaan' wajib diisi";
+            $this->errors[] = __('data_tools.row_name', ['row' => $rowNumber]);
         }
 
         if (!empty($row['email_address']) && !filter_var($row['email_address'], FILTER_VALIDATE_EMAIL)) {
-            $this->errors[] = "Baris $rowNumber: Format email_koresponden tidak valid";
+            $this->errors[] = __('data_tools.row_email', ['row' => $rowNumber]);
         }
 
         if (!empty($row['established_year']) && !is_numeric($row['established_year'])) {
-            $this->errors[] = "Baris $rowNumber: tahun_berdiri harus berupa angka";
+            $this->errors[] = __('data_tools.row_year', ['row' => $rowNumber]);
         }
 
         if (!empty($row['contact_email']) && !filter_var($row['contact_email'], FILTER_VALIDATE_EMAIL)) {
-            $this->errors[] = "Baris $rowNumber: Format e_mail_kontak tidak valid";
+            $this->errors[] = __('data_tools.row_contact', ['row' => $rowNumber]);
         }
     }
 

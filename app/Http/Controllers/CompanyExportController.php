@@ -28,10 +28,10 @@ class CompanyExportController extends Controller
         $request->validate([
             'fields' => 'required|array|min:1',
             'fields.*' => 'string',
-        ], [
-            'fields.required' => 'Pilih minimal 1 field untuk di-export',
-            'fields.min' => 'Pilih minimal 1 field untuk di-export',
-        ]);
+        ], array_merge(__('data_tools_validation.messages'), [
+            'fields.required' => __('data_tools.Pilih minimal 1 field untuk di-export'),
+            'fields.min' => __('data_tools.Pilih minimal 1 field untuk di-export'),
+        ]), __('data_tools_validation.attributes'));
 
         try {
             $user = Auth::user();
@@ -51,7 +51,7 @@ class CompanyExportController extends Controller
             Log::error('Custom Export Error: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
 
-            return back()->with('error', 'Export gagal: ' . $e->getMessage());
+            return back()->with('error', __('data_tools.export_failed'));
         }
     }
 
@@ -73,7 +73,7 @@ class CompanyExportController extends Controller
             Log::error('Export Error: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
 
-            return back()->with('error', 'Export gagal: ' . $e->getMessage());
+            return back()->with('error', __('data_tools.export_failed'));
         }
     }
 
@@ -92,7 +92,7 @@ class CompanyExportController extends Controller
         } catch (\Exception $e) {
             Log::error('Template Download Error: ' . $e->getMessage());
 
-            return back()->with('error', 'Download template gagal: ' . $e->getMessage());
+            return back()->with('error', __('data_tools.template_failed'));
         }
     }
 
@@ -104,10 +104,10 @@ class CompanyExportController extends Controller
         $request->validate([
             'fields' => 'required|array|min:1',
             'fields.*' => 'string',
-        ], [
-            'fields.required' => 'Pilih minimal 1 field untuk di-export',
-            'fields.min'      => 'Pilih minimal 1 field untuk di-export',
-        ]);
+        ], array_merge(__('data_tools_validation.messages'), [
+            'fields.required' => __('data_tools.Pilih minimal 1 field untuk di-export'),
+            'fields.min'      => __('data_tools.Pilih minimal 1 field untuk di-export'),
+        ]), __('data_tools_validation.attributes'));
 
         try {
             $user           = Auth::user();
@@ -144,9 +144,7 @@ class CompanyExportController extends Controller
             <table width="100%" style="font-size: 10px;">
                 <tr>
                     <td width="90%" align="left">
-                        <b>Disclaimer</b><br>
-                        this document is strictly private, confidential and personal to recipients and should not be
-                        copied, distributed or reproduced in whole or in part, not passed to any third party.
+                        <b>'.e(__('partner.Disclaimer')).'</b><br>'.e(__('partner.confidentiality')).'
                     </td>
                     <td width="10%" style="text-align: right;">{PAGENO}</td>
                 </tr>
@@ -185,7 +183,7 @@ class CompanyExportController extends Controller
             Log::error('Custom PDF Export Error: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
 
-            return back()->with('error', 'Export PDF gagal: ' . $e->getMessage());
+            return back()->with('error', __('data_tools.export_failed'));
         }
     }
 }

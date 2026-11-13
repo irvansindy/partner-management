@@ -10,7 +10,7 @@
     <meta name="msapplication-tap-highlight" content="no"/>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login — {{ config('app.name', 'Partner Management') }}</title>
+    <title>{{ __('public_form.Sign In') }} — {{ config('app.name', 'Partner Management') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('uploads/pt/1713190566.jpg') }}">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment-with-locales.min.js" integrity="sha512-4F1cxYdMiAW98oomSLaygEwmCnIP38pb4Kx70yQYqRwLVCs3DbRumfBq82T08g/4LJ/smbFGFpmeFlQgoDccgg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -41,7 +41,7 @@
 <body class="login-page sign-in">
     <div class="loader">
         <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
+            <span class="sr-only">{{ __('public_form.Loading...') }}</span>
         </div>
     </div>
 
@@ -52,7 +52,12 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="card login-box">
                             <div class="card-body">
-                                <h5 class="card-title">Sign In</h5>
+                                <div class="text-right mb-2">
+                                    <a href="{{ route('locale.switch', ['locale' => 'id', 'return_to' => request()->getRequestUri()]) }}" lang="id">ID</a>
+                                    <span aria-hidden="true"> · </span>
+                                    <a href="{{ route('locale.switch', ['locale' => 'en', 'return_to' => request()->getRequestUri()]) }}" lang="en">EN</a>
+                                </div>
+                                <h5 class="card-title">{{ __('public_form.Sign In') }}</h5>
 
                                 {{-- Tampilkan error umum (mis. "email/password salah")
                                      yang tidak terikat ke field spesifik --}}
@@ -81,12 +86,12 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="password">Password</label>
+                                        <label for="password">{{ __('public_form.Password') }}</label>
                                         <input type="password"
                                                name="password"
                                                id="password"
                                                class="form-control @error('password') is-invalid @enderror"
-                                               placeholder="Password"
+                                               placeholder="{{ __('public_form.Password') }}"
                                                required>
                                         @error('password')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -97,11 +102,11 @@
 
                                     <div class="form-group form-check">
                                         <input type="checkbox" class="form-check-input" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="remember">Ingat saya</label>
+                                        <label class="form-check-label" for="remember">{{ __('public_form.Ingat saya') }}</label>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary w-100">
-                                        Sign In
+                                        {{ __('public_form.Sign In') }}
                                     </button>
                                 </form>
                             </div>

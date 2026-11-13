@@ -7,7 +7,7 @@
             </div>
             <div class="sidebar-profile-info">
                 <a href="javascript:void(0);" class="account-settings-link">
-                    <p>{{ auth()->user()->name ?? 'Guest' }}</p>
+                    <p>{{ auth()->user()->name ?? __('settings.Guest') }}</p>
                     <span>{{ auth()->user()->email ?? '' }}</span>
                 </a>
             </div>

@@ -34,9 +34,10 @@ class UserManagementController extends Controller
             })
             ->get();
             // $user = User::with('roles')->get();
-            return FormatResponseJson::success($user, 'user fetched successfully');
+            return FormatResponseJson::success($user, __('settings.user fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function storeUser(Request $request)
@@ -54,19 +55,19 @@ class UserManagementController extends Controller
                 'department'=> 'required',
                 'job_title' => 'nullable|exists:master_job_titles,id',
                 'division' => 'required',
-            ], [
-                'name.required' => 'Name is required',
-                'email.required' => 'Email is required',
-                'role.required' => 'Role is required',
-                'office.required' => 'Office is required',
-                'department.required' => 'Department is required',
-                'job_title.exists' => 'Job title is invalid',
-                'division.required' => 'Division is required',
-                'nik.required' => 'NIK is required',
-                'nik.unique' => 'NIK must be unique',
-                'employee_id.required' => 'Employee ID is required',
-                'employee_id.unique' => 'Employee ID must be unique',
-            ]);
+            ], array_merge(__('settings_validation.messages'), [
+                'name.required' => __('settings.Name is required'),
+                'email.required' => __('settings.Email is required'),
+                'role.required' => __('settings.Role is required'),
+                'office.required' => __('settings.Office is required'),
+                'department.required' => __('settings.Department is required'),
+                'job_title.exists' => __('settings.Job title is invalid'),
+                'division.required' => __('settings.Division is required'),
+                'nik.required' => __('settings.NIK is required'),
+                'nik.unique' => __('settings.NIK must be unique'),
+                'employee_id.required' => __('settings.Employee ID is required'),
+                'employee_id.unique' => __('settings.Employee ID must be unique'),
+            ]), __('settings_validation.attributes'));
 
             if ($validator->fails()) {
                 throw new ValidationException($validator);
@@ -87,14 +88,15 @@ class UserManagementController extends Controller
 
             $user->assignRole($request->role);
             DB::commit();
-            return FormatResponseJson::success($user, 'user created successfully');
+            return FormatResponseJson::success($user, __('settings.user created successfully'));
         } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null,$e->getMessage(), 400);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 400);
         }
     }
     public function fetchRoleOfficeDepartment()
@@ -116,9 +118,10 @@ class UserManagementController extends Controller
                 'job_titles'=> $jobTitles,
                 'parents'=> $parents,
             ];
-            return FormatResponseJson::success($data, 'supporting data fetched successfully');
+            return FormatResponseJson::success($data, __('settings.supporting data fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function detailUser(Request $request)
@@ -142,9 +145,10 @@ class UserManagementController extends Controller
                 'job_titles'=> $jobTitles,
                 'parents'=> $parents,
             ];
-            return FormatResponseJson::success($data, 'user fetched successfully');
+            return FormatResponseJson::success($data, __('settings.user fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function updateUser(Request $request)
@@ -165,7 +169,7 @@ class UserManagementController extends Controller
                 'division' => 'required|integer|exists:master_divisions,id',
                 'job_title' => 'nullable|integer|exists:master_job_titles,id',
                 'parent_user' => ['nullable', 'integer', 'exists:users,id', Rule::notIn([$request->id])],
-            ]);
+            ], __('settings_validation.messages'), __('settings_validation.attributes'));
 
             if ($validator->fails()) {
                 throw new ValidationException($validator);
@@ -195,15 +199,16 @@ class UserManagementController extends Controller
 
             DB::commit();
 
-            return FormatResponseJson::success($user->load('roles', 'office', 'division', 'dept', 'jobTitle', 'parent'), 'User updated successfully');
+            return FormatResponseJson::success($user->load('roles', 'office', 'division', 'dept', 'jobTitle', 'parent'), __('settings.User updated successfully'));
         }
         catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         }
         catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 400);
         }
     }
     public function updateUserOld(Request $request)
@@ -217,7 +222,7 @@ class UserManagementController extends Controller
                 'role' => 'required',
                 'office' => 'required',
                 'department'=> 'required',
-            ]);
+            ], __('settings_validation.messages'), __('settings_validation.attributes'));
 
             if ($validator->fails()) {
                 throw new ValidationException($validator);
@@ -235,14 +240,15 @@ class UserManagementController extends Controller
             $user->update($data);
             $user->assignRole($request->role);
             DB::commit();
-            return FormatResponseJson::success($user, 'user updated successfully');
+            return FormatResponseJson::success($user, __('settings.user updated successfully'));
         } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null,$e->getMessage(), 400);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 400);
         }
     }
     public function deleteUser(Request $request)
@@ -253,10 +259,11 @@ class UserManagementController extends Controller
             $user->syncRoles([]);
             $user->delete();
             DB::commit();
-            return FormatResponseJson::success($user, 'user deleted successfully');
+            return FormatResponseJson::success($user, __('settings.user deleted successfully'));
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null,$e->getMessage(), 400);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 400);
         }
     }
 }

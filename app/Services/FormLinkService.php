@@ -111,7 +111,7 @@ class FormLinkService
     public function deleteFormLink(FormLink $formLink): bool
     {
         if ($this->hasSubmissions($formLink)) {
-            throw new \Exception('Tidak dapat menghapus form yang sudah memiliki submission!');
+            throw new \Exception(__('form_links_audit.Tidak dapat menghapus form yang sudah memiliki submission!'));
         }
 
         return $formLink->delete();
@@ -155,7 +155,7 @@ class FormLinkService
 
         // Verify company belongs to this form link
         if ($company->form_link_id !== $formLink->id) {
-            abort(404, 'Submission tidak ditemukan untuk form link ini.');
+            abort(404, __('form_links_audit.Submission tidak ditemukan untuk form link ini.'));
         }
 
         return $company;
@@ -179,7 +179,7 @@ class FormLinkService
         abort_unless(
             $this->canManageFormLink($formLink),
             403,
-            'Anda tidak memiliki akses ke form link ini.'
+            __('form_links_audit.Anda tidak memiliki akses ke form link ini.')
         );
     }
 
@@ -209,7 +209,7 @@ class FormLinkService
         ?User $user = null
     ): void {
         if ((int) $company->form_link_id !== (int) $formLink->id) {
-            abort(404, 'Submission tidak ditemukan untuk form link ini.');
+            abort(404, __('form_links_audit.Submission tidak ditemukan untuk form link ini.'));
         }
 
         $user = $user ?: Auth::user();
@@ -224,7 +224,7 @@ class FormLinkService
             && $approvalProcess
             && $approvalProcess->steps()->where('user_id', $user->id)->exists();
 
-        abort_unless($isAssignedApprover, 403, 'Anda tidak memiliki akses ke submission ini.');
+        abort_unless($isAssignedApprover, 403, __('form_links_audit.Anda tidak memiliki akses ke submission ini.'));
     }
 
     public function canEditSubmission(
@@ -272,7 +272,7 @@ class FormLinkService
         abort_unless(
             $this->canEditSubmission($formLink, $company, $user),
             403,
-            'Submission tidak dapat diedit atau tahap approval terakhir sudah aktif.'
+            __('form_links_audit.Submission tidak dapat diedit atau tahap approval terakhir sudah aktif.')
         );
     }
 

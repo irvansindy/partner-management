@@ -132,14 +132,14 @@
                     <select class="form-select" name="business_classification" id="business_classification" required>
                         <option value="">-- {{ __('messages.Placeholder Business Classification') }} --</option>
                         @foreach (\App\Models\MasterBusinessClassification::all() as $item)
-                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                            <option value="{{ $item->name }}">{{ trans()->has('messages.' . $item->name) ? __('messages.' . $item->name) : $item->name }}</option>
                         @endforeach
                     </select>
                     <div class="my-2" id="field_form_create_business_other" style="display: none;">
-                        <label for="business_classification_other_detail">Klasifikasi Bisnis Lainnya <span class="text-danger" role="alert">*</span></label>
+                        <label for="business_classification_other_detail">{{ __('public_form.Klasifikasi Bisnis Lainnya') }} <span class="text-danger" role="alert">*</span></label>
                         <input type="text" name="business_classification_other_detail"
                             id="business_classification_other_detail" class="form-control" maxlength="255"
-                            placeholder="Masukkan klasifikasi bisnis lainnya">
+                            placeholder="{{ __('public_form.Masukkan klasifikasi bisnis lainnya') }}">
                         <span class="text-danger message-danger"
                             id="message_business_classification_other_detail" role="alert"></span>
                     </div>
@@ -171,7 +171,7 @@
                         <span class="input-group-text">https://</span>
                         <input type="text" name="website_address" id="website_address" class="form-control website-host"
                             maxlength="255" inputmode="url" autocomplete="url" data-public-website
-                            placeholder="contoh.com">
+                            placeholder="{{ __('public_form.contoh.com') }}">
                     </div>
                     <span class="text-danger message-danger" id="message_website_address" role="alert"></span>
                 </div>

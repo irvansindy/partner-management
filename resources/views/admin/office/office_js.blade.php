@@ -49,7 +49,7 @@
 
         $('#office_table').DataTable({
             processing: true,
-            language: {
+            language: Object.assign(@json(__('settings.datatable')), {
                 emptyTable: officeText.tableEmpty,
                 loadingRecords: officeText.tableLoading,
                 processing: officeText.tableLoading,
@@ -58,7 +58,7 @@
                 infoEmpty: officeText.tableInfoEmpty,
                 zeroRecords: officeText.tableZeroRecords,
                 paginate: { previous: officeText.tablePrevious, next: officeText.tableNext }
-            },
+            }),
 
             ajax: {
                 url: "{{ route('fetch-office-setting') }}",

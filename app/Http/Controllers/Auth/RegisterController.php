@@ -63,14 +63,14 @@ class RegisterController extends Controller
                 'regex:/[0-9]/',   // Harus mengandung angka
                 'regex:/[@$!%*#?&]/' // Harus mengandung simbol
             ],
-        ], [
-            'name.required' => 'Nama tidak boleh kosong',
-            'email.required' => 'Email tidak boleh kosong',
-            'password.required' => 'Kata sandi tidak boleh kosong',
-            'email.regex' => 'Email harus menggunakan domain gmail (@gmail.com).',
-            'password.regex' => 'Kata sandi harus terdiri dari huruf besar & kecil, angka dan simbol.',
-            'password.min' => 'Kata sandi minimal terdiri dari 8 karakter',
-        ]);
+        ], array_merge(__('public_validation.messages'), [
+            'name.required' => __('public_form.Nama tidak boleh kosong'),
+            'email.required' => __('public_form.Email tidak boleh kosong'),
+            'password.required' => __('public_form.Kata sandi tidak boleh kosong'),
+            'email.regex' => __('public_form.Email harus menggunakan domain gmail (@gmail.com).'),
+            'password.regex' => __('public_form.Kata sandi harus terdiri dari huruf besar & kecil, angka dan simbol.'),
+            'password.min' => __('public_form.Kata sandi minimal terdiri dari 8 karakter'),
+        ]), __('public_validation.attributes'));
     }
 
     /**

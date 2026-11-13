@@ -57,17 +57,17 @@
             </div>
         </div>
 
-        <div class="form-link-stats" aria-label="Pending approval summary">
+        <div class="form-link-stats" aria-label="{{ __('approval.Pending approval summary') }}">
             <div class="stat-card stat-total">
                 <div><h3>{{ $pendingSteps->count() }}</h3><span class="stat-card__label">{{ __('admin.Pending Actions') }}</span></div>
                 <i class="material-icons" aria-hidden="true">assignment_late</i>
             </div>
             <div class="stat-card stat-approved">
-                <div><h3>{{ $customerCount }}</h3><span class="stat-card__label">Customer</span></div>
+                <div><h3>{{ $customerCount }}</h3><span class="stat-card__label">{{ __('approval.Customer') }}</span></div>
                 <i class="material-icons" aria-hidden="true">groups</i>
             </div>
             <div class="stat-card stat-progress">
-                <div><h3>{{ $vendorCount }}</h3><span class="stat-card__label">Vendor</span></div>
+                <div><h3>{{ $vendorCount }}</h3><span class="stat-card__label">{{ __('approval.Vendor') }}</span></div>
                 <i class="material-icons" aria-hidden="true">storefront</i>
             </div>
             <div class="stat-card stat-companies">
@@ -81,7 +81,7 @@
                 <h3 class="card-title">{{ __('admin.Assigned Submissions') }}</h3>
                 <div class="input-group input-group-sm inbox-search">
                     <input type="search" id="approvalSearchInput" class="form-control"
-                        placeholder="Search company or type" aria-label="Search pending approvals">
+                        placeholder="{{ __('approval.Search company or type') }}" aria-label="{{ __('approval.Search pending approvals') }}">
                     <div class="input-group-append" aria-hidden="true">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                     </div>
@@ -121,40 +121,40 @@
                                 </td>
                                 <td>
                                     <span class="badge badge-{{ $company->type === 'vendor' ? 'info' : 'success' }}">
-                                        {{ ucfirst($company->type) }}
+                                        {{ __('approval.' . ucfirst($company->type)) }}
                                     </span>
                                 </td>
                                 <td>{{ Str::limit($company->business_classification, 30) }}</td>
                                 <td>
-                                    {{ optional($company->created_at)->format('d M Y') ?? '-' }}
+                                    {{ optional($company->created_at)->locale(app()->getLocale())->translatedFormat('d M Y') ?? '-' }}
                                     @if($company->created_at)
                                         <br><small class="text-muted">{{ $company->created_at->format('H:i') }}</small>
                                     @endif
                                 </td>
                                 <td>
                                     <span class="badge badge-warning"><i class="fas fa-clock" aria-hidden="true"></i> {{ __('admin.Waiting for You') }}</span>
-                                    <small class="d-block text-muted mt-1">Progress {{ $completedSteps }}/{{ $totalSteps }}</small>
-                                    <div class="progress progress-xs mt-1 approval-progress" aria-label="Approval progress {{ round($progress) }}%">
+                                    <small class="d-block text-muted mt-1">{{ __('form_links.progress', ['done' => $completedSteps, 'total' => $totalSteps]) }}</small>
+                                    <div class="progress progress-xs mt-1 approval-progress" aria-label="{{ __('approval.Approval progress') }} {{ round($progress) }}%">
                                         <div class="progress-bar bg-warning" style="width: {{ $progress }}%"></div>
                                     </div>
                                 </td>
                                 <td>
-                                    {{ optional($step->created_at)->diffForHumans() ?? '-' }}
+                                    {{ optional($step->created_at)->locale(app()->getLocale())->diffForHumans() ?? '-' }}
                                     @if($step->created_at)
-                                        <br><small class="text-muted">{{ $step->created_at->format('d M Y H:i') }}</small>
+                                        <br><small class="text-muted">{{ $step->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}</small>
                                     @endif
                                 </td>
                                 <td>
                                     <div class="approval-actions">
                                         <a href="{{ route('admin.form-links.submission-detail', [$company->form_link_id, $company->id]) }}"
                                             class="btn btn-info btn-icon form-link-action"
-                                            aria-label="View submission details for {{ $company->name }}" title="View details">
+                                            aria-label="{{ __('approval.view_named', ['name' => $company->name]) }}" title="{{ __('form_links_remaining.View details') }}">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
                                         <a href="{{ route('admin.approvals.step.action', $step) }}"
                                             class="btn btn-primary form-link-action"
-                                            aria-label="Review submission for {{ $company->name }}">
-                                            <i class="fas fa-tasks mr-1" aria-hidden="true"></i> Review
+                                            aria-label="{{ __('approval.review_named', ['name' => $company->name]) }}">
+                                            <i class="fas fa-tasks mr-1" aria-hidden="true"></i> {{ __('approval.Review') }}
                                         </a>
                                     </div>
                                 </td>
@@ -164,7 +164,7 @@
                                 <td colspan="8" class="text-center text-muted empty-inbox">
                                     <i class="material-icons d-block mb-2" aria-hidden="true">task_alt</i>
                                     <strong>{{ __('admin.No pending approvals') }}</strong>
-                                    <p class="mb-0 mt-1">New submissions assigned to you will appear here.</p>
+                                    <p class="mb-0 mt-1">{{ __('approval.New submissions assigned to you will appear here.') }}</p>
                                 </td>
                             </tr>
                         @endforelse

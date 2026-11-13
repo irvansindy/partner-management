@@ -192,6 +192,7 @@
                 try { $('#roles').select2('destroy'); } catch (e) { /* ignore */ }
             }
             $('#roles').select2({
+                language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
                 dropdownParent: $('#formCreateMenu'),
                 placeholder: menuText.selectOne,
                 closeOnSelect: false,
@@ -298,6 +299,8 @@
                     table: 'table table-striped table-hover align-middle',
                 },
                 language: {
+                    loading: @json(__('settings.loading')),
+                    sort: { sortAsc: @json(__('settings.sort_asc')), sortDesc: @json(__('settings.sort_desc')) },
                     search: { placeholder: menuText.searchPlaceholder },
                     pagination: {
                         previous: '‹',
@@ -362,6 +365,8 @@
                     table: 'table table-striped table-hover align-middle',
                 },
                 language: {
+                    loading: @json(__('settings.loading')),
+                    sort: { sortAsc: @json(__('settings.sort_asc')), sortDesc: @json(__('settings.sort_desc')) },
                     search: { placeholder: menuText.searchPlaceholder },
                     pagination: {
                         previous: menuText.previous,
@@ -397,6 +402,7 @@
                         </select>
                     `);
 $('#parent_id').select2({
+                language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
                         data: parent_menu.map(parent => ({
                             id: parent.id,
                             text: parent.name_text

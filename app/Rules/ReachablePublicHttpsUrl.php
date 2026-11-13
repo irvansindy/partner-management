@@ -78,7 +78,7 @@ class ReachablePublicHttpsUrl implements Rule
 
     public function message(): string
     {
-        return 'Situs web tidak dapat diakses melalui HTTPS. Periksa kembali alamatnya. | The website could not be reached over HTTPS. Please check the address.';
+        return __('public_form.https_unreachable');
     }
 
     public function resolveHost(string $host): array

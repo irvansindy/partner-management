@@ -82,11 +82,12 @@ class PartnerManagementController extends Controller
             }
 
             $company_informations = $query_company->get();
-            $message = count($company_informations) == 0 ? 'Data partner empty' : 'Data partner fetched successfully';
+            $message = count($company_informations) == 0 ? __('partner.Data partner empty') : __('partner.Data partner fetched successfully');
 
             return FormatResponseJson::success($company_informations, $message);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load partner data.'), 500);
         }
     }
     public function detailPartner(Request $request)
@@ -140,14 +141,15 @@ class PartnerManagementController extends Controller
                 'office' => \auth()->user()->office_id,
                 'department' => \auth()->user()->department_id,
             ];
-            return FormatResponseJson::success($data, 'Company profile fetched successfully');
+            return FormatResponseJson::success($data, __('partner.Company profile fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load partner details.'), 500);
         }
     }
     public function exportPartnerToExcel()
     {
-        return Excel::download(new PartnerExport(), 'list vendor.xlsx');
+        return Excel::download(new PartnerExport(), __('partner.export_filename').'.xlsx');
     }
     public function exportPartnerToPdf()
     {
@@ -172,14 +174,15 @@ class PartnerManagementController extends Controller
         $footer             = '<hr>
         <table width="100%" style="font-size: 10px;">
             <tr>
-                <td width="90%" align="left"><b>Disclaimer</b><br>this document is strictly private, confidential and personal to recipients and should not be copied, distributed or reproduced in whole or in part, not passed to any third party.</td>
+                <td width="90%" align="left"><b>'.e(__('partner.Disclaimer')).'</b><br>'.e(__('partner.confidentiality')).'</td>
                 <td width="10%" style="text-align: right;"> {PAGENO}</td>
             </tr>
         </table>';
         $data = [
             'partners' => $partners,
         ];
-        $mpdf = new mPDF();
+        File::ensureDirectoryExists(storage_path('framework/cache/mpdf'));
+        $mpdf = new mPDF(['tempDir' => storage_path('framework/cache/mpdf')]);
             $mpdf->SetHTMLHeader($header);
             $mpdf->SetHTMLFooter($footer);
             $mpdf->AddPage(
@@ -198,7 +201,7 @@ class PartnerManagementController extends Controller
         $cetak = view('partner.export_pdf',$data);
         $mpdf->WriteHTML($cetak);
         ob_clean();
-        $mpdf->Output('Report Daily'.'('.date('Y-m-d').').pdf', 'I');
+        $mpdf->Output(__('partner.export_filename').'-'.date('Y-m-d').'.pdf', 'I');
     }
     public function approvalPartnerOld(Request $request)
     {

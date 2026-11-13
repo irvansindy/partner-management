@@ -11,7 +11,7 @@
 
         <a class="navbar-brand" href="{{ route('dashboard') }}">{{ config('app.name', 'Alpha') }}</a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('settings.Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -22,12 +22,12 @@
                 {{-- User dropdown --}}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ auth()->user()->name ?? 'Guest' }}
+                        {{ auth()->user()->name ?? __('settings.Guest') }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item">{{ __('settings.Logout') }}</button>
                         </form>
                     </div>
                 </li>

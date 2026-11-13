@@ -298,25 +298,25 @@
             <div class="page-actions submission-detail-actions">
                 @if ($canManageFormLink)
                     <a href="{{ route('admin.form-links.submissions', $formLink) }}" class="btn btn-outline-secondary submission-header-action">
-                        <i class="material-icons" aria-hidden="true">arrow_back</i> Submissions
+                        <i class="material-icons" aria-hidden="true">arrow_back</i> {{ __('admin.Submissions') }}
                     </a>
                 @elseif ($company->approvalProcess)
                     <a href="{{ route('admin.approvals.show', $company->approvalProcess) }}" class="btn btn-outline-secondary submission-header-action">
-                        <i class="material-icons" aria-hidden="true">arrow_back</i> Approval
+                        <i class="material-icons" aria-hidden="true">arrow_back</i> {{ __('admin.Approval') }}
                     </a>
                 @else
                     <a href="{{ route('admin.approvals.my') }}" class="btn btn-outline-secondary submission-header-action">
-                        <i class="material-icons" aria-hidden="true">arrow_back</i> My Approvals
+                        <i class="material-icons" aria-hidden="true">arrow_back</i> {{ __('form_links_audit.My Approvals') }}
                     </a>
                 @endif
                 @if ($canEditSubmission)
                     <a href="{{ route('admin.form-links.submission-edit', [$formLink, $company->id]) }}"
                         class="btn btn-primary submission-header-action">
-                        <i class="material-icons" aria-hidden="true">edit</i> Edit Submission
+                        <i class="material-icons" aria-hidden="true">edit</i> {{ __('admin.Edit Submission') }}
                     </a>
                 @endif
                 <a href="{{ route('admin.form-links.submission-pdf', [$formLink, $company->id]) }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger submission-header-action">
-                    <i class="material-icons" aria-hidden="true">picture_as_pdf</i> Export PDF
+                    <i class="material-icons" aria-hidden="true">picture_as_pdf</i> {{ __('tools.Export PDF') }}
                 </a>
             </div>
         </div>

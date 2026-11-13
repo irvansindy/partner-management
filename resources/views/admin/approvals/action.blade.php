@@ -64,11 +64,11 @@
     <div class="approval-action-shell">
         <div class="approval-action-header">
             <div>
-                <h2>Review Approval</h2>
-                <p>Step {{ $step->step_ordering }} of {{ $totalSteps }} · Review the partner submission before deciding.</p>
+                <h2>{{ __('approval.Review Approval') }}</h2>
+                <p>{{ __('approval.stage_review', ['number' => $step->step_ordering, 'total' => $totalSteps]) }}</p>
             </div>
             <a href="{{ route('admin.approvals.show', $step->approval_id) }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left mr-1" aria-hidden="true"></i> Approval Detail
+                <i class="fas fa-arrow-left mr-1" aria-hidden="true"></i> {{ __('approval.Approval Detail') }}
             </a>
         </div>
 
@@ -76,46 +76,46 @@
             <main>
                 <section class="approval-panel">
                     <div class="approval-panel__header">
-                        <h5>Partner information</h5>
-                        <span class="approval-type">{{ ucfirst($company->type ?? 'Partner') }}</span>
+                        <h5>{{ __('approval.Partner information') }}</h5>
+                        <span class="approval-type">{{ ucfirst($company->type ?? __('approval.Partner')) }}</span>
                     </div>
                     <div class="approval-panel__body">
                         <dl class="approval-summary">
                             <div><dt>{{ __('admin.Company') }}</dt><dd>{{ $company->name ?? '-' }}</dd></div>
-                            <div><dt>Business classification</dt><dd>{{ $company->business_classification ?? '-' }}</dd></div>
-                            <div><dt>Submitted by</dt><dd>{{ $process->initiator->name ?? '-' }}</dd></div>
-                            <div><dt>Submitted at</dt><dd>{{ optional($company->created_at)->format('d M Y, H:i') ?? '-' }}</dd></div>
+                            <div><dt>{{ __('approval.Business classification') }}</dt><dd>{{ $company->business_classification ?? '-' }}</dd></div>
+                            <div><dt>{{ __('approval.Submitted by') }}</dt><dd>{{ $process->initiator->name ?? '-' }}</dd></div>
+                            <div><dt>{{ __('approval.Submitted at') }}</dt><dd>{{ optional($company->created_at)->locale(app()->getLocale())->translatedFormat('d M Y, H:i') ?? '-' }}</dd></div>
                         </dl>
                         @if($company && $company->form_link_id)
                             <a href="{{ route('admin.form-links.submission-detail', [$company->form_link_id, $company->id]) }}"
                                class="btn btn-outline-primary btn-sm mt-4" target="_blank" rel="noopener noreferrer">
-                                <i class="fas fa-external-link-alt mr-1" aria-hidden="true"></i> View full submission
+                                <i class="fas fa-external-link-alt mr-1" aria-hidden="true"></i> {{ __('approval.View full submission') }}
                             </a>
                         @endif
                     </div>
                 </section>
 
                 <section class="approval-panel">
-                    <div class="approval-panel__header"><h5>Decision</h5></div>
+                    <div class="approval-panel__header"><h5>{{ __('approval.Decision') }}</h5></div>
                     <form class="approval-form" action="{{ route('admin.approvals.step.process', $step) }}" method="POST" id="approvalDecisionForm">
                         @csrf
                         <div class="approval-panel__body">
                             <div class="approval-guidance" role="note">
                                 <i class="fas fa-info-circle" aria-hidden="true"></i>
-                                <p>Review the full submission carefully. Once submitted, this decision cannot be undone.</p>
+                                <p>{{ __('approval.Review the full submission carefully. Once submitted, this decision cannot be undone.') }}</p>
                             </div>
                             <div class="approval-field">
-                                <label>Decision <span class="text-danger">*</span></label>
+                                <label>{{ __('approval.Decision') }} <span class="text-danger">*</span></label>
                                 <div class="decision-options">
                                     <label class="decision-option">
                                         <input type="radio" name="action" value="approve" required {{ old('action') === 'approve' ? 'checked' : '' }}>
-                                        <strong><i class="fas fa-check-circle text-success mr-1"></i>Approve</strong>
-                                        <small>Approve this submission and continue it to the next step.</small>
+                                        <strong><i class="fas fa-check-circle text-success mr-1"></i>{{ __('approval.Approve') }}</strong>
+                                        <small>{{ __('approval.Approve this submission and continue it to the next step.') }}</small>
                                     </label>
                                     <label class="decision-option decision-option--reject">
                                         <input type="radio" name="action" value="reject" required {{ old('action') === 'reject' ? 'checked' : '' }}>
-                                        <strong><i class="fas fa-times-circle text-danger mr-1"></i>Reject</strong>
-                                        <small>Reject this submission and terminate its approval process.</small>
+                                        <strong><i class="fas fa-times-circle text-danger mr-1"></i>{{ __('approval.Reject') }}</strong>
+                                        <small>{{ __('approval.Reject this submission and terminate its approval process.') }}</small>
                                     </label>
                                 </div>
                                 @error('action')<span class="text-danger small d-block mt-2">{{ $message }}</span>@enderror
@@ -123,19 +123,19 @@
                             @if($requiresFinancialTerms)
                                 <div class="approval-guidance" role="note">
                                     <i class="fas fa-coins" aria-hidden="true"></i>
-                                    <p>Nilai ini akan menggantikan data customer ketika Anda memilih Approve. Field tidak wajib untuk Reject.</p>
+                                    <p>{{ __('approval.Nilai ini akan menggantikan data customer ketika Anda memilih Approve. Field tidak wajib untuk Reject.') }}</p>
                                 </div>
                                 <div class="approval-summary">
                                     <div class="approval-field">
-                                        <label for="term_of_payment">Term of payment <span class="text-danger">*</span></label>
+                                        <label for="term_of_payment">{{ __('approval.Term of payment') }} <span class="text-danger">*</span></label>
                                         <input type="text" name="term_of_payment" id="term_of_payment"
                                             class="form-control @error('term_of_payment') is-invalid @enderror"
                                             maxlength="255" value="{{ old('term_of_payment', $company->term_of_payment) }}"
-                                            placeholder="Contoh: 30 hari">
+                                            placeholder="{{ __('approval.Contoh: 30 hari') }}">
                                         @error('term_of_payment')<span class="invalid-feedback">{{ $message }}</span>@enderror
                                     </div>
                                     <div class="approval-field">
-                                        <label for="credit_limit">Credit limit <span class="text-danger">*</span></label>
+                                        <label for="credit_limit">{{ __('approval.Credit limit') }} <span class="text-danger">*</span></label>
                                         <input type="number" name="credit_limit" id="credit_limit"
                                             class="form-control @error('credit_limit') is-invalid @enderror"
                                             min="0" max="2147483647" step="1"
@@ -146,19 +146,19 @@
                                 </div>
                             @endif
                             <div class="approval-field">
-                                <label for="notes">Notes / Comments <span class="text-muted font-weight-normal">(Wajib jika memilih Reject)</span></label>
+                                <label for="notes">{{ __('approval.Notes / Comments') }} <span class="text-muted font-weight-normal">{{ __('approval.(Wajib jika memilih Reject)') }}</span></label>
                                 <textarea name="notes" id="notes" class="form-control @error('notes') is-invalid @enderror" rows="4"
-                                    maxlength="1000" placeholder="Add supporting notes or a rejection reason">{{ old('notes') }}</textarea>
+                                    maxlength="1000" placeholder="{{ __('approval.Add supporting notes or a rejection reason') }}">{{ old('notes') }}</textarea>
                                 @error('notes')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                                <small class="form-text text-muted"><span id="notesCount">0</span>/1000 characters</small>
+                                <small class="form-text text-muted"><span id="notesCount">0</span>/1000 {{ __('approval.characters') }}</small>
                             </div>
                             <label class="approval-confirmation" for="confirmation">
                                 <input type="checkbox" id="confirmation" required>
-                                <span>I confirm that I have reviewed the submission and this decision is final.</span>
+                                <span>{{ __('approval.I confirm that I have reviewed the submission and this decision is final.') }}</span>
                             </label>
                             <div class="approval-actions">
                                 <a href="{{ route('admin.approvals.show', $step->approval_id) }}" class="btn btn-light">{{ __('admin.Cancel') }}</a>
-                                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane mr-1"></i> Submit decision</button>
+                                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane mr-1"></i> {{ __('approval.Submit decision') }}</button>
                             </div>
                         </div>
                     </form>
@@ -167,16 +167,16 @@
 
             <aside>
                 <section class="approval-panel">
-                    <div class="approval-panel__header"><h5>Workflow progress</h5></div>
+                    <div class="approval-panel__header"><h5>{{ __('approval.Workflow progress') }}</h5></div>
                     <div class="approval-panel__body">
                         <div class="approval-summary mb-4">
-                            <div><dt>Current step</dt><dd>Step {{ $step->step_ordering }}</dd></div>
-                            <div><dt>Your role</dt><dd>Approver</dd></div>
-                            <div><dt>Completed</dt><dd>{{ $completedSteps }} steps</dd></div>
-                            <div><dt>Total</dt><dd>{{ $totalSteps }} steps</dd></div>
+                            <div><dt>{{ __('approval.Current step') }}</dt><dd>{{ __('approval.current_stage', ['number' => $step->step_ordering]) }}</dd></div>
+                            <div><dt>{{ __('approval.Your role') }}</dt><dd>{{ __('approval.Approver') }}</dd></div>
+                            <div><dt>{{ __('approval.Completed') }}</dt><dd>{{ __('approval.steps_count', ['count' => $completedSteps]) }}</dd></div>
+                            <div><dt>{{ __('approval.Total') }}</dt><dd>{{ __('approval.steps_count', ['count' => $totalSteps]) }}</dd></div>
                         </div>
-                        <div class="approval-progress__meta"><strong>Progress</strong><span>{{ number_format($progress, 0) }}%</span></div>
-                        <div class="approval-progress" role="progressbar" aria-label="Approval progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ number_format($progress, 0) }}">
+                        <div class="approval-progress__meta"><strong>{{ __('approval.Progress') }}</strong><span>{{ number_format($progress, 0) }}%</span></div>
+                        <div class="approval-progress" role="progressbar" aria-label="{{ __('approval.Approval progress') }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ number_format($progress, 0) }}">
                             <span style="width: {{ $progress }}%"></span>
                         </div>
                     </div>
@@ -186,10 +186,10 @@
 
         @if($step->step_ordering > 1)
             <section class="approval-panel">
-                <div class="approval-panel__header"><h5>Previous approval steps</h5></div>
+                <div class="approval-panel__header"><h5>{{ __('approval.Previous approval steps') }}</h5></div>
                 <div class="table-responsive">
                     <table class="table approval-history">
-                        <thead><tr><th>Step</th><th>Approver</th><th>{{ __('admin.Status') }}</th><th>Notes</th><th>Date</th></tr></thead>
+                        <thead><tr><th>{{ __('approval.Step') }}</th><th>{{ __('approval.Approver') }}</th><th>{{ __('admin.Status') }}</th><th>{{ __('approval.Notes') }}</th><th>{{ __('approval.Date') }}</th></tr></thead>
                         <tbody>
                             @foreach($process->steps->where('step_ordering', '<', $step->step_ordering) as $previousStep)
                                 <tr>
@@ -198,11 +198,11 @@
                                     <td>
                                         @if($previousStep->isApproved())<span class="badge badge-success">{{ __('admin.Approved') }}</span>
                                         @elseif($previousStep->isRejected())<span class="badge badge-danger">{{ __('admin.Rejected') }}</span>
-                                        @elseif($previousStep->isSkipped())<span class="badge badge-secondary">Skipped</span>
+                                        @elseif($previousStep->isSkipped())<span class="badge badge-secondary">{{ __('approval.Skipped') }}</span>
                                         @else<span class="badge badge-secondary">{{ __('admin.Pending') }}</span>@endif
                                     </td>
                                     <td>{{ $previousStep->notes }}</td>
-                                    <td>{{ optional($previousStep->approved_at ?? $previousStep->rejected_at)->format('d M Y, H:i') ?? '-' }}</td>
+                                    <td>{{ optional($previousStep->approved_at ?? $previousStep->rejected_at)->locale(app()->getLocale())->translatedFormat('d M Y, H:i') ?? '-' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -237,16 +237,16 @@
                 const isReject = action === 'reject';
 
                 Swal.fire({
-                    title: isReject ? 'Tolak pengajuan ini?' : 'Setujui pengajuan ini?',
+                    title: isReject ? @json(__('approval.Tolak pengajuan ini?')) : @json(__('approval.Setujui pengajuan ini?')),
                     text: isReject
-                        ? 'Pengajuan akan ditolak dan proses approval dihentikan.'
+                        ? @json(__('approval.Pengajuan akan ditolak dan proses approval dihentikan.'))
                         : (requiresFinancialTerms
-                            ? 'Pengajuan akan disetujui dan nilai term of payment serta credit limit akan disimpan.'
-                            : 'Pengajuan akan disetujui dan dilanjutkan ke tahap berikutnya.'),
+                            ? @json(__('approval.Pengajuan akan disetujui dan nilai term of payment serta credit limit akan disimpan.'))
+                            : @json(__('approval.Pengajuan akan disetujui dan dilanjutkan ke tahap berikutnya.'))),
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: isReject ? 'Ya, tolak' : 'Ya, setujui',
-                    cancelButtonText: 'Batal',
+                    confirmButtonText: isReject ? @json(__('approval.Ya, tolak')) : @json(__('approval.Ya, setujui')),
+                    cancelButtonText: @json(__('approval.Batal')),
                     confirmButtonColor: isReject ? '#dc3545' : '#6c5dd3',
                     cancelButtonColor: '#6c757d',
                     reverseButtons: true,

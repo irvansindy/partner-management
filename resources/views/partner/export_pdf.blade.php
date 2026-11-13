@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {{-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> --}}
-    <title>Export Partner Data</title>
+    <title>{{ __('partner.Export Partner Data') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
@@ -32,21 +32,21 @@
     </htmlpageheader> --}}
 
     <h1 style="margin-top: 20px;">
-        <b>List Daftar Vendor</b>
+        <b>{{ __('partner.List Daftar Vendor') }}</b>
     </h1>
     <div class="table-stepper">
         <table>
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama Perusahaan</th>
-                    <th>Nama Grup</th>
-                    <th>Tipe</th>
-                    <th>Tahun Berdiri</th>
-                    <th>Jumlah Karyawan</th>
-                    <th>Pemilik Perusahaan</th>
-                    <th>Email Perusahaan</th>
-                    <th>No. Tlp</th>
+                    <th>{{ __('partner.Nama Perusahaan') }}</th>
+                    <th>{{ __('partner.Nama Grup') }}</th>
+                    <th>{{ __('partner.Tipe') }}</th>
+                    <th>{{ __('partner.Tahun Berdiri') }}</th>
+                    <th>{{ __('partner.Jumlah Karyawan') }}</th>
+                    <th>{{ __('partner.Pemilik Perusahaan') }}</th>
+                    <th>{{ __('partner.Email Perusahaan') }}</th>
+                    <th>{{ __('partner.Website') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,16 +64,16 @@
                             {{ $partner->group_name }}
                         </td>
                         <td style="text-align: left;">
-                            {{ $partner->type }}
+                            {{ __('messages.Dashboard ' . ucfirst($partner->type)) }}
                         </td>
                         <td style="text-align: left;">
-                            {{ $partner->established_year . ' Masehi' }}
+                            {{ $partner->established_year }}
                         </td>
                         <td style="text-align: left;">
                             {{ $partner->total_employee }}
                         </td>
                         <td style="text-align: left;">
-                            {{ $partner->owner_name != null ? $partner->owner_name : 'Kosong'}}
+                            {{ $partner->owner_name != null ? $partner->owner_name : __('partner.Kosong')}}
                         </td>
                         <td style="text-align: left;">
                             {{ $partner->email_address }}
@@ -83,6 +83,7 @@
                         </td>
                     </tr>
                 @empty
+                    <tr><td colspan="9">{{ __('partner.No partners found') }}</td></tr>
                 @endforelse
             </tbody>
         </table>

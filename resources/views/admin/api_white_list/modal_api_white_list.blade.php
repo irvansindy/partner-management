@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="formIpAddressLabel">IP Address Master</h5>
+                <h5 class="modal-title" id="formIpAddressLabel">{{ __('settings.IP Address Master') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="form-group">
                         <label for="description">{{ __('admin.Description') }}</label>
-                        <textarea class="form-control" id="description" placeholder="Description" name="description"></textarea>
+                        <textarea class="form-control" id="description" placeholder="{{ __('settings.Description') }}" name="description"></textarea>
                         <span class="text-danger" id="message_description"></span>
                     </div>
                 </div>

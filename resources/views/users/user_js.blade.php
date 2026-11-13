@@ -113,10 +113,12 @@
         }
 
         $('#user_role, #user_job_title, #user_division, #user_department, #user_office, #user_parent').select2({
+                language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
             dropdownParent: $('#formCreateUser'),
             width: '100%'
         });
         $('#update_user_role, #update_user_job_title, #update_user_division, #update_user_department, #update_user_office, #update_user_parent').select2({
+                language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
             dropdownParent: $('#formUpdateUser'),
             width: '100%'
         });
@@ -180,7 +182,7 @@
                     }
                 },
             ],
-            language: {
+            language: Object.assign(@json(__('settings.datatable')), {
                 emptyTable: userText.tableEmpty,
                 processing: userText.tableLoading,
                 search: userText.tableSearch,
@@ -191,7 +193,7 @@
                     previous: userText.tablePrevious,
                     next: userText.tableNext
                 }
-            }
+            })
         })
 
         $(document).on('click', '#for_create_user', function(e) {
@@ -461,6 +463,7 @@
                 $(selector).select2('destroy');
             }
             $(selector).select2({
+                language: { noResults: function () { return @json(__('settings.no_results')); }, searching: function () { return @json(__('settings.searching')); } },
                 dropdownParent: $(selector).closest('.modal'),
                 width: '100%'
             });

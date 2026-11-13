@@ -21,12 +21,12 @@ class FormLinkSubmissionsPageTest extends TestCase
         $this->assertStringNotContainsString('small-box', $view);
         $this->assertStringContainsString('submissions-table-wrap', $view);
         $this->assertStringContainsString('submission-actions', $view);
-        $this->assertStringContainsString('aria-label="View submission details', $view);
+        $this->assertStringContainsString('form_links_remaining.View submission details', $view);
         $this->assertStringContainsString('$completedSteps = $approval->getCompletedStepsCount()', $view);
-        $this->assertStringContainsString('Progress {{ $completedSteps }}/{{ $totalSteps }}', $view);
-        $this->assertStringContainsString('Approved {{ $completedSteps }}/{{ $totalSteps }}', $view);
-        $this->assertStringContainsString('Rejected {{ $completedSteps }}/{{ $totalSteps }}', $view);
-        $this->assertGreaterThanOrEqual(3, substr_count($view, 'aria-label="Approval progress'));
+        $this->assertStringContainsString("__('form_links.progress', ['done' => \$completedSteps, 'total' => \$totalSteps])", $view);
+        $this->assertStringContainsString("__('form_links.approved_count', ['done' => \$completedSteps, 'total' => \$totalSteps])", $view);
+        $this->assertStringContainsString("__('form_links.rejected_count', ['done' => \$completedSteps, 'total' => \$totalSteps])", $view);
+        $this->assertGreaterThanOrEqual(3, substr_count($view, "__('form_links_remaining.Approval progress')"));
         $this->assertStringNotContainsString('Step {{ $approval->step_ordering }}', $view);
     }
 
@@ -35,11 +35,13 @@ class FormLinkSubmissionsPageTest extends TestCase
     {
         $view = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/submission_detail.blade.php');
 
+        $view .= file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/_submission_detail_panels.blade.php');
+
         $this->assertStringContainsString('approval-summary', $view);
         $this->assertStringContainsString('approval-step-card', $view);
         $this->assertStringContainsString('approval-status-dot', $view);
         $this->assertStringContainsString('approval-note', $view);
-        $this->assertStringContainsString('aria-label="Approval progress"', $view);
+        $this->assertStringContainsString("__('form_links_remaining.Approval progress')", $view);
         $this->assertStringNotContainsString('alert alert-{{ $step->isApproved()', $view);
         $this->assertStringNotContainsString('class="time-label"', $view);
         $this->assertStringContainsString('{{ $step->notes }}', $view);

@@ -121,10 +121,10 @@ class ApprovalService
     ): bool
     {
         if (!in_array($action, ['approve', 'reject'], true)) {
-            throw new \InvalidArgumentException("Invalid action: {$action}");
+            throw new \InvalidArgumentException(__('approval.Aksi tidak valid.'));
         }
         if ($action === 'reject' && trim((string) $notes) === '') {
-            throw new \InvalidArgumentException('Rejection notes are required.');
+            throw new \InvalidArgumentException(__('approval.Rejection notes are required.'));
         }
 
         try {
@@ -134,12 +134,12 @@ class ApprovalService
                 $company = CompanyInformation::whereKey($process->company_information_id)->lockForUpdate()->firstOrFail();
 
                 if ($lockedStep->user_id !== $actorId) {
-                    throw new \RuntimeException('You are not the approver for this step.');
+                    throw new \RuntimeException(__('approval.You are not the approver for this step.'));
                 }
                 if (!$lockedStep->isWaiting()
                     || !$process->isInProgress()
                     || $process->step_ordering !== $lockedStep->step_ordering) {
-                    throw new \RuntimeException('This approval step has already been processed.');
+                    throw new \RuntimeException(__('approval.This approval step has already been processed.'));
                 }
 
                 $stageSteps = ApprovalProcessStep::where('approval_id', $process->id)
@@ -157,7 +157,7 @@ class ApprovalService
                 } else {
                     $actor = User::with(['division', 'dept'])->whereKey($actorId)->lockForUpdate()->firstOrFail();
                     if (!$actor->office_id || !$actor->department_id) {
-                        throw new \RuntimeException('Approver office and department must be configured.');
+                        throw new \RuntimeException(__('approval.Approver office and department must be configured.'));
                     }
 
                     $companyUpdates = [
@@ -262,7 +262,7 @@ class ApprovalService
             || $normalizedCreditLimit === false
             || $normalizedCreditLimit < 0
             || $normalizedCreditLimit > 2147483647) {
-            throw new \InvalidArgumentException('Financial terms are required for FAT Finance approval.');
+            throw new \InvalidArgumentException(__('approval.Financial terms are required for FAT Finance approval.'));
         }
 
         return [$normalizedTermOfPayment, $normalizedCreditLimit];

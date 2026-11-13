@@ -34,7 +34,7 @@ class FormLinkStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(__('submission_validation.messages'), [
             'form_type.required' => __('form_links.type_required'),
             'form_type.in' => __('form_links.type_invalid'),
             'title.required' => __('form_links.title_required'),
@@ -42,7 +42,7 @@ class FormLinkStoreRequest extends FormRequest
             'expires_at.after' => __('form_links.expiry_after'),
             'max_submissions.min' => __('form_links.limit_min'),
             'user_form.exists' => __('form_links.user_invalid'),
-        ];
+        ]);
     }
 
     /**
@@ -56,7 +56,7 @@ class FormLinkStoreRequest extends FormRequest
             'description' => __('admin.Description'),
             'expires_at' => __('admin.Expires At'),
             'max_submissions' => __('admin.Submissions'),
-            'user_form' => 'user',
+            'user_form' => __('form_links_audit.user'),
         ];
     }
 }

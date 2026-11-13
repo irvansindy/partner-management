@@ -22,26 +22,26 @@ class CompanyAttachmentService
         $path = $file->getRealPath();
         $size = $file->getSize();
         if (!$path || $size === false || $size > config('company_attachments.max_bytes', 5 * 1024 * 1024)) {
-            $this->invalid('Ukuran file maksimal 5 MB.');
+            $this->invalid(__('public_form.Ukuran file maksimal 5 MB.'));
         }
 
         $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($path);
         if (!isset(self::TYPES[$mime])) {
-            $this->invalid('Isi file harus berupa PDF, JPEG, atau PNG yang valid.');
+            $this->invalid(__('public_form.Isi file harus berupa PDF, JPEG, atau PNG yang valid.'));
         }
 
         $width = null;
         $height = null;
         if ($mime === 'application/pdf') {
             $prefix = file_get_contents($path, false, null, 0, 5);
-            if ($prefix !== '%PDF-') $this->invalid('Signature PDF tidak valid.');
+            if ($prefix !== '%PDF-') $this->invalid(__('public_form.Signature PDF tidak valid.'));
         } else {
             $image = @getimagesize($path);
             $expectedType = $mime === 'image/png' ? IMAGETYPE_PNG : IMAGETYPE_JPEG;
             $contents = file_get_contents($path);
             $decoded = function_exists('imagecreatefromstring') ? @imagecreatefromstring($contents) : true;
             if (!$image || $image[2] !== $expectedType || !$decoded) {
-                $this->invalid('File gambar rusak atau tidak sesuai format.');
+                $this->invalid(__('public_form.File gambar rusak atau tidak sesuai format.'));
             }
             if (is_resource($decoded) || is_object($decoded)) imagedestroy($decoded);
             [$width, $height] = $image;
@@ -49,7 +49,7 @@ class CompanyAttachmentService
                 $width > config('company_attachments.max_width', 6000)
                 || $height > config('company_attachments.max_height', 6000)
             ) {
-                $this->invalid('Dimensi gambar melebihi batas yang diizinkan.');
+                $this->invalid(__('public_form.Dimensi gambar melebihi batas yang diizinkan.'));
             }
         }
 

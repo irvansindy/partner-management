@@ -75,15 +75,15 @@
                 </div>
             </div>
             <div class="edit-field col-md-4"><label>Fax <small class="text-muted">{{ __('submission.(optional)') }}</small></label><input name="{{ $prefix }}[fax]" class="form-control" value="{{ $value('fax') }}" maxlength="50"></div>
-            <div class="edit-field col-md-6"><label>Latitude</label><input type="number" step="any" name="{{ $prefix }}[latitude]" class="form-control" value="{{ $value('latitude') }}"></div>
-            <div class="edit-field col-md-6"><label>Longitude</label><input type="number" step="any" name="{{ $prefix }}[longitude]" class="form-control" value="{{ $value('longitude') }}"></div>
+            <div class="edit-field col-md-6"><label>{{ __('form_links_audit.Latitude') }}</label><input type="number" step="any" name="{{ $prefix }}[latitude]" class="form-control" value="{{ $value('latitude') }}"></div>
+            <div class="edit-field col-md-6"><label>{{ __('form_links_audit.Longitude') }}</label><input type="number" step="any" name="{{ $prefix }}[longitude]" class="form-control" value="{{ $value('longitude') }}"></div>
             <div class="edit-field col-12 address-map-field">
                 <label for="address_map_search_{{ $index }}">{{ __('submission.Map coordinate') }}</label>
                 <div class="input-group address-map-search">
-                    <input id="address_map_search_{{ $index }}" type="text" class="form-control" data-coordinate-search value="{{ $value('address') }}" maxlength="500" placeholder="Search a nearby place or complete address">
+                    <input id="address_map_search_{{ $index }}" type="text" class="form-control" data-coordinate-search value="{{ $value('address') }}" maxlength="500" placeholder="{{ __('form_links_audit.address_search') }}">
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" data-find-coordinate>
-                            <i class="fas fa-search mr-1" aria-hidden="true"></i> Search
+                            <i class="fas fa-search mr-1" aria-hidden="true"></i> {{ __('submission.Search') }}
                         </button>
                     </div>
                 </div>

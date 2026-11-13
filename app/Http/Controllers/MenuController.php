@@ -23,27 +23,30 @@ class MenuController extends Controller
     {
         try {
             $menus = Menu::with(['permission'])->where('type', 1)->get();
-            return FormatResponseJson::success($menus, 'menu berhasil diambil');
+            return FormatResponseJson::success($menus, __('settings.menu berhasil diambil'));
         } catch (\Throwable $th) {
-            return FormatResponseJson::error(null, $th->getMessage(), 500);
+            report($th);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
     public function fetchParentMenu()
     {
         try {
             $menus = Menu::with(['permission'])->where('type', 1)->get();
-            return FormatResponseJson::success($menus, 'menu berhasil diambil');
+            return FormatResponseJson::success($menus, __('settings.menu berhasil diambil'));
         } catch (\Throwable $th) {
-            return FormatResponseJson::error(null, $th->getMessage(), 500);
+            report($th);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
     public function fetchMenuById(Request $request)
     {
         try {
             $menu = Menu::with(['permission.roles'])->find($request->id);
-            return FormatResponseJson::success($menu, 'menu berhasil diambil');
+            return FormatResponseJson::success($menu, __('settings.menu berhasil diambil'));
         } catch (\Throwable $th) {
-            return FormatResponseJson::error(null, $th->getMessage(), 500);
+            report($th);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
     public function fetchChildrenMenu(Request $request)
@@ -52,9 +55,10 @@ class MenuController extends Controller
             $menus = Menu::with(['permission'])
             ->where('parent_id', $request->id)
             ->where('type', 2)->get();
-            return FormatResponseJson::success($menus, 'menu berhasil diambil');
+            return FormatResponseJson::success($menus, __('settings.menu berhasil diambil'));
         } catch (\Throwable $th) {
-            return FormatResponseJson::error(null, $th->getMessage(), 500);
+            report($th);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
     public function storeMenu(Request $request)
@@ -70,12 +74,12 @@ class MenuController extends Controller
                 'parent_id' => 'nullable|exists:menus,id',
                 // 'can_permission' => 'nullable|string',
                 'roles' => 'nullable|array',
-            ], [
-                'name.required' => 'Nama tidak boleh kosong',
-                'url.required' => 'Link / Url tidak boleh kosong',
-                'icon.required' => 'Icon tidak boleh kosong',
-                'menu_type.required' => 'Type tidak boleh kosong',
-            ]);
+            ], array_merge(__('settings_validation.messages'), [
+                'menu_name.required' => __('settings.Nama tidak boleh kosong'),
+                'menu_url.required' => __('settings.Link / Url tidak boleh kosong'),
+                'menu_icon.required' => __('settings.Icon tidak boleh kosong'),
+                'menu_type.required' => __('settings.Type tidak boleh kosong'),
+            ]), __('settings_validation.attributes'));
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
@@ -109,13 +113,14 @@ class MenuController extends Controller
             }
 
             DB::commit();
-            return FormatResponseJson::success($menu, 'menu berhasil dibuat');
+            return FormatResponseJson::success($menu, __('settings.menu berhasil dibuat'));
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 400);}
         catch (\Throwable $th) {
+            report($th);
             DB::rollback();
-            return FormatResponseJson::error(null, $th->getMessage(), 500);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
     public function updateMenu(Request $request)
@@ -132,14 +137,14 @@ class MenuController extends Controller
                 'parent_id' => 'nullable|exists:menus,id',
                 'roles' => 'nullable|array',
                 'roles.*' => 'exists:roles,id',
-            ], [
-                'id.required' => 'ID Menu tidak valid',
-                'id.exists' => 'ID Menu tidak ditemukan',
-                'menu_name.required' => 'Nama tidak boleh kosong',
-                'menu_url.required' => 'Link / Url tidak boleh kosong',
-                'menu_icon.required' => 'Icon tidak boleh kosong',
-                'menu_type.required' => 'Type tidak boleh kosong',
-            ]);
+            ], array_merge(__('settings_validation.messages'), [
+                'id.required' => __('settings.ID Menu tidak valid'),
+                'id.exists' => __('settings.ID Menu tidak ditemukan'),
+                'menu_name.required' => __('settings.Nama tidak boleh kosong'),
+                'menu_url.required' => __('settings.Link / Url tidak boleh kosong'),
+                'menu_icon.required' => __('settings.Icon tidak boleh kosong'),
+                'menu_type.required' => __('settings.Type tidak boleh kosong'),
+            ]), __('settings_validation.attributes'));
 
             if ($validator->fails()) {
                 throw new ValidationException($validator);
@@ -212,7 +217,7 @@ class MenuController extends Controller
 
             return FormatResponseJson::success(
                 $menu,
-                'menu berhasil diperbarui'
+                __('settings.menu berhasil diperbarui')
             );
 
         } catch (ValidationException $e) {
@@ -226,12 +231,13 @@ class MenuController extends Controller
             );
 
         } catch (\Throwable $th) {
+            report($th);
 
             DB::rollback();
 
             return FormatResponseJson::error(
                 null,
-                $th->getMessage(),
+                __('settings.operation_failed'),
                 500
             );
         }
@@ -270,10 +276,11 @@ class MenuController extends Controller
             }
 
             DB::commit();
-            return FormatResponseJson::success(null, 'menu berhasil dihapus');
+            return FormatResponseJson::success(null, __('settings.menu berhasil dihapus'));
         } catch (\Throwable $th) {
+            report($th);
             DB::rollback();
-            return FormatResponseJson::error(null, $th->getMessage(), 500);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 

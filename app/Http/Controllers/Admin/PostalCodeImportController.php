@@ -13,12 +13,17 @@ class PostalCodeImportController extends Controller
 
     public function store(Request $request, PostalCodeImportService $importer)
     {
-        $validated = $request->validate(['csv' => 'required|file|max:10240|mimes:csv,txt']);
+        $validated = $request->validate(['csv' => 'required|file|max:10240|mimes:csv,txt'], __('data_tools_validation.messages'), __('data_tools_validation.attributes'));
         $path = $validated['csv']->store('imports/postal-codes', 'local');
         try {
             $result = $importer->import(Storage::disk('local')->path($path));
             session(['postal_import_errors' => $result['errors']]);
             return back()->with('postal_import_result', $result);
+        } catch (\InvalidArgumentException $e) {
+            return back()->withErrors(['csv' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            report($e);
+            return back()->withErrors(['csv' => __('data_tools.import_failed')]);
         } finally {
             Storage::disk('local')->delete($path);
         }
@@ -31,7 +36,10 @@ class PostalCodeImportController extends Controller
         return response()->streamDownload(function () use ($errors) {
             $stream = fopen('php://output', 'w');
             fputcsv($stream, ['row', 'province', 'regency', 'district', 'village', 'postal_code', 'reason']);
-            foreach ($errors as $error) fputcsv($stream, array_merge([$error['row']], array_pad($error['values'], 5, ''), [$error['reason']]));
+            foreach ($errors as $error) {
+                $reason = isset($error['reason_key']) ? __('data_tools.' . $error['reason_key']) : $error['reason'];
+                fputcsv($stream, array_merge([$error['row']], array_pad($error['values'], 5, ''), [$reason]));
+            }
             fclose($stream);
         }, 'postal-code-import-errors.csv', ['Content-Type' => 'text/csv', 'X-Content-Type-Options' => 'nosniff']);
     }

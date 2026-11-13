@@ -209,64 +209,40 @@ class CompanyTemplateExport implements WithHeadings, WithStyles, WithColumnWidth
                 // ========================================
 
                 // nama_perusahaan (WAJIB)
-                $sheet->getComment('A1')->getText()->createTextRun(
-                    "⚠️ WAJIB DIISI!\nNama perusahaan yang akan diimport.\n\nContoh: PT Maju Jaya"
-                );
+                $sheet->getComment('A1')->getText()->createTextRun(__('data_tools.template_notes.A1'));
 
                 // jenis_perusahaan_vendorcustomer
-                $sheet->getComment('C1')->getText()->createTextRun(
-                    "Pilih salah satu:\n• vendor\n• customer\n\nContoh: vendor"
-                );
+                $sheet->getComment('C1')->getText()->createTextRun(__('data_tools.template_notes.C1'));
 
                 // email_koresponden
-                $sheet->getComment('L1')->getText()->createTextRun(
-                    "Format email yang valid.\n\nContoh: info@perusahaan.com"
-                );
+                $sheet->getComment('L1')->getText()->createTextRun(__('data_tools.template_notes.L1'));
 
                 // tahun_berdiri
-                $sheet->getComment('D1')->getText()->createTextRun(
-                    "Harus berupa angka (tahun).\n\nContoh: 2020"
-                );
+                $sheet->getComment('D1')->getText()->createTextRun(__('data_tools.template_notes.D1'));
 
                 // alamat_npwp (Multiple)
-                $sheet->getComment('T1')->getText()->createTextRun(
-                    "📍 MULTIPLE ADDRESSES\nPisahkan dengan | (pipe) untuk multiple alamat.\n\nContoh:\nJl. Utama No. 1 | Jl. Kedua No. 2"
-                );
+                $sheet->getComment('T1')->getText()->createTextRun(__('data_tools.template_notes.T1'));
 
                 // kode_pos (Multiple)
-                $sheet->getComment('U1')->getText()->createTextRun(
-                    "MULTIPLE ZIP CODES\nPisahkan dengan | sesuai urutan alamat.\n\nContoh: 12345 | 67890"
-                );
+                $sheet->getComment('U1')->getText()->createTextRun(__('data_tools.template_notes.U1'));
 
                 // telepon_alamat (Multiple)
-                $sheet->getComment('V1')->getText()->createTextRun(
-                    "MULTIPLE TELEPON\nPisahkan dengan | sesuai urutan alamat.\n\nContoh: 021-111 | 021-222"
-                );
+                $sheet->getComment('V1')->getText()->createTextRun(__('data_tools.template_notes.V1'));
 
                 // fax_alamat (Multiple)
-                $sheet->getComment('W1')->getText()->createTextRun(
-                    "MULTIPLE FAX\nPisahkan dengan | sesuai urutan alamat.\n\nContoh: 021-333 | 021-444"
-                );
+                $sheet->getComment('W1')->getText()->createTextRun(__('data_tools.template_notes.W1'));
 
                 // nama_bank (Multiple)
-                $sheet->getComment('X1')->getText()->createTextRun(
-                    "🏦 MULTIPLE BANKS\nPisahkan dengan | untuk multiple bank.\n\nContoh: Bank BCA | Bank Mandiri"
-                );
+                $sheet->getComment('X1')->getText()->createTextRun(__('data_tools.template_notes.X1'));
 
                 // nama_akun_bank (Multiple)
-                $sheet->getComment('Y1')->getText()->createTextRun(
-                    "MULTIPLE ACCOUNT NAMES\nPisahkan dengan | sesuai urutan bank.\n\nContoh: PT ABC | CV XYZ"
-                );
+                $sheet->getComment('Y1')->getText()->createTextRun(__('data_tools.template_notes.Y1'));
 
                 // nomor_akun_bank (Multiple)
-                $sheet->getComment('Z1')->getText()->createTextRun(
-                    "MULTIPLE ACCOUNT NUMBERS\nPisahkan dengan | sesuai urutan bank.\n\nContoh: 1234567890 | 0987654321"
-                );
+                $sheet->getComment('Z1')->getText()->createTextRun(__('data_tools.template_notes.Z1'));
 
                 // e_mail_kontak
-                $sheet->getComment('R1')->getText()->createTextRun(
-                    "Format email yang valid.\n\nContoh: kontak@perusahaan.com"
-                );
+                $sheet->getComment('R1')->getText()->createTextRun(__('data_tools.template_notes.R1'));
 
                 // ========================================
                 // DATA VALIDATION - Dropdown untuk jenis_perusahaan
@@ -278,10 +254,10 @@ class CompanyTemplateExport implements WithHeadings, WithStyles, WithColumnWidth
                 $validation->setShowInputMessage(true);
                 $validation->setShowErrorMessage(true);
                 $validation->setShowDropDown(true);
-                $validation->setErrorTitle('❌ Input Error');
-                $validation->setError('Harus pilih "vendor" atau "customer"');
-                $validation->setPromptTitle('📋 Pilih Jenis Perusahaan');
-                $validation->setPrompt('Silakan pilih:\n• vendor (untuk supplier)\n• customer (untuk pelanggan)');
+                $validation->setErrorTitle(__('data_tools.❌ Input Error'));
+                $validation->setError(__('data_tools.Harus pilih "vendor" atau "customer"'));
+                $validation->setPromptTitle(__('data_tools.📋 Pilih Jenis Perusahaan'));
+                $validation->setPrompt(__('data_tools.template_prompt'));
                 $validation->setFormula1('"vendor,customer"');
 
                 // Copy validation ke rows 3-1000
@@ -322,43 +298,9 @@ class CompanyTemplateExport implements WithHeadings, WithStyles, WithColumnWidth
                 // Note: Ini akan menambah sheet baru untuk petunjuk
                 $spreadsheet = $event->sheet->getDelegate()->getParent();
                 $instructionSheet = $spreadsheet->createSheet();
-                $instructionSheet->setTitle('📋 PETUNJUK');
+                $instructionSheet->setTitle(__('data_tools.instructions_title'));
 
-                $instructions = [
-                    ['PETUNJUK PENGGUNAAN TEMPLATE IMPORT'],
-                    [''],
-                    ['1. KOLOM WAJIB (HEADER MERAH)'],
-                    ['   • nama_perusahaan → WAJIB DIISI'],
-                    [''],
-                    ['2. KOLOM MULTIPLE (HEADER TOSCA)'],
-                    ['   • Alamat, Telepon, Fax, Bank → Bisa lebih dari 1'],
-                    ['   • Pisahkan dengan karakter | (pipe)'],
-                    ['   • Contoh: Bank BCA | Bank Mandiri'],
-                    [''],
-                    ['3. FORMAT DATA'],
-                    ['   • tahun_berdiri → Harus angka (contoh: 2020)'],
-                    ['   • email_koresponden → Format email valid'],
-                    ['   • e_mail_kontak → Format email valid'],
-                    ['   • jenis_perusahaan → Pilih: vendor atau customer'],
-                    [''],
-                    ['4. CONTOH MULTIPLE DATA'],
-                    ['   Jika punya 2 alamat:'],
-                    ['   • alamat_npwp: Jl. A No. 1 | Jl. B No. 2'],
-                    ['   • kode_pos: 12345 | 67890'],
-                    ['   • telepon_alamat: 021-111 | 021-222'],
-                    ['   • fax_alamat: 021-333 | 021-444'],
-                    [''],
-                    ['5. TIPS'],
-                    ['   • Lihat contoh di row 2 sheet "Data"'],
-                    ['   • Hover mouse di header untuk lihat catatan'],
-                    ['   • Hapus row contoh sebelum import data real'],
-                    [''],
-                    ['6. PROSES IMPORT'],
-                    ['   • Isi data sesuai format'],
-                    ['   • Save file Excel'],
-                    ['   • Upload di halaman import'],
-                    ['   • Preview data sebelum confirm'],
-                ];
+                $instructions = array_map(fn ($line) => [$line], __('data_tools.template_instructions'));
 
                 $instructionSheet->fromArray($instructions, null, 'A1');
 

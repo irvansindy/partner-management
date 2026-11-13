@@ -507,19 +507,19 @@
     <div class="approval-page">
         <div class="approval-page-header">
             <div>
-                <h2>Master Approval</h2>
-                <p>Set up approval templates and approver flows by office and department.</p>
+                <h2>{{ __('approval.Master Approval') }}</h2>
+                <p>{{ __('approval.Set up approval templates and approver flows by office and department.') }}</p>
             </div>
             <button type="button" class="btn btn-primary waves-effect" id="for_create_approval"
                 data-toggle="modal" data-target="#formCreateApproval">
                 <i class="material-icons align-middle mr-1">playlist_add</i>
-                <span>Create Template</span>
+                <span>{{ __('approval.Create Template') }}</span>
             </button>
         </div>
 
         <div class="card approval-table-card">
             <div class="card-header">
-                <h5>Approval List</h5>
+                <h5>{{ __('approval.Approval List') }}</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -527,10 +527,10 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Approval Name</th>
-                                <th>Lokasi</th>
+                                <th>{{ __('approval.Approval Name') }}</th>
+                                <th>{{ __('approval.Lokasi') }}</th>
                                 <th>{{ __('admin.Department') }}</th>
-                                <th>Steps</th>
+                                <th>{{ __('approval.Steps') }}</th>
                                 <th>{{ __('admin.Status') }}</th>
                                 <th>{{ __('admin.Actions') }}</th>
                             </tr>

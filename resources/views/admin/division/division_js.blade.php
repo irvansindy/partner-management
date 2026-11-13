@@ -68,22 +68,22 @@
                 columns: [
                     { id: 'id', name: 'id', hidden: true },
                     { name: '#', width: '70px', sort: false },
-                    { name: 'Division Name', sort: true },
-                    { name: 'General Manager', sort: true },
-                    { name: 'Office', sort: true },
+                    { name: @json(__('settings.Division Name')), sort: true },
+                    { name: @json(__('settings.General Manager')), sort: true },
+                    { name: @json(__('settings.Office')), sort: true },
                     {
-                        name: 'Actions',
+                        name: @json(__('settings.Actions')),
                         sort: false,
                         width: '120px',
                         formatter: function (_, row) {
                             const id = Number(row.cells[0].data);
                                 const divisionName = escapeHtml(row.cells[2].data);
                             return gridjs.html(`
-                                <div class="table-actions" role="group" aria-label="Actions for ${divisionName}">
-                                    <button type="button" class="table-action table-action--edit edit_division" data-id="${id}" title="Edit division" aria-label="Edit ${divisionName}">
+                                <div class="table-actions" role="group" aria-label="${escapeHtml(@json(__('settings.actions_named')).replace(':name', row.cells[2].data))}">
+                                    <button type="button" class="table-action table-action--edit edit_division" data-id="${id}" title="${escapeHtml(@json(__('settings.Edit division')))}" aria-label="${escapeHtml(@json(__('settings.edit_named')).replace(':name', row.cells[2].data))}">
                                         <i class="fas fa-pen" aria-hidden="true"></i>
                                     </button>
-                                    <button type="button" class="table-action table-action--delete delete_division" data-id="${id}" title="Delete division" aria-label="Delete ${divisionName}">
+                                    <button type="button" class="table-action table-action--delete delete_division" data-id="${id}" title="${escapeHtml(@json(__('settings.Delete division')))}" aria-label="${escapeHtml(@json(__('settings.remove_named')).replace(':name', row.cells[2].data))}">
                                         <i class="fas fa-trash" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -99,23 +99,25 @@
                     table: 'table table-striped table-hover align-middle'
                 },
                 language: {
-                    search: { placeholder: 'Search divisions...' },
+                    loading: @json(__('settings.loading')),
+                    sort: { sortAsc: @json(__('settings.sort_asc')), sortDesc: @json(__('settings.sort_desc')) },
+                    search: { placeholder: @json(__('settings.Search divisions...')) },
                     pagination: {
                         previous: '‹',
                         next: '›',
-                        showing: 'Showing',
-                        of: 'of',
-                        to: 'to',
-                        results: 'divisions'
+                        showing: @json(__('settings.Showing')),
+                        of: @json(__('settings.of')),
+                        to: @json(__('settings.to')),
+                        results: @json(__('settings.divisions'))
                     },
-                    noRecordsFound: 'No divisions found',
-                    error: 'Unable to load divisions.'
+                    noRecordsFound: @json(__('settings.No divisions found')),
+                    error: @json(__('settings.Unable to load divisions.'))
                 }
             }).render(document.getElementById('division_table'));
         }
 
         function loadDivisions() {
-            $status.text('Loading divisions...').removeClass('d-none alert-danger').addClass('alert-info');
+            $status.text(@json(__('settings.Loading divisions...'))).removeClass('d-none alert-danger').addClass('alert-info');
 
             $.ajax({
                 url: @json(route('fetch-division')),
@@ -127,7 +129,7 @@
                     $status.addClass('d-none').text('');
                 },
                 error: function () {
-                    $status.text('Unable to load divisions. Try refreshing the list.')
+                    $status.text(@json(__('settings.Unable to load divisions. Try refreshing the list.')))
                         .removeClass('alert-info d-none')
                         .addClass('alert-danger');
                 }
@@ -143,8 +145,8 @@
             $('#division_form')[0].reset();
             syncDivisionLabels();
             $('#division_id').val('');
-            $('#divisionModalTitle').text('Create Division');
-            $('#save_division').html('<i class="material-icons align-middle mr-1">save</i> Save Division');
+            $('#divisionModalTitle').text(@json(__('settings.Create Division')));
+            $('#save_division').html('<i class="material-icons align-middle mr-1">save</i> ' + escapeHtml(@json(__('settings.Save Division'))));
             clearDivisionErrors();
         }
 
@@ -163,8 +165,8 @@
             syncDivisionLabels();
             $('#division_gm_user_id').val(division.gm_user_id || '');
             $('#division_office_id').val(division.office_id || '');
-            $('#divisionModalTitle').text('Edit Division');
-            $('#save_division').html('<i class="material-icons align-middle mr-1">save</i> Update Division');
+            $('#divisionModalTitle').text(@json(__('settings.Edit Division')));
+            $('#save_division').html('<i class="material-icons align-middle mr-1">save</i> ' + escapeHtml(@json(__('settings.Update Division'))));
             $('#divisionModal').modal('show');
         });
 
@@ -190,7 +192,7 @@
                 success: function (response) {
                     closeDivisionModal();
                     loadDivisions();
-                    showMessage('success', 'Saved', response.meta && response.meta.message || 'Division saved successfully.');
+                    showMessage('success', @json(__('settings.Saved')), response.meta && response.meta.message || @json(__('settings.Division saved successfully.')));
                 },
                 error: function (xhr) {
                     const errors = xhr.responseJSON && xhr.responseJSON.errors;
@@ -205,7 +207,7 @@
                     }
 
                     const message = xhr.responseJSON && xhr.responseJSON.meta && xhr.responseJSON.meta.message;
-                    showMessage('error', 'Unable to save division', message || 'Please try again.');
+                    showMessage('error', @json(__('settings.Unable to save division')), message || @json(__('settings.Please try again.')));
                 },
                 complete: function () {
                     $('#save_division').prop('disabled', false);
@@ -216,18 +218,18 @@
         $(document).on('click', '.delete_division', function () {
             const divisionId = $(this).data('id');
             const division = divisions.find(function (item) { return Number(item.id) === Number(divisionId); });
-            const divisionName = division ? division.name : 'this division';
+            const divisionName = division ? division.name : @json(__('settings.this division'));
 
             const confirmDelete = typeof Swal !== 'undefined'
                 ? Swal.fire({
-                    title: 'Delete Division?',
-                    text: 'Delete ' + divisionName + '? This action cannot be undone.',
+                    title: @json(__('settings.Delete Division?')),
+                    text: @json(__('settings.delete_named')).replace(':name', divisionName),
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Delete',
-                    cancelButtonText: 'Cancel'
+                    confirmButtonText: @json(__('settings.Delete')),
+                    cancelButtonText: @json(__('settings.Cancel'))
                 }).then(function (result) { return result.isConfirmed; })
-                : Promise.resolve(window.confirm('Delete ' + divisionName + '? This action cannot be undone.'));
+                : Promise.resolve(window.confirm(@json(__('settings.delete_named')).replace(':name', divisionName)));
 
             confirmDelete.then(function (confirmed) {
                 if (!confirmed) return;
@@ -239,11 +241,11 @@
                     headers: { 'X-CSRF-TOKEN': csrfToken },
                     success: function (response) {
                         loadDivisions();
-                        showMessage('success', 'Deleted', response.meta && response.meta.message || 'Division deleted successfully.');
+                        showMessage('success', @json(__('settings.Deleted')), response.meta && response.meta.message || @json(__('settings.Division deleted successfully.')));
                     },
                     error: function (xhr) {
                         const message = xhr.responseJSON && xhr.responseJSON.meta && xhr.responseJSON.meta.message;
-                        showMessage('error', 'Unable to delete division', message || 'Please try again.');
+                        showMessage('error', @json(__('settings.Unable to delete division')), message || @json(__('settings.Please try again.')));
                     }
                 });
             });

@@ -29,18 +29,20 @@ class RoleAndPermissionController extends Controller
     {
         try {
             $fetch_role = Role::all();
-            return FormatResponseJson::success($fetch_role, 'role fetched successfully');
+            return FormatResponseJson::success($fetch_role, __('settings.role fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function fetchPermission()
     {
         try {
             $fetch_permission = Permission::all();
-            return FormatResponseJson::success($fetch_permission, 'permission fetched successfully');
+            return FormatResponseJson::success($fetch_permission, __('settings.permission fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function fetchPermissionView()
@@ -48,9 +50,10 @@ class RoleAndPermissionController extends Controller
         try {
             $fetch_permission = Permission::where('name', 'LIKE', '%view_%')
             ->get(['id','name', 'guard_name']);
-            return FormatResponseJson::success($fetch_permission, 'permission fetched successfully');
+            return FormatResponseJson::success($fetch_permission, __('settings.permission fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function menu()
@@ -62,24 +65,28 @@ class RoleAndPermissionController extends Controller
         try {
             $request->validate([
                 'role_name'=> 'required|string',
-            ]);
+            ], __('settings_validation.messages'), __('settings_validation.attributes'));
             $data = [
                 'name' => $request->role_name,
                 'guard_name'=>'web',
             ];
             $role = Role::create($data);
-            return FormatResponseJson::success($role, 'role created successfully');
+            return FormatResponseJson::success($role, __('settings.role created successfully'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 500);
         }
     }
     public function detailRole(Request $request)
     {
         try {
             $detail_role = Role::findOrFail($request->role_id);
-            return FormatResponseJson::success($detail_role,'role fetched successfully');
+            return FormatResponseJson::success($detail_role,__('settings.role fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function updateRole(Request $request)
@@ -87,24 +94,28 @@ class RoleAndPermissionController extends Controller
         try {
             $request->validate([
                 'role_name'=> 'required|string',
-            ]);
+            ], __('settings_validation.messages'), __('settings_validation.attributes'));
             $data = [
                 'name' => $request->role_name,
                 'guard_name'=>'web',
             ];
             $update_role = Role::findOrFail($request->role_id)->update($data);
-            return FormatResponseJson::success($update_role,'role updated successfully');
+            return FormatResponseJson::success($update_role,__('settings.role updated successfully'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 500);
         }
     }
     public function deleteRole(Request $request)
     {
         try {
             $delete_role = Role::findOrFail($request->role_id)->delete();
-            return FormatResponseJson::success($delete_role,'role deleted successfully');
+            return FormatResponseJson::success($delete_role,__('settings.role deleted successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 500);
         }
     }
     public function storePermission(Request $request)
@@ -113,10 +124,10 @@ class RoleAndPermissionController extends Controller
             DB::beginTransaction();
             $validator = Validator::make($request->all(), [
                 'permission_name'=> 'required|string|unique:permissions,name',
-            ], [
-                'permission_name.required' => 'Permission tidak boleh kosong',
-                'permission_name.unique' => 'Permission tersebut sudah tersedia'
-            ]);
+            ], array_merge(__('settings_validation.messages'), [
+                'permission_name.required' => __('settings.Permission tidak boleh kosong'),
+                'permission_name.unique' => __('settings.Permission tersebut sudah tersedia')
+            ]), __('settings_validation.attributes'));
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
@@ -126,23 +137,25 @@ class RoleAndPermissionController extends Controller
             ];
             $permission = Permission::create($data);
             DB::commit();
-            return FormatResponseJson::success($permission,'permission created successfully');
+            return FormatResponseJson::success($permission,__('settings.permission created successfully'));
         } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
     public function detailPermission(Request $request)
     {
         try {
             $detail_permission = Permission::findOrFail($request->permission_id);
-            return FormatResponseJson::success($detail_permission,'permission fetched successfully');
+            return FormatResponseJson::success($detail_permission,__('settings.permission fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function updatePermission(Request $request)
@@ -157,7 +170,7 @@ class RoleAndPermissionController extends Controller
                         ->ignore($request->permission_id)
                         ->where(fn ($query) => $query->where('guard_name', 'web')),
                 ],
-            ]);
+            ], __('settings_validation.messages'), __('settings_validation.attributes'));
 
             $permission = DB::transaction(function () use ($request) {
                 $permission = Permission::whereKey($request->permission_id)
@@ -181,18 +194,22 @@ class RoleAndPermissionController extends Controller
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-            return FormatResponseJson::success($permission, 'permission updated successfully');
+            return FormatResponseJson::success($permission, __('settings.permission updated successfully'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 500);
         }
     }
     public function deletePermission(Request $request)
     {
         try {
             $delete_permission = Permission::findOrFail($request->permission_id)->delete();
-            return FormatResponseJson::success($delete_permission,'permission deleted successfully');
+            return FormatResponseJson::success($delete_permission,__('settings.permission deleted successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 500);
         }
     }
     public function fetchPermissionInRole(Request $request)
@@ -205,9 +222,10 @@ class RoleAndPermissionController extends Controller
                 'permissions' => $permissions,
                 'permission_by_role' => $permission_by_role
             ];
-            return FormatResponseJson::success($data,'permission fetched successfully');
+            return FormatResponseJson::success($data,__('settings.permission fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null,$e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null,__('settings.operation_failed'), 404);
         }
     }
     public function addOrRemovePermissionToRole(Request $request)
@@ -232,13 +250,14 @@ class RoleAndPermissionController extends Controller
             $existing_role->givePermissionTo($list_new_permissions);
             $existing_role->syncPermissions($list_new_permissions);
             DB::commit();
-            return FormatResponseJson::success($list_new_permissions,'Berhasil mengsinkronkan permission.');
+            return FormatResponseJson::success($list_new_permissions,__('settings.Berhasil mengsinkronkan permission.'));
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 
@@ -261,9 +280,10 @@ class RoleAndPermissionController extends Controller
                 'role' => $role
             ];
 
-            return FormatResponseJson::success($data, 'Permissions fetched successfully');
+            return FormatResponseJson::success($data, __('settings.Permissions fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 404);
         }
     }
 }

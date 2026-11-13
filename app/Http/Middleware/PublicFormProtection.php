@@ -21,7 +21,7 @@ class PublicFormProtection
         if ($key !== env('PUBLIC_FORM_SECRET')) {
             return response()->json([
                 'status' => false,
-                'message' => 'Unauthorized'
+                'message' => __('public_form.unauthorized')
             ], 401);
         }
 

@@ -91,7 +91,7 @@
     {{-- Loader — tampil sebentar saat halaman pertama kali load --}}
     <div class="loader" role="status" aria-live="polite">
         <div class="loader__figure" aria-hidden="true"></div>
-        <span>{{ app()->getLocale() === 'id' ? 'Memuat halaman, mohon tunggu...' : 'Loading page, please wait...' }}</span>
+        <span>{{ __('public_form.page_loading') }}</span>
     </div>
 
     {{-- App Container — struktur utama dari template Alpha.

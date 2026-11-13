@@ -75,9 +75,9 @@ class PublicFormController extends Controller
 
         $validated = $request->validate([
             'website_address' => ['required', 'string', 'max:255', new PublicHttpsUrl(), new ReachablePublicHttpsUrl()],
-        ], [
-            'website_address.required' => 'Alamat situs web wajib diisi. | Website address is required.',
-        ]);
+        ], array_merge(__('public_validation.messages'), [
+            'website_address.required' => __('public_form.website_required'),
+        ]), __('public_validation.attributes'));
 
         return response()->json([
             'valid' => true,
@@ -422,41 +422,9 @@ class PublicFormController extends Controller
             ]);
         }
 
-        $messages = [
-            'company_type.required' => 'Jenis perusahaan wajib diisi. | Company type is required.',
-            'business_classification.required' => 'Klasifikasi bisnis wajib diisi. | Business classification is required.',
-            'business_classification_other_detail.required_if' => 'Klasifikasi bisnis lainnya wajib diisi. | Other business classification is required.',
-            'email_address.email' => 'Format alamat email tidak valid. | Email address format is invalid.',
-            'contact_email.*.email' => 'Format email kontak tidak valid. | Contact email format is invalid.',
-            'contact_telephone.*.regex' => 'Format atau panjang nomor telepon kontak tidak valid. | Contact telephone format or length is invalid.',
-            'telephone.*.regex' => 'Format atau panjang nomor telepon tidak valid. | Telephone format or length is invalid.',
-            'fax.*.regex' => 'Format atau panjang nomor fax tidak valid. | Fax format or length is invalid.',
-            'company_type.in' => 'Jenis perusahaan harus vendor atau customer. | Company type must be vendor or customer.',
-            'company_name.required' => 'Nama perusahaan wajib diisi. | Company name is required.',
-            'company_name.string' => 'Nama perusahaan harus berupa teks. | Company name must be a string.',
-            'company_name.max' => 'Nama perusahaan maksimal 255 karakter. | Company name may not exceed 255 characters.',
-            'company_name.regex' => 'Nama perusahaan hanya boleh berisi huruf dan spasi. | Company name may only contain letters and spaces.',
-            'company_group_name.regex' => 'Nama grup perusahaan hanya boleh berisi huruf dan spasi. | Company group name may only contain letters and spaces.',
-            'established_year.integer' => 'Tahun berdiri harus berupa empat digit angka. | Established year must be a four-digit number.',
-            'established_year.min' => 'Tahun berdiri minimal 1900. | Established year must be at least 1900.',
-            'established_year.max' => 'Tahun berdiri tidak boleh melebihi tahun berjalan. | Established year may not exceed the current year.',
-            'total_employee.in' => 'Pilih rentang jumlah karyawan yang tersedia. | Select one of the available employee ranges.',
-            'liable_person.*.regex' => 'Nama penanggung jawab hanya boleh berisi huruf dan spasi. | Liable person name may only contain letters and spaces.',
-            'contact_department.*.regex' => 'Departemen hanya boleh berisi huruf dan spasi. | Department may only contain letters and spaces.',
-            'contact_position.*.regex' => 'Jabatan hanya boleh berisi huruf dan spasi. | Position may only contain letters and spaces.',
-            'contact_name.*.regex' => 'Nama kontak hanya boleh berisi huruf dan spasi. | Contact name may only contain letters and spaces.',
-            'bank_name.*.regex' => 'Nama bank mengandung karakter yang tidak didukung. | Bank name contains unsupported characters.',
-            'account_name.*.regex' => 'Nama akun hanya boleh berisi huruf dan spasi. | Account name may only contain letters and spaces.',
-            'input-multiple-file.required' => 'Minimal satu lampiran wajib diunggah. | At least one attachment is required.',
-            'input-multiple-file.min' => 'Minimal satu lampiran wajib diunggah. | At least one attachment is required.',
-            'input-multiple-file.max' => 'Jumlah lampiran melebihi batas yang diizinkan. | The number of attachments exceeds the allowed limit.',
-            'input-multiple-file.*.required' => 'Lampiran tidak boleh kosong. | Attachment may not be empty.',
-            'input-multiple-file.*.file' => 'Lampiran harus berupa file yang valid. | Attachment must be a valid file.',
-            'input-multiple-file.*.max' => 'Ukuran setiap lampiran maksimal 5 MB. | Each attachment may not exceed 5 MB.',
-            // ... (rest of messages sama)
-        ];
+        $messages = array_merge(__('public_validation.messages'), __('public_validation.custom'));
 
-        $validated = $request->validate($rules, $messages);
+        $validated = $request->validate($rules, $messages, __('public_validation.attributes'));
         $this->validateAlignedFields($validated, ['liable_person', 'liable_position', 'nik']);
         $this->validateAlignedFields($validated, ['contact_department', 'contact_position', 'contact_name', 'contact_email', 'contact_telephone']);
         $this->validateAlignedFields($validated, ['bank_name', 'account_name', 'account_number']);
@@ -473,7 +441,7 @@ class PublicFormController extends Controller
         $expected = count($validated[$fields[0]] ?? []);
         foreach ($fields as $field) {
             if (!isset($validated[$field]) || count($validated[$field]) !== $expected) {
-                throw ValidationException::withMessages([$field => 'Data berulang tidak lengkap atau tidak sejajar.']);
+                throw ValidationException::withMessages([$field => __('public_form.Data berulang tidak lengkap atau tidak sejajar.')]);
             }
         }
     }
@@ -484,11 +452,11 @@ class PublicFormController extends Controller
         $count = count($validated['address'] ?? []);
         foreach ($fields as $field) {
             if (!isset($validated[$field]) || count($validated[$field]) !== $count) {
-                throw ValidationException::withMessages([$field => 'Data alamat tidak lengkap atau tidak sejajar.']);
+                throw ValidationException::withMessages([$field => __('public_form.Data alamat tidak lengkap atau tidak sejajar.')]);
             }
         }
         if (($validated['address_role'][0] ?? null) !== 'legal' || count(array_filter($validated['address_role'], function ($role) { return $role === 'legal'; })) !== 1) {
-            throw ValidationException::withMessages(['address_role' => 'Alamat legal wajib ada tepat satu.']);
+            throw ValidationException::withMessages(['address_role' => __('public_form.Alamat legal wajib ada tepat satu.')]);
         }
         foreach ($validated['address'] as $index => $address) {
             $country = CountryCatalog::find($validated['country_code'][$index]);
@@ -499,12 +467,12 @@ class PublicFormController extends Controller
             $province = Provinces::find($validated['province'][$index]);
             $regency = $province ? Regencies::where('province_id', $province->id)->find($validated['city'][$index]) : null;
             if (!$province || !$regency) {
-                throw ValidationException::withMessages(["city.$index" => 'Relasi provinsi dan kota/kabupaten tidak valid.']);
+                throw ValidationException::withMessages(["city.$index" => __('public_form.Relasi provinsi dan kota/kabupaten tidak valid.')]);
             }
 
             $postalCodes = PostalCode::where('province_id', $province->id)->where('regency_id', $regency->id);
             if ($postalCodes->exists() && !(clone $postalCodes)->where('postal_code', $validated['zip_code'][$index])->exists()) {
-                throw ValidationException::withMessages(["zip_code.$index" => 'Kode pos tidak sesuai dengan kota/kabupaten yang dipilih.']);
+                throw ValidationException::withMessages(["zip_code.$index" => __('public_form.Kode pos tidak sesuai dengan kota/kabupaten yang dipilih.')]);
             }
             $validated['province'][$index] = (string) $province->id;
             $validated['city'][$index] = $regency->name;
@@ -517,7 +485,7 @@ class PublicFormController extends Controller
             return __('messages.Public Form Inactive');
         }
         if ($formLink->isExpired()) {
-            return __('messages.Public Form Expired', ['date' => $formLink->expires_at->format('d M Y H:i')]);
+            return __('messages.Public Form Expired', ['date' => $formLink->expires_at->locale(app()->getLocale())->translatedFormat('d M Y H:i')]);
         }
         if ($formLink->hasReachedMaxSubmissions()) {
             return __('messages.Public Form Submission Limit');

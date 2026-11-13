@@ -32,11 +32,11 @@ class FormLinkUpdateRequest extends FormRequest
      */
     public function messages(): array
     {
-        return [
+        return array_merge(__('submission_validation.messages'), [
             'title.required' => __('form_links.title_required'),
             'title.max' => __('form_links.title_max'),
             'max_submissions.min' => __('form_links.limit_min'),
-        ];
+        ]);
     }
 
     /**

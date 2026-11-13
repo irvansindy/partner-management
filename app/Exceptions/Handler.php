@@ -41,6 +41,18 @@ class Handler extends ExceptionHandler
         });
     }
 
+    protected function invalidJson($request, \Illuminate\Validation\ValidationException $exception)
+    {
+        if ($request->routeIs('public.form.*', 'submit-partner', 'login', 'register', 'password.*')) {
+            return response()->json([
+                'message' => __('messages.Validation Error'),
+                'errors' => $exception->errors(),
+            ], $exception->status);
+        }
+
+        return parent::invalidJson($request, $exception);
+    }
+
     public function render($request, Throwable $exception): Response
     {
         $response = parent::render($request, $exception);

@@ -40,6 +40,6 @@ class PublicHttpsUrl implements Rule
 
     public function message(): string
     {
-        return 'Alamat website harus menggunakan HTTPS dan domain publik yang valid. | Website must use HTTPS and a valid public domain.';
+        return __('public_form.https_format');
     }
 }

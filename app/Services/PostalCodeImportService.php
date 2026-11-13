@@ -14,7 +14,7 @@ class PostalCodeImportService
     public function import(string $path): array
     {
         if (!is_readable($path)) {
-            throw new \InvalidArgumentException('CSV tidak dapat dibaca.');
+            throw new \InvalidArgumentException(__('data_tools.CSV tidak dapat dibaca.'));
         }
 
         $file = new \SplFileObject($path);
@@ -22,7 +22,7 @@ class PostalCodeImportService
         $header = $file->fgetcsv();
         $header[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) ($header[0] ?? ''));
         if ($header !== self::HEADER) {
-            throw new \InvalidArgumentException('Header CSV tidak sesuai.');
+            throw new \InvalidArgumentException(__('data_tools.Header CSV tidak sesuai.'));
         }
 
         return DB::transaction(function () use ($file) {
@@ -39,7 +39,7 @@ class PostalCodeImportService
                 if (!$reason && (!$province || !$regency)) $reason = 'Provinsi atau kabupaten/kota tidak ditemukan atau tidak berelasi.';
                 if ($reason) {
                     $result['rejected']++;
-                    $result['errors'][] = ['row' => $rowNumber, 'values' => $row, 'reason' => $reason];
+                    $result['errors'][] = ['row' => $rowNumber, 'values' => $row, 'reason_key' => $reason, 'reason' => __('data_tools.' . $reason)];
                     continue;
                 }
                 $attributes = ['province_id' => $province->id, 'regency_id' => $regency->id, 'district' => $row[2], 'village' => $row[3], 'postal_code' => $row[4]];

@@ -19,9 +19,10 @@ class APIWhiteListManageController extends Controller
     {
         try {
             $list_api = ApiWhitelist::all();
-            return formatResponseJson::success($list_api,'Data fetched successfully');
+            return formatResponseJson::success($list_api,__('settings.Data fetched successfully'));
         } catch (\Exception $e) {
-            return formatResponseJson::error(null, 'Failed to fetch data: ' . $e->getMessage(), 500);
+            report($e);
+            return formatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
     public function fetchById(Request $request)
@@ -29,9 +30,10 @@ class APIWhiteListManageController extends Controller
         try {
             $data = ApiWhitelist::findOrFail($request->id);
 
-            return FormatResponseJson::success($data, 'IP address fetched successfully');
+            return FormatResponseJson::success($data, __('settings.IP address fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, 'Failed to fetch IP address: ' . $e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 404);
         }
     }
 
@@ -43,12 +45,12 @@ class APIWhiteListManageController extends Controller
             $validator = Validator::make($request->all(), [
                 'ip_address' => 'required|ip',
                 'description' => 'required|string|max:255',
-            ], [
-                'ip_address.required'=> 'IP address is required',
-                'ip_address.ip'=> 'IP address must be a valid IP address',
-                'description.required'=> 'Description must be a string and cannot be null',
-                'description.max'=> 'Description must not exceed 255 characters',
-            ]);
+            ], array_merge(__('settings_validation.messages'), [
+                'ip_address.required'=> __('settings.IP address is required'),
+                'ip_address.ip'=> __('settings.IP address must be a valid IP address'),
+                'description.required'=> __('settings.Description must be a string and cannot be null'),
+                'description.max'=> __('settings.Description must not exceed 255 characters'),
+            ]), __('settings_validation.attributes'));
 
             if ($validator->fails()) {
                 throw new ValidationException($validator);
@@ -70,14 +72,15 @@ class APIWhiteListManageController extends Controller
             }
 
             DB::commit();
-            return FormatResponseJson::success($data, 'IP address created/updated successfully');
+            return FormatResponseJson::success($data, __('settings.IP address created/updated successfully'));
 
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 
@@ -87,9 +90,10 @@ class APIWhiteListManageController extends Controller
             $data = ApiWhitelist::findOrFail($request->id);
             $data->delete();
 
-            return FormatResponseJson::success(null, 'IP address deleted successfully');
+            return FormatResponseJson::success(null, __('settings.IP address deleted successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, 'Failed to delete IP address: ' . $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('settings.operation_failed'), 500);
         }
     }
 

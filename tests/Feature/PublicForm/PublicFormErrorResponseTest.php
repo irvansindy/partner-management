@@ -39,7 +39,7 @@ class PublicFormErrorResponseTest extends TestCase
         $encoded = $response->getContent();
 
         $this->assertSame(500, $response->getStatusCode());
-        $this->assertSame('Gagal memproses formulir. Silakan coba lagi. | Failed to process the form. Please try again.', $json['meta']['message']);
+        $this->assertSame(__('messages.Public Submission Failed'), $json['meta']['message']);
         $this->assertTrue(Str::isUuid($json['meta']['request_id']));
         $this->assertStringNotContainsString('SQLSTATE', $encoded);
         $this->assertStringNotContainsString('company_informations', $encoded);

@@ -12,7 +12,7 @@
             <i class="{{ $menu['icon'] }}"></i>
         @endif
 
-        {{ $menu['name'] }}
+        {{ trans()->has('settings.menus.' . $menu['name']) ? __('settings.menus.' . $menu['name']) : $menu['name'] }}
 
         @if ($hasChildren)
             <i class="material-icons sub-arrow">keyboard_arrow_right</i>

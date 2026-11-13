@@ -128,16 +128,19 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="{{ asset('js/cdn/leaflet_geocoder.js') }}"></script>
-    <script>
-        $(function () {
-            const stepLabels = @json([
+    @php
+        $internalWizardStepLabels = [
                 __('messages.Public Step Master Information'),
                 __('messages.Public Step Contact'),
                 __('messages.Public Step Address'),
                 __('messages.Public Step Bank'),
                 __('messages.Public Step Survey'),
                 __('messages.Public Step Upload'),
-            ]);
+        ];
+    @endphp
+    <script>
+        $(function () {
+            const stepLabels = @json($internalWizardStepLabels);
             const totalSteps = stepLabels.length;
             let currentStep = 1;
 

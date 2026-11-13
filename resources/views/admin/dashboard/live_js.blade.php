@@ -24,6 +24,8 @@
             tablePrevious: @json(__('messages.Dashboard Table Previous')),
             tableNext: @json(__('messages.Dashboard Table Next'))
         };
+        const statusLabels = @json(__('partner.statuses'));
+        const numberFormat = new Intl.NumberFormat(@json(app()->getLocale()));
         const $status = $('#dashboard-status');
         let regencyChartInstance = null;
 
@@ -45,7 +47,7 @@
             $chart.removeClass('d-none');
 
             new ApexCharts($chart.get(0), {
-                chart: { type: 'donut', height: 300 },
+                chart: { type: 'donut', height: 300, toolbar: { show: false } },
                 series: [customerCount, vendorCount],
                 labels: [dashboardText.customer, dashboardText.vendor],
                 colors: ['#2f80a8', '#e0a13b'],
@@ -109,7 +111,7 @@
                 plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } },
                 dataLabels: { enabled: false },
                 xaxis: { categories: provinceNames, labels: { rotate: -35 } },
-                yaxis: { min: 0, forceNiceScale: true, title: { text: dashboardText.approvedPartnersAxis } },
+                yaxis: { min: 0, forceNiceScale: true, title: { text: dashboardText.approvedPartnersAxis }, labels: { formatter: function (value) { return numberFormat.format(value); } } },
                 legend: { position: 'bottom' },
                 tooltip: { shared: true, intersect: false }
             }).render();
@@ -159,7 +161,7 @@
                 colors: ['#2f80a8', '#df7180'],
                 plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } },
                 xaxis: { categories: cities, labels: { rotate: -35 } },
-                yaxis: { min: 0, forceNiceScale: true },
+                yaxis: { min: 0, forceNiceScale: true, labels: { formatter: function (value) { return numberFormat.format(value); } } },
                 dataLabels: { enabled: false },
                 legend: { position: 'bottom' }
             });
@@ -210,6 +212,10 @@
                 ajax: {
                     url: url,
                     type: 'GET',
+                    error: function () {
+                        showDashboardError(@json(__('partner.Unable to load recent partners.')));
+                        $table.closest('.dataTables_wrapper').find('.dataTables_processing').hide();
+                    },
                     dataSrc: function (response) {
                         return Array.isArray(response.data) ? response.data : [];
                     }
@@ -218,9 +224,15 @@
                     { data: 'name', defaultContent: '-', render: $.fn.dataTable.render.text() },
                     { data: 'email_address', defaultContent: '-', render: $.fn.dataTable.render.text() },
                     { data: 'contact_person', defaultContent: '-', render: $.fn.dataTable.render.text() },
-                    { data: 'status', defaultContent: '-', render: $.fn.dataTable.render.text() }
+                    { data: 'status', defaultContent: '-', render: function (data, type) {
+                        const label = Object.prototype.hasOwnProperty.call(statusLabels, data) ? statusLabels[data] : (data || '-');
+                        return type === 'display' ? $('<span>').text(label).prop('outerHTML') : label;
+                    } }
                 ],
                 language: {
+                    infoFiltered: @json(__('form_links.filtered')),
+                    loadingRecords: dashboardText.loadingPartners,
+                    aria: { sortAscending: @json(__('partner.sort_ascending')), sortDescending: @json(__('partner.sort_descending')) },
                     emptyTable: dashboardText.recentPartnersEmpty,
                     processing: dashboardText.loadingPartners,
                     search: dashboardText.tableSearch,
@@ -228,6 +240,8 @@
                     infoEmpty: dashboardText.tableInfoEmpty,
                     zeroRecords: dashboardText.tableZeroRecords,
                     paginate: {
+                        first: @json(__('partner.first')),
+                        last: @json(__('partner.last')),
                         previous: dashboardText.tablePrevious,
                         next: dashboardText.tableNext
                     }
@@ -239,7 +253,15 @@
             const mapElement = document.getElementById('dashboard-map');
             if (!mapElement || !window.L) return;
 
-            const map = L.map(mapElement, { scrollWheelZoom: false }).setView([-6.2, 106.8], 5);
+            const map = L.map(mapElement, { scrollWheelZoom: false, zoomControl: false }).setView([-6.2, 106.8], 5);
+            L.control.zoom({ zoomInTitle: @json(__('partner.Zoom in')), zoomOutTitle: @json(__('partner.Zoom out')) }).addTo(map);
+            map.on('popupopen', function (event) {
+                const close = event.popup.getElement().querySelector('.leaflet-popup-close-button');
+                if (close) {
+                    close.title = @json(__('partner.Close popup'));
+                    close.setAttribute('aria-label', @json(__('partner.Close popup')));
+                }
+            });
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19,
                 attribution: 'Tiles &copy; Esri'
@@ -263,6 +285,8 @@
 
                         const isCustomer = point.type === 'customer';
                         const marker = L.marker([latitude, longitude], {
+                            title: point.name || dashboardText.partner,
+                            alt: (isCustomer ? dashboardText.customer : dashboardText.vendor) + ': ' + (point.name || dashboardText.partner),
                             icon: L.divIcon({
                                 html: '<span class="dashboard-map-marker ' + (isCustomer ? 'customer' : 'vendor') + '"><i class="fas ' + (isCustomer ? 'fa-user' : 'fa-store') + '" aria-hidden="true"></i></span>',
                                 className: '',
@@ -302,10 +326,10 @@
             dataType: 'json',
             success: function (response) {
                 const data = response.data || {};
-                $('#text-total-partner').text(data.total_partners ?? 0);
-                $('#text-total-customer').text(data.total_customers ?? 0);
-                $('#text-total-vendor').text(data.total_vendors ?? 0);
-                $('#pending-approval').text(data.total_pending_approvals ?? 0);
+                $('#text-total-partner').text(numberFormat.format(data.total_partners ?? 0));
+                $('#text-total-customer').text(numberFormat.format(data.total_customers ?? 0));
+                $('#text-total-vendor').text(numberFormat.format(data.total_vendors ?? 0));
+                $('#pending-approval').text(numberFormat.format(data.total_pending_approvals ?? 0));
                 renderTypeChart(Number(data.total_customers) || 0, Number(data.total_vendors) || 0);
                 renderProvinceChart(data.total_partner_location || {});
             },

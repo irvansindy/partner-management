@@ -21,6 +21,7 @@
     $(document).ready(function() {
         $('#department_table').DataTable({
             processing: true,
+            language: @json(__('settings.datatable')),
             // serverSide: true,
 
             ajax: {
@@ -37,15 +38,15 @@
                 { data: 'name', name: 'name' },
                 {
                     'data': null,
-                    title: 'Action',
+                    title: @json(__('settings.Action')),
                     wrap: true,
                     "render": function(item) {
                         let viewButton = $('<button>', {
                             type: 'button',
                             class: 'table-action table-action--view detail_department',
                             html: '<i class="fas fa-eye" aria-hidden="true"></i>',
-                            title: 'View department',
-                            'aria-label': 'View department',
+                            title: @json(__('settings.View department')),
+                            'aria-label': @json(__('settings.View department')),
                             'data-department_id': item.id,
                             'data-department_name': item.name,
                             'data-toggle': 'modal',
@@ -55,7 +56,7 @@
                         return $('<div>', {
                             class: 'table-actions',
                             role: 'group',
-                            'aria-label': 'Department actions'
+                            'aria-label': @json(__('settings.Department actions'))
                         })
                             .append(viewButton)
                             .prop('outerHTML');
@@ -67,7 +68,7 @@
     
     $(document).on('click', '#for_create_department', function(e) {
         e.preventDefault();
-        $('#formDepartmentLabel').html('Create New Department');
+        $('#formDepartmentLabel').html(@json(__('settings.Create New Department')));
         $('#form_data_department')[0].reset();
         $('.text-danger').text('')
         $('#button_action_department').empty();
@@ -81,7 +82,7 @@
         e.preventDefault();
         let id = $(this).data('department_id');
         let name = $(this).data('department_name');
-        $('#formDepartmentLabel').html('Department '+name);
+        $('#formDepartmentLabel').text(@json(__('settings.department_named')).replace(':name', name));
         $('#form_data_department')[0].reset();
         $('.text-danger').text('')
         $('#department_id').val(id);
@@ -110,7 +111,7 @@
                 closeDepartmentModal();
                 $('#department_table').DataTable().ajax.reload();
                 $(document).Toasts('create', {
-                    title: 'Success',
+                    title: @json(__('settings.Success')),
                     class: 'bg-success',
                     body: res.meta.message,
                     delay: 10000,
@@ -124,7 +125,7 @@
                 let response_error = JSON.parse(xhr.responseText)
                     if (response_error.meta.code === 500 || response_error.meta.code === 400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('settings.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -140,9 +141,9 @@
                             $('#message_' + i).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('settings.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('settings.Harap isi data yang masih kosong')),
                             delay: 10000,
                             autohide: true,
                             fade: true,

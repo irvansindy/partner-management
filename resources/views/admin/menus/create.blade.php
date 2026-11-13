@@ -23,17 +23,17 @@
                         <input type="text" class="form-control" name="menu_icon" id="menu_icon" placeholder="{{ __('messages.Menu Setting Icon') }}">
                     </div>
                     <!-- <div class="form-group">
-                        <label for="menu_type">Menu Type</label>
+                        <label for="menu_type">{{ __('settings.Menu Type') }}</label>
                         <br>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="menu_type" id="menu_type_parent"
                                 value="parent">
-                            <label class="form-check-label" for="menu_type_parent">Parent</label>
+                            <label class="form-check-label" for="menu_type_parent">{{ __('settings.Parent') }}</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="menu_type" id="menu_type_children"
                                 value="children">
-                            <label class="form-check-label" for="menu_type_children">Children</label>
+                            <label class="form-check-label" for="menu_type_children">{{ __('settings.Children') }}</label>
                         </div>
                     </div> -->
                     <div class="form-check">

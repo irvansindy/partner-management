@@ -52,7 +52,7 @@ class FormLinkSubmissionEditUiTest extends TestCase
 
         $this->assertStringContainsString('@if ($company->can_edit_submission)', $list);
         $this->assertStringContainsString("route('admin.form-links.submission-edit'", $list);
-        $this->assertStringContainsString('aria-label="Edit submission', $list);
+        $this->assertStringContainsString('form_links_remaining.Edit submission', $list);
 
         $this->assertStringContainsString('@if ($canEditSubmission)', $detail);
         $this->assertStringContainsString("route('admin.form-links.submission-edit'", $detail);
@@ -95,9 +95,9 @@ class FormLinkSubmissionEditUiTest extends TestCase
         $this->assertStringContainsString('.submission-edit-page .edit-field > label', $page);
         $this->assertStringContainsString('height: 46px !important;', $page);
         $this->assertStringContainsString('if (alreadyCorrectType) return $old;', $page);
-        $this->assertStringContainsString('<div class="edit-field__label">Province</div>', $row);
-        $this->assertStringContainsString('<div class="edit-field__label">City / Regency</div>', $row);
-        $this->assertStringContainsString('aria-label="Province"', $row);
+        $this->assertStringContainsString("__('admin.Province')", $row);
+        $this->assertStringContainsString("__('submission.City / Regency')", $row);
+        $this->assertStringContainsString("__('form_links_remaining.Province')", $row);
         $this->assertStringContainsString('data-address-map', $row);
         $this->assertStringContainsString('data-coordinate-search', $row);
         $this->assertStringContainsString('data-map-fullscreen', $row);

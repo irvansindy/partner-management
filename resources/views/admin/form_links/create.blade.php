@@ -96,10 +96,10 @@
 
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Create Form Link
+                                <i class="fas fa-save"></i> {{ __('admin.Create Form Link') }}
                             </button>
                             <a href="{{ route('admin.form-links.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Cancel
+                                <i class="fas fa-times"></i> {{ __('admin.Cancel') }}
                             </a>
                         </div>
                     </form>

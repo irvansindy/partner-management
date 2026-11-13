@@ -27,4 +27,14 @@ class CompanyImportRequest extends FormRequest
             'file' => 'required|mimes:xlsx,xls,csv|max:51200',
         ];
     }
+
+    public function messages(): array
+    {
+        return __('data_tools_validation.messages');
+    }
+
+    public function attributes(): array
+    {
+        return __('data_tools_validation.attributes');
+    }
 }

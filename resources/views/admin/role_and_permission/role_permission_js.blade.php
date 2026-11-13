@@ -63,7 +63,7 @@
 
         $('#role_table').DataTable({
             processing: true,
-            language: rolePermissionTableLanguage,
+            language: Object.assign(@json(__('settings.datatable')), rolePermissionTableLanguage),
             ajax: {
                 url: '{{ route("fetch-role") }}',
                 type: 'GET',
@@ -131,7 +131,7 @@
         
         $('#permission_table').DataTable({
             processing: true,
-            language: rolePermissionTableLanguage,
+            language: Object.assign(@json(__('settings.datatable')), rolePermissionTableLanguage),
             ajax: {
                 url: '{{ route("fetch-permission") }}',
                 type: 'GET',

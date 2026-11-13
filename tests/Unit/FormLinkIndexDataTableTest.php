@@ -23,10 +23,10 @@ class FormLinkIndexDataTableTest extends TestCase
         $this->assertStringContainsString('autoWidth: false', $view);
         $this->assertStringContainsString('<th>No.</th>', $view);
         $this->assertStringNotContainsString('<th>ID</th>', $view);
-        $this->assertStringContainsString('<th>Created By</th>', $view);
-        $this->assertStringContainsString('<th>Created At</th>', $view);
+        $this->assertStringContainsString("<th>{{ __('admin.Created By') }}</th>", $view);
+        $this->assertStringContainsString("<th>{{ __('admin.Created At') }}</th>", $view);
         $this->assertStringContainsString('{{ $formLink->creator->name ?? \'-\' }}', $view);
-        $this->assertStringContainsString("\$formLink->created_at->format('d M Y H:i')", $view);
+        $this->assertStringContainsString("\$formLink->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i')", $view);
         $this->assertStringContainsString('class="row-number"', $view);
         $this->assertStringContainsString('drawCallback:', $view);
         $this->assertStringContainsString('targets: [0, 8, 9]', $view);

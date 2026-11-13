@@ -20,9 +20,18 @@ class SystemMaintenanceController extends Controller
 
     public function index(Request $request): View
     {
+        $result = $request->session()->get('maintenance_result');
+        if ($result) {
+            $commands = $this->maintenance->commands();
+            $result['label'] = $commands[$result['key'] ?? '']['label'] ?? $result['label'];
+            if (in_array($result['output_key'] ?? null, ['failed', 'busy', 'no_output'], true)) {
+                $result['output'] = __('maintenance.' . $result['output_key']);
+            }
+        }
+
         return view('admin.system_maintenance.index', [
             'commandGroups' => $this->maintenance->groupedCommands(),
-            'result' => $request->session()->get('maintenance_result'),
+            'result' => $result,
         ]);
     }
 
@@ -34,7 +43,7 @@ class SystemMaintenanceController extends Controller
                 'string',
                 Rule::in(array_keys($this->maintenance->commands())),
             ],
-        ]);
+        ], __('maintenance.validation'), __('maintenance.attributes'));
 
         $result = $this->maintenance->run($validated['command'], (int) $request->user()->id);
 

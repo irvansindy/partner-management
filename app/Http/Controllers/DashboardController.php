@@ -242,9 +242,10 @@ class DashboardController extends Controller
                 return $data;
             });
 
-            return FormatResponseJson::success($data, 'Dashboard data count fetched successfully');
+            return FormatResponseJson::success($data, __('partner.Dashboard data count fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage());
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load dashboard data.'), 500);
         }
     }
 
@@ -291,12 +292,13 @@ class DashboardController extends Controller
             });
 
             $message = $customers->isNotEmpty()
-                ? 'Recent customers fetched successfully'
-                : 'No recent customers found';
+                ? __('partner.Recent customers fetched successfully')
+                : __('partner.No recent customers found');
 
             return FormatResponseJson::success($customers, $message);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage());
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load dashboard data.'), 500);
         }
     }
 
@@ -312,12 +314,13 @@ class DashboardController extends Controller
             });
 
             $message = $vendors->isNotEmpty()
-                ? 'Recent vendors fetched successfully'
-                : 'No recent vendors found';
+                ? __('partner.Recent vendors fetched successfully')
+                : __('partner.No recent vendors found');
 
             return FormatResponseJson::success($vendors, $message);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage());
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load dashboard data.'), 500);
         }
     }
 
@@ -347,15 +350,16 @@ class DashboardController extends Controller
             }
 
             $message = $approvals->isNotEmpty()
-                ? 'Recent approvals fetched successfully'
-                : 'No recent approvals found';
+                ? __('partner.Recent approvals fetched successfully')
+                : __('partner.No recent approvals found');
 
             return FormatResponseJson::success([
                 'approvals' => $approvals,
                 'isSuperAdmin' => $this->isSuperAdmin,
             ], $message);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage());
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load dashboard data.'), 500);
         }
     }
 
@@ -425,10 +429,11 @@ class DashboardController extends Controller
                 }
             }
 
-            return FormatResponseJson::success($map_points, 'Map Point Fetched Successfully');
+            return FormatResponseJson::success($map_points, __('partner.Map Point Fetched Successfully'));
 
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load dashboard data.'), 500);
         }
     }
 
@@ -440,12 +445,12 @@ class DashboardController extends Controller
         try {
             $provinceName = $request->query('province');
             if (!$provinceName) {
-                return FormatResponseJson::error(null, 'Province parameter is required');
+                return FormatResponseJson::error(null, __('partner.Province parameter is required'));
             }
 
             $province = Provinces::where('name', $provinceName)->first();
             if (!$province) {
-                return FormatResponseJson::error(null, 'Province not found');
+                return FormatResponseJson::error(null, __('partner.Province not found'));
             }
 
             $user = auth()->user();
@@ -535,10 +540,11 @@ class DashboardController extends Controller
             return FormatResponseJson::success([
                 'vendor' => $showVendor ? $vendorData : [],
                 'customer' => $showCustomer ? $customerData : [],
-            ], 'Regency data fetched successfully');
+            ], __('partner.Regency data fetched successfully'));
 
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage());
+            report($e);
+            return FormatResponseJson::error(null, __('partner.Unable to load dashboard data.'), 500);
         }
     }
 

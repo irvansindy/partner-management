@@ -17,7 +17,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">
-                            <i class="material-icons align-middle mr-1">fact_check</i> Pilih Field untuk Export
+                            <i class="material-icons align-middle mr-1">fact_check</i> {{ __('tools.Pilih Field untuk Export') }}
                         </h3>
                     </div>
                     <form action="{{ route('admin.company.export.custom') }}" method="POST" id="exportForm">
@@ -32,12 +32,12 @@
                             <!-- Buttons untuk Select All / Deselect All -->
                             <div class="selection-toolbar mb-3">
                                 <button type="button" class="btn btn-sm btn-primary" id="selectAll">
-                                    <i class="fas fa-check-double"></i> Pilih Semua
+                                    <i class="fas fa-check-double"></i> {{ __('tools.Pilih Semua') }}
                                 </button>
                                 <button type="button" class="btn btn-sm btn-secondary" id="deselectAll">
-                                    <i class="fas fa-times"></i> Hapus Semua Pilihan
+                                    <i class="fas fa-times"></i> {{ __('data_tools.Hapus Semua Pilihan') }}
                                 </button>
-                                <span class="selection-count" id="selectedCount">0 field dipilih</span>
+                                <span class="selection-count" id="selectedCount">{{ __('data_tools.selected_count', ['count' => 0]) }}</span>
                             </div>
 
                             <hr>
@@ -48,12 +48,12 @@
                                     <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
-                                                <i class="fas fa-building"></i> Informasi Perusahaan
+                                                <i class="fas fa-building"></i> {{ __('data_tools.Informasi Perusahaan') }}
                                             </h5>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool btn-sm toggle-section"
                                                     data-section="company">
-                                                    <i class="fas fa-check-square"></i> Toggle All
+                                                    <i class="fas fa-check-square"></i> {{ __('data_tools.Toggle All') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -62,14 +62,14 @@
                                                 <input class="form-check-input field-checkbox company-field" type="checkbox"
                                                     name="fields[]" value="name" id="field_name" checked>
                                                 <label class="form-check-label" for="field_name">
-                                                    Nama Perusahaan <span class="text-danger">*</span>
+                                                    {{ __('tools.Nama Perusahaan') }} <span class="text-danger">*</span>
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input field-checkbox company-field" type="checkbox"
                                                     name="fields[]" value="group_name" id="field_group_name">
                                                 <label class="form-check-label" for="field_group_name">
-                                                    Group Perusahaan
+                                                    {{ __('data_tools.Group Perusahaan') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -128,7 +128,7 @@
                                                     type="checkbox" name="fields[]" value="website_address"
                                                     id="field_website_address">
                                                 <label class="form-check-label" for="field_website_address">
-                                                    Website
+                                                    {{ __('partner.Website') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -160,7 +160,7 @@
                                                     type="checkbox" name="fields[]" value="term_of_payment"
                                                     id="field_term_of_payment">
                                                 <label class="form-check-label" for="field_term_of_payment">
-                                                    Jangka Waktu Pembayaran
+                                                    {{ __('data_tools.Jangka Waktu Pembayaran') }}
                                                 </label>
                                             </div>
                                         </div>
@@ -172,12 +172,12 @@
                                     <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
-                                                <i class="fas fa-user-tie"></i> Contact Person
+                                                <i class="fas fa-user-tie"></i> {{ __('data_tools.Contact Person') }}
                                             </h5>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool btn-sm toggle-section"
                                                     data-section="contact">
-                                                    <i class="fas fa-check-square"></i> Toggle All
+                                                    <i class="fas fa-check-square"></i> {{ __('data_tools.Toggle All') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -229,12 +229,12 @@
                                     <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
-                                                <i class="fas fa-map-marker-alt"></i> Alamat
+                                                <i class="fas fa-map-marker-alt"></i> {{ __('data_tools.Alamat') }}
                                             </h5>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool btn-sm toggle-section"
                                                     data-section="address">
-                                                    <i class="fas fa-check-square"></i> Toggle All
+                                                    <i class="fas fa-check-square"></i> {{ __('data_tools.Toggle All') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -243,7 +243,7 @@
                                                 <input class="form-check-input field-checkbox address-field"
                                                     type="checkbox" name="fields[]" value="address" id="field_address">
                                                 <label class="form-check-label" for="field_address">
-                                                    Alamat Lengkap
+                                                    {{ __('data_tools.Alamat Lengkap') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -251,7 +251,7 @@
                                                     type="checkbox" name="fields[]" value="zip_code"
                                                     id="field_zip_code">
                                                 <label class="form-check-label" for="field_zip_code">
-                                                    Kode Pos
+                                                    {{ __('data_tools.Kode Pos') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -259,7 +259,7 @@
                                                     type="checkbox" name="fields[]" value="telephone_address"
                                                     id="field_telephone_address">
                                                 <label class="form-check-label" for="field_telephone_address">
-                                                    Telepon Alamat
+                                                    {{ __('data_tools.Telepon Alamat') }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
@@ -278,12 +278,12 @@
                                     <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
-                                                <i class="fas fa-university"></i> Bank
+                                                <i class="fas fa-university"></i> {{ __('data_tools.Bank') }}
                                             </h5>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool btn-sm toggle-section"
                                                     data-section="bank">
-                                                    <i class="fas fa-check-square"></i> Toggle All
+                                                    <i class="fas fa-check-square"></i> {{ __('data_tools.Toggle All') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -318,12 +318,12 @@
                                     <div class="card field-group">
                                         <div class="card-header">
                                             <h5 class="card-title">
-                                                <i class="fas fa-user-shield"></i> Penanggung Jawab
+                                                <i class="fas fa-user-shield"></i> {{ __('data_tools.Penanggung Jawab') }}
                                             </h5>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool btn-sm toggle-section"
                                                     data-section="liable">
-                                                    <i class="fas fa-check-square"></i> Toggle All
+                                                    <i class="fas fa-check-square"></i> {{ __('data_tools.Toggle All') }}
                                                 </button>
                                             </div>
                                         </div>
@@ -363,18 +363,18 @@
                                         formaction="{{ route('admin.company.export.custom') }}"
                                         class="btn btn-success btn-sm mx-1"
                                         id="btnExportExcel">
-                                    <i class="fas fa-file-download me-1"></i> Export Excel
+                                    <i class="fas fa-file-download me-1"></i> {{ __('tools.Export Excel') }}
                                 </button>
 
                                 <button type="submit"
                                         formaction="{{ route('admin.company.export.custom.pdf') }}"
                                         class="btn btn-danger btn-sm mx-1"
                                         id="btnExportPdf">
-                                    <i class="fas fa-file-pdf me-1"></i> Export PDF
+                                    <i class="fas fa-file-pdf me-1"></i> {{ __('tools.Export PDF') }}
                                 </button>
 
                                 <a href="{{ url()->previous() }}" class="btn btn-secondary btn-sm mx-1">
-                                    <i class="fas fa-arrow-left me-1"></i> Kembali
+                                    <i class="fas fa-arrow-left me-1"></i> {{ __('tools.Kembali') }}
                                 </a>
                             </div>
                         </div>
@@ -391,7 +391,7 @@
             // Update counter
             function updateCounter() {
                 var count = $('.field-checkbox:checked').length;
-                $('#selectedCount').text(count + ' field dipilih');
+                $('#selectedCount').text(@json(__('data_tools.selected_count')).replace(':count', count));
             }
 
             // Select All
@@ -421,42 +421,53 @@
                 updateCounter();
             });
 
-            // Validation before submit
-            $('#exportForm').submit(function(e) {
-                var checkedCount = $('.field-checkbox:checked').length;
-
-                // Validasi minimal 1 field
-                if (checkedCount === 0) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Pilih Minimal 1 Field',
-                        text: 'Anda harus memilih minimal 1 field untuk di-export!',
-                    });
-                    return false;
+            let exportSubmitter = null;
+            $('#btnExportExcel, #btnExportPdf').on('click', function () { exportSubmitter = this; });
+            $('#exportForm').on('submit', async function (event) {
+                event.preventDefault();
+                if (!$('.field-checkbox:checked').length) {
+                    Swal.fire({ icon: 'warning', title: @json(__('data_tools.Pilih Minimal 1 Field')), text: @json(__('data_tools.Anda harus memilih minimal 1 field untuk di-export!')) });
+                    return;
                 }
-
-                // Tampilkan loading
-                var $btn = $('#btnExport');
-                var originalText = $btn.html();
-                $btn.html('<i class="fas fa-spinner fa-spin"></i> Memproses...').prop('disabled', true);
-
-                // ✅ FIX: Reset button setelah 3 detik (download selesai)
-                setTimeout(function() {
-                    $btn.html(originalText).prop('disabled', false);
-
-                    // Tampilkan notifikasi sukses
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Export Berhasil!',
-                        text: 'File Excel sudah didownload',
-                        timer: 2000,
-                        showConfirmButton: false
+                const button = event.originalEvent && event.originalEvent.submitter || exportSubmitter || document.getElementById('btnExportExcel');
+                const originalHtml = button.innerHTML;
+                const buttons = $('#btnExportExcel, #btnExportPdf');
+                buttons.prop('disabled', true);
+                button.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> ' + @json(__('data_tools.Memproses...'));
+                let failureMessage = @json(__('data_tools.export_failed'));
+                try {
+                    const response = await fetch(button.formAction || this.action, {
+                        method: 'POST', body: new FormData(this), credentials: 'same-origin',
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     });
-                }, 3000);
-
-                // Biarkan form submit (file akan download)
-                return true;
+                    const contentType = response.headers.get('Content-Type') || '';
+                    if (!response.ok || !/application\/(?:pdf|vnd\.|octet-stream)/i.test(contentType)) {
+                        let message = @json(__('data_tools.export_failed'));
+                        if (contentType.includes('application/json')) {
+                            const error = await response.json();
+                            if (error.errors) message = Object.values(error.errors).flat().join('\n');
+                        }
+                        failureMessage = message;
+                        throw new Error(message);
+                    }
+                    const blob = await response.blob();
+                    const disposition = response.headers.get('Content-Disposition') || '';
+                    const filename = /filename="([^"]+)"/i.exec(disposition);
+                    const link = document.createElement('a');
+                    const blobUrl = URL.createObjectURL(blob);
+                    link.href = blobUrl;
+                    link.download = filename ? filename[1] : (contentType.includes('pdf') ? 'company-export.pdf' : 'company-export.xlsx');
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    setTimeout(function () { URL.revokeObjectURL(blobUrl); }, 1000);
+                    Swal.fire({ icon: 'success', title: @json(__('data_tools.export_ready')), text: @json(__('data_tools.export_done')) });
+                } catch (error) {
+                    Swal.fire({ icon: 'error', title: @json(__('settings.Error')), text: failureMessage });
+                } finally {
+                    button.innerHTML = originalHtml;
+                    buttons.prop('disabled', false);
+                }
             });
 
             // Initial counter
