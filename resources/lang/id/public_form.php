@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'upload_hint' => 'PDF, JPEG, atau PNG. Maksimal 10 file, 5 MB per file, dan dimensi gambar 6000 × 6000 piksel.',
+    'registration_type_hint' => 'Formulir ini untuk pendaftaran :type.',
     'other_position_required' => 'Jabatan penanggung jawab wajib diisi ketika memilih Lainnya.',
     'other_business_required' => 'Detail klasifikasi bisnis wajib diisi ketika memilih Lainnya.',
     'other_payment_required' => 'Detail jangka pembayaran wajib diisi ketika memilih Lainnya.',

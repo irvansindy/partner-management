@@ -54,12 +54,13 @@ class PartnerController extends Controller
             ->where("user_id", auth()->user()->id)->get();
 
             if ($company_profile) {
-                return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
+                return FormatResponseJson::success($company_profile, __('supporting.Company profile fetched successfully'));
             } else {
-                return FormatResponseJson::error(null, 'Company profile not found', 404);
+                return FormatResponseJson::error(null, __('supporting.Company profile not found'), 404);
             }
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function viewCreatePartner()
@@ -129,18 +130,20 @@ class PartnerController extends Controller
                 'document' => $supporting_document_user,
                 'logs' => $logs,
             ];
-            return FormatResponseJson::success($data, 'Company profile fetched successfully');
+            return FormatResponseJson::success($data, __('supporting.Company profile fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function ActivityLogs()
     {
         try {
             $logs = ActivityLogs::latest()->paginate(15);
-            return FormatResponseJson::success($logs, 'Activity logs fetched successfully');
+            return FormatResponseJson::success($logs, __('supporting.Activity logs fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function fetchCompanyPartnerById()
@@ -149,9 +152,10 @@ class PartnerController extends Controller
             $company_profile = CompanyInformation::with(['user'])
             ->where("user_id", auth()->user()->id)->first();
 
-            return FormatResponseJson::success($company_profile, 'Company profile fetched successfully');
+            return FormatResponseJson::success($company_profile, __('supporting.Company profile fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function fetchContactById(Request $request)
@@ -161,9 +165,10 @@ class PartnerController extends Controller
                 $q->where('company_informations_id', $request->id);
                 $q->where('user_id', auth()->user()->id);
             })->get();
-            return FormatResponseJson::success($contact,'contact fetched successfully');
+            return FormatResponseJson::success($contact,__('supporting.contact fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function fetchAddressById(Request $request)
@@ -173,9 +178,10 @@ class PartnerController extends Controller
                 $q->where('company_id', $request->id);
                 $q->where('user_id', auth()->user()->id);
             })->get();
-            return FormatResponseJson::success($address,'address fetched successfully');
+            return FormatResponseJson::success($address,__('supporting.address fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function fetchBankById(Request $request)
@@ -185,9 +191,10 @@ class PartnerController extends Controller
                 $q->where('company_id', $request->id);
                 $q->where('user_id', auth()->user()->id);
             })->get();
-            return FormatResponseJson::success($bank,'bank fetched successfully');
+            return FormatResponseJson::success($bank,__('supporting.bank fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function fetchTaxById(Request $request)
@@ -197,18 +204,20 @@ class PartnerController extends Controller
                 $q->where('company_id', $request->id);
                 $q->where('user_id', auth()->user()->id);
             })->get();
-            return FormatResponseJson::success($tax,'tax fetched successfully');
+            return FormatResponseJson::success($tax,__('supporting.tax fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function fetchDocTypeCategories()
     {
         try {
             $doc_type = CompanyDocumentTypeCategories::all();
-            return FormatResponseJson::success($doc_type,'Document Type fetched successfully');
+            return FormatResponseJson::success($doc_type,__('supporting.Document Type fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function fetchIncomeStatementBalanceSheet()
@@ -220,9 +229,10 @@ class PartnerController extends Controller
                 'income_statement'=> $income_statement,
                 'balance_sheet'=> $balance_sheet
             ];
-            return FormatResponseJson::success($data, 'Income Statement and Balance Sheet fetched successfully');
+            return FormatResponseJson::success($data, __('supporting.Income Statement and Balance Sheet fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 400);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 400);
         }
     }
     public function resultFinancialRatio(Request $request)
@@ -233,11 +243,12 @@ class PartnerController extends Controller
             $twoYearAgo = date("Y", strtotime("-2 year"));
             dd($request->all());
 
-            return FormatResponseJson::success($data, 'Financial ratio fetched successfully');
+            return FormatResponseJson::success($data, __('supporting.Financial ratio fetched successfully'));
         } catch (ValidationException $e) {
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function update(Request $request)
@@ -286,39 +297,10 @@ class PartnerController extends Controller
                 }
             }
 
-            // Validation messages
-            $messages = [
-                'detail_company_name.required' => 'Company name/Nama perusahaan tidak boleh kosong',
-                'detail_company_group_name.required' => 'Company group name/Nama grup perusahaan tidak boleh kosong',
-                'detail_company_type.required' => 'Company type/tipe perusahaan tidak boleh kosong',
-                'detail_established_year.required' => 'Established since year/Tahun berdiri tidak boleh kosong',
-                'detail_total_employee.required' => 'Total employee/Jumlah Karyawan tidak boleh kosong',
-                'detail_liable_person_and_position.required' => 'Liable person/Penanggung jawab tidak boleh kosong',
-                'detail_owner_name.required' => 'Owner name/Nama pemilik tidak boleh kosong',
-                'detail_board_of_directors.required' => 'Board of directors/Dewan direktur tidak boleh kosong',
-                'detail_major_shareholders.required' => 'Board of directors/Pemilik saham mayoritas tidak boleh kosong',
-                'detail_business_classification.required' => 'Business classification/Jenis usaha tidak boleh kosong',
-                'detail_business_classification_detail.required' => 'Business classification Detail/Detail Jenis usaha tidak boleh kosong',
-                'detail_website_address.required' => 'Website address/Alamat situs web tidak boleh kosong',
-                'detail_system_management.required' => 'System management/Manajemen sistem tidak boleh kosong',
-                'detail_contact_person.required' => 'Contact person/Kontak person tidak boleh kosong',
-                'detail_communication_language.required' => 'Communication language/Bahasa komunikasi tidak boleh kosong',
-                'detail_email_address.required' => 'Email address/Alamat email tidak boleh kosong',
-                'detail_stamp_file.required' => 'Stamp/Stempel tidak boleh kosong',
-                'detail_signature_file.required' => 'Signature/Tanda tangan tidak boleh kosong',
-                'detail_address.*.required' => 'Address/Alamat tidak boleh kosong',
-                'detail_city.*.required' => 'City/Kota tidak boleh kosong',
-                'detail_country.*.required' => 'Country/Negara tidak boleh kosong',
-                'detail_province.*.required' => 'Province/Provinsi tidak boleh kosong',
-                'detail_zip_code.*.required' => 'Zip code/Kode pos tidak boleh kosong',
-                'detail_telephone.*.required' => 'Telephone/Telepon tidak boleh kosong',
-                'detail_fax.*.required' => 'Fax tidak boleh kosong',
-                'detail_telephone.*.regex' => 'Telephone/Telepon harus menggunakan kode negara, contoh +62896232332423',
-                'detail_fax.*.regex' => 'Fax harus menggunakan kode negara, contoh +62856676654',
-            ];
+            $messages = __('public_validation.messages');
 
             // Apply validation
-            $validator = Validator::make($request->all(), $rules, $messages);
+            $validator = Validator::make($request->all(), $rules, $messages, __('supporting_validation'));
 
             if ($validator->fails()) {
                 throw new ValidationException($validator);
@@ -450,14 +432,15 @@ class PartnerController extends Controller
             }
             // Commit changes
             DB::commit();
-            return FormatResponseJson::success('success', 'partner profile updated successfully');
+            return FormatResponseJson::success('success', __('supporting.partner profile updated successfully'));
         } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Throwable $e) {
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function storeAttachment(Request $request)
@@ -473,11 +456,7 @@ class PartnerController extends Controller
                 'supporting_document_partner_id' => 'required|integer',
             ];
 
-            $validator = Validator::make($request->all(), $rules, [
-                'supporting_document_type.*.required' => 'The supporting document type field is required',
-                'supporting_document_business_type.*.required' => 'The supporting document business type field is required',
-                'file_supporting_document.*.required' => 'The file supporting document field is required',
-            ]);
+            $validator = Validator::make($request->all(), $rules, __('public_validation.messages'), __('supporting_validation'));
 
             // throw validation error
             if ($validator->fails()) {
@@ -490,7 +469,7 @@ class PartnerController extends Controller
 
             if (count($documentTypes) !== count($files) || count($businessTypes) !== count($files)) {
                 throw ValidationException::withMessages([
-                    'file_supporting_document' => 'Setiap baris dokumen wajib memiliki tipe dokumen, tipe usaha, dan file.',
+                    'file_supporting_document' => __('supporting.Complete document row'),
                 ]);
             }
 
@@ -501,7 +480,7 @@ class PartnerController extends Controller
                     $explode_docx_type = explode('|', $documentTypes[$i], 2);
                     if (count($explode_docx_type) !== 2 || trim($explode_docx_type[1]) === '') {
                         throw ValidationException::withMessages([
-                            "supporting_document_type.$i" => 'Tipe dokumen tidak valid.',
+                            "supporting_document_type.$i" => __('supporting.Invalid document type'),
                         ]);
                     }
                     $result_docx_name = Str::slug($explode_docx_type[1], '_');
@@ -521,7 +500,7 @@ class PartnerController extends Controller
 
                     if ($existing_docx) {
                         DB::rollBack();
-                        return FormatResponseJson::error(null, 'Document already exists', 400); // Send error response
+                        return FormatResponseJson::error(null, __('supporting.Document already exists'), 400); // Send error response
                     } else {
                         // insert data to database
                         $list_docx_attachment_data = [
@@ -540,13 +519,14 @@ class PartnerController extends Controller
                 }
             }
             DB::commit();
-            return FormatResponseJson::success('success', 'documents uploaded successfully');
+            return FormatResponseJson::success('success', __('supporting.Documents uploaded successfully'));
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function fetchAttachmentById(Request $request)
@@ -560,7 +540,8 @@ class PartnerController extends Controller
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             // DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function updateAttachmentById(Request $request)
@@ -599,13 +580,14 @@ class PartnerController extends Controller
             }
 
             DB::commit();
-            return FormatResponseJson::success('success', 'documents updated successfully');
+            return FormatResponseJson::success('success', __('supporting.Documents updated successfully'));
         } catch (ValidationException $e) {
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function fetchProvinces(Request $request)

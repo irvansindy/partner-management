@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'License Agreements - Term and Conditions')
+@section('title', __('supporting.License Agreements'))
 
 @section('content_header')
-    <h1>End User License Aggrement</h1>
+    <h1>{{ __('supporting.License Agreements') }}</h1>
 @stop
 
 @section('content')
@@ -16,7 +16,7 @@
                             <p>list Menu Permission</p>
                         </div> --}}
                         <div class="p-2 flex-fill bd-highlight d-flex justify-content-end" style="float: right !important;">
-                            <button type="button" class="btn bg-gradient-primary" id="for_create_eula"
+                            <button type="button" class="btn bg-gradient-primary" id="for_create_eula" aria-label="{{ __('supporting.License Agreements') }}"
                                 data-toggle="modal" data-target="#AddOrEditEULA"><i class="fas fa-edit"></i></button>
                         </div>
                     </div>
@@ -31,13 +31,13 @@
                                             No
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Name T & C
+                                            {{ __('supporting.Agreement Name') }}
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Year
+                                            {{ __('supporting.Year') }}
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Status
+                                            {{ __('supporting.Status') }}
                                         </th>
                                         <th class="text-secondary opacity-7">#</th>
                                     </tr>
@@ -90,5 +90,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- summernote --}}
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs4.min.js"></script>
+    <script src="{{ asset('vendor/summernote/lang/summernote-id-ID.min.js') }}"></script>
     @include('admin.eula.eula_js')
 @stop

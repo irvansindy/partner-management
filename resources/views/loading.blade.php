@@ -15,7 +15,7 @@
 <div class="modal fade" id="modalLoading" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalLoadingLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered d-flex justify-content-center" role="document">
         <div class="spinner-border text-danger" style="width: 4rem; height: 4rem;" role="status">
-            <span class="sr-only">Loading...</span>
+            <span class="sr-only">{{ __('public_form.page_loading') }}</span>
         </div>
     </div>
 </div>

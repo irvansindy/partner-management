@@ -355,6 +355,7 @@
         $("#year_prev_1, #bs_year_minus_1, #fr_year_minus_1").text(currentYear - 1);
         $("#year_prev_2, #bs_year_minus_2, #fr_year_minus_2").text(currentYear - 2);
 
+        if ($("#input-multiple-file").length) {
         $("#input-multiple-file").fileinput({
             ...@json(__('public_form.fileinput')),
             uploadUrl: false,
@@ -418,6 +419,8 @@
                 actionUpload: '' // Kosongkan template upload button
             }
         });
+
+        }
 
         // Paksa hide upload button
         $('.fileinput-upload, .fileinput-upload-button, .kv-file-upload').hide();

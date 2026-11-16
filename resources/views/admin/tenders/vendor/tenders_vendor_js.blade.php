@@ -1,9 +1,12 @@
 <script>
+    const tenderLabels = @json(__('supporting'));
+    const tenderLabel = key => $('<span>').text(tenderLabels[key] ?? key).html();
     $(document).ready(() => {
         // moment.locale('id');
         // Example: format a date in Indonesian
         // const formattedDate = moment('2024-10-24').format('LL');
         // console.log(formattedDate); // Output: "24 Oktober 2024"
+        moment.locale(@json(app()->getLocale()));
         fetchTenderVendor()
         // get all data tender for first page
         function fetchTenderVendor() {
@@ -18,9 +21,9 @@
                 success: function(res) {
                     if (res.data == null) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
-                            body: 'data kosong',
+                            body: @json(__('supporting.No data available')),
                             delay: 3000,
                             autohide: true,
                             fade: true,
@@ -31,9 +34,9 @@
                             <div class="container d-flex flex-column justify-content-center align-items-center" style="height: 50vh;">
                                 <div class="text-center">
                                     <i class="bi bi-exclamation-circle" style="font-size: 4rem; color: #6c757d;"></i>
-                                    <h1 class="display-6 mt-3">Tidak Ada Data Tersedia</h1>
-                                    <p class="text-muted">Data yang Anda cari saat ini kosong atau belum tersedia.</p>
-                                    <x-adminlte-button label="Refresh" theme="info" icon="fas fa-fw fa-sync-alt" onclick="location.reload()"/>
+                                    <h1 class="display-6 mt-3">${tenderLabel("No data available") }</h1>
+                                    <p class="text-muted">${tenderLabel("No data description") }</p>
+                                    <x-adminlte-button :label="__('supporting.Refresh')" theme="info" icon="fas fa-fw fa-sync-alt" onclick="location.reload()"/>
                                 </div>
                             </div>
                         `)
@@ -59,7 +62,7 @@
                                         <br/>
                                         <span>${list_tender_vendor[i].tender_type_id}</span>
                                         <div class="text-sm-right">
-                                            <span class="text-end text-muted">Start - End</span>
+                                            <span class="text-end text-muted">${tenderLabel("Start - End") }</span>
                                             <br/>
                                             <span class="text-end text-muted">${moment(list_tender_vendor[i].ordering_date).format('ll')} - ${moment(list_tender_vendor[i].expired_date).format('ll')}</span>
                                         </div>
@@ -70,9 +73,9 @@
                     })
                 },
                 error: function(xhr) {
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = (xhr.responseJSON || {meta: {code: xhr.status, message: @json(__('supporting.Request failed'))}})
                     $(document).Toasts('create', {
-                        title: 'Error',
+                        title: @json(__('supporting.Error')),
                         class: 'bg-danger',
                         body: response_error.meta.message,
                         delay: 10000,
@@ -93,7 +96,7 @@
 
             // set tender type
             $('#create_tender_type').empty(``)
-            $('#create_tender_type').append(`<option value="" hidden>Select Type</option>`)
+            $('#create_tender_type').append(`<option value="" hidden>${tenderLabel("Select Type") }</option>`)
             const list_tender_type = [
                 'Type 1',
                 'Type 2',
@@ -101,7 +104,7 @@
             ]
 
             $.each(list_tender_type, (i, type) => {
-                $('#create_tender_type').append(`<option value="${type}">${type}</option>`)
+                $('#create_tender_type').append(`<option value="${type}">${tenderLabel(type)}</option>`)
             })
 
             // Get today's date
@@ -137,11 +140,11 @@
                         $('#list_view_tender_vendor tbody').append(`
                         <tr>
                             <td>
-                                <input type="checkbox" class="rowCheckbox" id="rowCheckbox_${i+1}" value="${vendor.id != null ? vendor.id : 'not set'}" name="create_tender_product_list_vendor[]">
+                                <input type="checkbox" class="rowCheckbox" id="rowCheckbox_${i+1}" value="${vendor.id != null ? vendor.id : tenderLabels['Not set']}" name="create_tender_product_list_vendor[]">
                             </td>
                             <td>
                                 <label for="rowCheckbox_${i+1}">
-                                    ${vendor.name != null ? vendor.name : 'not set'}
+                                    ${vendor.name != null ? vendor.name : tenderLabels['Not set']}
                                 </label>
                             </td>
                         </tr>
@@ -149,6 +152,7 @@
                     })
 
                     var table = $('#list_view_tender_vendor').DataTable({
+                        language: @json(__('settings.datatable')),
                         scrollX: true
                     })
                 }
@@ -204,13 +208,21 @@
                 contentType: false,   // Prevent jQuery from setting content type
                 cache: false,
                 success: function(res) {
+                    $('#modal_create_tender_vendor').modal('hide');
+                    $(document).Toasts('create', {title: @json(__('supporting.Success')), class: 'bg-success', body: res.meta.message, autohide: true, delay: 5000});
                     fetchTenderVendor()
+                },
+                error: function(xhr) {
+                    const message = xhr.responseJSON?.meta?.message;
+                    const text = typeof message === 'string' ? message : Object.values(message?.errors || {}).flat().join(' ') || @json(__('supporting.Request failed'));
+                    $(document).Toasts('create', {title: @json(__('supporting.Error')), class: 'bg-danger', body: $('<span>').text(text).html(), autohide: true, delay: 7000});
                 }
             })
             
         })
 
         $('#create_tender_type').select2({
+            language: { noResults: () => @json(__('settings.no_results')), searching: () => @json(__('settings.searching')) },
             dropdownParent: $("#modal_create_tender_vendor")
         })
 
@@ -219,19 +231,19 @@
                 <div class="row array_dynamic_form_tender_product">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="create_tender_product_name">Product Name</label>
+                            <label for="create_tender_product_name">${tenderLabel("Product Name") }</label>
                             <input type="text" class="form-control" id=""
                                 name="create_tender_product_name[]" aria-describedby="">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="create_tender_product_requirement">Product Requirement</label>
+                            <label for="create_tender_product_requirement">${tenderLabel("Product Requirement") }</label>
                             <textarea class="form-control" name="create_tender_product_requirement[]" id="" rows="2"></textarea>
                         </div>
                     </div>
                     <div class="mr-4">
-                        <button type="button" class="btn btn-danger float-sm-right pop_dynamic_form_tender_product">
+                        <button type="button" class="btn btn-danger float-sm-right pop_dynamic_form_tender_product" aria-label="${tenderLabel('Remove product')}">
                             <i class="fas fa-ws fa-minus"></i>
                         </button>
                     </div>
@@ -292,7 +304,7 @@
                 async: true,
                 success: function(res) {
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: @json(__('supporting.Success')),
                         class: 'bg-success',
                         body: res.meta.message,
                         delay: 2000,
@@ -303,11 +315,11 @@
                     });
                 },
                 error: function(xhr) {
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = (xhr.responseJSON || {meta: {code: xhr.status, message: @json(__('supporting.Request failed'))}})
 
                     if (response_error.meta.code === 500 || response_error.meta.code === 400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -322,9 +334,9 @@
                             $('#message_' + i.replace('.', '_')).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('supporting.Fill required fields')),
                             delay: 10000,
                             autohide: true,
                             fade: true,

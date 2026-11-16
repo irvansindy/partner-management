@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content ">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="AddOrEditEULALabel">End User License Agreements</h1>
+                <h1 class="modal-title fs-5" id="AddOrEditEULALabel">{{ __('supporting.License Agreements') }}</h1>
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}"></button>
             </div>
             <form action="" id="form_end_user_license_agreements">
@@ -18,14 +18,14 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="end_user_license_agreements_year">Year</label>
+                                <label for="end_user_license_agreements_year">{{ __('supporting.Year') }}</label>
                                 <input type="number" class="form-control" id="end_user_license_agreements_year">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="custom-control custom-switch mb-3">
                                 <input type="checkbox" class="custom-control-input" id="end_user_license_agreements_is_active" name="end_user_license_agreements_is_active">
-                                <label class="custom-control-label" for="end_user_license_agreements_is_active">Toggle this switch element</label>
+                                <label class="custom-control-label" for="end_user_license_agreements_is_active">{{ __('supporting.Active') }}</label>
                             </div>
                         </div>
                     </div>

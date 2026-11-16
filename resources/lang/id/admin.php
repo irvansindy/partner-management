@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'Customer' => 'Pelanggan',
+    'Vendor' => 'Vendor',
     'Form Links Management' => 'Manajemen Tautan Formulir',
     'Create and manage public partner registration links.' => 'Buat dan kelola tautan pendaftaran mitra publik.',
     'Create Form Link' => 'Buat Tautan Formulir',

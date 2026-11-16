@@ -1,7 +1,17 @@
 <script>
     $(document).ready(function() {
+        $('#summernote_end_user_license_agreements').summernote({
+            lang: @json(app()->getLocale() === 'id' ? 'id-ID' : 'en-US'),
+            placeholder: @json(__('supporting.License Agreements')),
+            tabsize: 2,
+            height: 100,
+            codeviewFilter: false,
+            codeviewIframeFilter: true,
+            spellCheck: true
+        });
         $('#eula_tnc_table').DataTable({
             processing: true,
+            language: @json(__('settings.datatable')),
             // serverside: true,
             ajax: {
                 url: '{{ route("fetch-end-user-license-agreement") }}',
@@ -16,25 +26,25 @@
                 },
                 {
                     "data": "name",
-                    "defaultContent": "<i>Not set</i>"
+                    "defaultContent": @json(__('supporting.Not set'))
                 },
                 {
                     "data": "year",
-                    "defaultContent": "<i>Not set</i>"
+                    "defaultContent": @json(__('supporting.Not set'))
                 },
                 {
                     "data": "is_active",
-                    "defaultContent": "<i>Not set</i>",
+                    "defaultContent": @json(__('supporting.Not set')),
                     "render": function (data, type, row) {
-                        return data == 1 ? 'Active' : 'Inactive';
+                        return data == 1 ? @json(__('supporting.Active')) : @json(__('supporting.Inactive'));
                     }
                 },
                 {
                     'data': null,
-                    title: 'Action',
+                    title: @json(__('supporting.Action')),
                     wrap: true,
                     "render": function(item) {
-                        return '<button type="button" data-id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_eula_tnc" data-toggle="modal" data-target="#AddOrEditEULA">View</button>'
+                        return '<button type="button" data-id="'+item.id+'" class="btn btn-outline-info btn-sm mt-2 detail_eula_tnc" data-toggle="modal" data-target="#AddOrEditEULA">' + @json(__('supporting.View')) + '</button>'
                     }
                 },
             ]
@@ -57,7 +67,8 @@
                 async: true,
                 success: function(res) {
                     $('#summernote_end_user_license_agreements').summernote({
-                        placeholder: 'End User License Agreements',
+                        lang: @json(app()->getLocale() === 'id' ? 'id-ID' : 'en-US'),
+                        placeholder: @json(__('supporting.License Agreements')),
                         tabsize: 2,
                         height: 100,
                         focus: true,
@@ -145,7 +156,7 @@
                 data: data,
                 success: function(res) {
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: @json(__('supporting.Success')),
                         class: 'bg-success',
                         body: res.meta.message,
                         delay: 5000,
@@ -159,12 +170,12 @@
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = (xhr.responseJSON || {meta: {code: xhr.status, message: @json(__('supporting.Request failed'))}})
 
                     if (response_error.meta.code === 500 || response_error.meta.code ===
                         400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -179,9 +190,9 @@
                             $('#message_' + i.replace('.', '_')).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('supporting.Fill required fields')),
                             delay: 10000,
                             autohide: true,
                             fade: true,
@@ -213,7 +224,8 @@
                 async: true,
                 success: function(res) {
                     $('#summernote_end_user_license_agreements').summernote({
-                        placeholder: 'End User License Agreements',
+                        lang: @json(app()->getLocale() === 'id' ? 'id-ID' : 'en-US'),
+                        placeholder: @json(__('supporting.License Agreements')),
                         tabsize: 2,
                         height: 100,
                         focus: true,

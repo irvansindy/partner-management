@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'Customer' => 'Customer',
+    'Vendor' => 'Vendor',
     'Form Links Management' => 'Form Links Management',
     'Create and manage public partner registration links.' => 'Create and manage public partner registration links.',
     'Create Form Link' => 'Create Form Link',

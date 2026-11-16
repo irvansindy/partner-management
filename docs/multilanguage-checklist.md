@@ -12,12 +12,14 @@ Tanggal inventaris: 12 November 2026. Bahasa: Indonesia (`id`) dan Inggris (`en`
 - [x] Task 6: export/import, preview, PDF, template spreadsheet dan impor kode pos (implementasi selesai; QA browser lanjutan pada Task 10).
 - [x] Task 7: System Maintenance (implementasi selesai; QA browser lanjutan pada Task 10).
 - [x] Task 8: form public, create partner internal, success/closed dan autentikasi (implementasi selesai; QA browser lanjutan pada Task 10).
-- [ ] Task 9: tender, EULA, home dan supporting documents.
-- [ ] Task 10: audit sisa teks, kesamaan key, tes render dan pemeriksaan browser ID/EN.
+- [x] Task 9: tender, EULA, home dan supporting documents (implementasi selesai; QA browser lanjutan pada Task 10).
+- [x] Task 10: audit sisa teks, kesamaan key, tes render dan pemeriksaan browser ID/EN (audit lokal selesai; batas pengujian server dicatat di audit Task 10).
 
 Task 1 selesai berarti sumber dan kategori pekerjaan telah dipetakan, bukan seluruh teks sudah diterjemahkan. Pemindaian statis menghasilkan kandidat; komentar, identifier dan data pengguna tidak dihitung sebagai teks yang wajib diterjemahkan.
 
 ## Inventaris per modul
+
+Tabel ini merupakan inventaris awal. Status penyelesaian terbaru mengikuti daftar task di atas dan laporan audit masing-masing task.
 
 | Task | Route/alur | Sumber utama | Pekerjaan tersisa dan bukti |
 | --- | --- | --- | --- |
@@ -61,12 +63,12 @@ Task 1 selesai berarti sumber dan kategori pekerjaan telah dipetakan, bukan selu
 
 ## Kriteria selesai setiap task
 
-- [ ] Halaman utama, modal dan state kosong/loading/error memakai locale aktif.
-- [ ] Notifikasi success/error, validasi backend dan JavaScript konsisten.
-- [ ] DataTable/Select2, title/placeholder/aria-label diperiksa.
-- [ ] Key ID/EN lengkap dengan placeholder identik dan tanpa raw translation key tampil.
-- [ ] Blade terkompilasi; tes yang relevan lulus atau kegagalan dijelaskan.
-- [ ] Pemeriksaan browser ID dan EN dicatat, termasuk halaman yang belum bisa diuji.
+- [x] Halaman utama, modal dan state kosong/loading/error memakai locale aktif.
+- [x] Notifikasi success/error, validasi backend dan JavaScript konsisten.
+- [x] DataTable/Select2, title/placeholder/aria-label diperiksa.
+- [x] Key ID/EN lengkap dengan placeholder identik dan tanpa raw translation key tampil pada halaman yang diuji.
+- [x] Blade terkompilasi; tes yang relevan lulus atau kegagalan dijelaskan.
+- [x] Pemeriksaan browser ID dan EN dicatat, termasuk halaman yang belum bisa diuji pada server.
 
 ## Catatan verifikasi Task 1
 
@@ -86,3 +88,7 @@ Status implementasi: selesai, 13 November 2026. Temuan T2-01–T2-12 ditangani; 
 - [x] Kesamaan key/placeholder rekursif, render row/panel bersama dan pembuatan PDF mPDF diuji ID/EN.
 - [x] 35 tes terkait lulus; Blade terkompilasi dan diff bersih.
 - [ ] QA interaksi browser ID/EN dan layout PDF secara visual diteruskan ke Task 10. Belum ada klaim pengujian browser atau submit pada database server.
+
+## Progres Task 10
+
+Audit lokal selesai, 16 November 2026. Lihat `docs/task-10-multilanguage-audit.md` untuk matriks bukti, perbaikan dan batas pengujian. Sebanyak 279 tes lulus; 35 halaman dirender dalam ID/EN dan diperiksa di Chromium menggunakan API fixture. Sepuluh skenario interaksi ID/EN lulus. Login dan persistensi locale diuji pada Laravel lokal sebenarnya. Tidak ada transaksi produksi dijalankan; GPS perangkat, proxy 413, operasi maintenance dan pemeriksaan visual dokumen hasil ekspor pada server belum diverifikasi.

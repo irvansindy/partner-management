@@ -26,10 +26,10 @@
                                 <select name="form_type" id="form_type"
                                     class="form-control @error('form_type') is-invalid @enderror" required>
                                     <option value="">{{ __('form_links.-- Select Form Type --') }}</option>
-                                    <option value="vendor" {{ old('form_type') === 'vendor' ? 'selected' : '' }}>Vendor
+                                    <option value="vendor" {{ old('form_type') === 'vendor' ? 'selected' : '' }}>{{ __('admin.Vendor') }}
                                     </option>
                                     <option value="customer" {{ old('form_type') === 'customer' ? 'selected' : '' }}>
-                                        Customer</option>
+                                        {{ __('admin.Customer') }}</option>
                                 </select>
                                 @error('form_type')
                                     <span class="invalid-feedback">{{ $message }}</span>

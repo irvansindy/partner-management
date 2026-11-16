@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Detail Company')
+@section('title', __('supporting.Detail Company'))
 
 @section('content_header')
-    <h1>Data Partner
-        <br>Seleksi Customer
+    <h1>{{ __('supporting.Partner Data') }}
+        <br>{{ __('supporting.Customer Selection') }}
     </h1>
 @stop
 
@@ -14,7 +14,7 @@
             {{-- company information master --}}
             <div class="card card-info">
                 <div class="card-header">
-                    <h3 class="card-title">1. COMPANY INFORMATION (Informasi Perusahaan)</h3>
+                    <h3 class="card-title">{{ __('supporting.Company Information') }}</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
@@ -26,27 +26,25 @@
                     <div class="row px-2 py-2" style="line-height: 1">
                         <div class="input-group my-4">
                             <div class="col-md-3">
-                                <label for="detail_company_type">Company Type *</label>
+                                <label for="detail_company_type">{{ __('supporting.Company Type') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Jenis
-                                    Perusahaan</p>
+                                    {{ __('supporting.Company Type') }}</p>
                             </div>
                             <div class="col-md-9">
                                 <select name="detail_company_type" id="detail_company_type" class="form-control">
-                                    <option value="customer">Customer</option>
-                                    <option value="vendor">Vendor</option>
-                                    <option value="customer dan vendor">Keduanya</option>
+                                    <option value="customer">{{ __('supporting.Customer') }}</option>
+                                    <option value="vendor">{{ __('supporting.Vendor') }}</option>
+                                    <option value="customer dan vendor">{{ __('supporting.Both') }}</option>
                                 </select>
                             </div>
                         </div>
                         <div class="input-group my-4">
                             <div class="col-md-3">
-                                <label for="detail_company_name">Company Name *</label>
+                                <label for="detail_company_name">{{ __('supporting.Company Name') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Nama
-                                    Perusahaan</p>
+                                    {{ __('supporting.Company Name') }}</p>
                             </div>
                             <div class="col-md-9">
                                 <input type="text" name="detail_company_name" id="detail_company_name" placeholder=""
@@ -57,11 +55,11 @@
                             <div class="col-md-4 mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_company_group_name">Company Group Name *</label>
+                                        <label for="detail_company_group_name">{{ __('supporting.Company Group Name') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nama Grup Perusahaan</p>
+                                            {{ __('supporting.Company Group Name') }}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_company_group_name"
@@ -72,11 +70,11 @@
                             <div class="col-md-4 mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_established_year">Established Since (Year) *</label>
+                                        <label for="detail_established_year">{{ __('supporting.Established Since (Year)') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Didirikan Sejak (Tahun)</p>
+                                            {{ __('supporting.Established Year') }}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_established_year" id="detail_established_year"
@@ -88,11 +86,11 @@
                             <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_total_employee">Total Employee *</label>
+                                        <label for="detail_total_employee">{{ __('supporting.Total Employee') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Jumlah Karyawan</p>
+                                            {{ __('supporting.Total Employee') }}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_total_employee" id="detail_total_employee"
@@ -106,12 +104,11 @@
                             <div class="col-md-6 mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_liable_person_and_position">Liable Person & Position
-                                            *</label>
+                                        <label for="detail_liable_person_and_position">{{ __('supporting.Liable Person & Position') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nama penanggung Jawab & Jabatan</p>
+                                            {{ __('supporting.Liable Person & Position') }}</p>
                                     </div>
                                     <div class="col-md-7">
                                         <input type="text" name="detail_liable_person_and_position"
@@ -122,11 +119,11 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_owner_name">Owner’s Name *</label>
+                                        <label for="detail_owner_name">{{ __('supporting.Owner Name') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nama Pemilik/Presiden</p>
+                                            {{ __('supporting.Owner Name') }}</p>
                                     </div>
                                     <div class="col-md-7">
                                         <input type="text" name="detail_owner_name" id="detail_owner_name" placeholder=""
@@ -139,11 +136,11 @@
                             <div class="col-md-6 mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_board_of_directors">Board of Directors *</label>
+                                        <label for="detail_board_of_directors">{{ __('supporting.Board of Directors') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nama Dewan Direktur</p>
+                                            {{ __('supporting.Board of Directors') }}</p>
                                     </div>
                                     <div class="col-md-7">
                                         <input type="text" name="detail_board_of_directors"
@@ -154,12 +151,11 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_major_shareholders">Major Shareholders *</label>
+                                        <label for="detail_major_shareholders">{{ __('supporting.Major Shareholders') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nama Pemilik
-                                            Saham Mayoritas</p>
+                                            {{ __('supporting.Major Shareholders') }}</p>
                                     </div>
                                     <div class="col-md-7">
                                         <input type="text" name="detail_major_shareholders"
@@ -171,10 +167,10 @@
                         </div>
                         <div class="input-group mb-4">
                             <div class="col-md-auto">
-                                <label for="">Business Classification *</label>
+                                <label for="">{{ __('supporting.Business Classification') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Jenis Usaha</p>
+                                    {{ __('supporting.Business Classification') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <div class="row px-2">
@@ -185,10 +181,10 @@
                                                 id="detail_business_classification_manufacturer" value="Manufacturer">
                                             <label class="form-check-label"
                                                 for="detail_business_classification_manufacturer">
-                                                Manufacturer
+                                                {{ __('supporting.Manufacturer') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Manufaktur</p>
+                                                    {{ __('supporting.Manufacturer') }}</p>
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-1">
@@ -196,10 +192,10 @@
                                                 name="detail_business_classification"
                                                 id="detail_business_classification_trading" value="Trading">
                                             <label class="form-check-label" for="detail_business_classification_trading">
-                                                Trading
+                                                {{ __('supporting.Trading') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Trading</p>
+                                                    {{ __('supporting.Trading') }}</p>
                                             </label>
                                             </label>
                                         </div>
@@ -208,10 +204,10 @@
                                                 name="detail_business_classification"
                                                 id="detail_business_classification_agent" value="Agent">
                                             <label class="form-check-label" for="detail_business_classification_agent">
-                                                Agent
+                                                {{ __('supporting.Agent') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Agen</p>
+                                                    {{ __('supporting.Agent') }}</p>
                                             </label>
                                             </label>
                                         </div>
@@ -221,10 +217,10 @@
                                                 id="detail_business_classification_distributor" value="Distributor">
                                             <label class="form-check-label"
                                                 for="detail_business_classification_distributor">
-                                                Distributor
+                                                {{ __('supporting.Distributor') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Distributor</p>
+                                                    {{ __('supporting.Distributor') }}</p>
                                             </label>
                                             </label>
                                         </div>
@@ -233,10 +229,10 @@
                                                 name="detail_business_classification"
                                                 id="detail_business_classification_services" value="Services">
                                             <label class="form-check-label" for="detail_business_classification_services">
-                                                Services
+                                                {{ __('supporting.Services') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Jasa</p>
+                                                    {{ __('supporting.Services') }}</p>
                                             </label>
                                             </label>
                                         </div>
@@ -246,10 +242,10 @@
                                                 id="detail_business_classification_contractor" value="Contractor">
                                             <label class="form-check-label"
                                                 for="detail_business_classification_contractor">
-                                                Contractor
+                                                {{ __('supporting.Contractor') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Kontraktor</p>
+                                                    {{ __('supporting.Contractor') }}</p>
                                             </label>
                                             </label>
                                         </div>
@@ -258,10 +254,10 @@
                                                 name="detail_business_classification"
                                                 id="detail_business_classification_other" value="Other">
                                             <label class="form-check-label" for="detail_business_classification_other">
-                                                Other
+                                                {{ __('supporting.Other') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Lain-lain</p>
+                                                    {{ __('supporting.Other') }}</p>
                                             </label>
                                             </label>
                                         </div>
@@ -274,10 +270,10 @@
                         </div>
                         <div class="input-group mb-4">
                             <div class="col-md-3">
-                                <label for="detail_website_address">Website Address *</label>
+                                <label for="detail_website_address">{{ __('supporting.Website') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Alamat Situs</p>
+                                    {{ __('supporting.Website') }}</p>
                             </div>
                             <div class="col-md-9">
                                 <input type="text" name="detail_website_address" id="detail_website_address"
@@ -286,10 +282,10 @@
                         </div>
                         <div class="input-group mb-4">
                             <div class="col-md-auto">
-                                <label for="">System Management *</label>
+                                <label for="">{{ __('supporting.System Management') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Jenis Usaha</p>
+                                    {{ __('supporting.Business Classification') }}</p>
                             </div>
                             <div class="col-md-auto detail_system_management">
                                 <div class="form-check form-check-inline mb-1">
@@ -309,10 +305,10 @@
                                         name="detail_system_management" id="detail_system_management_other"
                                         value="Others Certificate">
                                     <label class="form-check-label" for="detail_system_management_other">
-                                        Others Certificate
+                                        {{ __('supporting.Others Certificate') }}
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Sertifikat lainnya</p>
+                                            {{ __('supporting.Others Certificate') }}</p>
                                     </label>
                                 </div>
                             </div>
@@ -321,11 +317,11 @@
                             <div class="col-md-6 mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_contact_person">Contact Persons *</label>
+                                        <label for="detail_contact_person">{{ __('supporting.Contact Persons') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Staff yang dapat dihubungi</p>
+                                            {{ __('supporting.Contact Person') }}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_contact_person" id="detail_contact_person"
@@ -336,11 +332,11 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_communication_language">Comm. Language *</label>
+                                        <label for="detail_communication_language">{{ __('supporting.Communication Language') }} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Bahasa Komunikasi</p>
+                                            {{ __('supporting.Communication Language') }}</p>
                                     </div>
                                     <div class="col-md-auto detail_option_languange">
                                         <div class="form-check form-check-inline mb-1">
@@ -348,10 +344,10 @@
                                                 type="radio" name="detail_communication_language"
                                                 id="detail_communication_language_bahasa" value="Bahasa">
                                             <label class="form-check-label" for="detail_communication_language_bahasa">
-                                                Bahasa
+                                                {{ __('supporting.Indonesian') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Indonesia</p>
+                                                    {{ __('supporting.Indonesian') }}</p>
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline mb-1">
@@ -359,10 +355,10 @@
                                                 type="radio" name="detail_communication_language"
                                                 id="detail_communication_language_english" value="English">
                                             <label class="form-check-label" for="detail_communication_language_english">
-                                                English
+                                                {{ __('supporting.English') }}
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Inggris</p>
+                                                    {{ __('supporting.English') }}</p>
                                             </label>
                                         </div>
                                     </div>
@@ -371,9 +367,9 @@
                         </div>
                         <div class="input-group mb-4">
                             <div class="col-md-3">
-                                <label for="detail_email_address">Email Address (Correspondence) *</label>
+                                <label for="detail_email_address">{{ __('supporting.Correspondence Email') }} *</label>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Alamat email (Koresponden)</p>
+                                    {{ __('supporting.Correspondence Email') }}</p>
                             </div>
                             <div class="col-md-9">
                                 <input type="text" name="detail_email_address" id="detail_email_address"
@@ -382,20 +378,20 @@
                         </div>
                         <div class="input-group mb-4">
                             <div class="col-sm-6">
-                                <label for="detail_stamp_file">Stamp *</label>
+                                <label for="detail_stamp_file">{{ __('supporting.Stamp') }} *</label>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Stempel</p>
+                                    {{ __('supporting.Stamp') }}</p>
                                 <input type="file" name="detail_stamp_file" id="detail_stamp_file"
                                     class="form-control" />
-                                <a id="link_stamp" target="_blank"><i class="fas fa-file"></i> Your Stamp</a>
+                                <a id="link_stamp" target="_blank"><i class="fas fa-file"></i> {{ __('supporting.Your Stamp') }}</a>
                             </div>
                             <div class="col-sm-6">
-                                <label for="detail_signature_file">Signature *</label>
+                                <label for="detail_signature_file">{{ __('supporting.Signature') }} *</label>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Tanda Tangan</p>
+                                    {{ __('supporting.Signature') }}</p>
                                 <input type="file" name="detail_signature_file" id="detail_signature_file"
                                     class="form-control" />
-                                <a id="link_signature" target="_blank"><i class="fas fa-file"></i> Your Signature</a>
+                                <a id="link_signature" target="_blank"><i class="fas fa-file"></i> {{ __('supporting.Your Signature') }}</a>
                             </div>
                         </div>
                     </div>
@@ -404,13 +400,11 @@
                             </fieldset> --}}
                         <div class="input-group mb-4">
                             <div class="col-md-2">
-                                <label for="detail_address">Company Address *<br>
-                                    (according to Company Address stated in the Tax Register Number):
-                                    *</label>
+                                <label for="detail_address">{{ __('supporting.Company Address') }} *<br>
+                                    {{ __('supporting.Tax address hint') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Alamat Perusahaan
-                                    (sesuai dengan NPWP)</p>
+                                    {{ __('supporting.Tax address hint') }}</p>
                             </div>
                             <div class="col-md-10">
                                 <div class="row">
@@ -421,11 +415,11 @@
                                     <div class="col-md-auto">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_city">City *</label>
+                                                <label for="detail_city">{{ __('supporting.City') }} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Kota</p>
+                                                    {{ __('supporting.City') }}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_city[]" id="detail_city"
@@ -438,11 +432,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_country">Country *</label>
+                                                <label for="detail_country">{{ __('supporting.Country') }} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Negara</p>
+                                                    {{ __('supporting.Country') }}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_country[]" id="detail_country"
@@ -453,11 +447,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_province">Province *</label>
+                                                <label for="detail_province">{{ __('supporting.Province') }} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Provinsi</p>
+                                                    {{ __('supporting.Province') }}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_province[]" id="detail_province"
@@ -468,11 +462,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_zip_code">Zip Code *</label>
+                                                <label for="detail_zip_code">{{ __('supporting.Postal Code') }} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Kode Pos</p>
+                                                    {{ __('supporting.Postal Code') }}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_zip_code[]" id="detail_zip_code"
@@ -483,11 +477,10 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_telephone">Telephone *</label>
+                                                <label for="detail_telephone">{{ __('supporting.Telephone') }} *</label>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    + [Country-Area Code] [No.]
-                                                    Telepon +[Negara-Area] [No.]</p>
+                                                    {{ __('supporting.Phone format hint') }}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_telephone[]" id="detail_telephone"
@@ -498,11 +491,10 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_fax">Fax *</label>
+                                                <label for="detail_fax">{{ __('supporting.Fax') }} *</label>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    + [Country-Area Code] [No.]
-                                                    Fax +[Negara-Area] [No.]</p>
+                                                    {{ __('supporting.Phone format hint') }}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_fax[]" id="detail_fax" placeholder=""
@@ -512,7 +504,7 @@
                                     </div>
                                     <div class="col mb-4 align-items-end mr-4">
                                         <button type="button" class="btn btn-primary float-right"
-                                            id="add_detail_dynamic_address">+ Address</button>
+                                            id="add_detail_dynamic_address">{{ __('supporting.Add Address') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -531,7 +523,7 @@
     <div class="card card-info">
         <div class="card-header">
             <h3 class="card-title">
-                2. BANK DATA * (Data Bank)
+                {{ __('supporting.Bank Information') }}
             </h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -545,10 +537,10 @@
                     <div class="col-md-6 mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_bank_name">Bank Name *</label>
+                                <label for="detail_bank_name">{{ __('supporting.Bank Name') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Nama Bank</p>
+                                    {{ __('supporting.Bank Name') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_bank_name[]" id="detail_bank_name" placeholder=""
@@ -559,10 +551,10 @@
                     <div class="col-md-6">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_branch">Branch *</label>
+                                <label for="detail_branch">{{ __('supporting.Branch') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Cabang</p>
+                                    {{ __('supporting.Branch') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_branch[]" id="detail_branch" placeholder=""
@@ -575,10 +567,10 @@
                     <div class="col-md-6 mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_account_name">Account Name *</label>
+                                <label for="detail_account_name">{{ __('supporting.Account Name') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Rekening Atas Nama</p>
+                                    {{ __('supporting.Account Name') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_account_name[]" id="detail_account_name"
@@ -589,10 +581,10 @@
                     <div class="col-md-6 mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_city_or_country">City/Country *</label>
+                                <label for="detail_city_or_country">{{ __('supporting.City/Country') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Kota/Negara</p>
+                                    {{ __('supporting.City/Country') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_city_or_country[]" id="detail_city_or_country"
@@ -605,10 +597,10 @@
                     <div class="col-md-auto mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_account_number">Account No. *</label>
+                                <label for="detail_account_number">{{ __('supporting.Account No.') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    No Rekening</p>
+                                    {{ __('supporting.Account No.') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_account_number[]" id="detail_account_number"
@@ -619,10 +611,10 @@
                     <div class="col-md-auto mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_currency">Currency *</label>
+                                <label for="detail_currency">{{ __('supporting.Currency') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Mata Uang</p>
+                                    {{ __('supporting.Currency') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_currency[]" id="detail_currency" placeholder=""
@@ -633,10 +625,10 @@
                     <div class="col-md-auto">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_swift_code">Swift Code *</label>
+                                <label for="detail_swift_code">{{ __('supporting.Swift Code') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Optional</p>
+                                    {{ __('supporting.Optional') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_swift_code[]" id="detail_swift_code" placeholder=""
@@ -646,8 +638,7 @@
                     </div>
                 </div>
                 <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
-                    <button type="button" class="btn btn-primary" id="add_bank"> +
-                        Bank</button>
+                    <button type="button" class="btn btn-primary" id="add_bank"> {{ __('supporting.Add Bank') }}</button>
                 </div>
                 <div class="dynamic_bank">
 
@@ -661,7 +652,7 @@
     <div class="card card-info">
         <div class="card-header">
             <h3 class="card-title">
-                3. TAX DATA * (Data Pajak)
+                {{ __('supporting.Tax Information') }}
             </h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -675,11 +666,10 @@
                     <div class="col-md-auto mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_register_number_as_in_tax_invoice">Tax Register Number
-                                    (As in Tax Invoice) *</label>
+                                <label for="detail_register_number_as_in_tax_invoice">{{ __('supporting.Tax Register Number (As in Tax Invoice)') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Nomor NPWP (Sesuai dengan Faktur Pajak)</p>
+                                    {{ __('supporting.Tax Register Number (As in Tax Invoice)') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_register_number_as_in_tax_invoice"
@@ -690,10 +680,10 @@
                     <div class="col-md-auto mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_trc_number">TRC No. *</label>
+                                <label for="detail_trc_number">{{ __('supporting.TRC No.') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Nomor TRC</p>
+                                    {{ __('supporting.TRC No.') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_trc_number" id="detail_trc_number" placeholder=""
@@ -706,11 +696,10 @@
                     <div class="col-md-auto mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_register_number_related_branch">Tax Register Number
-                                    (Related Branch) *</label>
+                                <label for="detail_register_number_related_branch">{{ __('supporting.Tax Register Number (Related Branch)') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Nomor NPWP (Cabang Terkait)</p>
+                                    {{ __('supporting.Tax Register Number (Related Branch)') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="text" name="detail_register_number_related_branch"
@@ -721,10 +710,10 @@
                     <div class="col-md-auto mb-4">
                         <div class="row">
                             <div class="col-md-auto">
-                                <label for="detail_valid_until">Valid Until *</label>
+                                <label for="detail_valid_until">{{ __('supporting.Valid Until') }} *</label>
                                 <br>
                                 <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                    Berlaku Sampai</p>
+                                    {{ __('supporting.Valid Until') }}</p>
                             </div>
                             <div class="col-md-auto">
                                 <input type="date" name="detail_valid_until" id="detail_valid_until" placeholder=""
@@ -735,10 +724,9 @@
                 </div>
                 <div class="input-group mb-4">
                     <div class="col-md-3">
-                        <label for="detail_taxable_entrepreneur_number">Taxable Entrepreneur Number
-                            *</label>
+                        <label for="detail_taxable_entrepreneur_number">{{ __('supporting.Taxable Entrepreneur Number') }} *</label>
                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                            Nomor Surat Pengukuhan PKP</p>
+                            {{ __('supporting.Taxable Entrepreneur Number') }}</p>
                     </div>
                     <div class="col-md-9">
                         <input type="text" name="detail_taxable_entrepreneur_number"
@@ -747,9 +735,9 @@
                 </div>
                 <div class="input-group mb-4">
                     <div class="col-md-3">
-                        <label for="detail_tax_invoice_serial_number">Tax Invoice Serial No. *</label>
+                        <label for="detail_tax_invoice_serial_number">{{ __('supporting.Tax Invoice Serial No.') }} *</label>
                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                            Nomor Serial Faktur Pajak (pada SK-PKP)</p>
+                            {{ __('supporting.Tax Invoice Serial No.') }}</p>
                     </div>
                     <div class="col-md-9">
                         <input type="text" name="detail_tax_invoice_serial_number"
@@ -765,7 +753,7 @@
     <div class="card card-info">
         <div class="card-header">
             <h3 class="card-title">
-                4. SUPPORTING DOCUMENTS (Dokumen yang harus dilengkapi)
+                {{ __('supporting.Supporting Documents') }}
             </h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -790,7 +778,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#detail_document_type_perorangan" role="tab"
-                                data-toggle="tab">Perorangan</a>
+                                data-toggle="tab">{{ __('supporting.Individual') }}</a>
                         </li>
                     </ul>
                     <div class="tab-content mt-5">
@@ -798,8 +786,8 @@
                             <table class="table table-hover w-100">
                                 <thead>
                                     <tr>
-                                        <th>Doc Type</th>
-                                        <th>File</th>
+                                        <th>{{ __('supporting.Document Type') }}</th>
+                                        <th>{{ __('supporting.Document File') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data_doc_type_pt">
@@ -810,8 +798,8 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Doc Type</th>
-                                        <th>File</th>
+                                        <th>{{ __('supporting.Document Type') }}</th>
+                                        <th>{{ __('supporting.Document File') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data_doc_type_cv">
@@ -823,8 +811,8 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Doc Type</th>
-                                        <th>File</th>
+                                        <th>{{ __('supporting.Document Type') }}</th>
+                                        <th>{{ __('supporting.Document File') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data_doc_type_ud_or_pd">
@@ -836,8 +824,8 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Doc Type</th>
-                                        <th>File</th>
+                                        <th>{{ __('supporting.Document Type') }}</th>
+                                        <th>{{ __('supporting.Document File') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data_doc_type_perorangan">

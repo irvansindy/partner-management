@@ -5,8 +5,8 @@
         <div class="modal-content">
             <form id="form_submit_supporting_document" enctype="multipart/form-data">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal_support_documentLabel">Form Supporting Documents</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="modal_support_documentLabel">{{ __('supporting.Supporting Documents') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -17,23 +17,23 @@
                                 <select class="form-control select2_supporting_document" name="supporting_document_type[]" id="supporting_document_type_0">
                                     
                                 </select>
-                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Dokumen</p>
+                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">{{ __('supporting.Document Type') }}</p>
                                 <span class="text-danger mt-2 message_supporting_document_type" id="message_supporting_document_type_0" role="alert"></span>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <select class="form-control select2_supporting_document" name="supporting_document_business_type[]" id="supporting_document_business_type_0">
-                                    <option value="">tipe bisnis dokumen</option>
+                                    <option value="">{{ __('supporting.Business Type') }}</option>
                                 </select>
-                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Usaha</p>
+                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">{{ __('supporting.Business Type') }}</p>
                                 <span class="text-danger mt-2 message_supporting_document_business_type" id="message_supporting_document_business_type_0" role="alert"></span>
                             </div>
                         </div>
                         <div class="col-md-5">
                             <div class="form-group">
                                 <input type="file" name="file_supporting_document[]" id="file_supporting_document_0" placeholder="" class="form-control" required/>
-                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen</p>
+                                <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">{{ __('supporting.Document File') }}</p>
                                 <span class="text-danger mt-2 message_file_supporting_document" id="message_file_supporting_document_0" role="alert"></span>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                     <div class="d-flex justify-content-end">
                         <input type="hidden" name="supporting_document_partner_id" id="supporting_document_partner_id">
                         <button type="button" class="btn btn-primary" id="btn_submit_supporting_document">
-                            submit
+                            {{ __('supporting.Submit') }}
                         </button>
                     </div>
                 </div>

@@ -1,9 +1,13 @@
 <script>
+    const homeLabels = @json(__('supporting'));
+    const homeLabel = key => $('<span>').text(homeLabels[key] ?? key).html();
     $('#company_type').select2({
+            language: { noResults: () => @json(__('settings.no_results')), searching: () => @json(__('settings.searching')) },
         dropdownParent: $('#modalCreatePartner'),
         width: '100%'
     })
     $('.select2_supporting_document').select2({
+            language: { noResults: () => @json(__('settings.no_results')), searching: () => @json(__('settings.searching')) },
         dropdownParent: $('#modal_support_document'),
         width: '100%'
     })
@@ -26,13 +30,13 @@
                 success: function(res) {
                     if (res.data[0] == null) {
                         $('#data-company-name').empty()
-                        $('#data-company-name').html('<small>Not Set</small>')
+                        $('#data-company-name').text(homeLabels['Not set'])
                         $('#data-company-group-name').empty()
-                        $('#data-company-group-name').html('<small>Not Set</small>')
+                        $('#data-company-group-name').text(homeLabels['Not set'])
                         $('#data-company-established-year').empty()
-                        $('#data-company-established-year').html('<small>Not Set</small>')
+                        $('#data-company-established-year').text(homeLabels['Not set'])
                         $('#data-company-type').empty()
-                        $('#data-company-type').html('<small>Not Set</small>')
+                        $('#data-company-type').text(homeLabels['Not set'])
                     }
 
                     if (res.data[0] != null) {
@@ -53,7 +57,7 @@
                         $('#data-company-established-year').html(res.data[0].established_year)
 
                         $('#data-company-type').empty()
-                        $('#data-company-type').html(res.data[0].type)
+                        $('#data-company-type').text(homeLabels[res.data[0].type === 'customer' ? 'Customer' : res.data[0].type === 'vendor' ? 'Vendor' : 'Both'])
 
                         $('#data-company-total-employee').empty()
                         $('#data-company-total-employee').html(res.data[0].total_employee)
@@ -94,8 +98,8 @@
                         $('#data-company-email').empty()
                         $('#data-company-email').empty()
 
-                        $('#data-company-status').html(res.data[0].status)
-                        $('#data-company-status').html(res.data[0].status)
+                        $('#data-company-status').text(homeLabels[{approved: 'Approved', checking: 'Checking', rejected: 'Rejected'}[res.data[0].status]] ?? res.data[0].status)
+                        $('#data-company-status').text(homeLabels[{approved: 'Approved', checking: 'Checking', rejected: 'Rejected'}[res.data[0].status]] ?? res.data[0].status)
 
                         $('#add_data_support_document').attr('data-data_id', res.data[0].id)
 
@@ -126,7 +130,7 @@
                         
                             default:
                                 $('.list-data-contact').append(
-                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data Kontak</li>`
+                                    `<li><i class="fas fa-times-circle text-muted"></i> ${homeLabel("No contacts") }</li>`
                                 );
                                 break;
                         }
@@ -137,14 +141,14 @@
                                 $.each(company_address, (index, address) => {
                                     $('.list-data-address').append(`
                                         <li>
-                                            <i class="fas fa-map-pin text-danger"></i> ${address.address}, ${address.city}, ${address.province} ${address.zip_code} | Tel: ${address.telephone || '-'} | Fax: ${address.fax || '-'}
+                                            <i class="fas fa-map-pin text-danger"></i> ${address.address}, ${address.city}, ${address.province} ${address.zip_code} | ${homeLabel('Telephone')}: ${address.telephone || '-'} | ${homeLabel('Fax')}: ${address.fax || '-'}
                                         </li>
                                     `);
                                 });
                                 break;
                             default:
                                 $('.list-data-address').append(
-                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data alamat</li>`
+                                    `<li><i class="fas fa-times-circle text-muted"></i> ${homeLabel("No addresses") }</li>`
                                 );
                                 break;
                         }
@@ -154,14 +158,14 @@
                                 $.each(company_bank, (index, bank) => {
                                     $('.list-data-bank').append(`
                                         <li>
-                                            <i class="fas fa-university text-muted"></i> ${bank.name} - ${bank.branch} | A/N: ${bank.account_name} | No: ${bank.account_number} | Swift: ${bank.swift_code} | Kota: ${bank.city_or_country} | ${bank.currency}
+                                            <i class="fas fa-university text-muted"></i> ${bank.name} - ${bank.branch} | ${homeLabel('Account Name')}: ${bank.account_name} | ${homeLabel('Account No.')}: ${bank.account_number} | Swift: ${bank.swift_code} | ${homeLabel('City')}: ${bank.city_or_country} | ${bank.currency}
                                         </li>
                                     `);
                                 });
                                 break;
                             default:
                                 $('.list-data-bank').append(
-                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data bank</li>`
+                                    `<li><i class="fas fa-times-circle text-muted"></i> ${homeLabel("No banks") }</li>`
                                 );
                                 break;
                         }
@@ -171,14 +175,14 @@
                                 $.each(company_tax, (index, tax) => {
                                     $('.list-data-tax').append(`
                                         <li>
-                                        <i class="fas fa-file-invoice text-muted"></i> NPWP: ${tax.register_number_as_in_tax_invoice} | TRC: ${tax.trc_number} | Branch: ${tax.register_number_related_branch} | PKP: ${tax.taxable_entrepreneur_number} | Serial: ${tax.tax_invoice_serial_number} | Valid s/d: ${tax.valid_until}
+                                        <i class="fas fa-file-invoice text-muted"></i> NPWP: ${tax.register_number_as_in_tax_invoice} | TRC: ${tax.trc_number} | ${homeLabel('Branch')}: ${tax.register_number_related_branch} | PKP: ${tax.taxable_entrepreneur_number} | ${homeLabel('Tax Invoice Serial No.')}: ${tax.tax_invoice_serial_number} | ${homeLabel('Valid Until')}: ${tax.valid_until}
                                         </li>
                                     `);
                                 });
                                 break;
                             default:
                                 $('.list-data-tax').append(
-                                    `<li><i class="fas fa-times-circle text-muted"></i> Tidak ada data pajak</li>`
+                                    `<li><i class="fas fa-times-circle text-muted"></i> ${homeLabel("No tax data") }</li>`
                                 );
                                 break;
                         }
@@ -189,14 +193,14 @@
                                     $('.list-data-attachment').append(`
                                         <li>
                                             <i class="fas fa-file-word"></i> ${attachment.document_type_name} - 
-                                            <a href="{{ asset('') }}${attachment.document}" target="_blank">Link</a>
+                                            <a href="{{ asset('') }}${attachment.document}" target="_blank">${homeLabel("Link") }</a>
                                         </li>
                                     `);
                                 });
                                 break;
                             default:
                                 $('.list-data-attachment').append(
-                                    `<li><i class="fas fa-file-word"></i> Tidak ada dokumen yang diunggah</li>`
+                                    `<li><i class="fas fa-file-word"></i> ${homeLabel("No documents") }</li>`
                                 );
                                 break;
                         }
@@ -206,14 +210,14 @@
                         $('#company_support_document tbody').empty();
 
                         supporting_document.forEach((docx, index) => {
-                            let id = docx.id != null ? docx.id : 'not set'
+                            let id = docx.id != null ? docx.id : homeLabels['Not set']
                             let data_link_docx = "{{ asset('') }}" + docx.document
                             $('#company_support_document tbody').append(`
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${docx.document != null ? docx.document : 'not set'}</td>
-                                    <td>${docx.document_type_name != null ? docx.document_type_name : 'not set'}</td>
-                                    <td>${docx.document != null ? `<a href="" id="link_docx_${index}" target="blank_">Link</a>` : 'not set'}</td>
+                                    <td>${docx.document != null ? docx.document : homeLabels['Not set']}</td>
+                                    <td>${docx.document_type_name != null ? docx.document_type_name : homeLabels['Not set']}</td>
+                                    <td>${docx.document != null ? `<a href="" id="link_docx_${index}" target="blank_">${homeLabel("Link") }</a>` : homeLabels['Not set']}</td>
                                     <td>
                                         <button class="btn btn-sm btn-outline-info edit_supporting_document" data-toggle="modal" data-target="#modal_support_document_edit" data-id="${docx.id}" data-company_id="${docx.company_id}" data-link="${data_link_docx}"><i class="fas fa-edit"></i></button>
                                     </td>
@@ -223,6 +227,7 @@
                         });
 
                         $('#company_support_document').DataTable({
+                        language: @json(__('settings.datatable')),
                             pagingType: 'simple_numbers',
                         })
 
@@ -237,7 +242,7 @@
 
                                 // Info master: user & waktu utama
                                 let createdAtMaster = new Date(master.created_at)
-                                    .toLocaleString("id-ID", {dateStyle: "medium", timeStyle: "short"});
+                                    .toLocaleString(@json(app()->getLocale() === 'id' ? 'id-ID' : 'en-US'), {dateStyle: "medium", timeStyle: "short"});
 
                                 listHtml += `
                                 <div class="card mb-2">
@@ -260,7 +265,7 @@
                                 if (master.logs && master.logs.length > 0) {
                                     $.each(master.logs, function(detailIndex, log) {
                                         let createdAtDetail = new Date(log.created_at)
-                                            .toLocaleString("id-ID", {dateStyle: "medium", timeStyle: "short"});
+                                            .toLocaleString(@json(app()->getLocale() === 'id' ? 'id-ID' : 'en-US'), {dateStyle: "medium", timeStyle: "short"});
 
                                         listHtml += `
                                             <li class="mb-2">
@@ -272,7 +277,7 @@
                                         `;
                                     });
                                 } else {
-                                    listHtml += `<li class="text-muted">Tidak ada log detail.</li>`;
+                                    listHtml += `<li class="text-muted">${homeLabel("No log details") }</li>`;
                                 }
 
                                 listHtml += `
@@ -283,7 +288,7 @@
                                 `;
                             });
                         } else {
-                            listHtml = `<p class="text-muted">Belum ada aktivitas.</p>`;
+                            listHtml = `<p class="text-muted">${homeLabel("No activity") }</p>`;
                         }
 
                         $("#activity-accordion").html(listHtml);
@@ -369,7 +374,7 @@
                         selected_type = res.data.type == data_type ? 'selected' :
                             ''
                         $('#detail_company_type').append(`
-                            <option value="${data_type}" ${selected_type}>${data_type}</option>
+                            <option value="${data_type}" ${selected_type}>${homeLabel(data_type)}</option>
                         `)
                     })
 
@@ -406,10 +411,10 @@
                                     name="detail_business_classification" id="detail_business_classification_${business.toLowerCase()}"
                                     value="${business}" ${checked_business}>
                                 <label class="form-check-label" for="detail_business_classification_${business.toLowerCase()}">
-                                    ${business}
+                                    ${homeLabel(business)}
                                     <p class="fs-6"
                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        ${business}</p>
+                                        ${homeLabel(business)}</p>
                                 </label>
                             </div>
                         `)
@@ -423,7 +428,7 @@
                     // if (checked_business_value = 'Other') {
                     if (res.data.business_classification == 'Other') {
                         $('#field_form_detail_business_other').append(`
-                        <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control" value="${res.data.other_business}">
+                        <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="${homeLabel("Other")}" class="form-control" value="${res.data.other_business}">
                         `)
                     } else {
                         $('#field_form_detail_business_other').empty()
@@ -448,8 +453,8 @@
                                 <input class="form-check-input" type="radio" name="detail_system_management"
                                     id="detail_system_management_${system.toLowerCase()}" value="${system}" ${checked_system_management}>
                                 <label class="form-check-label" for="detail_system_management_${system.toLowerCase()}">
-                                    ${system}
-                                    ${system == 'Others Certificate' ? `<p class="fs-6" style="margin-bottom: 0rem !important; font-size: 10px !important;">Sertifikat lainnya</p>` : ``}
+                                    ${homeLabel(system)}
+                                    ${system == 'Others Certificate' ? `<p class="fs-6" style="margin-bottom: 0rem !important; font-size: 10px !important;">${homeLabel("Others Certificate") }</p>` : ``}
                                 </label>
                             </div>
                         `)
@@ -470,10 +475,10 @@
                                     type="radio" name="detail_communication_language"
                                     id="detail_communication_language_${data_language[i].toLowerCase()}" value="Bahasa">
                                 <label class="form-check-label" for="detail_communication_language_${data_language[i].toLowerCase()}">
-                                    Bahasa
+                                    ${homeLabel(language === 'Bahasa' ? 'Indonesian' : 'English')}
                                     <p class="fs-6"
                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Indonesia</p>
+                                        ${homeLabel('Indonesian')}</p>
                                 </label>
                             </div>
                         `)
@@ -495,8 +500,8 @@
                         $('.link_detail_stamp').empty()
                         $('.button-change-stamp').empty()
                         $('.button-change-stamp').append(`
-                            <i class="fas fa-edit title_change_stamp" title="Ubah data stempel" for="title_change_stamp"></i>
-                            <span class="info-box-text title_change_stamp" id="title_change_stamp" title="Ubah data stempel"><small>Ubah data stempel</small></span>
+                            <i class="fas fa-edit title_change_stamp" title="${homeLabel("Change stamp")}" for="title_change_stamp"></i>
+                            <span class="info-box-text title_change_stamp" id="title_change_stamp" title="${homeLabel("Change stamp")}"><small>${homeLabel("Change stamp") }</small></span>
                         `)
                     }
                     if (res.data.signature != '' || res.data.signature != null) {
@@ -505,8 +510,8 @@
                         $('.link_detail_signature').empty()
                         $('.button-change-signature').empty()
                         $('.button-change-signature').append(`
-                            <i class="fas fa-edit title_change_signature" title="Ubah data tanda tangan" for="title_change_signature"></i>
-                            <span class="info-box-text title_change_signature" id="title_change_signature" title="Ubah data tanda tangan"><small>Ubah data tanda tangan</small></span>
+                            <i class="fas fa-edit title_change_signature" title="${homeLabel("Change signature")}" for="title_change_signature"></i>
+                            <span class="info-box-text title_change_signature" id="title_change_signature" title="${homeLabel("Change signature")}"><small>${homeLabel("Change signature") }</small></span>
                         `)
                     }
                 }
@@ -555,14 +560,12 @@
                             $('#list_detail_address').append(`
                                 <div class="input-group mb-4 array_detail_company_address">
                                     <div class="col-md-2">
-                                        <label for="detail_address">Company Address *<br>
-                                            (according to Company Address stated in the Tax Register Number):
-                                            *</label>
+                                        <label for="detail_address">${homeLabel("Company Address") } *<br>
+                                            ${homeLabel('Tax address hint')} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Alamat Perusahaan
-                                            (sesuai dengan NPWP)</p>
+                                            ${homeLabel('Tax address hint')}</p>
                                     </div>
                                     <div class="col-md-10">
                                         <div class="row">
@@ -573,11 +576,11 @@
                                             <div class="col-md-auto">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_city">City *</label>
+                                                        <label for="detail_city">${homeLabel("City") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kota</p>
+                                                            ${homeLabel("City") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_city[]" id="detail_city_${i+1}" placeholder="" value="${address.city}"
@@ -590,11 +593,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_country">Country *</label>
+                                                        <label for="detail_country">${homeLabel("Country") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Negara</p>
+                                                            ${homeLabel("Country") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_country[]" id="detail_country_${i+1}" placeholder="" value="${address.country}"
@@ -605,11 +608,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_province">Province *</label>
+                                                        <label for="detail_province">${homeLabel("Province") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Provinsi</p>
+                                                            ${homeLabel("Province") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_province[]" id="detail_province_${i+1}" value="${address.province}"
@@ -620,11 +623,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_zip_code">Zip Code *</label>
+                                                        <label for="detail_zip_code">${homeLabel("Postal Code") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kode Pos</p>
+                                                            ${homeLabel("Postal Code") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_zip_code[]" id="detail_zip_code_${i+1}" value="${address.zip_code}"
@@ -635,11 +638,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_telephone">Telephone *</label>
+                                                        <label for="detail_telephone">${homeLabel("Telephone") } *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Telepon +[Negara-Area] [No.]</p>
+                                                            ${homeLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_telephone[]" id="detail_telephone_${i+1}" value="${address.telephone}"
@@ -650,11 +652,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_fax">Fax *</label>
+                                                        <label for="detail_fax">${homeLabel("Fax") } *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Fax +[Negara-Area] [No.]</p>
+                                                            ${homeLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_fax[]" id="detail_fax_${i+1}" placeholder="" value="${address.fax}"
@@ -671,7 +672,7 @@
                             `)
                             $('#button-for-add-address_' + i).append(`
                                 <button type="button" class="btn btn-primary float-right" id="add_detail_dynamic_address">
-                                    + Address
+                                    ${homeLabel('Add Address')}
                                 </button>
                             `)
                         })
@@ -684,14 +685,12 @@
                             $('#list_detail_address').append(`
                                 <div class="input-group mb-4 array_detail_company_address">
                                     <div class="col-md-2">
-                                        <label for="detail_address">Company Address *<br>
-                                            (according to Company Address stated in the Tax Register Number):
-                                            *</label>
+                                        <label for="detail_address">${homeLabel("Company Address") } *<br>
+                                            ${homeLabel('Tax address hint')} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Alamat Perusahaan
-                                            (sesuai dengan NPWP)</p>
+                                            ${homeLabel('Tax address hint')}</p>
                                     </div>
                                     <div class="col-md-10">
                                         <div class="row">
@@ -702,11 +701,11 @@
                                             <div class="col-md-auto">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_city">City *</label>
+                                                        <label for="detail_city">${homeLabel("City") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kota</p>
+                                                            ${homeLabel("City") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_city[]" id="detail_city_${i+1}" placeholder="" value="${address.city}"
@@ -719,11 +718,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_country">Country *</label>
+                                                        <label for="detail_country">${homeLabel("Country") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Negara</p>
+                                                            ${homeLabel("Country") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_country[]" id="detail_country_${i+1}" placeholder="" value="${address.country}"
@@ -734,11 +733,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_province">Province *</label>
+                                                        <label for="detail_province">${homeLabel("Province") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Provinsi</p>
+                                                            ${homeLabel("Province") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_province[]" id="detail_province_${i+1}" value="${address.province}"
@@ -749,11 +748,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_zip_code">Zip Code *</label>
+                                                        <label for="detail_zip_code">${homeLabel("Postal Code") } *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kode Pos</p>
+                                                            ${homeLabel("Postal Code") }</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_zip_code[]" id="detail_zip_code_${i+1}" value="${address.zip_code}"
@@ -764,11 +763,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_telephone">Telephone *</label>
+                                                        <label for="detail_telephone">${homeLabel("Telephone") } *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Telepon +[Negara-Area] [No.]</p>
+                                                            ${homeLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_telephone[]" id="detail_telephone_${i+1}" value="${address.telephone}"
@@ -779,11 +777,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_fax">Fax *</label>
+                                                        <label for="detail_fax">${homeLabel("Fax") } *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Fax +[Negara-Area] [No.]</p>
+                                                            ${homeLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_fax[]" id="detail_fax_${i+1}" placeholder="" value="${address.fax}"
@@ -801,12 +798,12 @@
                             if (i === 0) {
                                 $('#button-for-add-address_' + i).append(`
                                     <button type="button" class="btn btn-primary float-right" id="add_detail_dynamic_address">
-                                        + Address
+                                        ${homeLabel('Add Address')}
                                     </button>
                                 `)
                             } else {
                                 $('#button-for-add-address_' + i).append(`
-                                    <button type="button" class="btn btn-danger float-right" id="delete_dynamic_address">- Address</button>
+                                    <button type="button" class="btn btn-danger float-right" id="delete_dynamic_address">${homeLabel("Address") }</button>
                                 `)
 
                             }
@@ -842,11 +839,11 @@
                                     <div class="col-md-6 mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_bank_name">Bank Name *</label>
+                                                <label for="detail_bank_name">${homeLabel("Bank Name") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nama Bank</p>
+                                                    ${homeLabel('Bank Name')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_bank_name[]" id="detail_bank_name" placeholder="" value="${bank.name}" class="form-control">
@@ -856,11 +853,11 @@
                                     <div class="col-md-6">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_branch">Branch *</label>
+                                                <label for="detail_branch">${homeLabel("Branch") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Cabang</p>
+                                                    ${homeLabel('Branch')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_branch[]" id="detail_branch" placeholder="" value="${bank.branch}"
@@ -873,11 +870,11 @@
                                     <div class="col-md-6 mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_account_name">Account Name *</label>
+                                                <label for="detail_account_name">${homeLabel("Account Name") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Rekening Atas Nama</p>
+                                                    ${homeLabel('Account Name')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_account_name[]" id="detail_account_name" placeholder="" value="${bank.account_name}"
@@ -888,11 +885,11 @@
                                     <div class="col-md-6 mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_city_or_country">City/Country *</label>
+                                                <label for="detail_city_or_country">${homeLabel("City/Country") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Kota/Negara</p>
+                                                    ${homeLabel('City/Country')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_city_or_country[]" id="detail_city_or_country" value="${bank.city_or_country}"
@@ -905,11 +902,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_account_number">Account No. *</label>
+                                                <label for="detail_account_number">${homeLabel("Account No.") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    No Rekening</p>
+                                                    ${homeLabel('Account No.')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_account_number[]" id="detail_account_number" placeholder="" value="${bank.account_number}"
@@ -920,11 +917,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_currency">Currency *</label>
+                                                <label for="detail_currency">${homeLabel("Currency") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Mata Uang</p>
+                                                    ${homeLabel('Currency')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_currency[]" id="detail_currency" placeholder="" value="${bank.currency}"
@@ -935,11 +932,11 @@
                                     <div class="col-md-auto">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_swift_code">Swift Code *</label>
+                                                <label for="detail_swift_code">${homeLabel("Swift Code") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Optional</p>
+                                                    ${homeLabel('Optional')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_swift_code[]" id="detail_swift_code" placeholder="" value="${bank.swift_code}"
@@ -949,8 +946,7 @@
                                     </div>
                                 </div>
                                 <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
-                                    <button type="button" class="btn btn-primary" id="add_bank"> +
-                                        Bank</button>
+                                    <button type="button" class="btn btn-primary" id="add_bank"> ${homeLabel('Add Bank')}</button>
                                 </div>
                             `)
                         })
@@ -964,11 +960,11 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_bank_name">Bank Name *</label>
+                                            <label for="detail_bank_name">${homeLabel("Bank Name") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nama Bank</p>
+                                                ${homeLabel('Bank Name')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_bank_name[]" id="detail_bank_name" placeholder="" value="" class="form-control">
@@ -978,11 +974,11 @@
                                 <div class="col-md-6">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_branch">Branch *</label>
+                                            <label for="detail_branch">${homeLabel("Branch") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Cabang</p>
+                                                ${homeLabel('Branch')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_branch[]" id="detail_branch" placeholder="" value=""
@@ -995,11 +991,11 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_account_name">Account Name *</label>
+                                            <label for="detail_account_name">${homeLabel("Account Name") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Rekening Atas Nama</p>
+                                                ${homeLabel('Account Name')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_account_name[]" id="detail_account_name" placeholder="" value=""
@@ -1010,11 +1006,11 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_city_or_country">City/Country *</label>
+                                            <label for="detail_city_or_country">${homeLabel("City/Country") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Kota/Negara</p>
+                                                ${homeLabel('City/Country')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_city_or_country[]" id="detail_city_or_country" value=""
@@ -1027,11 +1023,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_account_number">Account No. *</label>
+                                            <label for="detail_account_number">${homeLabel("Account No.") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                No Rekening</p>
+                                                ${homeLabel('Account No.')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_account_number[]" id="detail_account_number" placeholder="" value=""
@@ -1042,11 +1038,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_currency">Currency *</label>
+                                            <label for="detail_currency">${homeLabel("Currency") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Mata Uang</p>
+                                                ${homeLabel('Currency')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_currency[]" id="detail_currency" placeholder="" value=""
@@ -1057,11 +1053,11 @@
                                 <div class="col-md-auto">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_swift_code">Swift Code *</label>
+                                            <label for="detail_swift_code">${homeLabel("Swift Code") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Optional</p>
+                                                ${homeLabel('Optional')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_swift_code[]" id="detail_swift_code" placeholder="" value=""
@@ -1071,8 +1067,7 @@
                                 </div>
                             </div>
                             <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
-                                <button type="button" class="btn btn-primary" id="add_bank"> +
-                                    Bank</button>
+                                <button type="button" class="btn btn-primary" id="add_bank"> ${homeLabel('Add Bank')}</button>
                             </div>
                         `)
                         $('#list_detail_bank').append(`
@@ -1106,12 +1101,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_register_number_as_in_tax_invoice">Tax Register Number
-                                                    (As in Tax Invoice) *</label>
+                                                <label for="detail_register_number_as_in_tax_invoice">${homeLabel('Tax Register Number (As in Tax Invoice)')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nomor NPWP (Sesuai dengan Faktur Pajak)</p>
+                                                    ${homeLabel('Tax Register Number (As in Tax Invoice)')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_register_number_as_in_tax_invoice" value="${tax.register_number_as_in_tax_invoice}"
@@ -1122,11 +1116,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_trc_number">TRC No. *</label>
+                                                <label for="detail_trc_number">${homeLabel("TRC No.") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nomor TRC</p>
+                                                    ${homeLabel('TRC No.')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_trc_number" id="detail_trc_number" placeholder=""
@@ -1139,12 +1133,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_register_number_related_branch">Tax Register Number
-                                                    (Related Branch) *</label>
+                                                <label for="detail_register_number_related_branch">${homeLabel('Tax Register Number (Related Branch)')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nomor NPWP (Cabang Terkait)</p>
+                                                    ${homeLabel('Tax Register Number (Related Branch)')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_register_number_related_branch" value="${tax.register_number_related_branch}"
@@ -1155,11 +1148,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_valid_until">Valid Until *</label>
+                                                <label for="detail_valid_until">${homeLabel("Valid Until") } *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Berlaku Sampai</p>
+                                                    ${homeLabel('Valid Until')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="date" name="detail_valid_until" id="detail_valid_until" placeholder=""
@@ -1170,10 +1163,9 @@
                                 </div>
                                 <div class="input-group mb-4">
                                     <div class="col-md-3">
-                                        <label for="detail_taxable_entrepreneur_number">Taxable Entrepreneur Number
-                                            *</label>
+                                        <label for="detail_taxable_entrepreneur_number">${homeLabel('Taxable Entrepreneur Number')} *</label>
                                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nomor Surat Pengukuhan PKP</p>
+                                            ${homeLabel('Taxable Entrepreneur Number')}</p>
                                     </div>
                                     <div class="col-md-9">
                                         <input type="text" name="detail_taxable_entrepreneur_number" id="detail_taxable_entrepreneur_number"
@@ -1182,9 +1174,9 @@
                                 </div>
                                 <div class="input-group mb-4">
                                     <div class="col-md-3">
-                                        <label for="detail_tax_invoice_serial_number">Tax Invoice Serial No. *</label>
+                                        <label for="detail_tax_invoice_serial_number">${homeLabel("Tax Invoice Serial No.") } *</label>
                                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nomor Serial Faktur Pajak (pada SK-PKP)</p>
+                                            ${homeLabel('Tax Invoice Serial No.')}</p>
                                     </div>
                                     <div class="col-md-9">
                                         <input type="text" name="detail_tax_invoice_serial_number" id="detail_tax_invoice_serial_number"
@@ -1200,12 +1192,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_register_number_as_in_tax_invoice">Tax Register Number
-                                                (As in Tax Invoice) *</label>
+                                            <label for="detail_register_number_as_in_tax_invoice">${homeLabel('Tax Register Number (As in Tax Invoice)')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nomor NPWP (Sesuai dengan Faktur Pajak)</p>
+                                                ${homeLabel('Tax Register Number (As in Tax Invoice)')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_register_number_as_in_tax_invoice"
@@ -1216,11 +1207,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_trc_number">TRC No. *</label>
+                                            <label for="detail_trc_number">${homeLabel("TRC No.") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nomor TRC</p>
+                                                ${homeLabel('TRC No.')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_trc_number" id="detail_trc_number" placeholder=""
@@ -1233,12 +1224,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_register_number_related_branch">Tax Register Number
-                                                (Related Branch) *</label>
+                                            <label for="detail_register_number_related_branch">${homeLabel('Tax Register Number (Related Branch)')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nomor NPWP (Cabang Terkait)</p>
+                                                ${homeLabel('Tax Register Number (Related Branch)')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_register_number_related_branch"
@@ -1249,11 +1239,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_valid_until">Valid Until *</label>
+                                            <label for="detail_valid_until">${homeLabel("Valid Until") } *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Berlaku Sampai</p>
+                                                ${homeLabel('Valid Until')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="date" name="detail_valid_until" id="detail_valid_until" placeholder=""
@@ -1264,10 +1254,9 @@
                             </div>
                             <div class="input-group mb-4">
                                 <div class="col-md-3">
-                                    <label for="detail_taxable_entrepreneur_number">Taxable Entrepreneur Number
-                                        *</label>
+                                    <label for="detail_taxable_entrepreneur_number">${homeLabel('Taxable Entrepreneur Number')} *</label>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Nomor Surat Pengukuhan PKP</p>
+                                        ${homeLabel('Taxable Entrepreneur Number')}</p>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="detail_taxable_entrepreneur_number" id="detail_taxable_entrepreneur_number"
@@ -1276,9 +1265,9 @@
                             </div>
                             <div class="input-group mb-4">
                                 <div class="col-md-3">
-                                    <label for="detail_tax_invoice_serial_number">Tax Invoice Serial No. *</label>
+                                    <label for="detail_tax_invoice_serial_number">${homeLabel("Tax Invoice Serial No.") } *</label>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Nomor Serial Faktur Pajak (pada SK-PKP)</p>
+                                        ${homeLabel('Tax Invoice Serial No.')}</p>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="detail_tax_invoice_serial_number" id="detail_tax_invoice_serial_number"
@@ -1318,7 +1307,7 @@
             let value = $(this).val()
             if (value == 'Other') {
                 $('#field_form_detail_business_other').append(`
-                    <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control">
+                    <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="${homeLabel("Other")}" class="form-control">
                 `)
             } else {
                 $('#field_form_detail_business_other').empty()
@@ -1330,11 +1319,10 @@
             $('.detail_dynamic_company_address').append(`
                 <div class="input-group mb-4 array_detail_company_address">
                     <div class="col-md-2">
-                        <label for="address">Company Address *<br>
-                            (according to Company Address stated in the Tax Register Number): *</label>
+                        <label for="address">${homeLabel("Company Address") } *<br>
+                            ${homeLabel('Tax address hint')} *</label>
                         <br>
-                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Alamat Perusahaan
-                            (sesuai dengan NPWP)</p>
+                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${homeLabel('Tax address hint')}</p>
                     </div>
                     <div class="col-md-10">
                         <div class="row">
@@ -1346,9 +1334,9 @@
                             <div class="col-md-auto">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_city">City *</label>
+                                        <label for="detail_city">${homeLabel("City") } *</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Kota</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${homeLabel("City") }</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_city[]" id="detail_city" placeholder="" class="form-control">
@@ -1361,9 +1349,9 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_country">Country *</label>
+                                        <label for="detail_country">${homeLabel("Country") } *</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Negara</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${homeLabel("Country") }</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_country[]" id="detail_country" placeholder="" class="form-control">
@@ -1374,9 +1362,9 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_province">Province *</label>
+                                        <label for="detail_province">${homeLabel("Province") } *</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Provinsi</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${homeLabel("Province") }</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_province[]" id="detail_province" placeholder="" class="form-control">
@@ -1387,9 +1375,9 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_zip_code">Zip Code *</label>
+                                        <label for="detail_zip_code">${homeLabel("Postal Code") } *</label>
                                         <br>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">Kode Pos</p>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${homeLabel("Postal Code") }</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_zip_code[]" id="detail_zip_code" placeholder="" class="form-control">
@@ -1400,9 +1388,8 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_telephone">Telephone *</label>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area Code] [No.]
-                                            Telepon +[Negara-Area] [No.]</p>
+                                        <label for="detail_telephone">${homeLabel("Telephone") } *</label>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${homeLabel('Phone format hint')}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_telephone[]" id="detail_telephone" placeholder="" class="form-control">
@@ -1413,9 +1400,8 @@
                             <div class="col-md-auto mb-4">
                                 <div class="row">
                                     <div class="col-md-auto">
-                                        <label for="detail_fax">Fax *</label>
-                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">+ [Country-Area Code] [No.]
-                                            Fax +[Negara-Area] [No.]</p>
+                                        <label for="detail_fax">${homeLabel("Fax") } *</label>
+                                        <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">${homeLabel('Phone format hint')}</p>
                                     </div>
                                     <div class="col-md-auto">
                                         <input type="text" name="detail_fax[]" id="detail_fax" placeholder="" class="form-control">
@@ -1424,7 +1410,7 @@
                                 </div>
                             </div>
                             <div class="col mb-4 align-items-end">
-                                <button type="button" class="btn btn-danger float-right delete_dynamic_address" id="delete_dynamic_address">- Address</button>
+                                <button type="button" class="btn btn-danger float-right delete_dynamic_address" id="delete_dynamic_address">${homeLabel("Address") }</button>
                             </div>
                         </div>
                     </div>
@@ -1465,10 +1451,10 @@
                         <div class="col-md-6 mb-4">
                             <div class="row">
                                 <div class="col-md-auto">
-                                    <label for="detail_bank_name">Bank Name *</label>
+                                    <label for="detail_bank_name">${homeLabel("Bank Name") } *</label>
                                     <br>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Nama Bank</p>
+                                        ${homeLabel('Bank Name')}</p>
                                 </div>
                                 <div class="col-md-auto">
                                     <input type="text" name="detail_bank_name[]" id="detail_bank_name"
@@ -1479,10 +1465,10 @@
                         <div class="col-md-6">
                             <div class="row">
                                 <div class="col-md-auto">
-                                    <label for="detail_branch">Branch *</label>
+                                    <label for="detail_branch">${homeLabel("Branch") } *</label>
                                     <br>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Cabang</p>
+                                        ${homeLabel('Branch')}</p>
                                 </div>
                                 <div class="col-md-auto">
                                     <input type="text" name="detail_branch[]" id="detail_branch" placeholder="" class="form-control">
@@ -1494,10 +1480,10 @@
                         <div class="col-md-6 mb-4">
                             <div class="row">
                                 <div class="col-md-auto">
-                                    <label for="detail_account_name">Account Name *</label>
+                                    <label for="detail_account_name">${homeLabel("Account Name") } *</label>
                                     <br>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Rekening Atas Nama</p>
+                                        ${homeLabel('Account Name')}</p>
                                 </div>
                                 <div class="col-md-auto">
                                     <input type="text" name="detail_account_name[]" id="detail_account_name" placeholder="" class="form-control">
@@ -1507,10 +1493,10 @@
                         <div class="col-md-6 mb-4">
                             <div class="row">
                                 <div class="col-md-auto">
-                                    <label for="detail_city_or_country">City/Country *</label>
+                                    <label for="detail_city_or_country">${homeLabel("City/Country") } *</label>
                                     <br>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Kota/Negara</p>
+                                        ${homeLabel('City/Country')}</p>
                                 </div>
                                 <div class="col-md-auto">
                                     <input type="text" name="detail_city_or_country[]" id="detail_city_or_country" placeholder="" class="form-control">
@@ -1522,10 +1508,10 @@
                         <div class="col-md-auto mb-4">
                             <div class="row">
                                 <div class="col-md-auto">
-                                    <label for="detail_account_number">Account No. *</label>
+                                    <label for="detail_account_number">${homeLabel("Account No.") } *</label>
                                     <br>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        No Rekening</p>
+                                        ${homeLabel('Account No.')}</p>
                                 </div>
                                 <div class="col-md-auto">
                                     <input type="text" name="detail_account_number[]" id="detail_account_number" placeholder="" class="form-control">
@@ -1535,10 +1521,10 @@
                         <div class="col-md-auto mb-4">
                             <div class="row">
                                 <div class="col-md-auto">
-                                    <label for="detail_currency">Currency *</label>
+                                    <label for="detail_currency">${homeLabel("Currency") } *</label>
                                     <br>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Mata Uang</p>
+                                        ${homeLabel('Currency')}</p>
                                 </div>
                                 <div class="col-md-auto">
                                     <input type="text" name="detail_currency[]" id="detail_currency" placeholder="" class="form-control">
@@ -1548,10 +1534,10 @@
                         <div class="col-md-auto">
                             <div class="row">
                                 <div class="col-md-auto">
-                                    <label for="detail_swift_code">Swift Code *</label>
+                                    <label for="detail_swift_code">${homeLabel("Swift Code") } *</label>
                                     <br>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Optional</p>
+                                        ${homeLabel('Optional')}</p>
                                 </div>
                                 <div class="col-md-auto">
                                     <input type="text" name="detail_swift_code[]" id="detail_swift_code" placeholder="" class="form-control">
@@ -1560,7 +1546,7 @@
                         </div>
                     </div>
                     <div class="input-group d-flex justify-content-end mb-4 mt-4">
-                        <button type="button" class="btn btn-danger" id="delete_bank">- Bank</button>
+                        <button type="button" class="btn btn-danger" id="delete_bank">${homeLabel("Bank Information") }</button>
                     </div>
                 </div>
             `)
@@ -1581,8 +1567,8 @@
             )
             $('.button-change-stamp').empty()
             $('.button-change-stamp').append(`
-                <i class="fas fa-times-circle text-danger cancel_change_stamp" title="Cancel perubahan stempel" for="cancel_change_stamp"></i>
-                <span class="info-box-text text-danger cancel_change_stamp" id="cancel_change_stamp" title="Cancel perubahan stempel"><small>Cancel perubahan stempel</small></span>
+                <i class="fas fa-times-circle text-danger cancel_change_stamp" title="${homeLabel('Cancel stamp change')}" for="cancel_change_stamp"></i>
+                <span class="info-box-text text-danger cancel_change_stamp" id="cancel_change_stamp" title="${homeLabel('Cancel stamp change')}"><small>${homeLabel("Cancel stamp change") }</small></span>
             `)
         })
         // opsi update data foto/scan tanda tangan
@@ -1594,8 +1580,8 @@
             )
             $('.button-change-signature').empty()
             $('.button-change-signature').append(`
-                <i class="fas fa-times-circle text-danger cancel_change_signature" title="Cancel perubahan tanda tangan" for="cancel_change_signature"></i>
-                <span class="info-box-text text-danger cancel_change_signature" id="cancel_change_signature" title="Cancel perubahan tanda tangan"><small>Cancel perubahan tanda tangan</small></span>
+                <i class="fas fa-times-circle text-danger cancel_change_signature" title="${homeLabel('Cancel signature change')}" for="cancel_change_signature"></i>
+                <span class="info-box-text text-danger cancel_change_signature" id="cancel_change_signature" title="${homeLabel('Cancel signature change')}"><small>${homeLabel("Cancel signature change") }</small></span>
             `)
         })
         // cancel update data foto/scan stempel
@@ -1604,8 +1590,8 @@
             $('.form_field_detail_stamp').empty()
             $('.button-change-stamp').empty()
             $('.button-change-stamp').append(`
-                <i class="fas fa-edit title_change_stamp" title="Ubah data stempel" for="title_change_stamp"></i>
-                <span class="info-box-text title_change_stamp" id="title_change_stamp" title="Ubah data stempel"><small>Ubah data stempel</small></span>
+                <i class="fas fa-edit title_change_stamp" title="${homeLabel("Change stamp")}" for="title_change_stamp"></i>
+                <span class="info-box-text title_change_stamp" id="title_change_stamp" title="${homeLabel("Change stamp")}"><small>${homeLabel("Change stamp") }</small></span>
             `)
         })
         // cancel update data foto/scan tanda tangan
@@ -1614,8 +1600,8 @@
             $('.form_field_detail_signature').empty()
             $('.button-change-signature').empty()
             $('.button-change-signature').append(`
-                <i class="fas fa-edit title_change_signature" title="Ubah data tanda tangan" for="title_change_signature"></i>
-                <span class="info-box-text title_change_signature" id="title_change_signature" title="Ubah data tanda tangan"><small>Ubah data tanda tangan</small></span>
+                <i class="fas fa-edit title_change_signature" title="${homeLabel("Change signature")}" for="title_change_signature"></i>
+                <span class="info-box-text title_change_signature" id="title_change_signature" title="${homeLabel("Change signature")}"><small>${homeLabel("Change signature") }</small></span>
             `)
         })
         // update data ketika kondisi masih checking 1
@@ -1644,7 +1630,7 @@
 
                 success: function(res) {
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: @json(__('supporting.Success')),
                         class: 'bg-success',
                         body: res.meta.message,
                         delay: 5000,
@@ -1659,12 +1645,12 @@
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = (xhr.responseJSON || {meta: {code: xhr.status, message: @json(__('supporting.Request failed'))}})
 
                     if (response_error.meta.code === 500 || response_error.meta.code ===
                         400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -1679,9 +1665,9 @@
                             $('#message_' + i.replace('.', '_')).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('supporting.Fill required fields')),
                             delay: 10000,
                             autohide: true,
                             fade: true,
@@ -1712,7 +1698,7 @@
                     $('#supporting_document_partner_id').val(data_id)
                     $('#supporting_document_type_0').empty()
                     $('#supporting_document_type_0').append(
-                        `<option value="">tipe dokumen</option>`)
+                        `<option value="">${homeLabel("Document Type") }</option>`)
                     $.each(res.data, function(i, data) {
                         $('#supporting_document_type_0').append(
                             `<option value="${data.id+`|`+data.name}">${data.name}</option>`
@@ -1728,7 +1714,7 @@
                     ]
                     $('#supporting_document_business_type_0').empty()
                     $('#supporting_document_business_type_0').append(
-                        `<option value="">tipe usaha</option>`)
+                        `<option value="">${homeLabel("Business Type") }</option>`)
                     $.each(list_class_business, function(i, data) {
                         $('#supporting_document_business_type_0').append(
                             `<option value="${data}">${data}</option>`)
@@ -1762,25 +1748,25 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <select class="form-control select2_supporting_document" name="supporting_document_type[]" id="supporting_document_type">
-                                <option value="">tipe dokumen</option>
+                                <option value="">${homeLabel("Document Type") }</option>
                             </select>
-                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Dokumen</p>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">${homeLabel("Document Type") }</p>
                             <span class="text-danger mt-2 message_supporting_document_type" id="" role="alert"></span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <select class="form-control select2_supporting_document" name="supporting_document_business_type[]" id="supporting_document_business_type">
-                                <option value="">tipe bisnis dokumen</option>
+                                <option value="">${homeLabel("Business Type") }</option>
                             </select>
-                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Usaha</p>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">${homeLabel("Business Type") }</p>
                             <span class="text-danger mt-2 message_supporting_document_business_type" id="" role="alert"></span>
                         </div>
                     </div>
                     <div class="col-md-5">
                         <div class="form-group">
                             <input type="file" name="file_supporting_document[]" id="file_supporting_document" placeholder="" class="form-control">
-                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen</p>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">${homeLabel("Document File") }</p>
                             <span class="text-danger mt-2 message_file_supporting_document" id="" role="alert"></span>
                         </div>
                     </div>
@@ -1795,6 +1781,7 @@
             `)
 
             $('.select2_supporting_document').select2({
+            language: { noResults: () => @json(__('settings.no_results')), searching: () => @json(__('settings.searching')) },
                 dropdownParent: $('#modal_support_document'),
                 width: '100%'
             })
@@ -1809,7 +1796,7 @@
                     // add all data tipe dokumen
                     $('#supporting_document_type_' + total_field_document).empty()
                     $('#supporting_document_type_' + total_field_document).append(
-                        `<option value="">tipe dokumen</option>`)
+                        `<option value="">${homeLabel("Document Type") }</option>`)
                     $.each(res.data, function(i, data) {
                         $('#supporting_document_type_' + total_field_document)
                             .append(
@@ -1825,7 +1812,7 @@
                     ]
                     $('#supporting_document_business_type_' + total_field_document).empty()
                     $('#supporting_document_business_type_' + total_field_document).append(
-                        `<option value="">tipe usaha</option>`)
+                        `<option value="">${homeLabel("Business Type") }</option>`)
                     $.each(list_class_business, function(i, data) {
                         $('#supporting_document_business_type_' +
                             total_field_document).append(
@@ -1863,7 +1850,7 @@
                 enctype: 'multipart/form-data',
                 success: function(res) {
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: @json(__('supporting.Success')),
                         class: 'bg-success',
                         body: res.meta.message,
                         delay: 5000,
@@ -1877,12 +1864,12 @@
                 },
                 error: function(xhr) {
                     fetchDataPartner()
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = (xhr.responseJSON || {meta: {code: xhr.status, message: @json(__('supporting.Request failed'))}})
 
                     if (response_error.meta.code === 500 || response_error.meta.code ===
                         400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -1897,9 +1884,9 @@
                             $('#message_' + i.replace('.', '_')).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('supporting.Fill required fields')),
                             delay: 10000,
                             autohide: true,
                             fade: true,
@@ -1938,7 +1925,7 @@
                 enctype: 'multipart/form-data',
                 success: function(res) {
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: @json(__('supporting.Success')),
                         class: 'bg-success',
                         body: res.meta.message,
                         delay: 5000,
@@ -1953,12 +1940,12 @@
                 },
                 error: function(xhr) {
                     fetchDataPartner()
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = (xhr.responseJSON || {meta: {code: xhr.status, message: @json(__('supporting.Request failed'))}})
 
                     if (response_error.meta.code === 500 || response_error.meta.code ===
                         400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -1973,9 +1960,9 @@
                             $('#message_' + i.replace('.', '_')).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('supporting.Fill required fields')),
                             delay: 10000,
                             autohide: true,
                             fade: true,

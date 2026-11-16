@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Partner Management')
+@section('title', __('supporting.Partner Management'))
 
 @section('content_header')
-    <h1>Form Attachment</h1>
+    <h1>{{ __('supporting.Attachment Form') }}</h1>
 @stop
 
 @section('content')
@@ -12,7 +12,7 @@
                 <div class="card card-info">
                     <div class="card-header">
                         <h3 class="card-title">
-                            Form Attachment
+                            {{ __('supporting.Attachment Form') }}
                         </h3>
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -31,7 +31,7 @@
         
                                         </select>
                                         <p class="fs-6 text-info"
-                                            style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Dokumen
+                                            style="margin-bottom: 0.5rem !important; font-size: 12px !important;">{{ __('supporting.Document Type') }}
                                         </p>
                                         <span class="text-danger mt-2 message_supporting_document_type"
                                             id="message_supporting_document_type_0" role="alert"></span>
@@ -41,10 +41,10 @@
                                     <div class="form-group">
                                         <select class="form-control select2_supporting_document"
                                             name="supporting_document_business_type[]" id="supporting_document_business_type_0">
-                                            <option value="">tipe bisnis dokumen</option>
+                                            <option value="">{{ __('supporting.Business Type') }}</option>
                                         </select>
                                         <p class="fs-6 text-info"
-                                            style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Usaha</p>
+                                            style="margin-bottom: 0.5rem !important; font-size: 12px !important;">{{ __('supporting.Business Type') }}</p>
                                         <span class="text-danger mt-2 message_supporting_document_business_type"
                                             id="message_supporting_document_business_type_0" role="alert"></span>
                                     </div>
@@ -54,7 +54,7 @@
                                         <input type="file" name="file_supporting_document[]" id="file_supporting_document_0"
                                             class="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required />
                                         <p class="fs-6 text-info"
-                                            style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen
+                                            style="margin-bottom: 0.5rem !important; font-size: 12px !important;">{{ __('supporting.Document File') }}
                                         </p>
                                         <span class="text-danger mt-2 message_file_supporting_document"
                                             id="message_file_supporting_document_0" role="alert"></span>
@@ -75,7 +75,7 @@
                             <div class="d-flex justify-content-end">
                                 <input type="hidden" name="supporting_document_partner_id" id="supporting_document_partner_id" value="{{ count(auth()->user()->companyInformation) > 0 ? auth()->user()->companyInformation[0]['id'] : null}}">
                                 <button type="button" class="btn btn-primary" id="btn_submit_supporting_document">
-                                    submit
+                                    {{ __('supporting.Submit') }}
                                 </button>
                             </div>
                         </form>
@@ -115,6 +115,8 @@
     <!-- select 2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+    const attachmentLabels = @json(__('supporting'));
+    const attachmentLabel = key => $('<span>').text(attachmentLabels[key] ?? key).html();
     $(document).ready(function() {
         // load type Documents
         loadDocs()
@@ -135,7 +137,7 @@
                     // $('#supporting_document_partner_id').val(data_id)
                     $('#supporting_document_type_0').empty()
                     $('#supporting_document_type_0').append(
-                        `<option value="">tipe dokumen</option>`)
+                        `<option value="">${attachmentLabel("Document Type") }</option>`)
                     $.each(res.data, function(i, data) {
                         $('#supporting_document_type_0').append(
                             `<option value="${data.id+`|`+data.name}">${data.name}</option>`
@@ -151,12 +153,13 @@
                     ]
                     $('#supporting_document_business_type_0').empty()
                     $('#supporting_document_business_type_0').append(
-                        `<option value="">tipe usaha</option>`)
+                        `<option value="">${attachmentLabel("Business Type") }</option>`)
                     $.each(list_class_business, function(i, data) {
                         $('#supporting_document_business_type_0').append(
                             `<option value="${data}">${data}</option>`)
                     })
                     $('.select2_supporting_document').select2({
+            language: { noResults: () => @json(__('settings.no_results')), searching: () => @json(__('settings.searching')) },
                         width: '100%'
                     })
                 }
@@ -170,25 +173,25 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <select class="form-control select2_supporting_document" name="supporting_document_type[]" id="supporting_document_type">
-                                <option value="">tipe dokumen</option>
+                                <option value="">${attachmentLabel("Document Type") }</option>
                             </select>
-                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Dokumen</p>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">${attachmentLabel("Document Type") }</p>
                             <span class="text-danger mt-2 message_supporting_document_type" id="" role="alert"></span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <select class="form-control select2_supporting_document" name="supporting_document_business_type[]" id="supporting_document_business_type">
-                                <option value="">tipe bisnis dokumen</option>
+                                <option value="">${attachmentLabel("Business Type") }</option>
                             </select>
-                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">Tipe Usaha</p>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">${attachmentLabel("Business Type") }</p>
                             <span class="text-danger mt-2 message_supporting_document_business_type" id="" role="alert"></span>
                         </div>
                     </div>
                     <div class="col-md-5">
                         <div class="form-group">
                             <input type="file" name="file_supporting_document[]" id="file_supporting_document" class="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
-                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">File Dokumen</p>
+                            <p class="fs-6 text-info" style="margin-bottom: 0.5rem !important; font-size: 12px !important;">${attachmentLabel("Document File") }</p>
                             <span class="text-danger mt-2 message_file_supporting_document" id="" role="alert"></span>
                         </div>
                     </div>
@@ -213,7 +216,7 @@
                     // add all data tipe dokumen
                     $('#supporting_document_type_' + total_field_document).empty()
                     $('#supporting_document_type_' + total_field_document).append(
-                        `<option value="">tipe dokumen</option>`)
+                        `<option value="">${attachmentLabel("Document Type") }</option>`)
                     $.each(res.data, function(i, data) {
                         $('#supporting_document_type_' + total_field_document)
                             .append(
@@ -229,13 +232,14 @@
                     ]
                     $('#supporting_document_business_type_' + total_field_document).empty()
                     $('#supporting_document_business_type_' + total_field_document).append(
-                        `<option value="">tipe usaha</option>`)
+                        `<option value="">${attachmentLabel("Business Type") }</option>`)
                     $.each(list_class_business, function(i, data) {
                         $('#supporting_document_business_type_' +
                             total_field_document).append(
                             `<option value="${data}">${data}</option>`)
                     })
                     $('.select2_supporting_document').select2({
+            language: { noResults: () => @json(__('settings.no_results')), searching: () => @json(__('settings.searching')) },
                         width: '100%'
                     })
                 }
@@ -292,9 +296,9 @@
             var formData = buildSupportingDocumentFormData();
             if (!formData) {
                 $(document).Toasts('create', {
-                    title: 'Error',
+                    title: @json(__('supporting.Error')),
                     class: 'bg-danger',
-                    body: 'Lengkapi tipe dokumen, tipe usaha, dan file pada setiap baris.',
+                    body: @json(__('supporting.Complete document row')),
                     delay: 7000,
                     autohide: true,
                     close: true
@@ -315,7 +319,7 @@
                 success: function(res) {
                     // alert('Documents submitted successfully!');
                     $(document).Toasts('create', {
-                        title: 'Success',
+                        title: @json(__('supporting.Success')),
                         class: 'bg-success',
                         body: res.meta.message,
                         delay: 5000,
@@ -329,12 +333,12 @@
                 },
                 error: function(xhr) {
                     fetchDataPartner()
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = (xhr.responseJSON || {meta: {code: xhr.status, message: @json(__('supporting.Request failed'))}})
 
                     if (response_error.meta.code === 500 || response_error.meta.code ===
                         400) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
                             body: response_error.meta.message,
                             delay: 10000,
@@ -349,9 +353,9 @@
                             $('#message_' + i.replace('.', '_')).text(value)
                         })
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
-                            body: 'Silahkan isi data yang masih kosong',
+                            body: @json(__('supporting.Fill required fields')),
                             delay: 10000,
                             autohide: true,
                             fade: true,

@@ -24,10 +24,11 @@ class TenderForVendorController extends Controller
             $tenders = Tenders::with(['detailProduct', 'vendorSubmission', 'user', 'eula'])->get();
             $message = '';
             $list_tender = count($tenders) == 0 ? null : $tenders;
-            $message = count($tenders) == 0 ? 'tender vendor is empty':'tender vendor fetched successfully';
+            $message = count($tenders) == 0 ? __('supporting.No data available'):__('supporting.Tender fetched successfully');
             return FormatResponseJson::success($list_tender, $message);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function storeTenderVendor(Request $request)
@@ -51,16 +52,16 @@ class TenderForVendorController extends Controller
                     if (is_array($value)) {
                         // Jika array, pastikan elemen pertama tidak boleh kosong
                         if (empty($value[0])) {
-                            $fail('The first item in ' . $attribute . ' cannot be empty.');
+                            $fail(__('supporting.Select at least one vendor'));
                         }
                     } else {
                         // Jika bukan array, pastikan berupa string
                         if (!is_string($value)) {
-                            $fail($attribute . ' must be a string.');
+                            $fail(__('supporting.Vendor list must be text'));
                         }
                     }
                 },]
-            ]);
+            ], __('public_validation.messages'), __('supporting_validation'));
 
             if ($validations->fails()) {
                 throw new ValidationException($validations);
@@ -139,14 +140,15 @@ class TenderForVendorController extends Controller
             }
 
             DB::commit();
-            return FormatResponseJson::success($create_tender, 'tender created successfully');
+            return FormatResponseJson::success($create_tender, __('supporting.Tender created successfully'));
         } catch (ValidationException $e) {
             // Return validation errors as JSON response
             DB::rollback();
             return FormatResponseJson::error(null, ['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function fetchTenderVendorById(Request $request)
@@ -158,10 +160,11 @@ class TenderForVendorController extends Controller
             $message = '';
             // dd($tenders);
             $detail_tender = $tenders == null ? null : $tenders;
-            $message = $tenders == null ? 'tender vendor is empty':'tender vendor fetched successfully';
+            $message = $tenders == null ? __('supporting.No data available'):__('supporting.Tender fetched successfully');
             return FormatResponseJson::success($detail_tender, $message);
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
 }

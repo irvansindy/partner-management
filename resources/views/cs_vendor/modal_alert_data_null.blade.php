@@ -4,10 +4,10 @@
     <div class="modal-dialog modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <h3>Kamu belum terdaftar sebagai customer atau vendor</h3>
+                <h3>{{ __('supporting.Not registered') }}</h3>
             </div>
             <div class="modal-footer">
-                <a href="{{ route('create-partner') }}"><button type="button" class="btn btn-primary">Daftar</button></a>
+                <a href="{{ route('create-partner') }}"><button type="button" class="btn btn-primary">{{ __('supporting.Register') }}</button></a>
                 
             </div>
         </div>

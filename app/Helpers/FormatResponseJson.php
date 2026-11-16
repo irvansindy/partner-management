@@ -26,6 +26,9 @@ class FormatResponseJson
      */
     public static function success($data = null, $message = null)
     {
+        self::$response['meta']['code'] = 200;
+        self::$response['meta']['status'] = 'success';
+        unset(self::$response['meta']['request_id']);
         self::$response['meta']['message'] = $message;
         self::$response['data'] = $data;
 

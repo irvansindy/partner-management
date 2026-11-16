@@ -18,7 +18,7 @@
                         form="form_company" accept="application/pdf,image/jpeg,image/png" data-show-upload="true"
                         data-show-caption="true">
                 </div>
-                <small class="text-muted d-block mt-2">PDF, JPEG, atau PNG. Maksimal 10 file, 5 MB per file, dan dimensi gambar 6000 × 6000 piksel.</small>
+                <small class="text-muted d-block mt-2">{{ __('public_form.upload_hint') }}</small>
             </div>
         </div>
     </div>

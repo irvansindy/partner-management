@@ -19,18 +19,20 @@ class EndUserLicenseAgreementController extends Controller
         try {
             //code...
             $end_user_license_agreement = EndUserLicenseAgreement::all();
-            return FormatResponseJson::success($end_user_license_agreement, 'End User License Agreement fetched successfully');
+            return FormatResponseJson::success($end_user_license_agreement, __('supporting.Agreement fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function fetchEulaById(Request $request)
     {
         try {
             $end_user_license_agreement = EndUserLicenseAgreement::where(['id'=> $request->id])->first();
-            return FormatResponseJson::success($end_user_license_agreement, 'End User License Agreement fetched successfully');
+            return FormatResponseJson::success($end_user_license_agreement, __('supporting.Agreement fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
     public function submitEula(Request $request)
@@ -48,10 +50,11 @@ class EndUserLicenseAgreementController extends Controller
                 'is_active' => $eula_is_active,
             ];
             $create_or_update = EndUserLicenseAgreement::updateOrCreate(['id' => $request->id], $store_eula);
-            return FormatResponseJson::success($create_or_update, 'End User License Agreement submitted successfully');
+            return FormatResponseJson::success($create_or_update, __('supporting.Agreement saved successfully'));
         } catch (\Exception $e) {
             DB::rollback();
-            return FormatResponseJson::error(null, $e->getMessage(), 500);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 500);
         }
     }
 }

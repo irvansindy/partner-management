@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'upload_hint' => 'PDF, JPEG, or PNG. Up to 10 files, 5 MB per file, and image dimensions of 6000 × 6000 pixels.',
+    'registration_type_hint' => 'This form is for :type registration.',
     'other_position_required' => 'The liable person position is required when selecting Other.',
     'other_business_required' => 'Business classification details are required when selecting Other.',
     'other_payment_required' => 'Payment term details are required when selecting Other.',

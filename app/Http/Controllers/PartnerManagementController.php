@@ -700,9 +700,10 @@ class PartnerManagementController extends Controller
                 'business_classification_detail',
                 'contact_person',
             ]);
-            return FormatResponseJson::success($list_company, 'vendor fetched successfully');
+            return FormatResponseJson::success($list_company, __('supporting.Vendor fetched successfully'));
         } catch (\Exception $e) {
-            return FormatResponseJson::error(null, $e->getMessage(), 404);
+            report($e);
+            return FormatResponseJson::error(null, __('supporting.Request failed'), 404);
         }
     }
 }

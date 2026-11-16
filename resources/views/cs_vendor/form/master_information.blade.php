@@ -28,10 +28,9 @@
                     <div class="col-md-9">
                         {{-- <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}" disabled> --}}
                         <!-- field untuk ditampilkan di UI -->
-                        <input type="text" class="form-control" value="{{ ucfirst($formLink->form_type) }}"
-                            placeholder="{{ ucfirst($formLink->form_type) }}" readonly>
-                        <small class="text-muted">This form is for {{ ucfirst($formLink->form_type) }}
-                            registration</small>
+                        <input type="text" class="form-control" value="{{ __('messages.Dashboard ' . ucfirst($formLink->form_type)) }}"
+                            placeholder="{{ __('messages.Dashboard ' . ucfirst($formLink->form_type)) }}" readonly>
+                        <small class="text-muted">{{ __('public_form.registration_type_hint', ['type' => __('messages.Dashboard ' . ucfirst($formLink->form_type))]) }}</small>
                     </div>
                 </div>
             @endif

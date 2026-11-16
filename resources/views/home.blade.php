@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Home')
+@section('title', __('supporting.Home'))
 
 @section('content_header')
     <div class="mb-2"></div>
@@ -26,25 +26,25 @@
                         <div class="row text-dark">
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-building text-secondary"></i> Company Name:</strong>
+                                    <strong><i class="fas fa-building text-secondary"></i> {{ __('supporting.Company Name') }}:</strong>
                                     <span id="data-company-name"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-users text-secondary"></i> Group Name:</strong>
+                                    <strong><i class="fas fa-users text-secondary"></i> {{ __('supporting.Group Name') }}:</strong>
                                     <span id="data-company-group-name"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-calendar-alt text-secondary"></i> Established Year:</strong>
+                                    <strong><i class="fas fa-calendar-alt text-secondary"></i> {{ __('supporting.Established Year') }}:</strong>
                                     <span id="data-company-established-year"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-user-tie text-secondary"></i> Company Type:</strong>
+                                    <strong><i class="fas fa-user-tie text-secondary"></i> {{ __('supporting.Company Type') }}:</strong>
                                     <span id="data-company-type"></span>
                                 </div>
                             </div>
@@ -52,79 +52,79 @@
                             <!-- Detail Kelengkapan Tambahan -->
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-users-cog text-secondary"></i> Total Employee:</strong>
+                                    <strong><i class="fas fa-users-cog text-secondary"></i> {{ __('supporting.Total Employee') }}:</strong>
                                     <span id="data-company-total-employee"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-user-check text-secondary"></i> Liable Person:</strong>
+                                    <strong><i class="fas fa-user-check text-secondary"></i> {{ __('supporting.Liable Person') }}:</strong>
                                     <span id="data-company-liable-person"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-user text-secondary"></i> Owner Name:</strong>
+                                    <strong><i class="fas fa-user text-secondary"></i> {{ __('supporting.Owner Name') }}:</strong>
                                     <span id="data-company-owner-name"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-users text-secondary"></i> Board of Directors:</strong>
+                                    <strong><i class="fas fa-users text-secondary"></i> {{ __('supporting.Board of Directors') }}:</strong>
                                     <span id="data-company-board-of-directors"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-chart-pie text-secondary"></i> Major Shareholders:</strong>
+                                    <strong><i class="fas fa-chart-pie text-secondary"></i> {{ __('supporting.Major Shareholders') }}:</strong>
                                     <span id="data-company-major-shareholders"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-industry text-secondary"></i> Business Classification:</strong>
+                                    <strong><i class="fas fa-industry text-secondary"></i> {{ __('supporting.Business Classification') }}:</strong>
                                     <span id="data-company-business-classification"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-tasks text-secondary"></i> Business Detail:</strong>
+                                    <strong><i class="fas fa-tasks text-secondary"></i> {{ __('supporting.Business Detail') }}:</strong>
                                     <span id="data-company-business-detail"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-globe text-secondary"></i> Website:</strong>
+                                    <strong><i class="fas fa-globe text-secondary"></i> {{ __('supporting.Website') }}:</strong>
                                     <span id="data-company-website"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-cogs text-secondary"></i> System Management:</strong>
+                                    <strong><i class="fas fa-cogs text-secondary"></i> {{ __('supporting.System Management') }}:</strong>
                                     <span id="data-company-system-management"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-user-circle text-secondary"></i> Contact Person:</strong>
+                                    <strong><i class="fas fa-user-circle text-secondary"></i> {{ __('supporting.Contact Person') }}:</strong>
                                     <span id="data-company-contact-person"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-language text-secondary"></i> Language:</strong>
+                                    <strong><i class="fas fa-language text-secondary"></i> {{ __('supporting.Language') }}:</strong>
                                     <span id="data-company-language"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-envelope text-secondary"></i> Email:</strong>
+                                    <strong><i class="fas fa-envelope text-secondary"></i> {{ __('supporting.Email') }}:</strong>
                                     <span id="data-company-email"></span>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="d-flex justify-content-between">
-                                    <strong><i class="fas fa-exclamation-circle text-secondary"></i> Status:</strong>
+                                    <strong><i class="fas fa-exclamation-circle text-secondary"></i> {{ __('supporting.Status') }}:</strong>
                                     <span id="data-company-status"></span>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@
                     <!-- contact -->
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div>
-                            <strong><i class="fas fa-list-alt text-dark"></i> Kontak:</strong>
+                            <strong><i class="fas fa-list-alt text-dark"></i> {{ __('supporting.Contacts') }}:</strong>
                             <ul class="mt-2 list-data-contact">
                             </ul>
                         </div>
@@ -154,7 +154,7 @@
                     <!-- Address -->
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div>
-                            <strong><i class="fas fa-map-marker-alt text-primary"></i> Alamat:</strong>
+                            <strong><i class="fas fa-map-marker-alt text-primary"></i> {{ __('supporting.Address') }}:</strong>
                             <ul class="mt-2 list-data-address">
                             </ul>
                         </div>
@@ -164,7 +164,7 @@
                     <!-- Bank Info -->
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div>
-                            <strong><i class="fas fa-university text-success"></i> Informasi Bank:</strong>
+                            <strong><i class="fas fa-university text-success"></i> {{ __('supporting.Bank Information') }}:</strong>
                             <ul class="mt-2 list-data-bank">
                             </ul>
                         </div>
@@ -174,7 +174,7 @@
                     <!-- Tax Info -->
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div>
-                            <strong><i class="fas fa-receipt text-warning"></i> NPWP & Pajak:</strong>
+                            <strong><i class="fas fa-receipt text-warning"></i> {{ __('supporting.Tax Information') }}:</strong>
                             <ul class="mt-2 list-data-tax">
                             </ul>
                         </div>
@@ -184,7 +184,7 @@
                     <!-- Legal Document / Attachment -->
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div>
-                            <strong><i class="fas fa-file-alt text-danger"></i> Dokumen Legal/Pendukung:</strong>
+                            <strong><i class="fas fa-file-alt text-danger"></i> {{ __('supporting.Supporting Documents') }}:</strong>
                             <ul class="mt-2 list-data-attachment text-muted">
                             </ul>
                         </div>
@@ -197,14 +197,14 @@
         <!-- Recent Activity -->
         <div class="card shadow-sm">
             <div class="card-header bg-light">
-                <strong><i class="fas fa-bell text-warning"></i> Aktivitas Terakhir</strong>
+                <strong><i class="fas fa-bell text-warning"></i> {{ __('supporting.Recent Activity') }}</strong>
             </div>
             <div class="card-body">
                 {{-- Master–Detail Accordion --}}
                 <div id="activity-accordion"></div>
 
                 {{-- Pagination --}}
-                <nav aria-label="Page navigation">
+                <nav aria-label="{{ __('supporting.Page navigation') }}">
                     <ul class="pagination justify-content-center mt-3" id="activity-pagination"></ul>
                 </nav>
             </div>

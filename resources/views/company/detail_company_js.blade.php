@@ -1,4 +1,6 @@
 <script>
+    const companyLabels = @json(__('supporting'));
+    const companyLabel = key => $('<span>').text(companyLabels[key] ?? key).html();
     $('#detail_company_type').select2({
         // dropdownParent: $('#modalCreatePartner'),
         // width:'100%'
@@ -33,7 +35,7 @@
                     $.each(data_company_type, function(i, data_type) {
                         selected_type = res.data[0].type == data_type ? 'selected' : ''
                         $('#detail_company_type').append(`
-                            <option value="${data_type}" ${selected_type}>${data_type}</option>
+                            <option value="${data_type}" ${selected_type}>${companyLabel(data_type)}</option>
                         `)
                     })
 
@@ -66,10 +68,10 @@
                                     name="detail_business_classification" id="detail_business_classification_${business.toLowerCase()}"
                                     value="${business}" ${checked_business}>
                                 <label class="form-check-label" for="detail_business_classification_${business.toLowerCase()}">
-                                    ${business}
+                                    ${companyLabel(business)}
                                     <p class="fs-6"
                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        ${business}</p>
+                                        ${companyLabel(business)}</p>
                                 </label>
                             </div>
                         `)
@@ -79,7 +81,7 @@
                     // if (checked_business_value = 'Other') {
                     if (res.data[0].business_classification == 'Other') {
                         $('#field_form_detail_business_other').append(`
-                        <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control" value="${res.data[0].other_business}">
+                        <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="${companyLabel('Other')}" class="form-control" value="${res.data[0].other_business}">
                         `)
                     } else {
                         $('#field_form_detail_business_other').empty()
@@ -102,9 +104,9 @@
                                 <input class="form-check-input" type="radio" name="detail_system_management"
                                     id="detail_system_management_${system.toLowerCase()}" value="${system}" ${checked_system_management}>
                                 <label class="form-check-label" for="detail_system_management_${system.toLowerCase()}">
-                                    ${system}
+                                    ${companyLabel(system)}
                                     ${system == 'Others Certificate' ? `<p class="fs-6" style="margin-bottom: 0rem !important; font-size: 10px !important;">
-                                                        Sertifikat lainnya</p>` : ``}
+                                                        ${companyLabel('Others Certificate')}</p>` : ``}
                                 </label>
                             </div>
                         `)
@@ -126,10 +128,10 @@
                                     type="radio" name="detail_communication_language"
                                     id="detail_communication_language_bahasa" value="Bahasa">
                                 <label class="form-check-label" for="detail_communication_language_bahasa">
-                                    Bahasa
+                                    ${companyLabel('Indonesian')}
                                     <p class="fs-6"
                                         style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Indonesia</p>
+                                        ${companyLabel('Indonesian')}</p>
                                 </label>
                             </div>
                         `)
@@ -155,14 +157,12 @@
                             $('#detail_company_address_additional').append(`
                                 <div class="input-group mb-4">
                                     <div class="col-md-2">
-                                        <label for="detail_address">Company Address *<br>
-                                            (according to Company Address stated in the Tax Register Number):
-                                            *</label>
+                                        <label for="detail_address">${companyLabel('Company Address')} *<br>
+                                            ${companyLabel('Tax address hint')} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Alamat Perusahaan
-                                            (sesuai dengan NPWP)</p>
+                                            ${companyLabel('Tax address hint')}</p>
                                     </div>
                                     <div class="col-md-10">
                                         <div class="row">
@@ -173,11 +173,11 @@
                                             <div class="col-md-auto">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_city">City *</label>
+                                                        <label for="detail_city">${companyLabel('City')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kota</p>
+                                                            ${companyLabel('City')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_city[]" id="detail_city" placeholder="" value="${address.city}"
@@ -190,11 +190,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_country">Country *</label>
+                                                        <label for="detail_country">${companyLabel('Country')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Negara</p>
+                                                            ${companyLabel('Country')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_country[]" id="detail_country" placeholder="" value="${address.country}"
@@ -205,11 +205,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_province">Province *</label>
+                                                        <label for="detail_province">${companyLabel('Province')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Provinsi</p>
+                                                            ${companyLabel('Province')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_province[]" id="detail_province" value="${address.province}"
@@ -220,11 +220,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_zip_code">Zip Code *</label>
+                                                        <label for="detail_zip_code">${companyLabel('Postal Code')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kode Pos</p>
+                                                            ${companyLabel('Postal Code')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_zip_code[]" id="detail_zip_code" value="${address.zip_code}"
@@ -235,11 +235,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_telephone">Telephone *</label>
+                                                        <label for="detail_telephone">${companyLabel('Telephone')} *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Telepon +[Negara-Area] [No.]</p>
+                                                            ${companyLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_telephone[]" id="detail_telephone" value="${address.telephone}"
@@ -250,11 +249,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_fax">Fax *</label>
+                                                        <label for="detail_fax">${companyLabel('Fax')} *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Fax +[Negara-Area] [No.]</p>
+                                                            ${companyLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_fax[]" id="detail_fax" placeholder="" value="${address.fax}"
@@ -264,7 +262,7 @@
                                             </div>
                                             <div class="col mb-4 align-items-end mr-4">
                                                 <button type="button" class="btn btn-primary float-right"
-                                                    id="add_detail_dynamic_address">+ Address</button>
+                                                    id="add_detail_dynamic_address">${companyLabel('Add Address')}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -283,14 +281,12 @@
                             $('#detail_company_address_additional').append(`
                                 <div class="input-group mb-4">
                                     <div class="col-md-2">
-                                        <label for="detail_address">Company Address *<br>
-                                            (according to Company Address stated in the Tax Register Number):
-                                            *</label>
+                                        <label for="detail_address">${companyLabel('Company Address')} *<br>
+                                            ${companyLabel('Tax address hint')} *</label>
                                         <br>
                                         <p class="fs-6"
                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Alamat Perusahaan
-                                            (sesuai dengan NPWP)</p>
+                                            ${companyLabel('Tax address hint')}</p>
                                     </div>
                                     <div class="col-md-10">
                                         <div class="row">
@@ -301,11 +297,11 @@
                                             <div class="col-md-auto">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_city">City *</label>
+                                                        <label for="detail_city">${companyLabel('City')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kota</p>
+                                                            ${companyLabel('City')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_city[]" id="detail_city" placeholder="" value="${address.city}"
@@ -318,11 +314,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_country">Country *</label>
+                                                        <label for="detail_country">${companyLabel('Country')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Negara</p>
+                                                            ${companyLabel('Country')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_country[]" id="detail_country" placeholder="" value="${address.country}"
@@ -333,11 +329,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_province">Province *</label>
+                                                        <label for="detail_province">${companyLabel('Province')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Provinsi</p>
+                                                            ${companyLabel('Province')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_province[]" id="detail_province" value="${address.province}"
@@ -348,11 +344,11 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_zip_code">Zip Code *</label>
+                                                        <label for="detail_zip_code">${companyLabel('Postal Code')} *</label>
                                                         <br>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            Kode Pos</p>
+                                                            ${companyLabel('Postal Code')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_zip_code[]" id="detail_zip_code" value="${address.zip_code}"
@@ -363,11 +359,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_telephone">Telephone *</label>
+                                                        <label for="detail_telephone">${companyLabel('Telephone')} *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Telepon +[Negara-Area] [No.]</p>
+                                                            ${companyLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_telephone[]" id="detail_telephone" value="${address.telephone}"
@@ -378,11 +373,10 @@
                                             <div class="col-md-auto mb-4">
                                                 <div class="row">
                                                     <div class="col-md-auto">
-                                                        <label for="detail_fax">Fax *</label>
+                                                        <label for="detail_fax">${companyLabel('Fax')} *</label>
                                                         <p class="fs-6"
                                                             style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                            + [Country-Area Code] [No.]
-                                                            Fax +[Negara-Area] [No.]</p>
+                                                            ${companyLabel('Phone format hint')}</p>
                                                     </div>
                                                     <div class="col-md-auto">
                                                         <input type="text" name="detail_fax[]" id="detail_fax" placeholder="" value="${address.fax}"
@@ -392,7 +386,7 @@
                                             </div>
                                             <div class="col mb-4 align-items-end mr-4">
                                                 <button type="button" class="btn btn-primary float-right"
-                                                    id="add_detail_dynamic_address">+ Address</button>
+                                                    id="add_detail_dynamic_address">${companyLabel('Add Address')}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -412,7 +406,7 @@
                         $('#button_partner').append(`
                         <div class="d-flex justify-content-end">
                             <button type="button" class="btn btn-primary" id="btn_update_data_company" data-id="" data-status="">
-                                Update
+                                ${companyLabel('Update')}
                             </button>
                         </div>
                         `)
@@ -432,11 +426,11 @@
                                     <div class="col-md-6 mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_bank_name">Bank Name *</label>
+                                                <label for="detail_bank_name">${companyLabel('Bank Name')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nama Bank</p>
+                                                    ${companyLabel('Bank Name')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_bank_name[]" id="detail_bank_name" placeholder="" value="${bank.name}" class="form-control">
@@ -446,11 +440,11 @@
                                     <div class="col-md-6">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_branch">Branch *</label>
+                                                <label for="detail_branch">${companyLabel('Branch')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Cabang</p>
+                                                    ${companyLabel('Branch')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_branch[]" id="detail_branch" placeholder="" value="${bank.branch}"
@@ -463,11 +457,11 @@
                                     <div class="col-md-6 mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_account_name">Account Name *</label>
+                                                <label for="detail_account_name">${companyLabel('Account Name')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Rekening Atas Nama</p>
+                                                    ${companyLabel('Account Name')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_account_name[]" id="detail_account_name" placeholder="" value="${bank.account_name}"
@@ -478,11 +472,11 @@
                                     <div class="col-md-6 mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_city_or_country">City/Country *</label>
+                                                <label for="detail_city_or_country">${companyLabel('City/Country')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Kota/Negara</p>
+                                                    ${companyLabel('City/Country')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_city_or_country[]" id="detail_city_or_country" value="${bank.city_or_country}"
@@ -495,11 +489,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_account_number">Account No. *</label>
+                                                <label for="detail_account_number">${companyLabel('Account No.')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    No Rekening</p>
+                                                    ${companyLabel('Account No.')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_account_number[]" id="detail_account_number" placeholder="" value="${bank.account_number}"
@@ -510,11 +504,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_currency">Currency *</label>
+                                                <label for="detail_currency">${companyLabel('Currency')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Mata Uang</p>
+                                                    ${companyLabel('Currency')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_currency[]" id="detail_currency" placeholder="" value="${bank.currency}"
@@ -525,11 +519,11 @@
                                     <div class="col-md-auto">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_swift_code">Swift Code *</label>
+                                                <label for="detail_swift_code">${companyLabel('Swift Code')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Optional</p>
+                                                    ${companyLabel('Optional')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_swift_code[]" id="detail_swift_code" placeholder="" value="${bank.swift_code}"
@@ -539,8 +533,7 @@
                                     </div>
                                 </div>
                                 <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
-                                    <button type="button" class="btn btn-primary" id="add_bank"> +
-                                        Bank</button>
+                                    <button type="button" class="btn btn-primary" id="add_bank"> ${companyLabel('Add Bank')}</button>
                                 </div>
                             `)
                         })
@@ -554,11 +547,11 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_bank_name">Bank Name *</label>
+                                            <label for="detail_bank_name">${companyLabel('Bank Name')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nama Bank</p>
+                                                ${companyLabel('Bank Name')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_bank_name[]" id="detail_bank_name" placeholder="" value="" class="form-control">
@@ -568,11 +561,11 @@
                                 <div class="col-md-6">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_branch">Branch *</label>
+                                            <label for="detail_branch">${companyLabel('Branch')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Cabang</p>
+                                                ${companyLabel('Branch')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_branch[]" id="detail_branch" placeholder="" value=""
@@ -585,11 +578,11 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_account_name">Account Name *</label>
+                                            <label for="detail_account_name">${companyLabel('Account Name')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Rekening Atas Nama</p>
+                                                ${companyLabel('Account Name')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_account_name[]" id="detail_account_name" placeholder="" value=""
@@ -600,11 +593,11 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_city_or_country">City/Country *</label>
+                                            <label for="detail_city_or_country">${companyLabel('City/Country')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Kota/Negara</p>
+                                                ${companyLabel('City/Country')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_city_or_country[]" id="detail_city_or_country" value=""
@@ -617,11 +610,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_account_number">Account No. *</label>
+                                            <label for="detail_account_number">${companyLabel('Account No.')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                No Rekening</p>
+                                                ${companyLabel('Account No.')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_account_number[]" id="detail_account_number" placeholder="" value=""
@@ -632,11 +625,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_currency">Currency *</label>
+                                            <label for="detail_currency">${companyLabel('Currency')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Mata Uang</p>
+                                                ${companyLabel('Currency')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_currency[]" id="detail_currency" placeholder="" value=""
@@ -647,11 +640,11 @@
                                 <div class="col-md-auto">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_swift_code">Swift Code *</label>
+                                            <label for="detail_swift_code">${companyLabel('Swift Code')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Optional</p>
+                                                ${companyLabel('Optional')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_swift_code[]" id="detail_swift_code" placeholder="" value=""
@@ -661,8 +654,7 @@
                                 </div>
                             </div>
                             <div class="input-group d-flex justify-content-end mr-4 mb-4 mt-4">
-                                <button type="button" class="btn btn-primary" id="add_bank"> +
-                                    Bank</button>
+                                <button type="button" class="btn btn-primary" id="add_bank"> ${companyLabel('Add Bank')}</button>
                             </div>
                         `)
                         $('#list_data_bank').append(`
@@ -679,12 +671,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_register_number_as_in_tax_invoice">Tax Register Number
-                                                    (As in Tax Invoice) *</label>
+                                                <label for="detail_register_number_as_in_tax_invoice">${companyLabel('Tax Register Number (As in Tax Invoice)')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nomor NPWP (Sesuai dengan Faktur Pajak)</p>
+                                                    ${companyLabel('Tax Register Number (As in Tax Invoice)')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_register_number_as_in_tax_invoice" value="${tax.register_number_as_in_tax_invoice}"
@@ -695,11 +686,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_trc_number">TRC No. *</label>
+                                                <label for="detail_trc_number">${companyLabel('TRC No.')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nomor TRC</p>
+                                                    ${companyLabel('TRC No.')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_trc_number" id="detail_trc_number" placeholder=""
@@ -712,12 +703,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_register_number_related_branch">Tax Register Number
-                                                    (Related Branch) *</label>
+                                                <label for="detail_register_number_related_branch">${companyLabel('Tax Register Number (Related Branch)')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Nomor NPWP (Cabang Terkait)</p>
+                                                    ${companyLabel('Tax Register Number (Related Branch)')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="text" name="detail_register_number_related_branch" value="${tax.register_number_related_branch}"
@@ -728,11 +718,11 @@
                                     <div class="col-md-auto mb-4">
                                         <div class="row">
                                             <div class="col-md-auto">
-                                                <label for="detail_valid_until">Valid Until *</label>
+                                                <label for="detail_valid_until">${companyLabel('Valid Until')} *</label>
                                                 <br>
                                                 <p class="fs-6"
                                                     style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                    Berlaku Sampai</p>
+                                                    ${companyLabel('Valid Until')}</p>
                                             </div>
                                             <div class="col-md-auto">
                                                 <input type="date" name="detail_valid_until" id="detail_valid_until" placeholder=""
@@ -743,10 +733,9 @@
                                 </div>
                                 <div class="input-group mb-4">
                                     <div class="col-md-3">
-                                        <label for="detail_taxable_entrepreneur_number">Taxable Entrepreneur Number
-                                            *</label>
+                                        <label for="detail_taxable_entrepreneur_number">${companyLabel('Taxable Entrepreneur Number')} *</label>
                                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nomor Surat Pengukuhan PKP</p>
+                                            ${companyLabel('Taxable Entrepreneur Number')}</p>
                                     </div>
                                     <div class="col-md-9">
                                         <input type="text" name="detail_taxable_entrepreneur_number" id="detail_taxable_entrepreneur_number"
@@ -755,9 +744,9 @@
                                 </div>
                                 <div class="input-group mb-4">
                                     <div class="col-md-3">
-                                        <label for="detail_tax_invoice_serial_number">Tax Invoice Serial No. *</label>
+                                        <label for="detail_tax_invoice_serial_number">${companyLabel('Tax Invoice Serial No.')} *</label>
                                         <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                            Nomor Serial Faktur Pajak (pada SK-PKP)</p>
+                                            ${companyLabel('Tax Invoice Serial No.')}</p>
                                     </div>
                                     <div class="col-md-9">
                                         <input type="text" name="detail_tax_invoice_serial_number" id="detail_tax_invoice_serial_number"
@@ -773,12 +762,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_register_number_as_in_tax_invoice">Tax Register Number
-                                                (As in Tax Invoice) *</label>
+                                            <label for="detail_register_number_as_in_tax_invoice">${companyLabel('Tax Register Number (As in Tax Invoice)')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nomor NPWP (Sesuai dengan Faktur Pajak)</p>
+                                                ${companyLabel('Tax Register Number (As in Tax Invoice)')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_register_number_as_in_tax_invoice"
@@ -789,11 +777,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_trc_number">TRC No. *</label>
+                                            <label for="detail_trc_number">${companyLabel('TRC No.')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nomor TRC</p>
+                                                ${companyLabel('TRC No.')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_trc_number" id="detail_trc_number" placeholder=""
@@ -806,12 +794,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_register_number_related_branch">Tax Register Number
-                                                (Related Branch) *</label>
+                                            <label for="detail_register_number_related_branch">${companyLabel('Tax Register Number (Related Branch)')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Nomor NPWP (Cabang Terkait)</p>
+                                                ${companyLabel('Tax Register Number (Related Branch)')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="text" name="detail_register_number_related_branch"
@@ -822,11 +809,11 @@
                                 <div class="col-md-auto mb-4">
                                     <div class="row">
                                         <div class="col-md-auto">
-                                            <label for="detail_valid_until">Valid Until *</label>
+                                            <label for="detail_valid_until">${companyLabel('Valid Until')} *</label>
                                             <br>
                                             <p class="fs-6"
                                                 style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                                Berlaku Sampai</p>
+                                                ${companyLabel('Valid Until')}</p>
                                         </div>
                                         <div class="col-md-auto">
                                             <input type="date" name="detail_valid_until" id="detail_valid_until" placeholder=""
@@ -837,10 +824,9 @@
                             </div>
                             <div class="input-group mb-4">
                                 <div class="col-md-3">
-                                    <label for="detail_taxable_entrepreneur_number">Taxable Entrepreneur Number
-                                        *</label>
+                                    <label for="detail_taxable_entrepreneur_number">${companyLabel('Taxable Entrepreneur Number')} *</label>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Nomor Surat Pengukuhan PKP</p>
+                                        ${companyLabel('Taxable Entrepreneur Number')}</p>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="detail_taxable_entrepreneur_number" id="detail_taxable_entrepreneur_number"
@@ -849,9 +835,9 @@
                             </div>
                             <div class="input-group mb-4">
                                 <div class="col-md-3">
-                                    <label for="detail_tax_invoice_serial_number">Tax Invoice Serial No. *</label>
+                                    <label for="detail_tax_invoice_serial_number">${companyLabel('Tax Invoice Serial No.')} *</label>
                                     <p class="fs-6" style="margin-bottom: 0.5rem !important; font-size: 10px !important;">
-                                        Nomor Serial Faktur Pajak (pada SK-PKP)</p>
+                                        ${companyLabel('Tax Invoice Serial No.')}</p>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="detail_tax_invoice_serial_number" id="detail_tax_invoice_serial_number"
@@ -930,7 +916,7 @@
             let business_other = 'Other'
             if (value == business_other) {
                 $('#field_form_detail_business_other').append(`
-                    <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="Other" class="form-control" value="">
+                    <input type="text" name="detail_business_classification_other_detail" id="detail_business_classification_other_detail" placeholder="${companyLabel('Other')}" class="form-control" value="">
                         `)
             } else {
                 $('#field_form_detail_business_other').empty()
@@ -962,10 +948,10 @@
                 },
                 error: function(xhr) {
                     $('#modalLoading').modal('hide')
-                    let response_error = JSON.parse(xhr.responseText)
+                    let response_error = xhr.responseJSON || {meta: {message: {errors: {request: [@json(__('supporting.Request failed'))]}}}};
                     $.each(response_error.meta.message.errors, function(i, value) {
                         $(document).Toasts('create', {
-                            title: 'Error',
+                            title: @json(__('supporting.Error')),
                             class: 'bg-danger',
                             body: value,
                             delay: 10000,

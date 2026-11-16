@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content ">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modal_create_tender_vendor_label">Create New Tender</h1>
+                <h1 class="modal-title fs-5" id="modal_create_tender_vendor_label">{{ __('supporting.Create New Tender') }}</h1>
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}"></button>
             </div>
             <form action="" id="form_create_tender_vendor">
@@ -13,47 +13,47 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="create_tender_name">Tender Name</label>
+                                <label for="create_tender_name">{{ __('supporting.Tender Name') }}</label>
                                 <input type="tetx" class="form-control" id="create_tender_name"
                                     name="create_tender_name" aria-describedby="" required>
                                 <div class="invalid-tooltip">
-                                    Please provide a valid city.
+                                    {{ __('supporting.Valid value required') }}
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="create_tender_type">Tender Type</label>
+                                <label for="create_tender_type">{{ __('supporting.Tender Type') }}</label>
                                 <select class="form-control tender_select2" name="create_tender_type"
                                     id="create_tender_type" style="width: 100%;"></select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="create_tender_source_document">Tender Source Document</label>
+                                <label for="create_tender_source_document">{{ __('supporting.Tender Source Document') }}</label>
                                 <input type="file" class="form-control" id="create_tender_source_document"
                                     name="create_tender_source_document" aria-describedby="tender_source_document_help">
                                 <small id="tender_source_document_help" class="form-text text-info"
-                                    style="cursor: pointer;">Check document</small>
+                                    style="cursor: pointer;">{{ __('supporting.Check document') }}</small>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="create_tender_created_date">Tender Created Date</label>
+                                <label for="create_tender_created_date">{{ __('supporting.Tender Created Date') }}</label>
                                 <input type="date" class="form-control" id="create_tender_created_date"
                                     name="create_tender_created_date" aria-describedby="" readonly="true">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="create_tender_effective_date">Tender Effective Date</label>
+                                <label for="create_tender_effective_date">{{ __('supporting.Tender Effective Date') }}</label>
                                 <input type="date" class="form-control" id="create_tender_effective_date"
                                     name="create_tender_effective_date" aria-describedby="">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="create_tender_expired_date">Tender Expired Date</label>
+                                <label for="create_tender_expired_date">{{ __('supporting.Tender Expired Date') }}</label>
                                 <input type="date" class="form-control" id="create_tender_expired_date"
                                     name="create_tender_expired_date" aria-describedby="">
                             </div>
@@ -64,12 +64,12 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="product-tab" data-toggle="tab" data-target="#product"
                                 type="button" role="tab" aria-controls="product"
-                                aria-selected="true">product</button>
+                                aria-selected="true">{{ __('supporting.Product') }}</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="vendor-tab" data-toggle="tab" data-target="#vendor"
                                 type="button" role="tab" aria-controls="vendor"
-                                aria-selected="false">Vendor</button>
+                                aria-selected="false">{{ __('supporting.Vendor') }}</button>
                         </li>
                     </ul>
                     <div class="tab-content" id="myTabContent">
@@ -79,24 +79,24 @@
                             <div class="row mt-2" id="list_tender_product">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="create_tender_product_name_0">Product Name</label>
+                                        <label for="create_tender_product_name_0">{{ __('supporting.Product Name') }}</label>
                                         <input type="text" class="form-control" id="create_tender_product_name_0"
                                             name="create_tender_product_name[]" aria-describedby="" required>
                                         <div class="invalid-tooltip">
-                                            Please provide a valid city.
+                                            {{ __('supporting.Valid value required') }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="create_tender_product_requirement_0">Product Requirement</label>
+                                        <label for="create_tender_product_requirement_0">{{ __('supporting.Product Requirement') }}</label>
                                         <textarea class="form-control" name="create_tender_product_requirement[]" id="create_tender_product_requirement_0"
                                             rows="2"></textarea>
                                     </div>
                                 </div>
                                 <div class="mr-4">
                                     <button type="button" class="btn btn-primary float-sm-right"
-                                        id="add_dynamic_form_tender_product">
+                                        id="add_dynamic_form_tender_product" aria-label="{{ __('supporting.Add product') }}">
                                         <i class="fas fa-ws fa-plus"></i>
                                     </button>
                                 </div>

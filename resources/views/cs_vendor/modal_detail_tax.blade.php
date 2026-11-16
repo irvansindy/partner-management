@@ -4,8 +4,8 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="dataDetailPartnerTax" data-backdrop="static" tabindex="-1" role="dialog"Label">Detail Data</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="dataDetailPartnerTax" data-backdrop="static" tabindex="-1" role="dialog"Label">{{ __('supporting.Detail Data') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin.Close') }}">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -17,7 +17,7 @@
                         <div class="card card-info">
                             <div class="card-header">
                                 <input type="hidden" name="detail_id" id="detail_id">
-                                <h3 class="card-title">Detail Tax</h3>
+                                <h3 class="card-title">{{ __('supporting.Tax Details') }}</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>
@@ -36,8 +36,8 @@
                 {{-- end master --}}
             </div>
             <div class="modal-footer" id="button_update_partner_tax">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn_update_data_tax">Update</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('supporting.Close') }}</button>
+                <button type="button" class="btn btn-primary" id="btn_update_data_tax">{{ __('supporting.Update') }}</button>
             </div>
             </form>
         </div>
