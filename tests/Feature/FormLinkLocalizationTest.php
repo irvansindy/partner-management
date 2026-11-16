@@ -13,6 +13,23 @@ use Tests\TestCase;
 
 class FormLinkLocalizationTest extends TestCase
 {
+    public function test_pdf_payment_units_are_only_added_to_numeric_terms(): void
+    {
+        $company = new CompanyInformation(['name' => 'QA Company', 'type' => 'vendor']);
+        foreach (['liablePeople', 'contact', 'address', 'bank', 'attachment'] as $relation) {
+            $company->setRelation($relation, collect());
+        }
+        foreach (['id' => 'hari', 'en' => 'days'] as $locale => $unit) {
+            app()->setLocale($locale);
+            foreach (['30', '30 days', 'COD', ''] as $term) {
+                $company->term_of_payment = $term;
+                $html = view('admin.form_links.export_submission_pdf', compact('company'))->render();
+                if ($term === '30') $this->assertStringContainsString('30 '.$unit, $html);
+                else $this->assertStringNotContainsString($term.' '.$unit.'</td>', $html);
+            }
+        }
+    }
+
     public function test_translation_keys_and_placeholders_match_recursively(): void
     {
         foreach (['form_links', 'submission', 'submission_validation', 'form_links_remaining', 'form_links_audit'] as $group) {

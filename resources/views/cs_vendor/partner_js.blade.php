@@ -1267,6 +1267,15 @@
                 return;
             }
 
+            if ($('#input-multiple-file').prop('disabled')) {
+                Swal.fire({
+                    icon: 'info',
+                    title: partnerFormCopy.processing,
+                    text: @json(__('public_form.upload_processing'))
+                });
+                return;
+            }
+
             isPartnerFormSubmitting = true;
             var $submitButton = $(this).prop('disabled', true);
 

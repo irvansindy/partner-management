@@ -706,7 +706,7 @@
             <tr>
                 <td class="label" style="width:22%;">{{ __('admin.Term of Payment') }}</td>
                 <td class="colon">:</td>
-                <td class="value">{{ $company->term_of_payment ?? '' }} {{ __('submission.days') }}</td>
+                <td class="value">{{ $company->term_of_payment ?? '' }}@if(is_numeric($company->term_of_payment)) {{ __('submission.days') }}@endif</td>
                 <td style="width:2%;"></td>
                 <td class="label" style="width:22%;">{{ __('form_links_remaining.Batas Kredit') }}</td>
                 <td class="colon">:</td>

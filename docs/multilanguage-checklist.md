@@ -91,4 +91,6 @@ Status implementasi: selesai, 13 November 2026. Temuan T2-01–T2-12 ditangani; 
 
 ## Progres Task 10
 
+Pengujian integrasi lanjutan tercatat di `docs/task-10-integration-followup.md`: 286 tes lulus, transaksi approval/edit/lampiran dengan SQLite nyata, mail transport lokal, diagnostik Artisan, inspeksi dokumen dan sepuluh skenario GPS/unggahan tambahan. Pengujian server aktual menunggu identifikasi lingkungan staging.
+
 Audit lokal selesai, 16 November 2026. Lihat `docs/task-10-multilanguage-audit.md` untuk matriks bukti, perbaikan dan batas pengujian. Sebanyak 279 tes lulus; 35 halaman dirender dalam ID/EN dan diperiksa di Chromium menggunakan API fixture. Sepuluh skenario interaksi ID/EN lulus. Login dan persistensi locale diuji pada Laravel lokal sebenarnya. Tidak ada transaksi produksi dijalankan; GPS perangkat, proxy 413, operasi maintenance dan pemeriksaan visual dokumen hasil ekspor pada server belum diverifikasi.

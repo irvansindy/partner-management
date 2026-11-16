@@ -67,4 +67,6 @@ Artefak sementara berada di luar repository:
 
 ## Batas hasil
 
+Pembaruan: pengujian lanjutan telah menutup sebagian batas lokal di bawah. Lihat `task-10-integration-followup.md` untuk transaksi SQLite nyata, eksekusi diagnostik, transport email lokal, inspeksi dokumen, GPS emulasi dan HTTP 413 lokal. Batas produksi dan perangkat fisik tetap berlaku.
+
 Belum dilakukan CRUD/approval/maintenance nyata pada server, pengiriman email, GPS perangkat fisik, unggahan melalui proxy produksi termasuk HTTP 413, atau pengujian lintas browser/perangkat menyeluruh. API fixture tidak membuktikan otorisasi maupun integrasi database produksi; aturan terkait diuji melalui suite backend yang tersedia. Nama pengguna/perusahaan, filename, isi EULA, wilayah dan output teknis tidak diterjemahkan otomatis. View demo/backup yang tidak digunakan route aktif serta aset pihak ketiga dikecualikan dari audit teks aplikasi.

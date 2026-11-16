@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'upload_processing' => 'Tunggu hingga lampiran selesai diproses sebelum mengirim formulir.',
     'upload_hint' => 'PDF, JPEG, atau PNG. Maksimal 10 file, 5 MB per file, dan dimensi gambar 6000 × 6000 piksel.',
     'registration_type_hint' => 'Formulir ini untuk pendaftaran :type.',
     'other_position_required' => 'Jabatan penanggung jawab wajib diisi ketika memilih Lainnya.',
