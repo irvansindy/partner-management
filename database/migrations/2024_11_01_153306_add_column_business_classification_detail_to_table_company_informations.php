@@ -26,7 +26,7 @@ class AddColumnBusinessClassificationDetailToTableCompanyInformations extends Mi
     public function down()
     {
         Schema::table('company_informations', function (Blueprint $table) {
-            $table->dropColumn('business_classification_detail ');
+            $table->dropColumn('business_classification_detail');
         });
     }
 }
