@@ -26,9 +26,20 @@ class ModifyColumnStatusTableCompanyInformation extends Migration
      */
     public function down()
     {
-        Schema::table('company_informations', function (Blueprint $table) {
-            // DB::statement("ALTER TABLE company_informations MODIFY status ENUM('checking', 'approved') NOT NULL");
-            DB::statement("ALTER TABLE company_informations DROP CONSTRAINT IF EXISTS status");
-        });
+        $constraint = DB::selectOne("
+            SELECT CONSTRAINT_NAME
+            FROM information_schema.TABLE_CONSTRAINTS
+            WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'company_informations'
+            AND CONSTRAINT_NAME = 'status'
+            AND CONSTRAINT_TYPE = 'CHECK'
+        ");
+
+        if ($constraint) {
+            DB::statement("
+                ALTER TABLE company_informations
+                DROP CHECK `status`
+            ");
+        }
     }
 }
