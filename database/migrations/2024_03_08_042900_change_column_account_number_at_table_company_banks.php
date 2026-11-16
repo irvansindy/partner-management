@@ -1,8 +1,7 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 class ChangeColumnAccountNumberAtTableCompanyBanks extends Migration
@@ -15,8 +14,8 @@ class ChangeColumnAccountNumberAtTableCompanyBanks extends Migration
     public function up()
     {
         DB::statement("
-            ALTER TABLE company_banks
-            MODIFY COLUMN account_number VARCHAR(50)
+            ALTER TABLE `company_banks`
+            MODIFY COLUMN `account_number` VARCHAR(50) NULL
         ");
     }
 
@@ -27,9 +26,11 @@ class ChangeColumnAccountNumberAtTableCompanyBanks extends Migration
      */
     public function down()
     {
+        // Keep account numbers as VARCHAR to prevent
+        // data truncation, overflow and loss of leading zeros.
         DB::statement("
-            ALTER TABLE company_banks
-            MODIFY COLUMN account_number INTEGER
+            ALTER TABLE `company_banks`
+            MODIFY COLUMN `account_number` VARCHAR(50) NULL
         ");
     }
 }
