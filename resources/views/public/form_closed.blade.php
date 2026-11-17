@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('messages.Public Form Closed Page Title') }}</title>
+    <title>{{ $pageTitle ?? __('messages.Public Form Closed Page Title') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('uploads/logo/icon.png') }}">
     <style>
         * { box-sizing: border-box; }
@@ -38,12 +38,12 @@
                     <path d="M14 2v6h6M8 13h8M8 17h5"/>
                 </svg>
             </div>
-            <h1 id="status-title">{{ __('messages.Public Form Closed') }}</h1>
+            <h1 id="status-title">{{ $pageTitle ?? __('messages.Public Form Closed') }}</h1>
             <p class="status-message">{{ $message }}</p>
-            <p class="status-help">{{ __('public_form.closed_contact_help') }}</p>
-            <a href="{{ url('/') }}" class="status-home">
+            <p class="status-help">{{ $helpText ?? __('public_form.closed_contact_help') }}</p>
+            <a href="{{ $actionUrl ?? url('/') }}" class="status-home">
                 <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M5 12h14"/></svg>
-                {{ __('messages.Public Go Home') }}
+                {{ $actionLabel ?? __('messages.Public Go Home') }}
             </a>
         </section>
     </main>

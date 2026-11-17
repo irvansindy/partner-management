@@ -57,6 +57,19 @@ class Handler extends ExceptionHandler
     {
         $response = parent::render($request, $exception);
 
+        if ($response->getStatusCode() === 429) {
+            $headers = $response->headers->all();
+            unset($headers['content-type'], $headers['content-length']);
+            if ($request->expectsJson() || $request->is('api/*')) {
+                $response = response()->json(['message' => __('rate_limit.message')], 429, $headers);
+            } else {
+                $response = response()->view('errors.429', [
+                    'retryAfter' => max(1, (int) $response->headers->get('Retry-After', 60)),
+                ], 429, $headers);
+                $response->headers->set('Content-Type', 'text/html; charset=UTF-8');
+            }
+        }
+
         if ($request instanceof Request && $request->attributes->has('request_id')) {
             $response->headers->set('X-Request-ID', $request->attributes->get('request_id'));
         }

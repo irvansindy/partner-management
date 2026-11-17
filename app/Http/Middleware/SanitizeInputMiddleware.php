@@ -50,9 +50,9 @@ class SanitizeInputMiddleware
                 'reason'   => 'Terlalu banyak request dalam 60 detik',
                 'attempts' => RateLimiter::attempts($rateKey)
             ]);
-            return response()->json([
-                'message' => 'Terlalu banyak permintaan. Coba lagi nanti.'
-            ], 429);
+            abort(429, __('rate_limit.message'), [
+                'Retry-After' => max(1, RateLimiter::availableIn($rateKey)),
+            ]);
         }
         RateLimiter::hit($rateKey, 60);
 
