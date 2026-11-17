@@ -17,7 +17,7 @@ class CompanyAddInfoSeeder extends Seeder
     public function run()
     {
         // CompanyAdditionalInformation::create([
-            DB::table('company_document_type_categories')->insert([
+            $rows = [
             [
                 'name' => 'KTP Penanggung Jawab',
                 'name_id_class'=> Str::slug(strtolower('KTP Penanggung Jawab'), '_'),
@@ -108,6 +108,11 @@ class CompanyAddInfoSeeder extends Seeder
                 'name_id_class'=> Str::slug(strtolower('KBLI'), '_'),
                 'created_at'=> now()->format('Y-m-d H:i:s'),
             ]
-        ]);
+        ];
+        foreach ($rows as $row) {
+            if (!\Illuminate\Support\Facades\DB::table('company_document_type_categories')->where('name_id_class', $row['name_id_class'])->exists()) {
+                \Illuminate\Support\Facades\DB::table('company_document_type_categories')->insert($row);
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ class MenusSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('menus')->insert([
+        $menus = [
             [
                 'id' => 1,
                 'name_text' => 'Dashboard',
@@ -112,7 +112,7 @@ class MenusSeeder extends Seeder
             [
                 'id' => 8,
                 'name_text' => 'Partner List',
-                'url_name' => 'partner-management',
+                'url_name' => 'partner-list',
                 'can_permission' => 'partner-list',
                 'icon' => 'fa fa-users',
                 'type' => 1,
@@ -235,6 +235,31 @@ class MenusSeeder extends Seeder
                 'created_at' => Carbon::parse('2026-11-05 00:00:00'),
                 'updated_at' => Carbon::parse('2026-11-05 00:00:00'),
             ],
-        ]);
+        ];
+        $menus[] = [
+            'name_text' => 'Division', 'url_name' => 'division-setting',
+            'can_permission' => 'division-setting', 'icon' => 'fas fa-sitemap',
+            'type' => 2, 'order' => 17, 'parent_id' => 2, 'is_active' => 1,
+            'created_at' => now(), 'updated_at' => now(),
+        ];
+        $parentIds = [];
+        foreach ($menus as $menu) {
+            $defaultId = $menu['id'] ?? null;
+            unset($menu['id']);
+            if ($menu['parent_id'] !== null) {
+                $menu['parent_id'] = $parentIds[$menu['parent_id']];
+            }
+            $query = DB::table('menus')->where('url_name', $menu['url_name']);
+            if ($menu['url_name'] === '#') {
+                $query->where('name_text', $menu['name_text'])->where('parent_id', $menu['parent_id']);
+            }
+            $existing = $query->first();
+            if (!$existing && $menu['url_name'] === 'partner-list') {
+                $existing = DB::table('menus')->where('url_name', 'partner-management')->first();
+                if ($existing) DB::table('menus')->where('id', $existing->id)->update(['url_name' => 'partner-list']);
+            }
+            $id = $existing ? $existing->id : DB::table('menus')->insertGetId($menu);
+            if ($defaultId !== null) $parentIds[$defaultId] = $id;
+        }
     }
 }

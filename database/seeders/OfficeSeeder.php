@@ -14,8 +14,7 @@ class OfficeSeeder extends Seeder
      */
     public function run()
     {
-        DB::table("master_offices")->truncate();
-        DB::table("master_offices")->insert([
+        $offices = [
             [
                 "name"=> "Head Office",
                 "address"=> "Alam Sutera",
@@ -32,6 +31,11 @@ class OfficeSeeder extends Seeder
                 "name"=> "Gudang T8",
                 "address"=> "Alam Sutera",
             ]
-        ]);
+        ];
+        foreach ($offices as $office) {
+            if (!DB::table('master_offices')->where('name', $office['name'])->exists()) {
+                DB::table('master_offices')->insert($office);
+            }
+        }
     }
 }

@@ -23,7 +23,7 @@ class LevelJobSeeder extends Seeder
         ];
 
         foreach ($levelJobs as $levelJob) {
-            MasterLevelJobs::create($levelJob);
+            MasterLevelJobs::firstOrCreate($levelJob);
         }
     }
 }

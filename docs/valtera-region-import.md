@@ -2,6 +2,8 @@
 
 Sistem memakai snapshot lokal dari [`danikz/valtera-indonesia-regions`](https://github.com/danikz/valtera-indonesia-regions). Browser public form tidak mengambil data langsung dari CDN pihak ketiga.
 
+Snapshot untuk seeder sudah dibundel pada `database/data/regions`, termasuk pelengkap Papua Barat Daya, lisensi dan metadata commit. `php artisan db:seed` mengimpornya secara offline. Langkah download di bawah hanya diperlukan untuk memperbarui sumber secara manual. Panduan laptop baru: `docs/pindah-laptop-dan-seeder.md`.
+
 ## Sumber yang dibutuhkan
 
 Direktori input wajib berisi:

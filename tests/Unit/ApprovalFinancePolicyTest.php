@@ -39,9 +39,9 @@ class ApprovalFinancePolicyTest extends TestCase
         $this->assertStringContainsString("updateOrInsert(['name' => 'FAT']", $migration);
         $this->assertStringContainsString("updateOrInsert(['name' => 'Finance']", $migration);
         $this->assertStringContainsString("'division_id' => \$fatDivisionId", $migration);
-        $this->assertStringContainsString('MasterDivision::updateOrCreate', $divisionSeeder);
+        $this->assertStringContainsString('MasterDivision::firstOrCreate', $divisionSeeder);
         $this->assertStringContainsString("'name' => 'FAT'", $divisionSeeder);
-        $this->assertStringContainsString("updateOrInsert(['name' => \$department['name']]", $departmentSeeder);
+        $this->assertStringContainsString("where('name', \$department['name'])->exists()", $departmentSeeder);
         $this->assertStringContainsString("['name' => 'Finance', 'division_id' => \$fatDivision->id]", $departmentSeeder);
     }
 

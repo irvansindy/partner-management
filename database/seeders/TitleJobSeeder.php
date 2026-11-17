@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\MasterJobTitles;
+use App\Models\MasterLevelJobs;
 class TitleJobSeeder extends Seeder
 {
     /**
@@ -13,19 +14,21 @@ class TitleJobSeeder extends Seeder
      */
     public function run()
     {
+        $managerLevelId = MasterLevelJobs::where('name', 'Manager')->firstOrFail()->id;
+        $staffLevelId = MasterLevelJobs::where('name', 'Staff')->firstOrFail()->id;
         $jobTitles = [
-            ['name' => 'Manager Purchasing', 'level_id' => 3],
-            ['name' => 'Manager Sales Retail 1', 'level_id' => 3],
-            ['name' => 'Manager Sales Retail 2', 'level_id' => 3],
-            ['name' => 'Manager Sales Project', 'level_id' => 3],
-            ['name' => 'Staff Purchasing', 'level_id' => 6],
-            ['name' => 'Staff Sales Retail 1', 'level_id' => 6],
-            ['name' => 'Staff Sales Retail 2', 'level_id' => 6],
-            ['name' => 'Staff Sales Project', 'level_id' => 6],
+            ['name' => 'Manager Purchasing', 'level_id' => $managerLevelId],
+            ['name' => 'Manager Sales Retail 1', 'level_id' => $managerLevelId],
+            ['name' => 'Manager Sales Retail 2', 'level_id' => $managerLevelId],
+            ['name' => 'Manager Sales Project', 'level_id' => $managerLevelId],
+            ['name' => 'Staff Purchasing', 'level_id' => $staffLevelId],
+            ['name' => 'Staff Sales Retail 1', 'level_id' => $staffLevelId],
+            ['name' => 'Staff Sales Retail 2', 'level_id' => $staffLevelId],
+            ['name' => 'Staff Sales Project', 'level_id' => $staffLevelId],
         ];
 
         foreach ($jobTitles as $jobTitle) {
-            MasterJobTitles::create($jobTitle);
+            MasterJobTitles::firstOrCreate(['name' => $jobTitle['name']], $jobTitle);
         }
     }
 }

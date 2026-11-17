@@ -1,0 +1,36 @@
+{
+    "valtera": {
+        "repository": "https://github.com/danikz/valtera-indonesia-regions",
+        "commit": "3010d74241350cccfc59f4b2356bf9da65d27e60",
+        "license": "LICENSE.valtera"
+    },
+    "supplement": {
+        "repository": "https://github.com/mrayhanfadil/kodepos-id",
+        "commit": "33d362f827030606ab15a4f29a42c22c2eba3c7b",
+        "source_file": "kodepos_parsed.csv",
+        "filter": "provinsi == Papua Barat Daya",
+        "license": "LICENSE.kodepos-id"
+    },
+    "files": {
+        "villages.csv": {
+            "sha256": "75c8869fd17188c9a09c2949f145895fbf9bf021c565133d258051b72d8e6835",
+            "rows": 83763
+        },
+        "regencies.csv": {
+            "sha256": "6b6c85b6b23d889e2dec7f51acc446cbdc287f91da360f108fc4d5ca44c36763",
+            "rows": 514
+        },
+        "districts.csv": {
+            "sha256": "86da13a6d569bd773a76ede14bf6f835faf26014aff1fef3a2fab927a89dff9a",
+            "rows": 7272
+        },
+        "kodepos-papua-barat-daya.csv": {
+            "sha256": "419816d7a596d69c557a0866d152570d332ae6bbb851693b472ed7f1f585d58a",
+            "rows": 1009
+        },
+        "provinces.csv": {
+            "sha256": "8d41cf1e9ba8474762947ae132814b1319972abcfd80d802f9f48fba3a8c6297",
+            "rows": 37
+        }
+    }
+}

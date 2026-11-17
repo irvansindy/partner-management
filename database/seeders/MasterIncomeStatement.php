@@ -13,7 +13,7 @@ class MasterIncomeStatement extends Seeder
      */
     public function run()
     {
-        DB::table("master_income_statements")->insert([
+        $rows = [
             [
                 "name"=> "revenue",
                 "created_at"=> date("Y-m-d H:i:s"),
@@ -58,6 +58,11 @@ class MasterIncomeStatement extends Seeder
                 "name"=> "depreciation_expense",
                 "created_at"=> date("Y-m-d H:i:s"),
             ],
-        ]);
+        ];
+        foreach ($rows as $row) {
+            if (!\Illuminate\Support\Facades\DB::table('master_income_statements')->where('name', $row['name'])->exists()) {
+                \Illuminate\Support\Facades\DB::table('master_income_statements')->insert($row);
+            }
+        }
     }
 }

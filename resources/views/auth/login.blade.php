@@ -52,11 +52,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="card login-box">
                             <div class="card-body">
-                                <div class="text-right mb-2">
-                                    <a href="{{ route('locale.switch', ['locale' => 'id', 'return_to' => request()->getRequestUri()]) }}" lang="id">ID</a>
-                                    <span aria-hidden="true"> · </span>
-                                    <a href="{{ route('locale.switch', ['locale' => 'en', 'return_to' => request()->getRequestUri()]) }}" lang="en">EN</a>
-                                </div>
+                                @include('auth.partials.locale-switch')
                                 <h5 class="card-title">{{ __('public_form.Sign In') }}</h5>
 
                                 {{-- Tampilkan error umum (mis. "email/password salah")

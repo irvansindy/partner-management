@@ -12,7 +12,8 @@ class UserSeederSafetyTest extends TestCase
         $contents = file_get_contents(database_path('seeders/UserSeeder.php'));
 
         $this->assertStringNotContainsString('User::truncate()', $contents);
-        $this->assertStringContainsString('User::updateOrCreate(', $contents);
+        $this->assertStringContainsString('User::firstOrCreate(', $contents);
+        $this->assertStringContainsString('$user->wasRecentlyCreated', $contents);
 
         preg_match_all('/["\']email["\']\s*=>\s*["\']([^"\']+)["\']/', $contents, $matches);
         $this->assertSame(array_values(array_unique($matches[1])), $matches[1]);

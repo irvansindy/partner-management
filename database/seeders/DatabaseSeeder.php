@@ -3,23 +3,36 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-        $this->call([
-            RoleSeeder::class,
-            OfficeSeeder::class,
-            UserSeeder::class,
-            ProvincesSeeder::class,
-            RegenciesSeeder::class,
-        ]);
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        try {
+            DB::transaction(function () {
+                $this->call([
+                    RegionPostalCodeSeeder::class,
+                    RoleSeeder::class,
+                    PermissionsSeeder::class,
+                    OfficeSeeder::class,
+                    LevelJobSeeder::class,
+                    TitleJobSeeder::class,
+                    MasterDivisionSeeder::class,
+                    MasterDepartements::class,
+                    BusinessClassificationSeeder::class,
+                    CompanyAddInfoSeeder::class,
+                    MasterIncomeStatement::class,
+                    MasterBalanceSheet::class,
+                    MenusSeeder::class,
+                    RolePermissionSeeder::class,
+                    UserSeeder::class,
+                ]);
+            });
+        } finally {
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
+        }
     }
 }

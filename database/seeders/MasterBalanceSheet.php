@@ -13,7 +13,7 @@ class MasterBalanceSheet extends Seeder
      */
     public function run()
     {
-        \DB::table("master_balance_sheets")->insert([
+        $rows = [
             [
                 "name"=> "cash",
                 "created_at"=> date("Y-m-d H:i:s"),
@@ -62,6 +62,11 @@ class MasterBalanceSheet extends Seeder
                 "name"=> "net_equity",
                 "created_at"=> date("Y-m-d H:i:s"),
             ],
-        ]);
+        ];
+        foreach ($rows as $row) {
+            if (!\Illuminate\Support\Facades\DB::table('master_balance_sheets')->where('name', $row['name'])->exists()) {
+                \Illuminate\Support\Facades\DB::table('master_balance_sheets')->insert($row);
+            }
+        }
     }
 }

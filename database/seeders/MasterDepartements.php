@@ -14,10 +14,7 @@ class MasterDepartements extends Seeder
      */
     public function run()
     {
-        $fatDivision = MasterDivision::updateOrCreate(['name' => 'FAT'], [
-            'gm_user_id' => null,
-            'office_id' => 1,
-        ]);
+        $fatDivision = MasterDivision::where('name', 'FAT')->firstOrFail();
 
         $departments = [
             ['name' => 'Finance', 'division_id' => $fatDivision->id],
@@ -63,7 +60,9 @@ class MasterDepartements extends Seeder
         ];
 
         foreach ($departments as $department) {
-            DB::table('master_departments')->updateOrInsert(['name' => $department['name']], $department);
+            if (!DB::table('master_departments')->where('name', $department['name'])->exists()) {
+                DB::table('master_departments')->insert($department);
+            }
         }
     }
 }

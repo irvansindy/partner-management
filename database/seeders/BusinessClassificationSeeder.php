@@ -13,13 +13,13 @@ class BusinessClassificationSeeder extends Seeder
      */
     public function run()
     {
-        MasterBusinessClassification::create(['name' => 'Manufacturer']);
-        MasterBusinessClassification::create(['name' => 'Trading']);
-        MasterBusinessClassification::create(['name' => 'Agent']);
-        MasterBusinessClassification::create(['name' => 'Distributor']);
-        MasterBusinessClassification::create(['name' => 'Services']);
-        MasterBusinessClassification::create(['name' => 'Contractor']);
-        MasterBusinessClassification::create(['name' => 'E-commerce']);
-        MasterBusinessClassification::create(['name' => 'Other']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'Manufacturer']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'Trading']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'Agent']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'Distributor']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'Services']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'Contractor']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'E-commerce']);
+        MasterBusinessClassification::firstOrCreate(['name' => 'Other']);
     }
 }
