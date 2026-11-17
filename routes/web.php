@@ -38,6 +38,8 @@ Route::get('/refresh-csrf', function () {
     ]);
 })->name('refresh-csrf');
 Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])
+    ->middleware('auth')->name('profile');
 Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement-wo-auth');
 
 Route::get('map-geocoder', [GeocodeController::class,'index'])->name('map-geocoder');

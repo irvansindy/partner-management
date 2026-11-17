@@ -25,6 +25,8 @@
                         {{ auth()->user()->name ?? __('settings.Guest') }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="{{ route('profile') }}">{{ __('profile.title') }}</a>
+                        <div class="dropdown-divider"></div>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="dropdown-item">{{ __('settings.Logout') }}</button>
