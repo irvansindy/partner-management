@@ -923,4 +923,4 @@
         });
     </script>
 
-    @include('cs_vendor.partner_js')
+    @include('cs_vendor.partner_js', ['attachmentLimits' => config('company_attachments')])

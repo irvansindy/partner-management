@@ -133,7 +133,7 @@ class MultilanguageAuditTest extends TestCase
                 $this->assertStringContainsString('<html', $html, $name);
                 if ($name === 'public.form_index') {
                     $this->assertStringContainsString(__('public_form.registration_type_hint', ['type' => __('messages.Dashboard Customer')]), $html);
-                    $this->assertStringContainsString(__('public_form.upload_hint'), $html);
+                    $this->assertStringContainsString(__('public_form.upload_limits_hint', ['max_files' => config('company_attachments.max_files'), 'max_mb' => config('company_attachments.max_bytes') / (1024 * 1024), 'max_width' => config('company_attachments.max_width'), 'max_height' => config('company_attachments.max_height')]), $html);
                 }
                 $this->assertDoesNotMatchRegularExpression('/\b(?:admin\.[A-Z]|(?:supporting|public_form|form_links_audit|form_links_remaining|approval_validation|settings_validation|data_tools_validation)\.[A-Za-z])/', $html, $name);
                 preg_match_all('/<script\b[^>]*>(.*?)<\/script>/s', $html, $scripts);

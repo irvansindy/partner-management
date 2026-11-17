@@ -2,6 +2,7 @@
 @include('public.form.attachments')
 
 <script>
+    const partnerAttachmentLimits = @json($attachmentLimits ?? config('company_attachments'));
     function escapePartnerHtml(value) { return $('<div>').text(value).html(); }
     var partnerFormLocale = @json(app()->getLocale());
     var partnerValidationCopy = {
@@ -360,8 +361,11 @@
         $("#input-multiple-file").fileinput({
             ...@json(__('public_form.fileinput')),
             uploadUrl: $('#form_company').attr('action'),
-            maxFileCount: 10,
-            maxFileSize: 5120,
+            minFileCount: 1,
+            maxFileCount: partnerAttachmentLimits.max_files,
+            maxFileSize: Math.ceil(partnerAttachmentLimits.max_bytes / 1024),
+            maxImageWidth: partnerAttachmentLimits.max_width,
+            maxImageHeight: partnerAttachmentLimits.max_height,
             allowedFileExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
             showUpload: false,
             showRemove: true,
@@ -420,7 +424,10 @@
             }
         });
         PartnerAttachments.bind($('#input-multiple-file'), function () {
-            showPartnerToast(partnerValidationCopy.title, escapeHtml(@json(__('public_form.upload_reset_after_error'))), 'danger');
+            const resetMessage = @json(__('public_form.upload_reset_limits'))
+                .replace(':max_files', partnerAttachmentLimits.max_files)
+                .replace(':max_mb', partnerAttachmentLimits.max_bytes / (1024 * 1024));
+            showPartnerToast(partnerValidationCopy.title, escapeHtml(resetMessage), 'danger');
         });
 
         }

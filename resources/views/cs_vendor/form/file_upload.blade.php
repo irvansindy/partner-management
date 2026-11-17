@@ -18,7 +18,12 @@
                         form="form_company" accept="application/pdf,image/jpeg,image/png" data-show-upload="false"
                         data-show-caption="true">
                 </div>
-                <small class="text-muted d-block mt-2">{{ __('public_form.upload_hint') }}</small>
+                <small class="text-muted d-block mt-2">{{ __('public_form.upload_limits_hint', [
+                    'max_files' => config('company_attachments.max_files', 10),
+                    'max_mb' => config('company_attachments.max_bytes', 5 * 1024 * 1024) / (1024 * 1024),
+                    'max_width' => config('company_attachments.max_width', 6000),
+                    'max_height' => config('company_attachments.max_height', 6000),
+                ]) }}</small>
             </div>
         </div>
     </div>

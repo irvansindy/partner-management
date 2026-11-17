@@ -12,12 +12,12 @@ class PublicFormAttachmentMarkupTest extends TestCase
         $html = file_get_contents(dirname(__DIR__, 2).'/resources/views/cs_vendor/form/file_upload.blade.php');
 
         $this->assertStringContainsString('accept="application/pdf,image/jpeg,image/png"', $html);
-        $this->assertStringContainsString("__('public_form.upload_hint')", $html);
-        foreach (['id' => 'Maksimal 10 file', 'en' => 'Up to 10 files'] as $locale => $limit) {
+        $this->assertStringContainsString("__('public_form.upload_limits_hint',", $html);
+        foreach (['id', 'en'] as $locale) {
             $copy = require dirname(__DIR__, 2)."/resources/lang/{$locale}/public_form.php";
-            $this->assertStringContainsString($limit, $copy['upload_hint']);
-            $this->assertStringContainsString('5 MB', $copy['upload_hint']);
-            $this->assertStringContainsString('6000 × 6000', $copy['upload_hint']);
+            foreach ([':max_files', ':max_mb', ':max_width', ':max_height'] as $placeholder) {
+                $this->assertStringContainsString($placeholder, $copy['upload_limits_hint']);
+            }
         }
     }
 

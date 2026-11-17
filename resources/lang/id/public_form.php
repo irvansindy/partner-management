@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'upload_limits_hint' => 'PDF, JPEG, atau PNG. Maksimal :max_files file, :max_mb MB per file, dan dimensi gambar :max_width × :max_height piksel.',
+    'upload_reset_limits' => 'Terjadi kesalahan pada lampiran. Pilihan file telah dikosongkan. Silakan pilih ulang file PDF, JPEG, atau PNG, maksimal :max_files file dan :max_mb MB per file.',
     'upload_processing' => 'Tunggu hingga lampiran selesai diproses sebelum mengirim formulir.',
     'upload_hint' => 'PDF, JPEG, atau PNG. Maksimal 10 file, 5 MB per file, dan dimensi gambar 6000 × 6000 piksel.',
     'registration_type_hint' => 'Formulir ini untuk pendaftaran :type.',

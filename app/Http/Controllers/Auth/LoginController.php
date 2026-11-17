@@ -35,14 +35,6 @@ class LoginController extends Controller
             return route('login'); // ✅ return string URL, bukan redirect
         }
 
-        if ($user->roles->pluck('name')->first() === 'user') {
-            if (!$user->companyInformation) {
-                return route('create-partner'); // ✅ string path
-            } else {
-                return route('home');
-            }
-        }
-
         return route('dashboard'); // fallback jika bukan user biasa
     }
 

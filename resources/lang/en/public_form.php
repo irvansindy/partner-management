@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'upload_limits_hint' => 'PDF, JPEG, or PNG. Up to :max_files files, :max_mb MB per file, and image dimensions of :max_width × :max_height pixels.',
+    'upload_reset_limits' => 'An attachment error occurred. The file selection has been cleared. Please select your PDF, JPEG, or PNG files again, up to :max_files files and :max_mb MB per file.',
     'upload_processing' => 'Wait for the attachments to finish processing before submitting the form.',
     'upload_hint' => 'PDF, JPEG, or PNG. Up to 10 files, 5 MB per file, and image dimensions of 6000 × 6000 pixels.',
     'registration_type_hint' => 'This form is for :type registration.',

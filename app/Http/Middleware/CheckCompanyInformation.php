@@ -28,7 +28,7 @@ class CheckCompanyInformation
                 return redirect()->route('create-partner');
             } else {
                 // Jika role user dan sudah isi company info
-                return redirect()->route('home');
+                return redirect()->route('dashboard');
             }
         }
 

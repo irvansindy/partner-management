@@ -160,6 +160,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/dashboard', action: [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin|super-admin|super-user');
 });
 
@@ -174,7 +175,6 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
 });
 // Route::middleware(['auth', 'role:user|admin', 'verified'])->group(function () {
 Route::middleware(['auth', 'role:user|admin'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/user-attachment', [PartnerController::class,'viewAttachment'])->name('user-attachment');
     Route::get('/fetch-doctype', [PartnerController::class,'fetchDocTypeCategories'])->name('fetch-doctype');
     Route::get('/fetch-income-balance', [PartnerController::class,'fetchIncomeStatementBalanceSheet'])->name('fetch-income-balance');

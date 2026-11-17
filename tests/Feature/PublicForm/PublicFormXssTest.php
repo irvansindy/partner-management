@@ -22,7 +22,7 @@ class PublicFormXssTest extends TestCase
         $formLink = new FormLink([
             'token' => 'safe-token',
             'title' => $payload,
-            'description' => '<img src=x onerror=alert(1)>',
+            'description' => '<p>Safe description</p><img src=x onerror=alert(1)>',
             'form_type' => 'vendor',
             'is_active' => true,
         ]);
@@ -32,6 +32,8 @@ class PublicFormXssTest extends TestCase
         $this->assertStringNotContainsString($payload, $html);
         $this->assertStringNotContainsString('<img src=x onerror=alert(1)>', $html);
         $this->assertStringContainsString('&lt;script&gt;window.pwned=true&lt;/script&gt;', $html);
-        $this->assertStringContainsString('&lt;img src=x onerror=alert(1)&gt;', $html);
+        $this->assertStringContainsString('Safe description', $html);
+        $this->assertStringNotContainsString('&lt;img src=x onerror=alert(1)&gt;', $html);
+        $this->assertStringNotContainsString('&lt;p&gt;Safe description', $html);
     }
 }

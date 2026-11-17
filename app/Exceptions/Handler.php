@@ -70,6 +70,16 @@ class Handler extends ExceptionHandler
             }
         }
 
+        if ($response->getStatusCode() >= 400 && $response->getStatusCode() !== 429
+            && !$request->expectsJson() && !$request->is('api/*')) {
+            $headers = $response->headers->all();
+            unset($headers['content-type'], $headers['content-length']);
+            $response = response()->view('errors.status', [
+                'statusCode' => $response->getStatusCode(),
+            ], $response->getStatusCode(), $headers);
+            $response->headers->set('Content-Type', 'text/html; charset=UTF-8');
+        }
+
         if ($request instanceof Request && $request->attributes->has('request_id')) {
             $response->headers->set('X-Request-ID', $request->attributes->get('request_id'));
         }
