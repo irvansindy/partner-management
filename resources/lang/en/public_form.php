@@ -179,4 +179,6 @@ return [
     'zoom_in' => 'Zoom in',
     'zoom_out' => 'Zoom out',
     'map_pin' => 'Address location marker',
+    'closed_contact_help' => 'Contact the person who shared this link to request access to an available form.',
+    'upload_reset_after_error' => 'An attachment error occurred. The file selection has been cleared. Please select your PDF, JPEG, or PNG files again, up to 10 files and 5 MB per file.',
 ];

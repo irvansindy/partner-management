@@ -1,4 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@include('public.form.attachments')
 
 <script>
     function escapePartnerHtml(value) { return $('<div>').text(value).html(); }
@@ -358,7 +359,7 @@
         if ($("#input-multiple-file").length) {
         $("#input-multiple-file").fileinput({
             ...@json(__('public_form.fileinput')),
-            uploadUrl: false,
+            uploadUrl: $('#form_company').attr('action'),
             maxFileCount: 10,
             maxFileSize: 5120,
             allowedFileExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
@@ -385,7 +386,6 @@
             overwriteInitial: false,
             initialPreviewAsData: true,
             dropZoneEnabled: true,
-            allowedFileExtensions: ["jpg", "png", "jpeg", "webp", "pdf"],
             ajaxSettings: {
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -418,6 +418,9 @@
             layoutTemplates: {
                 actionUpload: '' // Kosongkan template upload button
             }
+        });
+        PartnerAttachments.bind($('#input-multiple-file'), function () {
+            showPartnerToast(partnerValidationCopy.title, escapeHtml(@json(__('public_form.upload_reset_after_error'))), 'danger');
         });
 
         }
@@ -1289,6 +1292,7 @@
                 $('input[name="_token"]').val();
 
             if (!csrfToken) {
+                PartnerAttachments.reset($('#input-multiple-file'));
                 isPartnerFormSubmitting = false;
                 $submitButton.prop('disabled', false);
 
@@ -1312,6 +1316,7 @@
 
             // Get form data
             var formData = new FormData($('#form_company')[0]);
+            PartnerAttachments.append(formData, $('#input-multiple-file'));
             prepareInternationalPhoneFormData(formData);
 
             // Force update CSRF token di FormData
@@ -1366,6 +1371,7 @@
                         setTimeout(attemptCloseTab, 5000);
                         // Clear localStorage setelah sukses
                     } else {
+                        PartnerAttachments.reset($('#input-multiple-file'));
                         isPartnerFormSubmitting = false;
                         $submitButton.prop('disabled', false);
 
@@ -1378,6 +1384,7 @@
                 },
 
                 error: function(xhr) {
+                    PartnerAttachments.reset($('#input-multiple-file'));
                     Swal.close();
                     isPartnerFormSubmitting = false;
                     $submitButton.prop('disabled', false);

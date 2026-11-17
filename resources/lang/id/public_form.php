@@ -179,4 +179,6 @@ return [
     'zoom_in' => 'Perbesar',
     'zoom_out' => 'Perkecil',
     'map_pin' => 'Titik lokasi alamat',
+    'closed_contact_help' => 'Hubungi pihak yang membagikan tautan ini untuk mendapatkan akses formulir yang masih berlaku.',
+    'upload_reset_after_error' => 'Terjadi kesalahan pada lampiran. Pilihan file telah dikosongkan. Silakan pilih ulang file PDF, JPEG, atau PNG, maksimal 10 file dan 5 MB per file.',
 ];
