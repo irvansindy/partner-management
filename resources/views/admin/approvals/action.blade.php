@@ -201,7 +201,7 @@
                                         @elseif($previousStep->isSkipped())<span class="badge badge-secondary">{{ __('approval.Skipped') }}</span>
                                         @else<span class="badge badge-secondary">{{ __('admin.Pending') }}</span>@endif
                                     </td>
-                                    <td>{{ $previousStep->notes }}</td>
+                                    <td style="white-space: pre-line; overflow-wrap: anywhere">{{ $previousStep->notes }}</td>
                                     <td>{{ optional($previousStep->approved_at ?? $previousStep->rejected_at)->locale(app()->getLocale())->translatedFormat('d M Y, H:i') ?? '-' }}</td>
                                 </tr>
                             @endforeach

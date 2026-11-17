@@ -18,7 +18,7 @@
                     <div class="card-header">
                         <h3 class="card-title">{{ __('form_links.Form Link Details') }}</h3>
                     </div>
-                    <form action="{{ route('admin.form-links.store') }}" method="POST">
+                    <form class="form-links-config" action="{{ route('admin.form-links.store') }}" method="POST">
                         @csrf
                         <div class="card-body">
                             <div class="form-group">
@@ -64,7 +64,7 @@
                             <div class="form-group">
                                 <label for="description">{{ __('admin.Description') }}</label>
                                 <textarea name="description" id="description" rows="3"
-                                    class="form-control @error('description') is-invalid @enderror" placeholder="{{ __('form_links.Optional description for internal use') }}">{{ old('description') }}</textarea>
+                                    class="form-control @error('description') is-invalid @enderror" placeholder="{{ __('form_links.Optional description for internal use') }}">{{ strip_tags(html_entity_decode(old('description', ''), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}</textarea>
                                 @error('description')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror

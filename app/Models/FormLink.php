@@ -27,6 +27,14 @@ class FormLink extends Model
         'is_active' => 'boolean',
     ];
 
+    public function getDescriptionAttribute($value): string
+    {
+        $text = html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace('/<\s*br\s*\/?\s*>|<\s*\/\s*(?:p|div|li|h[1-6])\s*>/i', "\n", $text);
+
+        return trim(strip_tags($text));
+    }
+
     protected static function boot()
     {
         parent::boot();

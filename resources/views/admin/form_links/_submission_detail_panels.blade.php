@@ -401,7 +401,7 @@
                                     @if ($step->notes)
                                         <div class="approval-note">
                                             <strong><i class="fas fa-comment mr-1"></i> {{ __('submission.Notes') }}</strong>
-                                            <div class="mt-1">{{ $step->notes }}</div>
+                                            <div class="mt-1" style="white-space: pre-line; overflow-wrap: anywhere">{{ $step->notes }}</div>
                                         </div>
                                     @endif
 

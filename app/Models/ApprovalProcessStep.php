@@ -28,6 +28,18 @@ class ApprovalProcessStep extends Model
         'rejected_at' => 'datetime',
     ];
 
+    public function getNotesAttribute($value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $text = html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace('/<\s*br\s*\/?\s*>|<\s*\/\s*(?:p|div|li|h[1-6])\s*>/i', "\n", $text);
+
+        return trim(strip_tags($text));
+    }
+
     // Status constants
     const STATUS_PENDING = 0;
     const STATUS_WAITING = 1;

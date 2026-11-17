@@ -18,13 +18,13 @@
                     <div class="card-header">
                         <h3 class="card-title">{{ __('submission.Edit Form Link Details') }}</h3>
                     </div>
-                    <form action="{{ route('admin.form-links.update', $formLink) }}" method="POST">
+                    <form class="form-links-config" action="{{ route('admin.form-links.update', $formLink) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="form_type">{{ __('admin.Form Type') }}</label>
-                                <input type="text" class="form-control" value="{{ __('admin.' . ucfirst($formLink->form_type ?? '')) }}"
+                                <input type="text" id="form_type" class="form-control" value="{{ __('admin.' . ucfirst($formLink->form_type ?? '')) }}"
                                     disabled>
                                 <small class="form-text text-muted">{{ __('submission.Form type cannot be changed') }}</small>
                             </div>
@@ -42,7 +42,7 @@
                             <div class="form-group">
                                 <label for="description">{{ __('admin.Description') }}</label>
                                 <textarea name="description" id="description" rows="3"
-                                    class="form-control @error('description') is-invalid @enderror">{{ old('description', $formLink->description) }}</textarea>
+                                    class="form-control @error('description') is-invalid @enderror">{{ strip_tags(html_entity_decode(old('description', $formLink->description), ENT_QUOTES | ENT_HTML5, 'UTF-8')) }}</textarea>
                                 @error('description')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror

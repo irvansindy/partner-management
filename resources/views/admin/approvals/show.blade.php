@@ -40,7 +40,7 @@
             .approval-step__number { align-items: center; background: #efedfc; border-radius: 50%; color: #6c5dd3; display: flex; font-weight: 700; height: 36px; justify-content: center; width: 36px; }
             .approval-step__main strong { display: block; margin-bottom: 3px; }
             .approval-step__main small { color: #74778a; }
-            .approval-step__notes { background: #f7f7fa; border-radius: 6px; color: #555869; margin-top: 10px; padding: 10px 12px; }
+            .approval-step__notes { background: #f7f7fa; border-radius: 6px; color: #555869; margin-top: 10px; padding: 10px 12px; white-space: pre-line; overflow-wrap: anywhere; }
             .approval-step__aside { min-width: 135px; text-align: right; }
             .approval-step__aside small { color: #74778a; display: block; margin-top: 6px; }
             @media (max-width: 991.98px) { .approval-progress-grid, .approval-info-grid { grid-template-columns: 1fr; } }

@@ -231,4 +231,24 @@
             padding-right: 16px;
         }
     }
+    .form-links-config .form-group { position: relative; }
+    .form-links-config .form-group > label,
+    .form-links-config .form-group > label.active {
+        position: absolute;
+        top: 8px;
+        left: 18px;
+        margin: 0;
+        padding: 0;
+        transform: none;
+        font-size: 12px;
+        line-height: 18px;
+        color: #6558d3;
+        pointer-events: none;
+        z-index: 1;
+    }
+    .form-links-config .form-group > .form-control {
+        padding: 28px 18px 10px;
+        min-height: 64px;
+    }
+    .form-links-config .form-group > textarea.form-control { min-height: 120px; }
 </style>

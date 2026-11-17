@@ -24,7 +24,7 @@
         @if (isset($formLink) && $formLink->description)
             <div class="public-form-description">
                 <i class="fas fa-info-circle" aria-hidden="true"></i>
-                <span>{{ $formLink->description }}</span>
+                <span style="white-space: pre-line">{{ $formLink->description }}</span>
             </div>
         @endif
 
