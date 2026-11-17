@@ -198,6 +198,7 @@ Route::middleware(['auth', 'role:super-admin'])->group(function () {
     Route::post('/store-user', [UserManagementController::class,'storeUser'])->name('store-user');
     Route::get('/detail-user', [UserManagementController::class,'detailUser'])->name('detail-user');
     Route::post('/update-user', [UserManagementController::class,'updateUser'])->name('update-user');
+    Route::post('/update-user-password', [UserManagementController::class,'updatePassword'])->name('update-user-password');
     Route::post('/delete-user', [UserManagementController::class,'deleteUser'])->name('delete-user');
 
     Route::get('/role-permission', [RoleAndPermissionController::class,'index'])->name('role-permission');

@@ -177,7 +177,15 @@
                             role: 'group',
                             'aria-label': userText.actionsFor.replace('__NAME__', item.name)
                         })
-                            .append(viewButton, deleteButton)
+                            .append(viewButton, $('<button>', {
+                                type: 'button',
+                                class: 'table-action table-action--toggle change_user_password',
+                                html: '<i class="fas fa-key" aria-hidden="true"></i>',
+                                title: @json(__('user_password.title')),
+                                'aria-label': @json(__('user_password.title')) + ' ' + item.name,
+                                'data-user_id': item.id,
+                                'data-user_name': item.name
+                            }), deleteButton)
                             .prop('outerHTML');
                     }
                 },
@@ -195,6 +203,56 @@
                 }
             })
         })
+
+        $(document).on('click', '.change_user_password', function () {
+            $('#form_user_password')[0].reset();
+            $('#password_user_error').text('');
+            $('#password_user_id').val($(this).attr('data-user_id'));
+            $('#password_user_name').text($(this).attr('data-user_name'));
+            $('#formPasswordUser').modal('show');
+        });
+        $('#formPasswordUser').on('click', '[data-dismiss="modal"]', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!$(this).prop('disabled')) {
+                closeUserModal('#formPasswordUser');
+            }
+        });
+        $('#formPasswordUser').on('shown.bs.modal', function () {
+            $('#new_user_password').trigger('focus');
+        }).on('hidden.bs.modal', function () {
+            $('#form_user_password')[0].reset();
+            $('#password_user_error').text('');
+        });
+        $('#form_user_password').on('submit', function (event) {
+            event.preventDefault();
+            const button = $('#save_user_password');
+            if (button.prop('disabled')) return;
+            button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> ' + @json(__('user_password.saving')));
+            $('#password_user_error').text('');
+            $('#formPasswordUser [data-dismiss="modal"]').prop('disabled', true);
+            $.ajax({
+                url: @json(route('update-user-password')),
+                type: 'POST',
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'), 'Accept': 'application/json' },
+                data: $(this).serialize(),
+                success: function (response) {
+                    closeUserModal('#formPasswordUser');
+                    $(document).Toasts('create', { title: userText.success, class: 'bg-success', body: response.meta.message });
+                },
+                error: function (xhr) {
+                    const response = parseAjaxError(xhr, @json(__('user_password.failed')));
+                    const errors = response.errors || {};
+                    const message = Object.values(errors).flat().join(' ') || getAjaxErrorMessage(response, @json(__('user_password.failed')));
+                    $('#password_user_error').text(message);
+                    $(document).Toasts('create', { title: userText.error, class: 'bg-danger', body: message });
+                },
+                complete: function () {
+                    button.prop('disabled', false).text(@json(__('user_password.save')));
+                    $('#formPasswordUser [data-dismiss="modal"]').prop('disabled', false);
+                }
+            });
+        });
 
         $(document).on('click', '#for_create_user', function(e) {
             e.preventDefault()

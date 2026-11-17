@@ -499,6 +499,7 @@
 
         @include('users.create_user')
         @include('users.detail_user')
+        @include('users.password_user')
         @include('users.delete_user')
     </div>
 @endsection

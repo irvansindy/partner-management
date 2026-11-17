@@ -86,7 +86,7 @@ class SanitizeInputMiddleware
         $sanitizedData = SanitizeHelper::sanitizeArray(
             $request->all(),                // Semua data (query + body)
             htmlFields: ['content', 'description'], // HTML whitelist
-            excludeFields: ['password', 'token'],   // Exclude sensitive fields
+            excludeFields: ['password', 'password_confirmation', 'token'],   // Exclude sensitive fields
             autoDetect: true
         );
         $request->merge($sanitizedData);

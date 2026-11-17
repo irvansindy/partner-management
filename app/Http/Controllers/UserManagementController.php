@@ -211,6 +211,25 @@ class UserManagementController extends Controller
             return FormatResponseJson::error(null, __('settings.operation_failed'), 400);
         }
     }
+    public function updatePassword(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required|integer|exists:users,id',
+            'password' => 'required|string|min:8|max:72|confirmed',
+        ], [], [
+            'id' => __('user_password.user'),
+            'password' => __('user_password.password'),
+        ]);
+
+        $user = User::findOrFail($data['id']);
+        $user->forceFill([
+            'password' => Hash::make($data['password']),
+            'remember_token' => \Illuminate\Support\Str::random(60),
+        ])->save();
+
+        return FormatResponseJson::success(null, __('user_password.success'));
+    }
+
     public function updateUserOld(Request $request)
     {
         try {
