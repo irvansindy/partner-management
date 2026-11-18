@@ -231,6 +231,28 @@
             padding-right: 16px;
         }
     }
+    .form-links-config > .card-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .form-links-config > .card-footer .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        margin: 0;
+        white-space: normal;
+    }
+    @media (max-width: 575.98px) {
+        .form-links-config > .card-footer {
+            flex-direction: column;
+        }
+        .form-links-config > .card-footer .btn {
+            width: 100%;
+        }
+    }
     .form-links-config .form-group { position: relative; }
     .form-links-config .form-group > label,
     .form-links-config .form-group > label.active {

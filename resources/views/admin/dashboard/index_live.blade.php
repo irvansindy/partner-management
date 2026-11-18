@@ -100,6 +100,13 @@
 
             .dashboard-panel-body { padding: 18px 20px; }
             .dashboard-chart-box { min-height: 320px; position: relative; }
+            .dashboard-province-scroll { max-height: 480px; overflow-y: auto; overflow-x: hidden; }
+            .dashboard-province-scroll:focus-visible { outline: 2px solid #6558d3; outline-offset: 3px; }
+            #province-chart { min-height: 260px; }
+            .province-tooltip { min-width: 190px; max-width: 280px; }
+            .province-tooltip .apexcharts-tooltip-title { white-space: normal; overflow-wrap: anywhere; }
+            .province-tooltip-row { display: flex; justify-content: space-between; gap: 20px; padding: 6px 12px; }
+            .province-tooltip-total { border-top: 1px solid #e3e8ef; margin-top: 4px; }
 
             #dashboard-map {
                 border: 1px solid var(--dashboard-line);
@@ -209,7 +216,9 @@
                 <article class="dashboard-panel">
                     <header class="dashboard-panel-header"><h2>{{ __('messages.Dashboard Partners By Province') }}</h2></header>
                     <div class="dashboard-panel-body">
-                        <div id="province-chart" class="dashboard-chart-box"></div>
+                        <div class="dashboard-province-scroll" tabindex="0" role="region" aria-label="{{ __('messages.Dashboard Partners By Province') }}">
+                            <div id="province-chart" class="dashboard-chart-box"></div>
+                        </div>
                         <div id="province-chart-empty" class="dashboard-empty-state d-none">{{ __('messages.Dashboard No Province Distribution') }}</div>
                     </div>
                 </article>

@@ -60,9 +60,20 @@
         function renderProvinceChart(distribution) {
             const vendorRows = Array.isArray(distribution.vendor) ? distribution.vendor : [];
             const customerRows = Array.isArray(distribution.customer) ? distribution.customer : [];
+            function provinceTotal(name) {
+                return vendorRows.concat(customerRows).reduce(function (sum, row) {
+                    return sum + (row.province === name ? Number(row.total) || 0 : 0);
+                }, 0);
+            }
             const provinceNames = Array.from(new Set(
                 vendorRows.concat(customerRows).map(function (row) { return row.province; })
-            )).sort();
+            )).filter(function (name) {
+                return vendorRows.concat(customerRows).some(function (row) {
+                    return row.province === name && Number(row.total) > 0;
+                });
+            }).sort(function (a, b) {
+                return provinceTotal(b) - provinceTotal(a) || a.localeCompare(b);
+            });
             const series = [];
 
             if (vendorRows.length) {
@@ -85,7 +96,7 @@
                 });
             }
 
-            if (!series.length) {
+            if (!series.length || !provinceNames.length) {
                 $('#province-chart').addClass('d-none');
                 $('#province-chart-empty').removeClass('d-none');
                 return;
@@ -97,7 +108,8 @@
             new ApexCharts(document.querySelector('#province-chart'), {
                 chart: {
                     type: 'bar',
-                    height: 360,
+                    stacked: true,
+                    height: Math.max(260, provinceNames.length * 48 + 90),
                     toolbar: { show: false },
                     events: {
                         dataPointSelection: function (event, chartContext, config) {
@@ -108,12 +120,54 @@
                 },
                 series: series,
                 colors: ['#2f80a8', '#df7180'],
-                plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } },
-                dataLabels: { enabled: false },
-                xaxis: { categories: provinceNames, labels: { rotate: -35 } },
-                yaxis: { min: 0, forceNiceScale: true, title: { text: dashboardText.approvedPartnersAxis }, labels: { formatter: function (value) { return numberFormat.format(value); } } },
+                plotOptions: { bar: { horizontal: true, barHeight: '52%', borderRadius: 3 } },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (value) { return value > 0 ? numberFormat.format(value) : ''; },
+                    style: { fontSize: '11px' }
+                },
+                xaxis: {
+                    categories: provinceNames,
+                    min: 0,
+                    max: provinceTotal(provinceNames[0]),
+                    tickAmount: Math.min(5, provinceTotal(provinceNames[0])),
+                    decimalsInFloat: 0,
+                    title: { text: dashboardText.approvedPartnersAxis },
+                    crosshairs: { width: 1 },
+                    labels: { formatter: function (value) { return numberFormat.format(Math.round(value)); } }
+                },
+                yaxis: { labels: { maxWidth: 170, style: { fontSize: '12px' } } },
                 legend: { position: 'bottom' },
-                tooltip: { shared: true, intersect: false }
+                tooltip: {
+                    shared: true,
+                    intersect: false,
+                    followCursor: true,
+                    custom: function ({ dataPointIndex }) {
+                        const name = provinceNames[dataPointIndex];
+                        if (!name) return '';
+                        const content = $('<div>', { class: 'province-tooltip' });
+                        $('<div>', { class: 'apexcharts-tooltip-title', text: name }).appendTo(content);
+                        const values = [
+                            { label: dashboardText.vendor, rows: vendorRows },
+                            { label: dashboardText.customer, rows: customerRows }
+                        ];
+                        values.forEach(function (item) {
+                            const row = item.rows.find(function (entry) { return entry.province === name; });
+                            const value = row ? Number(row.total) || 0 : 0;
+                            const line = $('<div>', { class: 'province-tooltip-row' }).appendTo(content);
+                            $('<span>').text(item.label).appendTo(line);
+                            $('<strong>').text(numberFormat.format(value)).appendTo(line);
+                        });
+                        const total = $('<div>', { class: 'province-tooltip-row province-tooltip-total' }).appendTo(content);
+                        $('<span>').text(dashboardText.approvedPartnersAxis).appendTo(total);
+                        $('<strong>').text(numberFormat.format(provinceTotal(name))).appendTo(total);
+                        return content.prop('outerHTML');
+                    }
+                },
+                responsive: [{ breakpoint: 576, options: {
+                    yaxis: { labels: { maxWidth: 145, style: { fontSize: '11px' } } },
+                    legend: { fontSize: '12px' }
+                } }]
             }).render();
         }
 
