@@ -138,6 +138,7 @@ class ApprovalService
                 }
                 if (!$lockedStep->isWaiting()
                     || !$process->isInProgress()
+                    || in_array($company->status, ['approved', 'reject', 'rejected'], true)
                     || $process->step_ordering !== $lockedStep->step_ordering) {
                     throw new \RuntimeException(__('approval.This approval step has already been processed.'));
                 }

@@ -42,8 +42,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function adminlte_image()
     {
-        return 'https://picsum.photos/300/300';
-        // return asset('images/'.\Auth::user()->avatar);
+        return $this->avatar_url;
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar_path
+            ? route('profile.photo', ['v' => sha1($this->avatar_path)])
+            : asset('assets/images/avatars/avatar1.png');
     }
     public function adminlte_desc()
     {

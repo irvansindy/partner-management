@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'show' => 'Show password',
+    'hide' => 'Hide password',
     'title' => 'Change Password',
     'user' => 'User',
     'password' => 'New password',

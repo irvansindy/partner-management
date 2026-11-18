@@ -1,5 +1,6 @@
 <?php
 return [
+ 'summary_total' => 'Total Forms', 'summary_label' => 'Form link summary',
  'copy_link' => 'Copy public link', 'view_link' => 'View form link', 'edit_link' => 'Edit form link',
  'actions_for' => 'Actions for :name', 'view_named' => 'View :name', 'edit_named' => 'Edit :name',
  'copy_named' => 'Copy public link for :name', 'activate_named' => 'Activate :name', 'deactivate_named' => 'Deactivate :name',

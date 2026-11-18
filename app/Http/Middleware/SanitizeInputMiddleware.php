@@ -86,7 +86,7 @@ class SanitizeInputMiddleware
         $sanitizedData = SanitizeHelper::sanitizeArray(
             $request->all(),                // Semua data (query + body)
             htmlFields: ['content', 'description'], // HTML whitelist
-            excludeFields: ['password', 'password_confirmation', 'token'],   // Exclude sensitive fields
+            excludeFields: ['current_password', 'password', 'password_confirmation', 'token'],   // Exclude sensitive fields
             autoDetect: true
         );
         $request->merge($sanitizedData);
@@ -117,7 +117,7 @@ class SanitizeInputMiddleware
         $response->headers->set('Referrer-Policy', 'no-referrer');
         $response->headers->set(
             'Content-Security-Policy',
-            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:; connect-src 'self' https:"
+            "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https:; connect-src 'self' https:"
         );
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 

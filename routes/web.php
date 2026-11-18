@@ -40,6 +40,12 @@ Route::get('/refresh-csrf', function () {
 Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])
     ->middleware('auth')->name('profile');
+Route::post('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])
+    ->middleware(['auth', 'throttle:6,1'])->name('profile.password.update');
+Route::post('/profile/photo', [\App\Http\Controllers\ProfileController::class, 'updatePhoto'])
+    ->middleware(['auth', 'throttle:6,1'])->name('profile.photo.update');
+Route::get('/profile/photo', [\App\Http\Controllers\ProfileController::class, 'photo'])
+    ->middleware('auth')->name('profile.photo');
 Route::get('fetch-end-user-license-agreement-wo-auth', [EndUserLicenseAgreementController::class,'fetchEula'])->name('fetch-end-user-license-agreement-wo-auth');
 
 Route::get('map-geocoder', [GeocodeController::class,'index'])->name('map-geocoder');

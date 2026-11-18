@@ -273,4 +273,16 @@
         min-height: 64px;
     }
     .form-links-config .form-group > textarea.form-control { min-height: 120px; }
+    .form-links-config .form-group > select.form-control {
+        box-sizing: border-box;
+        width: 100%;
+        height: 64px;
+        min-height: 64px;
+        padding: 26px 18px 8px;
+        line-height: 22px;
+    }
+    .form-links-config label[for="form_type"],
+    .form-links-config label[for="user_form"] {
+        display: block !important;
+    }
 </style>

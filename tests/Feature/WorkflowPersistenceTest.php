@@ -126,6 +126,68 @@ class WorkflowPersistenceTest extends TestCase
         $this->assertFalse($forms->canEditSubmission($link, $company->fresh()));
     }
 
+    public function test_final_approval_cannot_be_changed_by_direct_posts_or_stale_waiting_steps(): void
+    {
+        [$users, $link, $company, $process] = $this->submission();
+        $this->actingAs($users[0]);
+        $step = $process->steps()->first();
+        $service = new ApprovalService();
+        $controller = new class($service) extends \App\Http\Controllers\Admin\ApprovalProcessController {
+            protected function authorizeAccess(ApprovalProcess $approval): void {}
+        };
+        $service->processApprovalAction($step, 'reject', $users[0]->id, 'Final rejection');
+        $snapshot = DB::table('approval_process_steps')->orderBy('id')->get()->toJson();
+        foreach (['approve', 'reject'] as $action) {
+            try {
+                $controller->processAction(Request::create('/', 'POST', ['action' => $action, 'notes' => 'Replay']), $step->fresh());
+                $this->fail('Direct replay accepted');
+            } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+                $this->assertSame(409, $e->getStatusCode());
+            }
+            try {
+                $service->processApprovalAction($step, $action, $users[0]->id, 'Replay');
+                $this->fail('Service replay accepted');
+            } catch (\RuntimeException $e) {
+                $this->assertSame(__('approval.This approval step has already been processed.'), $e->getMessage());
+            }
+        }
+        $response = $controller->showApprovalForm($step->fresh());
+        $this->assertSame(route('admin.approvals.show', $process->id), $response->getTargetUrl());
+        $this->assertSame($snapshot, DB::table('approval_process_steps')->orderBy('id')->get()->toJson());
+        $this->assertTrue($process->fresh()->isRejected());
+        $this->assertSame('reject', $company->fresh()->status);
+
+        // A stale waiting row must not bypass a final company status either.
+        $step->update(['status' => ApprovalProcessStep::STATUS_WAITING]);
+        $process->update(['status' => ApprovalProcess::STATUS_IN_PROGRESS]);
+        try {
+            $service->processApprovalAction($step, 'approve', $users[0]->id);
+            $this->fail('Final company status bypassed');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('reject', $company->fresh()->status);
+        }
+    }
+
+    public function test_final_approved_process_cannot_be_rejected_or_approved_again(): void
+    {
+        [$users, $link, $company, $process] = $this->submission();
+        $service = new ApprovalService();
+        foreach ($process->steps()->orderBy('step_ordering')->get() as $step) {
+            $service->processApprovalAction($step, 'approve', $step->user_id, 'Approved');
+        }
+        foreach (['approve', 'reject'] as $action) {
+            try {
+                $service->processApprovalAction($step, $action, $step->user_id, 'Replay');
+                $this->fail('Final approval was changed');
+            } catch (\RuntimeException $e) {
+                $this->assertSame(__('approval.This approval step has already been processed.'), $e->getMessage());
+            }
+        }
+        $this->assertTrue($process->fresh()->isApproved());
+        $this->assertSame('approved', $company->fresh()->status);
+        $this->assertSame('Approved', $step->fresh()->notes);
+    }
+
     public function test_edit_submission_updates_database_and_replaces_stored_attachment(): void
     {
         [$users, $link, $company, $process] = $this->submission();

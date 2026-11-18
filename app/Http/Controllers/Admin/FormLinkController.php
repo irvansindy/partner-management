@@ -27,6 +27,9 @@ class FormLinkController extends Controller
     {
         $this->formLinkService = $formLinkService;
         $this->attachmentService = $attachmentService;
+        $this->middleware('role:super-user')->only([
+            'create', 'store', 'edit', 'update', 'toggleStatus', 'destroy',
+        ]);
     }
 
     /**

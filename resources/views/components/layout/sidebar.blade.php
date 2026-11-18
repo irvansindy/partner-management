@@ -3,7 +3,7 @@
 
         <div class="page-sidebar-profile">
             <div class="sidebar-profile-image">
-                <img src="{{ auth()->user()->avatar_url ?? asset('assets/images/avatars/avatar1.png') }}" alt="">
+                <img src="{{ auth()->user()->avatar_url ?? asset('assets/images/avatars/avatar1.png') }}" alt="" style="object-fit: cover">
             </div>
             <div class="sidebar-profile-info">
                 <a href="javascript:void(0);" class="account-settings-link">

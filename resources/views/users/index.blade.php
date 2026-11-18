@@ -508,4 +508,5 @@
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     @include('users.user_js')
+    @include('users.partials.password_visibility')
 @endpush

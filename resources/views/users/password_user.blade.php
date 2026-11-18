@@ -13,11 +13,17 @@
                     <p class="text-muted">{{ __('user_password.hint') }}</p>
                     <div class="form-group">
                         <label for="new_user_password">{{ __('user_password.password') }}</label>
+                        <div class="password-visibility-field">
                         <input class="form-control" type="password" id="new_user_password" name="password" autocomplete="new-password" minlength="8" maxlength="72" required aria-describedby="password_user_error">
+                            @include('users.partials.password_toggle', ['inputId' => 'new_user_password'])
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="confirm_user_password">{{ __('user_password.confirmation') }}</label>
+                        <div class="password-visibility-field">
                         <input class="form-control" type="password" id="confirm_user_password" name="password_confirmation" autocomplete="new-password" minlength="8" maxlength="72" required>
+                            @include('users.partials.password_toggle', ['inputId' => 'confirm_user_password'])
+                        </div>
                     </div>
                     <p class="user-field-error" id="password_user_error" role="alert"></p>
                 </div>

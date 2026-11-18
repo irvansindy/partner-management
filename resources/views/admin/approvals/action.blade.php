@@ -222,6 +222,13 @@
             const $submit = $('#submitBtn');
             const $financialFields = $('#term_of_payment, #credit_limit');
             const requiresFinancialTerms = @json($requiresFinancialTerms);
+            @php
+                $canSubmitDecision = $step->isWaiting() && $step->process->isInProgress()
+                    && (int) $step->step_ordering === (int) $step->process->step_ordering
+                    && !in_array($step->process->company->status, ['approved', 'reject', 'rejected'], true);
+            @endphp
+            const canSubmitDecision = @json($canSubmitDecision);
+            let decisionSubmitting = false;
             function syncDecision() {
                 const action = $form.find('input[name="action"]:checked').val();
                 $notes.prop('required', action === 'reject');
@@ -233,8 +240,15 @@
             $notes.on('input', syncCount);
             $form.on('submit', function (event) {
                 event.preventDefault();
+                if (!canSubmitDecision || decisionSubmitting) return;
+                if (!$form[0].checkValidity()) {
+                    $form[0].reportValidity();
+                    return;
+                }
                 const action = $form.find('input[name="action"]:checked').val();
                 const isReject = action === 'reject';
+                if (!['approve', 'reject'].includes(action)) return;
+                decisionSubmitting = true;
 
                 Swal.fire({
                     title: isReject ? @json(__('approval.Tolak pengajuan ini?')) : @json(__('approval.Setujui pengajuan ini?')),
@@ -255,6 +269,8 @@
                     if (result.isConfirmed) {
                         $submit.prop('disabled', true);
                         $form[0].submit();
+                    } else {
+                        decisionSubmitting = false;
                     }
                 });
             });

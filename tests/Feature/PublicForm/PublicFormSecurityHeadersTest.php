@@ -29,5 +29,7 @@ class PublicFormSecurityHeadersTest extends TestCase
         $this->assertSame('no-referrer', $response->headers->get('Referrer-Policy'));
         $this->assertStringContainsString("object-src 'none'", $response->headers->get('Content-Security-Policy'));
         $this->assertStringContainsString("frame-ancestors 'none'", $response->headers->get('Content-Security-Policy'));
+        $this->assertStringContainsString("img-src 'self' data: blob: https:;", $response->headers->get('Content-Security-Policy'));
+        $this->assertStringContainsString("script-src 'self' 'unsafe-inline' https:;", $response->headers->get('Content-Security-Policy'));
     }
 }

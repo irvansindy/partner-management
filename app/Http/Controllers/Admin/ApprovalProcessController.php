@@ -100,8 +100,9 @@ class ApprovalProcessController extends Controller
         }
 
         // Check if step is waiting for approval
-        if (!$step->isWaiting()) {
-            return back()->with('error', __('approval.Step ini tidak dalam status menunggu approval.'));
+        if (!$this->canActOnStep($step)) {
+            return redirect()->route('admin.approvals.show', $step->approval_id)
+                ->with('error', __('approval.This approval step has already been processed.'));
         }
 
         $step->load(['process.company', 'process.initiator', 'process.steps.approver', 'approver']);
@@ -124,6 +125,8 @@ class ApprovalProcessController extends Controller
         if ($step->user_id !== Auth::id()) {
             abort(403, __('approval.Anda bukan approver untuk step ini.'));
         }
+
+        abort_unless($this->canActOnStep($step), 409, __('approval.This approval step has already been processed.'));
 
         $user = Auth::user()->loadMissing(['division', 'dept']);
         $requiresFinancialTerms = $step->process->company->type === 'customer'
@@ -190,6 +193,14 @@ class ApprovalProcessController extends Controller
             $approval->location_id !== $user->office->id) {
             abort(403, __('approval.Anda tidak memiliki akses ke approval ini.'));
         }
+    }
+
+    protected function canActOnStep(ApprovalProcessStep $step): bool
+    {
+        return $step->isWaiting()
+            && $step->process->isInProgress()
+            && (int) $step->process->step_ordering === (int) $step->step_ordering
+            && !in_array($step->process->company->status, ['approved', 'reject', 'rejected'], true);
     }
 
     protected function ensureApprovalRole($user): void

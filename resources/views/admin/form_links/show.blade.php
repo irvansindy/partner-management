@@ -192,16 +192,19 @@
                                 <i class="fas fa-list" aria-hidden="true"></i>
                                 <span>{{ __('admin.Submissions') }} ({{ $formLink->submission_count }})</span>
                             </a>
+                            @if (auth()->user()->hasRole('super-user'))
                             <a href="{{ route('admin.form-links.edit', $formLink) }}"
                                 class="btn btn-outline-secondary form-detail-action">
                                 <i class="fas fa-edit" aria-hidden="true"></i>
                                 <span>{{ __('submission.Edit form') }}</span>
                             </a>
+                            @endif
                             <a href="{{ $formLink->getPublicUrl() }}" target="_blank" rel="noopener noreferrer"
                                 class="btn btn-outline-secondary form-detail-action">
                                 <i class="fas fa-external-link-alt" aria-hidden="true"></i>
                                 <span>{{ __('submission.Open public form') }}</span>
                             </a>
+                            @if (auth()->user()->hasRole('super-user'))
                             <form action="{{ route('admin.form-links.toggle-status', $formLink) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-secondary form-detail-action">
@@ -209,6 +212,7 @@
                                     <span>{{ __($formLink->is_active ? 'form_links.deactivate_named' : 'form_links.activate_named', ['name' => $formLink->title]) }}</span>
                                 </button>
                             </form>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'show' => 'Tampilkan kata sandi',
+    'hide' => 'Sembunyikan kata sandi',
     'title' => 'Ganti Kata Sandi',
     'user' => 'Pengguna',
     'password' => 'Kata sandi baru',

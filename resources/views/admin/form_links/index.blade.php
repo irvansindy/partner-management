@@ -17,6 +17,9 @@
             .form-links-page #form_links_table {
                 width: 100% !important;
             }
+            .form-links-page .form-link-stats .stat-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+            .form-links-page .form-link-stats .material-icons { position: static; }
+            .form-links-page .stat-card__label { font-size: 14px; font-weight: 600; }
         </style>
     @endpush
 
@@ -26,7 +29,7 @@
                 <h2>{{ __('admin.Form Links Management') }}</h2>
                 <p>{{ __('admin.Create and manage public partner registration links.') }}</p>
             </div>
-            @if (\Auth::user()->roles[0]->name == 'admin' || \Auth::user()->roles[0]->name == 'super-user')
+            @if (auth()->user()->hasRole('super-user'))
                 <div class="page-actions">
                     <a href="{{ route('admin.form-links.create') }}" class="btn btn-primary waves-effect">
                         <i class="material-icons align-middle mr-1">add_link</i> {{ __('admin.Create Form Link') }}
@@ -48,6 +51,28 @@
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
         @endif
+
+        @php
+            $expiredForms = $formLinks->filter(fn ($link) => $link->isExpired())->count();
+            $activeForms = $formLinks->filter(fn ($link) => $link->is_active && !$link->isExpired())->count();
+            $summaryCards = [
+                ['label' => __('form_links.summary_total'), 'value' => $formLinks->count(), 'class' => 'stat-total', 'icon' => 'link'],
+                ['label' => __('admin.Active'), 'value' => $activeForms, 'class' => 'stat-approved', 'icon' => 'check_circle'],
+                ['label' => __('admin.Inactive'), 'value' => $formLinks->count() - $activeForms - $expiredForms, 'class' => 'stat-rejected', 'icon' => 'pause_circle_filled'],
+                ['label' => __('admin.Expired'), 'value' => $expiredForms, 'class' => 'stat-progress', 'icon' => 'schedule'],
+            ];
+        @endphp
+        <div class="form-link-stats" aria-label="{{ __('form_links.summary_label') }}">
+            @foreach($summaryCards as $summary)
+                <div class="stat-card {{ $summary['class'] }}">
+                    <div>
+                        <h3>{{ $summary['value'] }}</h3>
+                        <span class="stat-card__label">{{ $summary['label'] }}</span>
+                    </div>
+                    <i class="material-icons" aria-hidden="true">{{ $summary['icon'] }}</i>
+                </div>
+            @endforeach
+        </div>
 
         <div class="card">
             <div class="card-body">
@@ -127,6 +152,7 @@
                                             aria-label="{{ __('form_links.view_named', ['name' => $formLink->title]) }}">
                                             <i class="fas fa-eye" aria-hidden="true"></i>
                                         </a>
+                                        @if (auth()->user()->hasRole('super-user'))
                                         <a href="{{ route('admin.form-links.edit', $formLink) }}"
                                             class="table-action table-action--edit" title="{{ __('form_links.edit_link') }}"
                                             aria-label="{{ __('form_links.edit_named', ['name' => $formLink->title]) }}">
@@ -144,6 +170,7 @@
                                                     aria-hidden="true"></i>
                                             </button>
                                         </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

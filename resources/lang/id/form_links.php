@@ -1,5 +1,6 @@
 <?php
 return [
+ 'summary_total' => 'Total Form', 'summary_label' => 'Ringkasan tautan formulir',
  'copy_link' => 'Salin tautan publik', 'view_link' => 'Lihat tautan formulir', 'edit_link' => 'Ubah tautan formulir',
  'actions_for' => 'Aksi untuk :name', 'view_named' => 'Lihat :name', 'edit_named' => 'Ubah :name',
  'copy_named' => 'Salin tautan publik :name', 'activate_named' => 'Aktifkan :name', 'deactivate_named' => 'Nonaktifkan :name',
