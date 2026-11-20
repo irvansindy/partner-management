@@ -36,6 +36,15 @@
                 position: relative;
             }
 
+            .form-links-page .approval-stage-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+            .form-links-page .approval-stage-cards.is-parallel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .form-links-page .approval-stage-cards.is-parallel .approval-detail-list { grid-template-columns: minmax(0, 1fr); }
+            .form-links-page .approval-stage-cards .approval-step-header { flex-wrap: wrap; }
+            .form-links-page .approval-stage-cards .approval-step-card { overflow-wrap: anywhere; }
+            @media (max-width: 767.98px) {
+                .form-links-page .approval-stage-cards.is-parallel { grid-template-columns: minmax(0, 1fr); }
+            }
+
             .form-links-page .approval-status-dot {
                 align-items: center;
                 background: #fff;
@@ -357,66 +366,7 @@
                     </div>
 
                     <h5 class="mb-3">{{ __('admin.Approval Timeline') }}</h5>
-                    <div class="approval-timeline">
-                        @foreach ($approval->steps as $step)
-                            <div class="approval-step">
-                                <span class="approval-status-dot {{ $step->isApproved() ? 'is-approved' : ($step->isRejected() ? 'is-rejected' : ($step->isWaiting() ? 'is-waiting' : '')) }}">
-                                    <i class="fas fa-{{ $step->isApproved() ? 'check' : ($step->isRejected() ? 'times' : ($step->isWaiting() ? 'clock' : 'circle')) }}"></i>
-                                </span>
-                                <div class="approval-step-card">
-                                    <div class="approval-step-header">
-                                        <div>
-                                            <h3 class="approval-step-title">{{ __('form_links_remaining.Step') }} {{ $step->step_ordering }} · {{ $step->approver->name ?? __('form_links_remaining.Unknown') }}</h3>
-                                            <span class="approval-step-meta">
-                                        @if ($step->isApproved() && $step->approved_at)
-                                            <i class="fas fa-clock"></i> {{ $step->approved_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}
-                                        @elseif($step->isRejected() && $step->rejected_at)
-                                            <i class="fas fa-clock"></i> {{ $step->rejected_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}
-                                        @else
-                                            <i class="fas fa-clock"></i> {{ $step->created_at->locale(app()->getLocale())->translatedFormat('d M Y H:i') }}
-                                        @endif
-                                            </span>
-                                        </div>
-                                        @if ($step->isApproved())
-                                            <span class="approval-state">{{ __('admin.Approved') }}</span>
-                                        @elseif($step->isRejected())
-                                            <span class="approval-state">{{ __('admin.Rejected') }}</span>
-                                        @elseif($step->isWaiting())
-                                            <span class="approval-state">{{ __('admin.Waiting for Approval') }}</span>
-                                        @else
-                                            <span class="approval-state">{{ __('admin.Pending') }}</span>
-                                        @endif
-                                    </div>
-                                    <div class="approval-detail-list">
-                                        <p class="mb-1">
-                                            <i class="fas fa-user"></i> <strong>{{ __('submission.Approver:') }}</strong>
-                                            {{ $step->approver->name ?? __('form_links_remaining.Unknown') }}
-                                        </p>
-                                        <p class="mb-1">
-                                            <i class="fas fa-envelope"></i> <strong>Email:</strong>
-                                            {{ $step->approver->email ?? '-' }}
-                                        </p>
-                                    </div>
-
-                                    @if ($step->notes)
-                                        <div class="approval-note">
-                                            <strong><i class="fas fa-comment mr-1"></i> {{ __('submission.Notes') }}</strong>
-                                            <div class="mt-1" style="white-space: pre-line; overflow-wrap: anywhere">{{ $step->notes }}</div>
-                                        </div>
-                                    @endif
-
-                                    @if ($step->isWaiting() && auth()->id() === $step->user_id)
-                                        <div class="mt-3">
-                                            <a href="{{ route('admin.approvals.step.action', $step) }}"
-                                                class="btn btn-primary btn-sm form-link-action">
-                                                <i class="fas fa-tasks"></i> {{ __('admin.Take Action') }}
-                                            </a>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+                    @include('admin.form_links._approval_timeline')
 
                     <div class="row mt-4">
                         <div class="col-md-6">

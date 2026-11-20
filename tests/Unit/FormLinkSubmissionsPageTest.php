@@ -36,6 +36,7 @@ class FormLinkSubmissionsPageTest extends TestCase
         $view = file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/submission_detail.blade.php');
 
         $view .= file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/_submission_detail_panels.blade.php');
+        $view .= file_get_contents(dirname(__DIR__, 2).'/resources/views/admin/form_links/_approval_timeline.blade.php');
 
         $this->assertStringContainsString('approval-summary', $view);
         $this->assertStringContainsString('approval-step-card', $view);
